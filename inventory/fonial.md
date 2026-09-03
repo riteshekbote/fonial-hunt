@@ -24,3 +24,20 @@ www.fonial.de
 ## 2026-09-03 07:36:10 UTC
 
 ## 2026-09-03 12:17:36 UTC
+
+## 2026-09-03 16:47:39 UTC
+- NEW kundenkonto.fonial.de: Customer portal behind Cloudflare, PHP 8.3, permissive CORS (*), version header exposed (X-Fonial-Version: v2026.09.01-1)
+- NEW www.fonial.de/graphql/: GraphQL endpoint exists but returns 404 (TYPO3), not functional
+- NEW API marketed at /telefonanlage/funktionen/api/ but no public OpenAPI/Swagger/GraphQL introspection accessible
+- CHANGED Inventory passive recon previously showed 0 live HTTP; now 2 confirmed live (www, kundenkonto), 3 dead (app, admin, staging)
+- NEW kundenkonto.fonial.de — Customer portal + API host (Cloudflare-fronted, version v2026.09.01-1)
+- NEW kundenkonto.fonial.de/api/2.0 — Live REST API (POST-only, JSON body, session-based auth)
+- NEW CORS wildcard `access-control-allow-origin: *` on ALL API endpoints including /session/authenticate
+- NEW Two backend systems: session endpoints (text/json, no PHPSESSID) vs data endpoints (text/json;charset=UTF-8, sets PHPSESSID)
+- NEW www.fonial.de/shop/ — Hardware e-commerce (Magento-like, redirects from fonial.de/shop)
+- NEW www.fonial.de/hilfe/ — Help center (separate PHP app)
+- NEW www.fonial.de — TYPO3 CMS, PHP/8.3.3, nginx/1.31.2
+- CHANGED fonial.de → 301 to www.fonial.de (was previously unresolved; nginx/1.31.2 confirmed)
+- CHANGED app.fonial.de — Transport error (DNS/SSL unreachable)
+- CHANGED admin.fonial.de — Transport error (DNS/SSL unreachable)
+- CHANGED staging.fonial.de — Timeout (unreachable)

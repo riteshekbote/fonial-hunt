@@ -1,0 +1,3782 @@
+===== ANALYST nemotron3 2026-09-03 16:47:39 UTC =====
+[0m
+> build · nemotron-3-ultra-free
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://fonial.de --max-time 10
+301
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://app.fonial.de --max-time 10
+000
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://www.fonial.de --max-time 10
+200
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://admin.fonial.de --max-time 10
+000
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://staging.fonial.de --max-time 10
+000
+[0m
+[0m$ [0mcurl -s -I https://fonial.de --max-time 10
+HTTP/2 301 
+content-type: text/html
+date: Thu, 03 Sep 2026 16:31:48 GMT
+location: https://www.fonial.de/
+server: nginx/1.31.2
+content-length: 169
+[0m
+[0m$ [0mcurl -s -I https://www.fonial.de --max-time 10
+HTTP/2 200 
+cache-control: max-age=19691
+content-language: de-DE
+content-type: text/html; charset=utf-8
+date: Thu, 03 Sep 2026 16:31:49 GMT
+etag: "63f0cff138c7f9e5c2d4e167938735f2"
+expires: Thu, 03 Sep 2026 22:00:00 GMT
+pragma: public
+referrer-policy: strict-origin
+server: nginx/1.31.2
+strict-transport-security: max-age=31536000
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-powered-by: PHP/8.3.3
+x-typo3-cache-lifetime: 19691
+x-typo3-cache-tags: pageId_1 tx_news tx_news_pid_12
+x-typo3-debug-cache: Cached page generated 2026-09-03 12:00. Expires 2026-09-04 00:00
+x-typo3-parsetime: 0ms
+x-xss-protection: 1; mode=block
+content-length: 107556
+[0m
+[0m$ [0mcurl -s https://www.fonial.de --max-time 10 | head -200
+<!DOCTYPE html>
+<html lang="de-DE">
+<head>
+    <meta charset="utf-8">
+
+<!-- 
+	'___             _        _          _
+	  |  _|           |_|      | |        | |
+	 _| |_  ___   ___  _  __ _ | |      __| | ___
+	|_   _ / _ \ / _ \| |/ _` || |     / _| |/ _ \
+	  | | | (_) | | | | | (_| || |  _ | (_| |  __/
+	  |_|  \___/|_| |_|_|\__,_||_| |_| \____|\___|
+	
+	    fonial GmbH – www.fonial.de
+
+	This website is powered by TYPO3 - inspiring people to share!
+	TYPO3 is a free open source Content Management Framework initially created by Kasper Skaarhoj and licensed under GNU/GPL.
+	TYPO3 is copyright 1998-2026 of Kasper Skaarhoj. Extensions are copyright of their respective owners.
+	Information and contribution at https://typo3.org/
+-->
+
+
+<title>fonial: Ihre Cloud Telefonanlage 2026</title>
+<meta name="generator" content="TYPO3 CMS">
+<meta name="description" content="fonial - Ihr Anbieter für Cloud-Telefonie, SIP-Trunking und günstige DSL-Anschlüsse aus Deutschland. Wir sind für Sie da!">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="audience" content="all">
+<meta name="apple-touch-fullscreen" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobileoptimized" content="360">
+<meta name="handheldfriendly" content="true">
+<meta name="format-detection" content="telephone=no">
+
+
+<link href="/_assets/vite/vc_theme/assets/0-SscPfeSg.css" rel="stylesheet" >
+
+
+
+
+
+
+<!-- Google Tag Manager -->
+<script>
+  // Consent Mode v2: Default-Zustände vor GTM-Ladung
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'analytics_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'wait_for_update': 500  // verhindert vorzeitiges Tag-Firing
+  });
+
+  // GTM-Container laden
+  (function(w,d,s,l,i){
+    w[l]=w[l]||[];
+    w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+    var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),
+        dl=l!='dataLayer'?'&l='+l:'';
+    j.async=true;
+    j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+    f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-W5PWPRR');
+</script>
+<!-- End Google Tag Manager -->
+<script type="application/ld+json">{"@graph":[{"@id":"https://www.fonial.de/#webpage","url":"https://www.fonial.de/","name":"fonial: Ihre Cloud Telefonanlage 2026","@type":"WebPage","about":[{"@id":"https://www.fonial.de/#service-1"},{"@id":"https://www.fonial.de/#service-2"}],"isPartOf":{"@id":"https://www.fonial.de/#website"},"publisher":{"@id":"https://www.fonial.de/#organization"},"breadcrumb":{"@id":"https://www.fonial.de/#breadcrumb"},"inLanguage":"de-DE","description":"fonial: Cloud-Telefonanlage mit über 100 Funktionen ab 3,90 € netto/Rufnummer/Monat. Inklusive Microsoft Teams, KI-Telefonassistent, Web2Fax, Konferenzen. Zusätzlich Business-DSL ab 21,43 € netto und SIP-Trunking. Made in Germany, monatlich kündbar.","dateModified":"2026-05-08T08:42:46+00:00","potentialAction":{"@type":"OrderAction","target":{"@type":"EntryPoint","urlTemplate":"https://kundenkonto.fonial.de/signup/6","actionPlatform":"http://schema.org/DesktopWebPlatform"}},"isAccessibleForFree":true},{"@id":"https://www.fonial.de/#breadcrumb","@type":"BreadcrumbList","itemListElement":[{"item":"https://www.fonial.de/","name":"Start","@type":"ListItem","position":1}]},{"@id":"https://www.fonial.de/#website","url":"https://www.fonial.de/","name":"fonial","@type":"WebSite","publisher":{"@id":"https://www.fonial.de/#organization"},"inLanguage":"de-DE"},{"@id":"https://www.fonial.de/#organization","url":"https://www.fonial.de/","logo":{"@id":"https://www.fonial.de/#logo","url":"https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/fonial-logo.svg","@type":"ImageObject","contentUrl":"https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/fonial-logo.svg"},"name":"fonial","@type":"Organization","email":"info@fonial.de","image":{"@id":"https://www.fonial.de/#logo"},"sameAs":["https://www.linkedin.com/company/fonial/","https://www.instagram.com/fonial_de/","https://www.facebook.com/fonialgmbh/","https://de.trustpilot.com/review/www.fonial.de","https://www.google.com/maps/place/?q=place_id:ChIJ9Vc1jw8lv0cRgyAq3aCl7pk"],"address":{"@type":"PostalAddress","postalCode":"50672","streetAddress":"Kaiser-Wilhelm-Ring 7-9","addressCountry":"DE","addressLocality":"Köln"},"faxNumber":"+49 221 669 669 99","legalName":"fonial GmbH","telephone":"+49 221 669 669 65","knowsAbout":["Cloud-Telefonanlage","VoIP","SIP-Trunking","Business-DSL","KI-Telefonassistent","Microsoft Teams Integration","Unified Communications"],"description":"fonial GmbH ist ein Kölner Anbieter für Cloud-Telefonie und Business-Kommunikation. Kernprodukte: Cloud-Telefonanlage (VoIP, über 100 Funktionen, monatlich kündbar), SIP-Trunking, Business-DSL/VDSL, KI-Telefonassistent und Microsoft-Teams-Integration. Hosting in deutschen Rechenzentren. Ein Unternehmen der EnBW-Gruppe.","contactPoint":[{"@type":"ContactPoint","telephone":"+49 221 669 669 65","contactType":"sales","availableLanguage":"German"},{"@type":"ContactPoint","telephone":"+49 221 669 669 66","contactType":"customer support","availableLanguage":"German"}]},{"@id":"https://www.fonial.de/#service-1","url":"https://www.fonial.de/telefonanlage/preise/","name":"Cloud-Telefonanlage fonial PLUS","@type":"Service","offers":{"@type":"Offer","price":"3.9","seller":{"@id":"https://www.fonial.de/#organization"},"description":"3.9 € netto pro Rufnummer/Monat","priceCurrency":"EUR","potentialAction":{"@type":"OrderAction","target":{"@type":"EntryPoint","urlTemplate":"https://kundenkonto.fonial.de/signup/55","actionPlatform":"http://schema.org/DesktopWebPlatform"}},"priceSpecification":[{"@type":"UnitPriceSpecification","price":"3.9","unitText":"pro Rufnummer/Monat","priceCurrency":"EUR","valueAddedTaxIncluded":false},{"@type":"UnitPriceSpecification","price":"4.64","unitText":"pro Rufnummer/Monat","priceCurrency":"EUR","valueAddedTaxIncluded":true}]},"provider":{"@id":"https://www.fonial.de/#organization"},"areaServed":{"name":"DE","@type":"Country"},"serviceType":"Cloud-Telefonanlage"},{"@id":"https://www.fonial.de/#service-2","url":"https://www.fonial.de/dsl/preise/","name":"fonial DSL","@type":"Service","offers":{"@type":"Offer","price":"21.43","seller":{"@id":"https://www.fonial.de/#organization"},"description":"21.43 € netto pro Monat","priceCurrency":"EUR","potentialAction":{"@type":"OrderAction","target":{"@type":"EntryPoint","urlTemplate":"https://kundenkonto.fonial.de/signup/55","actionPlatform":"http://schema.org/DesktopWebPlatform"}},"priceSpecification":[{"@type":"UnitPriceSpecification","price":"21.43","unitText":"pro Monat","priceCurrency":"EUR","valueAddedTaxIncluded":false},{"@type":"UnitPriceSpecification","price":"25.5","unitText":"pro Monat","priceCurrency":"EUR","valueAddedTaxIncluded":true}]},"provider":{"@id":"https://www.fonial.de/#organization"},"areaServed":{"name":"DE","@type":"Country"},"serviceType":"DSL-Internetanschluss"}],"@context":"https://schema.org"}</script>
+<link rel="apple-touch-icon" sizes="57x57" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/android-icon-192x192.png?1787916420">
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/favicon-32x32.png?1787916420">
+<link rel="icon" type="image/png" sizes="96x96" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/favicon-96x96.png?1787916420">
+<link rel="icon" type="image/png" sizes="16x16" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/favicon-16x16.png?1787916420">
+<link rel="icon" type="image/png" sizes="48x48" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/favicon.png?1787916420">
+<link rel="manifest" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/manifest.json?1787916420">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/ms-icon-144x144.png?1787916420">
+<meta name="theme-color" content="#ffffff">
+
+<link rel="canonical" href="https://www.fonial.de/">
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" class="regular antialiased text-base xl:text-lg text-copycolor leading-normal">
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W5PWPRR";
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
+
+<header id="header" class="header fixed top-0 left-0 w-full z-6 bg-white border-b border-white">
+	<div class="container-fluid">
+		<div class="header__wrapper flex flex-nowrap justify-between lg:pt-5 transition-all duration-300 ease-in-out">
+			<div class="header__logo-and-nav flex flex-nowrap flex-grow justify-between lg:justify-start">
+				<div class="header__logo flex flex-nowrap items-center mr-6">
+					<div class="header__logo-enbw hidden lg:flex flex-col items-end mr-2 -mt-2">
+						<p class="claim-enbw">
+							Ein Unternehmen der 
+						</p>
+						<img alt="Logo EnBW" src="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/enbw-logo.svg" width="75" height="11" />
+					</div>
+					<a class="logo__link w-22 sm:w-24 lg:w-26 pt-2 transition-all duration-300 ease-in-out" href="/" title="Startseite">
+						<img class="header__logo-fonial-large hidden lg:block h-full transition-all" alt="Zurück zur Startseite" src="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/fonial-logo.svg" width="106" height="120" />
+						<img class="header__logo-fonial-small lg:hidden" alt="Zurück zur Startseite" src="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/fonial-lime.svg" width="99" height="49" />
+					</a>
+				</div>
+				<div class="header__nav flex">
+					<nav id="nav" class="snp jst flex flex-row justify-between" data-jst="nav-main" data-navtype="{{ params.navtype }}" data-subnavnode="subnav" data-label-site="Zur Seite" data-label-back="Zurück" data-max-height-offset="120">
+						
+
+
+    
+
+    <ul class="nav__list flex flex-row h-full list-reset" id="mainnav" data-level="1">
+        
+
+            <li class="nav__listitem nav__mainitem lev-0 hidden lg:block mr-1 py-6" data-display="">
+                
+                        
+                        
+                        
+                    
+
+                <a id="nav-item-2" href="https://www.fonial.de/telefonanlage/"   aria-haspopup=&quot;true&quot; aria-expanded=&quot;false&quot; &#039;, else: &#039; aria-current=&quot;false&quot; 
+                    class="nav__link group h-full whitespace-nowrap flex items-center text-base xl:text-base bold hover:text-copycolor no-underline hover:no-underline transition-all "
+                    data-defaultcontent="template-default-content-2" 
+                    data-copy="Cloud-Telefonie mit über 100 Funktionen" 
+                    data-navicon="phone-1" 
+                    aria-current="false">
+                    <span class="inline-block rounded-md icon-chevron-down group-hover:bg-lightgrey">
+                        Telefonanlage
+                        
+                    </span>
+                </a>
+
+                
+                    <template id="template-default-content-2">
+                                        <div class="p-6">
+					<img data-src="/fileadmin/user_upload/img/content/testimg-woman-laptop-landscape.webp" class="lazy rounded-xl overflow-hidden mb-4" alt="Image Description …" />
+					<p class="badge text-xs bold mb-2">
+						Neu: KI-Telefonassistent
+					</p>
+					<p class="text-lg bold">
+						Der KI-Telefonassistent
+					</p>
+					<p class="text-base mb-4">
+						Integrieren Sie jetzt einen KI-Telefonassistenten in Ihre Telefonanlage.
+					</p>
+					<a href="https://www.fonial.de/ki-telefonassistent/" class="btn btn--secondary btn--small">
+						Jetzt kostenlos testen
+					</a>
+				</div>
+                <style>.badge.text-xs {padding-top: .3125em;}</style>
+                    </template>
+                
+
+                
+
+
+    
+        
+        <ul class="nav__list hidden" data-level="2">
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-3" href="https://www.fonial.de/telefonanlage/preise/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Profi-Telefonie zu fairen Preisen"
+                       data-navicon="wallet-1"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Preise
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://api.fonial.de --max-time 10
+000
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://kundenkonto.fonial.de --max-time 10
+302
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://www.fonial.de/api --max-time 10
+404
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://www.fonial.de/api/v1 --max-time 10
+404
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://www.fonial.de/api/v2 --max-time 10
+404
+[0m
+[0m$ [0mcurl -s -I https://kundenkonto.fonial.de --max-time 10
+HTTP/2 302 
+date: Thu, 03 Sep 2026 16:34:20 GMT
+content-type: text/html; charset=utf-8
+location: https://kundenkonto.fonial.de/login
+server: cloudflare
+cache-control: max-age=0, must-revalidate, private
+expires: Thu, 03 Sep 2026 16:34:20 GMT
+set-cookie: PHPSESSID=ao3a790795kva3h0loojjl42h4; path=/; secure; httponly; samesite=lax
+x-fonial-version: v2026.09.01-1
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+cf-cache-status: DYNAMIC
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=7IpavwV3escQkV6dYYCIwZlXCF4auHcRO0CvGU%2FamINd3qYvKvyD2ARuShPSTE5PH3NDxjjvzzmu7YfsBDjF%2FS7fKxnoQSmCpUx%2BIMBNtca0EGtcEkF5Gk%2F9uMJWlURbLw5Y7Dqlqw%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cf-ray: a356294cdeb7da66-BOS
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://www.fonial.de/graphql --max-time 10
+301
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://www.fonial.de/swagger.json --max-time 10
+404
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://www.fonial.de/openapi.json --max-time 10
+404
+[0m
+[0m$ [0mcurl -s -I https://www.fonial.de/graphql --max-time 10
+HTTP/2 301 
+content-type: text/html
+date: Thu, 03 Sep 2026 16:35:35 GMT
+location: https://www.fonial.de/graphql/
+server: nginx/1.31.2
+content-length: 169
+[0m
+[0m$ [0mcurl -s https://kundenkonto.fonial.de/login --max-time 10 | head -100
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+            <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-W5PWPRR');</script>
+<!-- End Google Tag Manager -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Login</title>
+
+    <link rel="icon" type="image/ico" href="/favicon.ico">
+
+        <link rel="stylesheet" type="text/css" href="/bundles/fonial/frontend/css/bootstrap.min.css" media="all"/>
+    <link rel="stylesheet" type="text/css" href="/bundles/fonial/frontend/css/fonts.css" media="all"/>
+    <link rel="stylesheet" type="text/css" href="/bundles/fonial/frontend/css/sweet-alert.css" media="all"/>
+    <link rel="stylesheet" type="text/css" href="/bundles/fonial/frontend/css/datepicker.css" media="all"/>
+    <link rel="stylesheet" type="text/css" href="/bundles/fonial/frontend/css/bootstrap-timepicker.css" media="all"/>
+    <link rel="stylesheet" type="text/css" href="/bundles/fonial/frontend/css/chosen.css" media="all"/>
+    <link rel="stylesheet" type="text/css" href="/bundles/fonial/frontend/css/styles.css" media="all"/>
+
+    <link rel="canonical" href="https://kundenkonto.fonial.de/login" />
+
+    </head>
+        <body class="login">
+                    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W5PWPRR" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+        <div class="container login">
+    <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 pull-right col-right" id="login_form">
+            <h1>Login</h1>
+                            <p>
+                    Sie haben noch kein fonial Kundenkonto?<br>
+                    <a href="/signup">Erstellen Sie jetzt Ihr Kundenkonto</a>
+                    in weniger als fünf Minuten!
+                </p>
+            
+            
+
+            
+
+            <form role="form" action="/login_check" method="post">
+                <input type="hidden" name="_csrf_token" value="4aa7f94.ptBh1Or7uPQLRZ4rrwHTFaZVUHB25VPY4fjlLEEcVc8.0bgCuNKzwrw7fOwan26eLMtjGSYvqGCZqpmqGQlrGKqRqTO6nqztl2Fy6Q" />
+                <div class="form-group first">
+                    <label for="username">E-Mail-Adresse</label>
+                    <input class="form-control input-lg input-gray" id="username" name="_username" type="text" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="password">Passwort</label>
+                    <input type="password" class="form-control input-lg input-gray"  id="password" name="_password" required="required">
+                </div>
+                <div class="alert alert-info">
+                    2-Faktor-Authentifizierung
+                    <p>Sie erhalten nach dem Login eine E-Mail mit einer PIN zur Bestätigung im nächsten Schritt.</p>
+                </div>
+                <div class="row forgot-password">
+                    <div class="col-lg-7 col-md-7 col-sm-6 col-xs-12">
+                        <button type="submit" id="_submit" class="btn-primary submit submit-fullwidth" name="_submit">Login</button>
+                    </div>
+                    <div class="col-lg-5 col-md-5 col-sm-6 col-xs-12">
+                        <a href="/forgot/request" class="forgot-pwd">Passwort vergessen?</a>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+        <div class="col-lg-7 col-md-7 col-sm-6 col-xs-12 pull-left col-left">
+            <div class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="106" height="120">
+    <title>Bestellen Sie Ihre fonial Telefonanlage</title>
+    <defs>
+        <clipPath id="a">
+            <path d="M0 0h848.63v959.52H0V0z"/>
+        </clipPath>
+        <clipPath id="b">
+            <path d="M76.668 350h696.258v345.2H76.668V350z"/>
+        </clipPath>
+    </defs>
+    <g clip-path="url(#a)" transform="matrix(.125 0 0 -.125 0 119.938)">
+        <path
+            d="M848.63 535.2c0 234.34-189.974 424.32-424.32 424.32C189.97 959.52-.005 769.54-.005 535.2c0-185.36 118.902-342.86 284.563-400.64L419.116 0l129.41 129.398c173.73 53.122 300.102 214.68 300.102 405.8"
+            fill="#96c12a"/>
+    </g>
+    <g clip-path="url(#b)" fill="#fff" transform="matrix(.125 0 0 -.125 0 119.938)">
+        <path
+            d="M541.926 599.934c3.148 0 6.13.613 8.94 1.84 2.802 1.222 5.25 2.89 7.36 4.992 2.098 2.11 3.758 4.558 4.99 7.36 1.222 2.808 1.84 5.788 1.84 8.94 0 6.48-2.28 11.957-6.83 16.43-4.558 4.47-9.992 6.7-16.3 6.7-6.48 0-11.96-2.23-16.43-6.7-4.46-4.473-6.7-9.95-6.7-16.43 0-6.312 2.24-11.742 6.7-16.3 4.47-4.55 9.95-6.832 16.43-6.832M771.418 640.57c-1.418 6.32-3.22 11.79-5.38 16.4-2.17 4.608-4.608 8.01-7.31 10.202-2.7 2.187-5.458 3.11-8.298 2.79-2.84-.32-5.55-2.192-8.16-5.583-1.133-1.392-3.422-5.38-6.89-11.982-3.45-6.597-7.712-15.027-12.743-25.277-5.047-10.26-10.61-21.9-16.867-34.85-4.442-9.192-9.75-20.55-18.903-40.46-4.2-9.15-8.3-18.42-12.37-27.74-4.368-8.78-7.43-16.242-9.61-22.66-.43-.762-.86-1.57-1.258-2.46-1.583-3.848-3.68-8.23-6.314-13.14-2.628-4.912-5.61-9.548-8.937-13.93-3.333-4.38-6.88-8.1-10.653-11.17-3.77-3.07-7.66-4.78-11.688-5.132-2.634-.168-3.993.703-4.083 2.633-.09 1.93.66 4.6 2.242 8.02 1.577 3.418 3.68 7.32 6.308 11.7 2.62 4.37 5.29 8.8 8.012 13.27 2.718 4.472 5.207 8.85 7.488 13.14 2.28 4.3 3.86 8.02 4.73 11.172 1.23 4.738.23 8.547-2.1 12.097-4.41 6.718-8.26 7.378-12.458 7.7-4.063.31-9.403-3.75-10.98-7.08-1.403-2.628-18.653-35.45-21.544-41.5-2.886-6.04-19.066-24.66-22.566-27.46-3.512-2.81-7.102-3.86-10.774-3.16-3.16.53-5.218 2.45-6.187 5.78-.962 3.33-1.04 7.49-.25 12.49.788 4.99 2.397 10.472 4.858 16.43 2.45 5.952 5.692 11.91 9.72 17.87 4.03 5.96 8.68 11.648 13.93 17.082 5.26 5.43 11.09 9.988 17.48 13.668 6.402 3.68 13.28 6.218 20.64 7.62 7.36 1.41 15.07 1.14 23.13-.78 4.73-1.05 8.28-.97 10.64.26 2.36 1.22 3.68 2.892 3.95 4.99.26 2.11-.44 4.34-2.11 6.71-1.67 2.36-4.16 4.07-7.49 5.122-14.37 4.558-27.73 6.308-40.08 5.257-12.36-1.05-23.528-3.938-33.52-8.68-9.99-4.73-18.7-10.95-26.15-18.66-7.448-7.71-13.5-15.942-18.14-24.71-3.082-5.83-5.45-11.7-7.23-17.61-1.57-3.86-3.668-8.24-6.3-13.14-2.63-4.912-5.61-9.548-8.938-13.93-3.332-4.38-6.883-8.1-10.64-11.17-3.77-3.07-7.673-4.78-11.7-5.132-2.633-.168-3.64 1.363-3.032 4.602.622 3.25 2.24 7.5 4.872 12.75 2.628 5.26 5.918 11.218 9.86 17.88 3.936 6.65 7.788 13.23 11.558 19.71 3.77 6.48 7.19 12.492 10.25 18.01 3.062 5.51 5.04 9.85 5.92 13.01 1.22 4.73.35 9.24-2.63 13.53-2.982 4.29-6.79 7.63-11.44 9.99-4.64 2.37-6.3 3.42-10.94 3.15-4.64-.26-7.93-2.58-9.86-6.96-1.398-3.148-3.54-8.41-6.44-15.77-2.892-7.36-5.74-15.64-8.54-24.84-1.86-6.1-13.89-29.92-17.31-34.83-3.42-4.912-7.268-9.548-11.56-13.93-4.298-4.38-8.76-8.1-13.41-11.17-4.638-3.07-8.982-4.78-13.01-5.132-2.628-.168-3.55 1.363-2.76 4.602.788 3.25 2.632 7.5 5.52 12.75 2.89 5.26 6.4 11.218 10.518 17.88 4.113 6.65 8.184 13.23 12.223 19.71 4.026 6.48 7.62 12.492 10.768 18.01 3.16 5.51 5.168 9.85 6.05 13.01 1.22 4.02.75 7.92-1.448 11.69-2.192 3.77-5.12 6.97-8.8 9.598-3.68 2.62-7.673 4.332-11.962 5.12-4.3.79-8.02.314-11.172-1.436-2.457-1.41-5.386-3.774-8.797-7.102-3.422-3.332-7.192-7.27-11.313-11.832-4.11-4.558-8.41-9.59-12.88-15.11-4.468-5.52-8.93-11.128-13.397-16.82-4.473-5.7-8.852-11.398-13.153-17.09-4.29-5.7-8.277-11-11.95-15.898 3.5 6.66 17.013 32.46 20.23 37.64 3.43 5.528 6.02 10.66 8.58 14.76 2.55 4.088 5.94 10.42 6.77 13.452.94 3.43 1.05 6.09-2.438 10.008-3.22 3.64-3.232 4-8.04 6.54-4.832 2.542-9.73 3.72-14.723 3.55-5-.18-8.457-2.462-10.38-6.84-2.108-4.73-4.698-11.692-7.76-20.89-3.067-9.2-6.18-19.232-9.33-30.1-1.358-4.702-2.66-9.42-3.93-14.16-2.448-4.3-5.41-8.05-8.948-11.198-4.032-3.594-9.384-6.094-16.032-7.492 4.898 6.48 9.02 13.308 12.352 20.5 3.328 7.18 5.66 14.19 6.968 21.03 1.31 6.83 1.532 13.36.65 19.58-.868 6.222-3.06 11.698-6.572 16.43-3.5 4.73-8.367 8.452-14.578 11.17-6.23 2.712-14.07 4.07-23.53 4.07-1.4.17-2.802.22-4.2.13-1.41-.09-3.07-.22-5-.39-17.57-3.56-33.39-16.92-37.12-22.49-.85-.87-1.732-1.698-2.56-2.608-7.54-8.332-13.762-17.18-18.672-26.55-4.91-9.38-8.45-18.84-10.648-28.392-.65-2.87-3.602-10.61-4.48-12.29-1.58-2.98-3.598-5.82-6.05-8.542-2.45-2.72-5.13-5.078-8.02-7.098-2.892-2.01-5.83-3.5-8.802-4.468-2.976-.96-5.867-1.184-8.68-.653-4.378.87-7.27 3.19-8.667 6.96-1.404 3.77-.7 9.328 2.096 16.692l21.25 44.418c15.242 9.11 27.942 19.59 38.114 31.422 10.16 11.82 18.04 24 23.648 36.527 5.61 12.53 9.11 24.84 10.52 36.93 1.402 12.088.96 22.952-1.32 32.588-1.75 7.012-3.9 13.05-6.438 18.14-2.543 5.083-5.34 8.802-8.41 11.173-3.07 2.368-6.18 3.33-9.332 2.892-3.15-.442-6.13-2.59-8.942-6.442-1.22-1.582-3.668-6.09-7.36-13.54-3.667-7.448-8.187-16.948-13.527-28.51-5.352-11.57-11.3-24.67-17.872-39.3-6.57-14.63-13.242-29.83-19.98-45.6-2-4.68-6.97-16.48-13.09-31.12-71.4-32.828-85.63-67.88-85.63-67.88-4.09-7.08 4.298-11.608 4.298-11.608 7.523-2.692 11.383 5.52 11.383 5.52 9.46 21.84 41 42.148 61.39 53.456-13.192-31.648-27.813-67.058-30.872-75.457-5.35-14.632-9.86-27.99-13.54-40.08-3.678-12.09-6.042-21.99-7.1-29.7-.52-4.03-.078-7.27 1.32-9.73 1.398-2.45 3.2-4.032 5.39-4.73 2.188-.7 4.33-.44 6.438.792 2.102 1.226 3.594 3.508 4.473 6.828 3.327 13.5 8.096 27.512 14.32 42.06 6.218 14.542 14.237 31.1 24.05 49.67 1.75-2.98 4.156-5.43 7.226-7.35 3.063-1.94 7.05-3.07 11.954-3.42 6.136-.53 11.968.302 17.476 2.5 5.53 2.18 10.48 4.99 14.863 8.41 2.91 2.27 5.527 4.67 7.898 7.18 1.47-4.57 3.61-8.6 6.582-11.98 4.457-5.082 10.906-7.88 19.316-8.41 11.73-.7 22.903 1.27 33.512 5.91 10.602 4.65 20.19 10.91 28.78 18.8 8.06-.358 15.24.52 21.548 2.63 4.14 1.37 7.902 3.02 11.352 4.89-1.59-7.34-2.852-13.98-3.73-19.878-.528-4.383-.17-7.492 1.05-9.332 1.23-1.84 2.852-2.71 4.87-2.62 2.01.088 4.2 1.088 6.57 3.018 2.37 1.922 4.34 4.473 5.912 7.62 3.16 4.38 7.757 10.513 13.796 18.404 6.05 7.878 12.622 16.296 19.723 25.226 7.097 8.942 14.41 17.703 21.937 26.293 7.53 8.58 14.37 15.77 20.51 21.552-2.108-6.14-4.557-12.883-7.37-20.242-2.8-7.36-5.43-14.81-7.88-22.34-2.46-7.54-4.467-14.852-6.038-21.95-1.583-7.09-2.204-13.45-1.852-19.062.35-5.598 1.93-10.066 4.73-13.398 2.81-3.328 7.45-4.99 13.942-4.99 7.36 0 14.54 2.048 21.546 6.17 7 4.12 13.442 9.07 19.32 14.85 1.782 1.76 3.462 3.54 5.083 5.34.268-7.39 1.686-13.59 4.378-18.48 2.89-5.26 7.922-7.88 15.11-7.88 7.358 0 14.15 2.048 20.37 6.17 6.22 4.12 11.738 9.07 16.56 14.85 1.28 1.54 2.51 3.1 3.69 4.68 1.828-6.16 4.89-11.43 9.328-15.718 5.07-4.902 12.09-7.71 21.024-8.41 8.226-.703 15.636 1.578 22.207 6.84 6.57 5.25 12.312 11.726 17.21 19.45 0-7.892 1.45-14.5 4.34-19.853 2.903-5.34 8.11-8.01 15.64-8.01 7.36 0 14.15 2.048 20.372 6.17 6.218 4.12 11.738 9.07 16.558 14.85 0 0 2.23-5.35 3.85-8.64 2.99-6.058 9.68-11.21 17.7-11.68 6.598-.468 13.598 2.4 19.098 6.02 5.5 3.61 24.043 21.87 28.703 26.602 4.617 4.668 10 10.258 12.73 13.29 2.598 2.878 4.367 6.026 3.86 8.807-.442 2.402-1.61 5.492-5.173 6.68-2.66.882-5.777-.95-7.898-2.2-2.122-1.262-32.192-32.602-35.653-35.27-3.457-2.68-9.637-6.16-13.09-5.53-3.297.62-4.64 3.3-4.008 8.01.628 4.72 2.55 10.76 5.776 18.15 2.012 4.628 9.723 16.16 12.223 21.26 3.91 7.02 5.347 8.83 9.686 16.15 13.09 7.61 24.14 16.37 33.114 26.32 9.367 10.38 16.7 21.13 22 32.25 5.29 11.11 8.7 22.07 10.218 32.89 1.52 10.81 1.36 20.56-.48 29.25m-518.7 2.64c4.82-22.9-5.3-46.108-8.722-52.77-3.406-6.66-16.328-27.72-35.476-38.702 1.75 3.16 44.777 93.282 44.2 91.473m9.417-184.34c-4.828-2.89-9.778-4.34-14.86-4.34-5.78 0-9.77 2.368-11.95 7.1-2.198 4.73-2.897 10.65-2.108 17.74.788 7.1 2.846 14.85 6.178 23.27 3.33 8.41 7.622 16.29 12.88 23.65-1.05-10.51.3-20.9 4.07-31.15 3.77-10.25 10.21-18.44 19.32-24.57-4.2-4.91-8.72-8.808-13.53-11.7m39.292 71.49c-.703-7.09-2.543-14.848-5.524-23.258-2.976-8.41-6.75-16.383-11.297-23.922-4.383 2.8-7.8 6.44-10.262 10.91-2.45 4.47-4.16 9.29-5.12 14.46-.958 5.17-1.138 10.34-.52 15.51.608 5.16 1.788 9.89 3.538 14.19 1.75 4.29 4.03 7.89 6.844 10.78 2.797 2.892 6.13 4.6 9.988 5.118 5.078.352 8.578-1.75 10.512-6.308 1.93-4.56 2.54-10.38 1.84-17.48m453.707 60.17c-2.31-9.66-9.957-29.03-39.4-48.6 1.642 2.79 39.54 77.84 39.7 78.148.403-3.308 4.012-11.457-.3-29.547"/>
+    </g>
+</svg>            </div>
+            <h2>Ihr professioneller Kommunikationsanbieter aus der Cloud.</h2>
+<p>Telefonanlage mit über 100 Funktionen, Trunking, DSL, E-Brief und persönlicher Support.</p>
+
+            
+                        
+                    </div>
+    </div>
+    <div class="enbw-claim">Ein Unternehmen der <img src="/bundles/fonial/frontend/images/logo_enbw_w.svg" alt="Logo EnBW" width="75" height="11" border="0"></div>
+</div>
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://kundenkonto.fonial.de/api --max-time 10
+404
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://kundenkonto.fonial.de/api/v1 --max-time 10
+404
+[0m
+[0m$ [0mcurl -s -I https://www.fonial.de/graphql/ --max-time 10
+HTTP/2 404 
+content-type: text/html; charset=utf-8
+date: Thu, 03 Sep 2026 16:36:29 GMT
+server: nginx/1.31.2
+x-powered-by: PHP/8.3.3
+x-typo3-cache-lifetime: 9223372036854775807
+x-typo3-cache-tags: 
+x-typo3-parsetime: 0ms
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://kundenkonto.fonial.de/api/v2 --max-time 10
+404
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://kundenkonto.fonial.de/api/v3 --max-time 10
+404
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://kundenkonto.fonial.de/graphql --max-time 10
+404
+[0m
+[0m$ [0mcurl -s -X POST -H "Content-Type: application/json" -d '{"query":"{__schema{types{name}}}"}' https://www.fonial.de/graphql/ --max-time 10
+...output truncated...
+
+Full output saved to: /home/runner/.local/share/opencode/tool-output/tool_068234c9d0010put5OmwJ4TRCN
+
+                       data-copy="Fax App für iOS"
+                       data-navicon="mobile-phone"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        fonial E-Fax-App für iOS
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-4">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-106" href="https://www.fonial.de/telefonanlage/funktionen/apps/fonial-fax-druckertreiber-fuer-windows/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Faxen über das Druckmenü"
+                       data-navicon="printer"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        fonial Fax-Druckertreiber für Windows
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-4">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-107" href="https://www.fonial.de/telefonanlage/funktionen/apps/fonial-fax-druckertreiber-fuer-macos/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Faxen über das Druckmenü"
+                       data-navicon="printer"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        fonial Fax-Druckertreiber für MacOS
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+        </ul>
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-3">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-789" href="https://www.fonial.de/ki-telefonassistent/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Die KI-Assistenten Integration für Ihr Business"
+                       data-navicon="profile-serviceman-2"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        KI-Telefonassistent
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-3">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-663" href="https://www.fonial.de/telefonanlage/funktionen/e-brief/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Die digitale Lösung für Ihren Briefversand"
+                       data-navicon="document"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        E-Brief
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-3">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-341" href="https://www.fonial.de/telefonanlage/funktionen/api/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Die Schnittstelle zu vielen Funktionen"
+                       data-navicon="cloud-refresh"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        API
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-3">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-10" href="https://www.fonial.de/telefonanlage/funktionen/sicherheit/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Unsere Sicherheitsstandards im Überblick"
+                       data-navicon="lock-1"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Sicherheit
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+        </ul>
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-758" href="https://www.fonial.de/telefonanlage/vorteile/flatrates/" 
+                        
+                         aria-haspopup=&quot;true&quot; aria-expanded=&quot;false&quot;
+                       class="nav__link"
+                       data-copy="Flatrates, Rufnummern und dezentralen Lösungen"
+                       data-navicon="registry-1"
+                       data-doktype="4" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Vorteile
+                        
+                    </a>
+                    
+
+
+    
+        
+        <ul class="nav__list hidden" data-level="3">
+            
+                <li class="nav__listitem lev-3">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-388" href="https://www.fonial.de/telefonanlage/vorteile/flatrates/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Flexibel buchen oder abwählen"
+                       data-navicon="window-graph-2"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Flatrates
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-3">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-335" href="https://www.fonial.de/telefonanlage/rufnummern/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Telefonieren in über 5.200 Ortsnetzen"
+                       data-navicon="check-list"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Rufnummern
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-3">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-577" href="https://www.fonial.de/telefonanlage/home-office/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Weltweit standortunabhängig telefonieren"
+                       data-navicon="house-2"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Home Office
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+        </ul>
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-77" href="https://www.fonial.de/telefonanlage/preise/kostenkalkulator/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Ermitteln Sie Ihr Sparpotenzial"
+                       data-navicon="percent-4"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Kostenkalkulator
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-53" href="https://www.fonial.de/telefonanlage/haeufige-fragen/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Häufige Fragen zur Cloud Telefonanlage"
+                       data-navicon="question-mark"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Häufige Fragen
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+        </ul>
+    
+
+
+
+
+
+            </li>
+        
+
+            <li class="nav__listitem nav__mainitem lev-0 hidden lg:block mr-1 py-6" data-display="">
+                
+                        
+                        
+                        
+                    
+
+                <a id="nav-item-336" href="https://www.fonial.de/trunking/"   aria-haspopup=&quot;true&quot; aria-expanded=&quot;false&quot; &#039;, else: &#039; aria-current=&quot;false&quot; 
+                    class="nav__link group h-full whitespace-nowrap flex items-center text-base xl:text-base bold hover:text-copycolor no-underline hover:no-underline transition-all "
+                    data-defaultcontent="template-default-content-336" 
+                    data-copy="SIP-Trunking für bestehende Telefonanlagen" 
+                    data-navicon="router" 
+                    aria-current="false">
+                    <span class="inline-block rounded-md icon-chevron-down group-hover:bg-lightgrey">
+                        Trunking
+                        
+                    </span>
+                </a>
+
+                
+                    <template id="template-default-content-336">
+                                        <div class="p-6">
+					<img data-src="/fileadmin/user_upload/img/content/testimg-woman-laptop-landscape.webp" class="lazy rounded-xl overflow-hidden mb-4" alt="Image Description …" />
+					<p class="badge text-xs bold mb-2">
+						Neu: KI-Telefonassistent
+					</p>
+					<p class="text-lg bold">
+						Der KI-Telefonassistent
+					</p>
+					<p class="text-base mb-4">
+						Integrieren Sie jetzt einen KI-Telefonassistenten in Ihre Telefonanlage.
+					</p>
+					<a href="https://www.fonial.de/ki-telefonassistent/" class="btn btn--secondary btn--small">
+						Jetzt kostenlos testen
+					</a>
+				</div>
+                <style>.badge.text-xs {padding-top: .3125em;}</style>
+                    </template>
+                
+
+                
+
+
+    
+        
+        <ul class="nav__list hidden" data-level="2">
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-360" href="https://www.fonial.de/trunking/funktionen/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Alle Funktionen unserer Trunking Lösung"
+                       data-navicon="wrench"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Funktionen
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-343" href="https://www.fonial.de/trunking/preise/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Trunking Tarife &amp; Minutenpakete"
+                       data-navicon="wallet-1"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Preise
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-344" href="https://www.fonial.de/trunking/haeufige-fragen/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Schnelle Antworten zum fonial SIP-Trunking"
+                       data-navicon="question-mark"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Häufige Fragen
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+        </ul>
+    
+
+
+
+
+
+            </li>
+        
+
+            <li class="nav__listitem nav__mainitem lev-0 hidden lg:block mr-1 py-6" data-display="">
+                
+                        
+                        
+                        
+                    
+
+                <a id="nav-item-426" href="https://www.fonial.de/dsl/"   aria-haspopup=&quot;true&quot; aria-expanded=&quot;false&quot; &#039;, else: &#039; aria-current=&quot;false&quot; 
+                    class="nav__link group h-full whitespace-nowrap flex items-center text-base xl:text-base bold hover:text-copycolor no-underline hover:no-underline transition-all "
+                    data-defaultcontent="template-default-content-426" 
+                    data-copy="Schnelles Internet ohne Mindestvertragslaufzeit" 
+                    data-navicon="registry-1" 
+                    aria-current="false">
+                    <span class="inline-block rounded-md icon-chevron-down group-hover:bg-lightgrey">
+                        DSL
+                        
+                    </span>
+                </a>
+
+                
+                    <template id="template-default-content-426">
+                                        <div class="p-6">
+					<img data-src="/fileadmin/user_upload/img/content/testimg-woman-laptop-landscape.webp" class="lazy rounded-xl overflow-hidden mb-4" alt="Image Description …" />
+					<p class="badge text-xs bold mb-2">
+						Neu: KI-Telefonassistent
+					</p>
+					<p class="text-lg bold">
+						Der KI-Telefonassistent
+					</p>
+					<p class="text-base mb-4">
+						Integrieren Sie jetzt einen KI-Telefonassistenten in Ihre Telefonanlage.
+					</p>
+					<a href="https://www.fonial.de/ki-telefonassistent/" class="btn btn--secondary btn--small">
+						Jetzt kostenlos testen
+					</a>
+				</div>
+                <style>.badge.text-xs {padding-top: .3125em;}</style>
+                    </template>
+                
+
+                
+
+
+    
+        
+        <ul class="nav__list hidden" data-level="2">
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-428" href="https://www.fonial.de/dsl/preise/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Leistungsstarkes DSL, günstige Konditionen"
+                       data-navicon="wallet-1"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Preise
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-429" href="https://www.fonial.de/dsl/haeufige-fragen/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Schnelle Antworten zum Thema DSL"
+                       data-navicon="question-mark"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Häufige Fragen
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-786" href="https://www.fonial.de/komplettanschluss/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Komplettpakete mit Internet und Telefonie"
+                       data-navicon="package"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Komplettanschluss
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+        </ul>
+    
+
+
+
+
+
+            </li>
+        
+
+            <li class="nav__listitem nav__mainitem lev-0 hidden lg:block mr-1 py-6" data-display="">
+                
+                        
+                        
+                        
+                    
+
+                <a id="nav-item-6" href="https://www.fonial.de/support/uebersicht/"   aria-haspopup=&quot;true&quot; aria-expanded=&quot;false&quot; &#039;, else: &#039; aria-current=&quot;false&quot; 
+                    class="nav__link group h-full whitespace-nowrap flex items-center text-base xl:text-base bold hover:text-copycolor no-underline hover:no-underline transition-all "
+                    data-defaultcontent="template-default-content-6" 
+                    data-copy="Hilfe und Informationen rund um unsere Produkte" 
+                    data-navicon="phone-1" 
+                    aria-current="false">
+                    <span class="inline-block rounded-md icon-chevron-down group-hover:bg-lightgrey">
+                        Support
+                        
+                    </span>
+                </a>
+
+                
+                    <template id="template-default-content-6">
+                                        <div class="p-6">
+					<p class="iconized xl icon-headset-sound-streamline inline-block text-lg bold mb-4">
+						Beratung & Support
+					</p>
+					<p class="text-sm">
+						Supportzeiten:
+					</p>
+					<p class="text-base">
+						Mo. - Do.: 09:00 - 18:00 Uhr<br>
+						Fr.: 09:00 - 16:00 Uhr
+					</p>
+					<div class="mt-5">
+						<a href="tel:004922166966965" class="flex items-center bg-zinc-200 hover:bg-white rounded-xl mb-3 px-3 py-1-5 no-underline hover:no-underline hover:text-copycolor">
+							<span class="light text-sm pr-2">Beratung</span><span class="bold text-lg">0221 669 669 65</span>
+						</a>
+						<a href="tel:004922166966966" class="flex items-center bg-zinc-200 hover:bg-white rounded-xl mb-3 px-3 py-1-5 no-underline hover:no-underline hover:text-copycolor">
+							<span class="light text-sm pr-2">Support</span><span class="bold text-lg">0221 669 669 66</span>
+						</a>
+						<a href="tel:004922166966999" class="flex items-center bg-zinc-200 hover:bg-white rounded-xl mb-3 px-3 py-1-5 no-underline hover:no-underline hover:text-copycolor">
+							<span class="light text-sm pr-2">Fax</span><span class="bold text-lg">0221 669 669 99</span>
+						</a>
+					</div>
+				</div>
+                    </template>
+                
+
+                
+
+
+    
+        
+        <ul class="nav__list hidden" data-level="2">
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-52" href="https://www.fonial.de/hilfe/" 
+                        
+                            
+                                    target="_blank" rel="noopener noreferrer" 
+                                
+                        
+                        
+                       class="nav__link"
+                       data-copy="Funktionen und Einstellungen ausführlich erklärt"
+                       data-navicon="enbw-info-i"
+                       data-doktype="3" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Online-Hilfe
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-54" href="https://kundenkonto.fonial.de/login" 
+                        
+                            
+                                    target="_blank" rel="noopener noreferrer" 
+                                
+                        
+                        
+                       class="nav__link"
+                       data-copy="Support-Ticket im Kundenkonto erstellen"
+                       data-navicon="bubble-ask-1"
+                       data-doktype="3" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Support-Ticket erstellen
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-109" href="https://www.fonial.de/support/systemstatus/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Zeigt die Verfügbarkeit unserer Systeme"
+                       data-navicon="power"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Systemstatus
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+        </ul>
+    
+
+
+
+
+
+            </li>
+        
+
+            <li class="nav__listitem nav__mainitem lev-0 hidden lg:block mr-1 py-6" data-display="">
+                
+                        
+                        
+                        
+
+                    
+
+                <a id="nav-item-4" href="https://shop.fonial.de/" 
+                             target=&quot;_blank&quot;
+                             rel=&quot;noopener noreferrer&quot;
+                         
+                    class="nav__link group h-full whitespace-nowrap flex items-center text-base xl:text-base bold hover:text-copycolor no-underline hover:no-underline transition-all "
+                    data-defaultcontent="template-default-content-4" 
+                    data-copy="" 
+                    data-navicon="" 
+                    aria-current="false">
+                    <span class="inline-block rounded-md icon-chevron-down group-hover:bg-lightgrey">
+                        Shop
+                        
+                    </span>
+                </a>
+
+                
+                    <template id="template-default-content-4">
+                        <div class="p-6">
+	Zum Hardware Shop
+</div>
+                    </template>
+                
+
+                
+
+
+    
+
+
+
+
+
+            </li>
+        
+        <li class="nav__listitem nav__menu lg:hidden">
+            <a href="#" class="nav__link nav__menu flex items-center h-full whitespace-nowrap no-underline hover:no-underline">
+                <div class="btn btn--primary btn--small btn--icon icon-menu hidden sm:inline-block">
+                    <div class="icon"><s></s><s></s><s></s><s></s></div>
+                    <span class="pt-0-5">
+                        Menü
+                    </span>
+                </div>
+                <div class="w-8 sm:hidden icon-menu">
+                    <div class="icon"><s></s><s></s><s></s><s></s></div>
+                </div>
+            </a>
+        </li>
+    </ul>
+
+
+
+					</nav>
+				</div>
+			</div>
+			<div class="header__secondary flex items-center ml-4">
+				<a href="https://kundenkonto.fonial.de/login" class="hidden sm:inline-block btn btn--secondary btn--small">
+					Login
+				</a>
+				<a href="https://kundenkonto.fonial.de/signup/6?ref=webseiteheader" class="hidden lg:inline-block btn btn--primary btn--small ml-4">
+					Kostenlos testen
+				</a>
+			</div>
+			<div class="header__tertiary hidden lg:block absolute right-0 top-0 flex items-center mt-3 transition-opacity duration-300">
+				<a href="/partner-werden/" class="iconized icon-heart text-sm bold leading-snug">
+					Partner-werden
+				</a>
+				<a href="tel:004922166966966" class="iconized icon-call-1-1 ml-4 text-sm bold leading-snug">
+					 0221 669 669 66 
+				</a>
+			</div>
+			<div id="subnav" class="subnav nav__subnav block fixed z-1 lg:absolute lg:rounded-standard lg:shadow-equal-lg bg-white lg:border transition-all duration-300 overflow-hidden scale-50 opacity-0 origin-top invisible">
+			</div>
+			<template id="template-subnav-wrapper">
+				<div class="nav__subnav-wrapper hidden opacity-0 transition-all duration-150 ease-out h-full lg:h-auto">
+					<div class="lg:flex flex-nowrap h-full lg:h-auto">
+						<div class="overflow-hidden grow">
+							<div class="nav__stepper transition-all duration-300 ease-out">
+						
+							</div>
+						</div>
+						<div class="nav__defaultcontent  hidden lg:block w-68 grow-0 shrink-0 bg-lightgrey">
+						</div>
+					</div>
+				</div>
+			</template>
+			<template id="template-subnav-step">
+				<div class="nav__step">
+					<div class="nav__list sm:columns-2 lg:columns-1 xl:columns-2 p-4">
+					</div>
+				</div>
+			</template>
+			<template id="template-subnav-entry">
+				<a href="" class="nav__entry break-inside-avoid-column block p-5 pt-4 pl-12 sm:h-28 lg:h-auto xl:h-28 rounded-xl no-underline hover:no-underline hover:bg-lightgrey hover:text-copycolor">
+					<p class="nav__entry-label text-lg bold"></p>
+					<p class="nav__entry-copy text-base"></p>
+				</a>
+			</template>
+			<template id="template-subnav-back">
+				<div class="sm:col-span-2 mb-2" style="column-span: all;">
+					<button class="nav__back icon-chevron-left pl-4 text-lg text-lime hover:text-lime-800 extrabold">
+						Zurück
+					</button>
+				</div>
+			</template>
+			<template id="template-default-content-main" data-label="Main">
+				              <div class="flex flex-nowrap p-6">
+					<a href="https://kundenkonto.fonial.de/login" class="btn btn--secondary btn--small block grow mr-2">
+						Login
+					</a>
+					<a href="https://kundenkonto.fonial.de/signup/6?ref=webseiteheader" class="btn btn--primary btn--small block grow ml-2">
+						Kostenlos testen
+					</a>
+				</div>
+				<div class="flex flex-nowrap justify-between p-6 bg-lightgrey">
+					<a href="/partner-werden/" class="iconized icon-heart text-base bold leading-snug">
+						Partner-werden
+					</a>
+					<a href="tel:004922166966966" class="iconized icon-call-1-1 ml-4 text-base bold leading-snug">
+						0221 669 669 66
+					</a>
+				</div>
+			</template>
+		</div>
+	</div>
+</header> 
+
+<main id="main" class="main bg-white pt-padding-main">
+    
+	<!-- START SECTION STAGE -->
+    
+<div class="hero   bg-color-three  w-full overflow-hidden"><div class="absolute left-0 top-0 w-full h-full"><img alt="Header Fehler 404 Seite nicht gefunden " class="w-full h-full object-cover object-top" src="https://www.fonial.de/fileadmin/user_upload/img/header/header_404.jpg" width="1920" height="816" /></div><div class="container-step"><div class="grid-standard"><div class="content flex items-start content__col col-span-4  content__col col-span-4 md:col-span-6 xl:col-span-5  "><div class="content w-full hero__text"><h1 id="c8369" class="targetlink"><span>Seite nicht gefunden</span></h1><p class="text-2xl">Der gewünschte Inhalt ist leider&nbsp;<br>nicht vorhanden.</p></div></div><div class="content flex items-start content__col col-span-4  content__col col-span-4 md:col-span-6 xl:col-span-12  "><div class="content w-full "></div></div></div></div></div>
+
+
+    <!-- END SECTION STAGE -->
+	<!-- START SECTION CONTENT -->
+	
+<div class="area  bg-color-one"><a name="c8370" id="8370" class="targetlink"></a><div class="area__inner"><div class="container-fluid"><div class="grid-standard"><div class="area__intro md:col-start-2 lg:col-start-3 col-span-4 md:col-span-10 lg:col-span-8 mb-10"><h2 class="text-center">
+                                Das hat <span>leider<br>nicht</span> geklappt!
+                            </h2><div class="mt-6 text-center content"><p class="text-center text-lg">Leider können wir die gewünschte Seite&nbsp;<br /><strong>nicht finden</strong>. Das tut uns leid!</p><p class="text-center text-base">Schauen Sie sich doch gerne auf<br /><strong>folgenden Seiten</strong> um.</p></div></div></div><div class="grid-standard"><div class="area__content-left content col-span-4  md:col-span-6   "></div><div class="area__content-right content col-span-4  md:col-span-6  "></div></div></div></div></div>
+
+
+<hr class="ce-div" />
+
+
+<div class="area  bg-color-one"><a name="c8371" id="8371" class="targetlink"></a><div class="area__inner"><div class="container-fluid"><div class="area__content-full sm:flex justify-center"><div class="vario-container text-center px-8 mb-8 lg:mb-0" 
+        
+    ><div class="h-16 mb-4"><i class="icon icon-call-1 text-6xl text-lime"></i></div><a name="c8609" id="c8609" class="targetlink"></a><h3 class="text-center"><strong>Telefonanlage</strong>&nbsp;</h3><p class="text-center">Die Cloud-Telefonanlage von fonial&nbsp;bietet <strong>über 100 professionelle Funktionen</strong>&nbsp;für nur 2,90 € netto (3,45 € inkl. MwSt.)&nbsp;monatlich pro aktivierter Rufnummer.&nbsp;Premium-Features, wie Fax, BLF &amp; Pickup, IVR&nbsp;und Wartemusik sind <strong>inklusive</strong>.<br>&nbsp;</p><p class="text-center"><a href="https://www.fonial.de/telefonanlage/funktionen/" target="_top" class="btn btn--secondary" title="Funktionen der fonial Cloud-Telefonanlage">Zur fonial Telefonanlage</a></p></div><div class="vario-container text-center px-8 mb-8 lg:mb-0" 
+        
+    ><div class="h-16 mb-4"><i class="icon icon-router text-6xl text-lime"></i></div><a name="c8611" id="c8611" class="targetlink"></a><h3 class="text-center"><strong>Trunking</strong></h3><p class="text-center">Mit dem fonial SIP-Trunk binden Sie Ihre Telefonanlage an das Internet an und telefonieren so über <strong>VoIP</strong>. fonial Trunking passt sich an Ihren Bedarf an: Bis zu 30 Kanäle sind <strong>flexibel</strong>&nbsp;buchbar - <strong>ohne Mindestumsatz</strong>.&nbsp;Für den größeren Bedarf bietet fonial <strong>Volumentarife</strong> an.<br>&nbsp;</p><p class="text-center"><a href="https://www.fonial.de/trunking/" target="_top" class="btn btn--secondary" title="Informationen zu fonial Trunking">Zu fonial Trunking</a></p></div><div class="vario-container text-center px-8" 
+        
+    ><div class="h-16 mb-4"><i class="icon icon-wireless-router-2 text-6xl text-lime"></i></div><a name="c8612" id="c8612" class="targetlink"></a><h3 class="text-center"><strong>DSL</strong></h3><p class="text-center">Sie sind auf der Suche nach einem&nbsp;<strong>günstigen</strong> und <strong>zuverlässigen DSL-Anschluss</strong>&nbsp;ohne Vertragslaufzeit? Surfen Sie mit fonial mit&nbsp;bis zu 16 Mbit/s (Downstream)&nbsp;für nur 21,43 € netto (25,50 € inkl. MwSt.) im Monat. fonial DSL ist jederzeit <strong>monatlich kündbar</strong>.</p><p class="text-center"><br><a href="https://www.fonial.de/dsl/" target="_top" class="btn btn--secondary" title="Informationen zu fonial DSL">Zu fonial DSL</a></p></div></div><div class="grid-standard"><div class="area__content-left content col-span-4  md:col-span-6   "></div><div class="area__content-right content col-span-4  md:col-span-6  "></div></div></div></div></div>
+
+
+<div class="area  bg-color-two"><a name="c8373" id="8373" class="targetlink"></a><div class="area__inner"><div class="container-fluid"><div class="grid-standard"><div class="area__intro md:col-start-2 lg:col-start-3 col-span-4 md:col-span-10 lg:col-span-8 mb-10"><h2 class="text-center">
+                                Neuigkeiten im <br><span>fonial Blog</span></h2><div class="mt-6 text-center content"><p class="text-center">Stöbern Sie im fonial Blog und lesen Sie Beiträge&nbsp;<br />rund um die Themen IP-Telefonie, Internet, Cloud&nbsp;<br />und über den Tellerrand hinaus.</p></div></div></div><div class="area__content-full "><div class="grid-standard"><div class="content col-span-4 md:col-span-12 lg:col-span-10 lg:col-start-2 xl:col-span-8 xl:col-start-3"><!--TYPO3SEARCH_end--><div class="blog__grid grid-standard" id="news-container-5488"><!--
+	=====================
+		Partials/List/BlogItem.html
+--><div class="blog__teaser col-span-4 md:col-span-12 lg:col-span-6 articletype-0 "><a class="hidden-linktext z-1 absolute left-0 top-0 w-full h-full rounded-standard" title="VoIP Telefonanlage: Analoges Telefon an Fritzbox anschließen" href="https://www.fonial.de/blog/artikel/voip-telefonanlage-analoge-telefone-mit-der-fritzbox-anbinden/">
+				Read more
+			</a><div class="flex justify-end items-end h-92 p-2 rounded-standard overflow-hidden bg-zinc-700"><img loading="lazy" title="fonial mit einem Router verbinden" alt="Router Ansicht von hinten" class="absolute left-0 top-0 w-full h-full object-cover transition-transform ease-in-out duration-300" src="https://www.fonial.de/fileadmin/_processed_/0/a/csm_ADSL_Anschluss_dunkel_95d25d7acb.jpg" width="1200" height="510" /><div class="px-5 py-4 w-full lg:max-w-62 rounded-standard overflow-hidden bg-white"><p class="mb-1 text-base text-zinc-500"><time datetime="2026-09-02">
+							09/02/2026
+						</time></p><p class="text-lg extrabold leading-tight">
+						VoIP Telefonanlage: Analoges Telefon an Fritzbox anschließen
+					</p></div></div></div><!--
+	=====================
+		Partials/List/BlogItem.html
+--><div class="blog__teaser col-span-4 md:col-span-6 lg:col-span-3 articletype-0 "><a class="hidden-linktext z-1 absolute left-0 top-0 w-full h-full rounded-standard" title="Kostenlose Call Apps für mobile IP-Telefonie" href="https://www.fonial.de/blog/artikel/kostenlose-call-apps-fuer-die-mobile-ip-telefonie/">
+				Read more
+			</a><div class="flex justify-end items-end h-92 p-2 rounded-standard overflow-hidden bg-zinc-700"><img loading="lazy" title="fonial blog header" alt="fonial blog header" class="absolute left-0 top-0 w-full h-full object-cover transition-transform ease-in-out duration-300" src="https://www.fonial.de/fileadmin/_processed_/5/a/csm_header_tour_1ffdb4eba5.jpg" width="800" height="346" /><div class="px-5 py-4 w-full lg:max-w-62 rounded-standard overflow-hidden bg-white"><p class="mb-1 text-base text-zinc-500"><time datetime="2026-09-02">
+							09/02/2026
+						</time></p><p class="text-lg extrabold leading-tight">
+						Kostenlose Call Apps für mobile IP-Telefonie
+					</p></div></div></div><!--
+	=====================
+		Partials/List/BlogItem.html
+--><div class="blog__teaser col-span-4 md:col-span-6 lg:col-span-3 articletype-0 "><a class="hidden-linktext z-1 absolute left-0 top-0 w-full h-full rounded-standard" title="Der Mythos &quot;Technikertermin&quot;" href="https://www.fonial.de/blog/artikel/der-mythos-technikertermin/">
+				Read more
+			</a><div class="flex justify-end items-end h-92 p-2 rounded-standard overflow-hidden bg-zinc-700"><img loading="lazy" title="Der Mythos Technikertermin" alt="Der Mythos Technikertermin" class="absolute left-0 top-0 w-full h-full object-cover transition-transform ease-in-out duration-300" src="https://www.fonial.de/fileadmin/_processed_/9/c/csm_Techniker_17383e8608.jpg" width="800" height="297" /><div class="px-5 py-4 w-full lg:max-w-62 rounded-standard overflow-hidden bg-white"><p class="mb-1 text-base text-zinc-500"><time datetime="2026-08-31">
+							08/31/2026
+						</time></p><p class="text-lg extrabold leading-tight">
+						Der Mythos &quot;Technikertermin&quot;
+					</p></div></div></div></div><!--TYPO3SEARCH_begin--></div></div></div><div class="grid-standard"><div class="area__content-left content col-span-4  md:col-span-6   "></div><div class="area__content-right content col-span-4  md:col-span-6  "></div></div><div class="content mt-12 text-center hero__text "><a href="https://www.fonial.de/blog/" title="Zum fonial Blog" class="btn btn--secondary">
+              Weitere Artikel
+            </a></div></div></div></div>
+
+
+    <!-- END SECTION CONTENT -->
+
+</main>
+
+
+<footer id="footer" class="footer pt-12 pb-12 text-white text-base">
+    <div class="container-fluid z-1">
+        <div class="flex flex-wrap items-center justify-center mb-12">
+            <p class="w-full lg:w-auto text-2xl xl:text-3xl text-center lg:text-left light mb-6 lg:mb-0 lg:mr-6">
+                Überall&nbsp;telefonieren. Weltweit. Zum&nbsp;Festnetztarif.
+            </p>
+			
+
+
+
+
+    
+            <a href="https://kundenkonto.fonial.de/signup/6?ref=websitefooter" title="" class="btn btn--primary ">
+                Jetzt kostenlos testen
+            </a>
+        
+
+
+        </div>
+        <div class="vsm:grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-x-8 gap-y-8 mb-12">
+            <div class="col-span-2 md:col-span-4 xl:col-span-1 text-center">
+				<img alt="Logo Fonial" src="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/fonial.svg" width="99" height="49" />
+            </div>
+            <nav class="footer__nav" aria-labelledby="footer-nav-1">
+                <ul>
+                    <li class="mt-6 md:mt-0 mb-3">
+                        <p id="footer-nav-1" class="extrabold text-sm text-white">
+                            Unternehmen
+                        </p>
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/unternehmen/ueber-fonial/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Über fonial
+                        </a>
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/unternehmen/team/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Team
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/unternehmen/jobs-karriere/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Jobs & Karriere
+                        </a>
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/unternehmen/referenzen/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Referenzen
+                        </a> 
+                    </li>
+                </ul>
+            </nav>
+            <nav class="footer__nav" aria-labelledby="footer-nav-2">
+                <ul>
+                    <li class="mt-6 md:mt-0 mb-3">
+                        <p id="footer-nav-2" class="extrabold text-sm text-white">
+                            Presse
+                        </p>
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/presse/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Presse
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/blog/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Blog
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/newsletter-abonnieren/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Newsletter abonnieren
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/wissen/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Wissen
+                        </a> 
+                    </li>
+                </ul>
+            </nav>
+            <nav class="footer__nav" aria-labelledby="footer-nav-3">
+                <ul>
+                    <li class="mt-6 md:mt-0 mb-3">
+                        <p id="footer-nav-3" class="extrabold text-sm text-white">
+                            Kontakt & Support
+                        </p> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/kontakt/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Kontakt
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/kunden-werben/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Kunden werben
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/partner-werden/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Partner werden
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/support/uebersicht/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Support
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/kontakt/kuendigung/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Kündigung
+                        </a>
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/kontakt/erklaerung-zur-barrierefreiheit/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Erklärung zur Barrierefreitheit
+                        </a>
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/kontakt/widerruf/" class="bold text-sm lg:text-base hover:text-white underline">
+                            Vertrag widerrufen
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <nav class="footer__nav" aria-labelledby="footer-nav-4">
+                <ul>
+                    <li class="mt-6 md:mt-0 mb-3">
+                        <p id="footer-nav-4" class="extrabold text-sm text-white">
+                            Sonstiges
+                        </p> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/kontakt/impressum/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Impressum
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/kontakt/agb/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            AGB
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/kontakt/datenschutzerklaerung/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Datenschutzerklärung
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="https://www.fonial.de/kontakt/agb/#widerruf" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Widerrufsbelehrung
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="#cookies" onClick="UC_UI.showSecondLayer();" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Cookies
+                        </a> 
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="mb-10 text-center md:text-left">
+            <p class="iconized xl icon-headset-sound-streamline inline-block text-lg bold mb-4">
+                Beratung & Support
+            </p>
+            <p class="light">
+                <span class="bold text-sm block md:inline">Supportzeiten:</span> Mo. - Do.: 09:00 - 18:00 Uhr &nbsp; / &nbsp; Fr.: 09:00 - 16:00 Uhr
+            </p>
+            <div class="flex flex-wrap mt-5 justify-center md:justify-start">
+                <a href="tel:004922166966965" class="flex items-center bg-white/10 hover:bg-white/20 rounded-xl mr-3 mb-3 px-3 py-1-5 no-underline hover:no-underline hover:text-white">
+                    <span class="light text-sm pr-2">Beratung</span><span class="bold text-xl">0221 669 669 65</span>
+                </a>
+                <a href="tel:004922166966966" class="flex items-center bg-white/10 hover:bg-white/20 rounded-xl mr-3 mb-3 px-3 py-1-5 no-underline hover:no-underline hover:text-white">
+                    <span class="light text-sm pr-2">Support</span><span class="bold text-xl">0221 669 669 66</span>
+                </a>
+                <a href="tel:004922166966999" class="flex items-center bg-white/10 hover:bg-white/20 rounded-xl mr-3 mb-3 px-3 py-1-5 no-underline hover:no-underline hover:text-white">
+                    <span class="light text-sm pr-2">Fax</span><span class="bold text-xl">0221 669 669 99</span>
+                </a>
+            </div>
+        </div>
+        <div class="flex flex-wrap justify-center md:justify-between">
+            <div class="flex md:order-2">
+                <a class="icon-facebook iconized centered white block w-8 h-8 mr-3 last-of-type:mr-0 overflow-hidden bg-white/10 hover:bg-white/20 rounded no-underline hover:no-underline hover:text-white" target="_blank" rel="noopener" href="https://www.facebook.com/fonialgmbh/">
+                    <span class="inline-block -indent-24">facebook</span>
+                </a>
+                <a class="icon-x iconized centered white block w-8 h-8 mr-3 last-of-type:mr-0 overflow-hidden bg-white/10 hover:bg-white/20 rounded no-underline hover:no-underline hover:text-white" target="_blank" rel="noopener" href="https://www.x.com/fonialgmbh/">
+                    <span class="inline-block -indent-24">X</span>
+                </a>
+                <a class="icon-xing iconized centered white block w-8 h-8 mr-3 last-of-type:mr-0 overflow-hidden bg-white/10 hover:bg-white/20 rounded no-underline hover:no-underline hover:text-white" target="_blank" rel="noopener" href="https://www.xing.com/companies/fonialgmbh/">
+                    <span class="inline-block -indent-24">Xing</span>
+                </a>
+                <a class="icon-linkedin iconized centered white block w-8 h-8 mr-3 last-of-type:mr-0 overflow-hidden bg-white/10 hover:bg-white/20 rounded no-underline hover:no-underline hover:text-white" target="_blank" rel="noopener" href="https://www.linkedin.com/company/fonial/">
+                    <span class="inline-block -indent-24">Linkedin</span>
+                </a>
+                <a class="icon-instagram iconized centered white block w-8 h-8 mr-3 last-of-type:mr-0 overflow-hidden bg-white/10 hover:bg-white/20 rounded no-underline hover:no-underline hover:text-white" target="_blank" rel="noopener" href="https://www.instagram.com/fonial_de/">
+                    <span class="inline-block -indent-24">Instagram</span>
+                </a>
+            </div>
+            <div class="md:order-1 mt-12 md:mt-0 flex items-center">
+                <button class="toggle-prefers-contrast jst pr-12 text-white text-sm" data-jst="toggle-prefers-contrast">
+                    Kontrast umschalten
+                    <span class="marker block absolute right-0 top-0 h-6 w-8 rounded overflow-hidden bg-white border border-white"></span>
+                </button>
+            </div>
+        </div>
+        <div class="mt-8">
+            <p class="light w-full text-center ">
+                &copy;  2026 
+            </p>
+        </div>
+    </div>
+    <div class="absolute left-1/2 -translate-x-1/2 bottom-0">
+		<img loading="lazy" src="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/bg-footer.webp" width="991" height="545" alt="" />
+    </div>
+</footer>
+<div id="marker-scrolled" class="absolute right-0 top-0 w-0 h-screen-1/4 z-0"></div>
+
+<!--
+
+-->
+
+<script type="module" src="/_assets/vite/vc_theme/assets/0-B1-jICNV.js"></script>
+
+
+</body>
+</html>
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://www.fonial.de/swagger --max-time 10
+301
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://www.fonial.de/docs --max-time 10
+301
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://kundenkonto.fonial.de/swagger --max-time 10
+404
+[0m
+[0m$ [0mcurl -s -I https://www.fonial.de/swagger --max-time 10
+HTTP/2 301 
+content-type: text/html
+date: Thu, 03 Sep 2026 16:39:44 GMT
+location: https://www.fonial.de/swagger/
+server: nginx/1.31.2
+content-length: 169
+[0m
+[0m$ [0mcurl -s -I https://kundenkonto.fonial.de/swagger --max-time 10
+HTTP/2 404 
+date: Thu, 03 Sep 2026 16:39:44 GMT
+content-type: text/html; charset=UTF-8
+server: cloudflare
+cache-control: max-age=0, must-revalidate, private
+expires: Thu, 03 Sep 2026 16:39:44 GMT
+vary: Accept
+x-debug-token: 25963e
+x-fonial-version: v2026.09.01-1
+cf-cache-status: DYNAMIC
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=1dHoUrBK7su%2FR2ofdIYIxxwgm9MV1T59Ma2cb2CO4EsvE1SHx5Ah%2BIQspK43oLFToawPg2%2BxMez3pW8K2YLfCqTLToizEebU2Xt4USUARdZpZzvQ3URjoa%2BBV7%2Fj4kpjTeAEj5QzHg%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cf-ray: a35631356e2937cf-YYZ
+[0m
+[0m$ [0mcurl -s https://www.fonial.de/telefonanlage/funktionen/api/ --max-time 10 | head -200
+<!DOCTYPE html>
+<html lang="de-DE">
+<head>
+    <meta charset="utf-8">
+
+<!-- 
+	'___             _        _          _
+	  |  _|           |_|      | |        | |
+	 _| |_  ___   ___  _  __ _ | |      __| | ___
+	|_   _ / _ \ / _ \| |/ _` || |     / _| |/ _ \
+	  | | | (_) | | | | | (_| || |  _ | (_| |  __/
+	  |_|  \___/|_| |_|_|\__,_||_| |_| \____|\___|
+	
+	    fonial GmbH – www.fonial.de
+
+	This website is powered by TYPO3 - inspiring people to share!
+	TYPO3 is a free open source Content Management Framework initially created by Kasper Skaarhoj and licensed under GNU/GPL.
+	TYPO3 is copyright 1998-2026 of Kasper Skaarhoj. Extensions are copyright of their respective owners.
+	Information and contribution at https://typo3.org/
+-->
+
+
+<title>Die fonial API: Integrieren Sie Ihre Systeme</title>
+<meta name="generator" content="TYPO3 CMS">
+<meta name="description" content="Mit der fonial API binden Sie die Telefonanlage an Ihre Systeme an und erhalten Zugriff auf weitere Funktionen, wie z.B. Click2Dial.">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="audience" content="all">
+<meta name="apple-touch-fullscreen" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobileoptimized" content="360">
+<meta name="handheldfriendly" content="true">
+<meta name="format-detection" content="telephone=no">
+
+
+<link href="/_assets/vite/vc_theme/assets/0-SscPfeSg.css" rel="stylesheet" >
+
+
+
+
+
+
+<!-- Google Tag Manager -->
+<script>
+  // Consent Mode v2: Default-Zustände vor GTM-Ladung
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'analytics_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'wait_for_update': 500  // verhindert vorzeitiges Tag-Firing
+  });
+
+  // GTM-Container laden
+  (function(w,d,s,l,i){
+    w[l]=w[l]||[];
+    w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+    var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),
+        dl=l!='dataLayer'?'&l='+l:'';
+    j.async=true;
+    j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+    f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-W5PWPRR');
+</script>
+<!-- End Google Tag Manager -->
+<script type="application/ld+json">{"@graph":[{"@id":"https://www.fonial.de/telefonanlage/funktionen/api/#webpage","url":"https://www.fonial.de/telefonanlage/funktionen/api/","name":"Die fonial API: Integrieren Sie Ihre Systeme","@type":"WebPage","about":[{"@id":"https://www.fonial.de/telefonanlage/funktionen/api/#service-1"},{"@id":"https://www.fonial.de/telefonanlage/funktionen/api/#service-2"},{"@id":"https://www.fonial.de/telefonanlage/funktionen/api/#service-3"}],"isPartOf":{"@id":"https://www.fonial.de/#website"},"publisher":{"@id":"https://www.fonial.de/#organization"},"breadcrumb":{"@id":"https://www.fonial.de/telefonanlage/funktionen/api/#breadcrumb"},"inLanguage":"de-DE","mainEntity":{"@id":"https://www.fonial.de/telefonanlage/funktionen/api/#offering"},"description":"Die fonial API ermöglicht die Integration der Cloud-Telefonanlage in bestehende Systeme und Prozesse. Nutzen Sie Funktionen wie Click2Dial, EVN-Aufruf, Callback-Verfahren und eigene Szenarien über die Programmierschnittstelle.","dateModified":"2025-12-04T12:47:02+00:00","isAccessibleForFree":true},{"@id":"https://www.fonial.de/telefonanlage/funktionen/api/#breadcrumb","@type":"BreadcrumbList","itemListElement":[{"item":"https://www.fonial.de/","name":"Start","@type":"ListItem","position":1},{"item":"https://www.fonial.de/telefonanlage/","name":"Telefonanlage","@type":"ListItem","position":2},{"item":"https://www.fonial.de/telefonanlage/funktionen/","name":"Funktionen","@type":"ListItem","position":3},{"item":"https://www.fonial.de/telefonanlage/funktionen/api/","name":"Die fonial API: Integrieren Sie Ihre Systeme","@type":"ListItem","position":4}]},{"@id":"https://www.fonial.de/#website","url":"https://www.fonial.de/","name":"fonial","@type":"WebSite","publisher":{"@id":"https://www.fonial.de/#organization"},"inLanguage":"de-DE"},{"@id":"https://www.fonial.de/#organization","url":"https://www.fonial.de/","logo":{"@id":"https://www.fonial.de/#logo","url":"https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/fonial-logo.svg","@type":"ImageObject","contentUrl":"https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/fonial-logo.svg"},"name":"fonial","@type":"Organization","email":"info@fonial.de","image":{"@id":"https://www.fonial.de/#logo"},"sameAs":["https://www.linkedin.com/company/fonial/","https://www.instagram.com/fonial_de/","https://www.facebook.com/fonialgmbh/","https://de.trustpilot.com/review/www.fonial.de","https://www.google.com/maps/place/?q=place_id:ChIJ9Vc1jw8lv0cRgyAq3aCl7pk"],"address":{"@type":"PostalAddress","postalCode":"50672","streetAddress":"Kaiser-Wilhelm-Ring 7-9","addressCountry":"DE","addressLocality":"Köln"},"faxNumber":"+49 221 669 669 99","legalName":"fonial GmbH","telephone":"+49 221 669 669 65","knowsAbout":["Cloud-Telefonanlage","VoIP","SIP-Trunking","Business-DSL","KI-Telefonassistent","Microsoft Teams Integration","Unified Communications"],"description":"fonial GmbH ist ein Kölner Anbieter für Cloud-Telefonie und Business-Kommunikation. Kernprodukte: Cloud-Telefonanlage (VoIP, über 100 Funktionen, monatlich kündbar), SIP-Trunking, Business-DSL/VDSL, KI-Telefonassistent und Microsoft-Teams-Integration. Hosting in deutschen Rechenzentren. Ein Unternehmen der EnBW-Gruppe.","contactPoint":[{"@type":"ContactPoint","telephone":"+49 221 669 669 65","contactType":"sales","availableLanguage":"German"},{"@type":"ContactPoint","telephone":"+49 221 669 669 66","contactType":"customer support","availableLanguage":"German"}]},{"@id":"https://www.fonial.de/telefonanlage/funktionen/api/#offering","url":"https://www.fonial.de/telefonanlage/funktionen/api/","name":"fonial API","@type":"Service","provider":{"@id":"https://www.fonial.de/#organization"},"areaServed":{"name":"DE","@type":"Country"},"description":"Die fonial API ermöglicht die Integration der Cloud-Telefonanlage in bestehende Systeme und Prozesse. Nutzen Sie Funktionen wie Click2Dial, EVN-Aufruf, Callback-Verfahren und eigene Szenarien über die Programmierschnittstelle.","serviceType":"Integration Service"},{"@id":"https://www.fonial.de/telefonanlage/funktionen/api/#service-1","url":"https://www.fonial.de/telefonanlage/","name":"Cloud-Telefonanlage","@type":"Service","provider":{"@id":"https://www.fonial.de/#organization"},"areaServed":{"name":"DE","@type":"Country"},"serviceType":"Cloud PBX"},{"@id":"https://www.fonial.de/telefonanlage/funktionen/api/#service-2","url":"https://www.fonial.de/dsl/","name":"DSL","@type":"Service","provider":{"@id":"https://www.fonial.de/#organization"},"areaServed":{"name":"DE","@type":"Country"},"serviceType":"Internet Service"},{"@id":"https://www.fonial.de/telefonanlage/funktionen/api/#service-3","url":"https://www.fonial.de/telefonanlage/microsoft-teams-integration/","name":"Microsoft Teams Integration","@type":"Service","provider":{"@id":"https://www.fonial.de/#organization"},"areaServed":{"name":"DE","@type":"Country"},"serviceType":"Integration Service"}],"@context":"https://schema.org"}</script>
+<link rel="apple-touch-icon" sizes="57x57" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/android-icon-192x192.png?1787916420">
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/favicon-32x32.png?1787916420">
+<link rel="icon" type="image/png" sizes="96x96" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/favicon-96x96.png?1787916420">
+<link rel="icon" type="image/png" sizes="16x16" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/favicon-16x16.png?1787916420">
+<link rel="icon" type="image/png" sizes="48x48" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/favicon.png?1787916420">
+<link rel="manifest" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/manifest.json?1787916420">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/ms-icon-144x144.png?1787916420">
+<meta name="theme-color" content="#ffffff">
+
+<link rel="canonical" href="https://www.fonial.de/telefonanlage/funktionen/api/">
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" class="regular antialiased text-base xl:text-lg text-copycolor leading-normal">
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W5PWPRR";
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
+
+<header id="header" class="header fixed top-0 left-0 w-full z-6 bg-white border-b border-white">
+	<div class="container-fluid">
+		<div class="header__wrapper flex flex-nowrap justify-between lg:pt-5 transition-all duration-300 ease-in-out">
+			<div class="header__logo-and-nav flex flex-nowrap flex-grow justify-between lg:justify-start">
+				<div class="header__logo flex flex-nowrap items-center mr-6">
+					<div class="header__logo-enbw hidden lg:flex flex-col items-end mr-2 -mt-2">
+						<p class="claim-enbw">
+							Ein Unternehmen der 
+						</p>
+						<img alt="Logo EnBW" src="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/enbw-logo.svg" width="75" height="11" />
+					</div>
+					<a class="logo__link w-22 sm:w-24 lg:w-26 pt-2 transition-all duration-300 ease-in-out" href="/" title="Startseite">
+						<img class="header__logo-fonial-large hidden lg:block h-full transition-all" alt="Zurück zur Startseite" src="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/fonial-logo.svg" width="106" height="120" />
+						<img class="header__logo-fonial-small lg:hidden" alt="Zurück zur Startseite" src="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/fonial-lime.svg" width="99" height="49" />
+					</a>
+				</div>
+				<div class="header__nav flex">
+					<nav id="nav" class="snp jst flex flex-row justify-between" data-jst="nav-main" data-navtype="{{ params.navtype }}" data-subnavnode="subnav" data-label-site="Zur Seite" data-label-back="Zurück" data-max-height-offset="120">
+						
+
+
+    
+
+    <ul class="nav__list flex flex-row h-full list-reset" id="mainnav" data-level="1">
+        
+
+            <li class="nav__listitem nav__mainitem lev-0 hidden lg:block mr-1 py-6" data-display="">
+                
+                        
+                        
+                        
+                    
+
+                <a id="nav-item-2" href="https://www.fonial.de/telefonanlage/"   aria-haspopup=&quot;true&quot; aria-expanded=&quot;false&quot; &#039;, else: &#039; aria-current=&quot;false&quot; 
+                    class="nav__link group h-full whitespace-nowrap flex items-center text-base xl:text-base bold hover:text-copycolor no-underline hover:no-underline transition-all "
+                    data-defaultcontent="template-default-content-2" 
+                    data-copy="Cloud-Telefonie mit über 100 Funktionen" 
+                    data-navicon="phone-1" 
+                    aria-current="false">
+                    <span class="inline-block rounded-md icon-chevron-down group-hover:bg-lightgrey">
+                        Telefonanlage
+                        
+                    </span>
+                </a>
+
+                
+                    <template id="template-default-content-2">
+                                        <div class="p-6">
+					<img data-src="/fileadmin/user_upload/img/content/testimg-woman-laptop-landscape.webp" class="lazy rounded-xl overflow-hidden mb-4" alt="Image Description …" />
+					<p class="badge text-xs bold mb-2">
+						Neu: KI-Telefonassistent
+					</p>
+					<p class="text-lg bold">
+						Der KI-Telefonassistent
+					</p>
+					<p class="text-base mb-4">
+						Integrieren Sie jetzt einen KI-Telefonassistenten in Ihre Telefonanlage.
+					</p>
+					<a href="https://www.fonial.de/ki-telefonassistent/" class="btn btn--secondary btn--small">
+						Jetzt kostenlos testen
+					</a>
+				</div>
+                <style>.badge.text-xs {padding-top: .3125em;}</style>
+                    </template>
+                
+
+                
+
+
+    
+        
+        <ul class="nav__list hidden" data-level="2">
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-3" href="https://www.fonial.de/telefonanlage/preise/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Profi-Telefonie zu fairen Preisen"
+                       data-navicon="wallet-1"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Preise
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+[0m
+[0m$ [0mcurl -s https://www.fonial.de/swagger/ --max-time 10 | head -200
+<!DOCTYPE html>
+<html lang="de-DE">
+<head>
+    <meta charset="utf-8">
+
+<!-- 
+	'___             _        _          _
+	  |  _|           |_|      | |        | |
+	 _| |_  ___   ___  _  __ _ | |      __| | ___
+	|_   _ / _ \ / _ \| |/ _` || |     / _| |/ _ \
+	  | | | (_) | | | | | (_| || |  _ | (_| |  __/
+	  |_|  \___/|_| |_|_|\__,_||_| |_| \____|\___|
+	
+	    fonial GmbH – www.fonial.de
+
+	This website is powered by TYPO3 - inspiring people to share!
+	TYPO3 is a free open source Content Management Framework initially created by Kasper Skaarhoj and licensed under GNU/GPL.
+	TYPO3 is copyright 1998-2026 of Kasper Skaarhoj. Extensions are copyright of their respective owners.
+	Information and contribution at https://typo3.org/
+-->
+
+
+<title>404 Seite nicht gefunden</title>
+<meta name="generator" content="TYPO3 CMS">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="audience" content="all">
+<meta name="apple-touch-fullscreen" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobileoptimized" content="360">
+<meta name="handheldfriendly" content="true">
+<meta name="format-detection" content="telephone=no">
+
+
+<link href="/_assets/vite/vc_theme/assets/0-SscPfeSg.css" rel="stylesheet" >
+
+
+
+
+
+
+<!-- Google Tag Manager -->
+<script>
+  // Consent Mode v2: Default-Zustände vor GTM-Ladung
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'analytics_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'wait_for_update': 500  // verhindert vorzeitiges Tag-Firing
+  });
+
+  // GTM-Container laden
+  (function(w,d,s,l,i){
+    w[l]=w[l]||[];
+    w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+    var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),
+        dl=l!='dataLayer'?'&l='+l:'';
+    j.async=true;
+    j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+    f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-W5PWPRR');
+</script>
+<!-- End Google Tag Manager -->
+
+<link rel="apple-touch-icon" sizes="57x57" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/android-icon-192x192.png?1787916420">
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/favicon-32x32.png?1787916420">
+<link rel="icon" type="image/png" sizes="96x96" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/favicon-96x96.png?1787916420">
+<link rel="icon" type="image/png" sizes="16x16" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/favicon-16x16.png?1787916420">
+<link rel="icon" type="image/png" sizes="48x48" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/favicon.png?1787916420">
+<link rel="manifest" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/manifest.json?1787916420">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/ms-icon-144x144.png?1787916420">
+<meta name="theme-color" content="#ffffff">
+
+<link rel="canonical" href="https://www.fonial.de/404-fehler/">
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" class="regular antialiased text-base xl:text-lg text-copycolor leading-normal">
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W5PWPRR";
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
+
+<header id="header" class="header fixed top-0 left-0 w-full z-6 bg-white border-b border-white">
+	<div class="container-fluid">
+		<div class="header__wrapper flex flex-nowrap justify-between lg:pt-5 transition-all duration-300 ease-in-out">
+			<div class="header__logo-and-nav flex flex-nowrap flex-grow justify-between lg:justify-start">
+				<div class="header__logo flex flex-nowrap items-center mr-6">
+					<div class="header__logo-enbw hidden lg:flex flex-col items-end mr-2 -mt-2">
+						<p class="claim-enbw">
+							Ein Unternehmen der 
+						</p>
+						<img alt="Logo EnBW" src="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/enbw-logo.svg" width="75" height="11" />
+					</div>
+					<a class="logo__link w-22 sm:w-24 lg:w-26 pt-2 transition-all duration-300 ease-in-out" href="/" title="Startseite">
+						<img class="header__logo-fonial-large hidden lg:block h-full transition-all" alt="Zurück zur Startseite" src="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/fonial-logo.svg" width="106" height="120" />
+						<img class="header__logo-fonial-small lg:hidden" alt="Zurück zur Startseite" src="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/fonial-lime.svg" width="99" height="49" />
+					</a>
+				</div>
+				<div class="header__nav flex">
+					<nav id="nav" class="snp jst flex flex-row justify-between" data-jst="nav-main" data-navtype="{{ params.navtype }}" data-subnavnode="subnav" data-label-site="Zur Seite" data-label-back="Zurück" data-max-height-offset="120">
+						
+
+
+    
+
+    <ul class="nav__list flex flex-row h-full list-reset" id="mainnav" data-level="1">
+        
+
+            <li class="nav__listitem nav__mainitem lev-0 hidden lg:block mr-1 py-6" data-display="">
+                
+                        
+                        
+                        
+                    
+
+                <a id="nav-item-2" href="https://www.fonial.de/telefonanlage/"   aria-haspopup=&quot;true&quot; aria-expanded=&quot;false&quot; &#039;, else: &#039; aria-current=&quot;false&quot; 
+                    class="nav__link group h-full whitespace-nowrap flex items-center text-base xl:text-base bold hover:text-copycolor no-underline hover:no-underline transition-all "
+                    data-defaultcontent="template-default-content-2" 
+                    data-copy="Cloud-Telefonie mit über 100 Funktionen" 
+                    data-navicon="phone-1" 
+                    aria-current="false">
+                    <span class="inline-block rounded-md icon-chevron-down group-hover:bg-lightgrey">
+                        Telefonanlage
+                        
+                    </span>
+                </a>
+
+                
+                    <template id="template-default-content-2">
+                                        <div class="p-6">
+					<img data-src="/fileadmin/user_upload/img/content/testimg-woman-laptop-landscape.webp" class="lazy rounded-xl overflow-hidden mb-4" alt="Image Description …" />
+					<p class="badge text-xs bold mb-2">
+						Neu: KI-Telefonassistent
+					</p>
+					<p class="text-lg bold">
+						Der KI-Telefonassistent
+					</p>
+					<p class="text-base mb-4">
+						Integrieren Sie jetzt einen KI-Telefonassistenten in Ihre Telefonanlage.
+					</p>
+					<a href="https://www.fonial.de/ki-telefonassistent/" class="btn btn--secondary btn--small">
+						Jetzt kostenlos testen
+					</a>
+				</div>
+                <style>.badge.text-xs {padding-top: .3125em;}</style>
+                    </template>
+                
+
+                
+
+
+    
+        
+        <ul class="nav__list hidden" data-level="2">
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-3" href="https://www.fonial.de/telefonanlage/preise/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Profi-Telefonie zu fairen Preisen"
+                       data-navicon="wallet-1"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Preise
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://www.fonial.de/telefonanlage/funktionen/api/docs --max-time 10
+301
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://kundenkonto.fonial.de/api/docs --max-time 10
+404
+[0m
+[0m$ [0mcurl -s -I https://www.fonial.de/telefonanlage/funktionen/api/docs --max-time 10
+HTTP/2 301 
+content-type: text/html
+date: Thu, 03 Sep 2026 16:41:51 GMT
+location: https://www.fonial.de/telefonanlage/funktionen/api/docs/
+server: nginx/1.31.2
+content-length: 169
+[0m
+[0m$ [0mcurl -s https://www.fonial.de/swagger/ --max-time 10 | grep -E "(swagger|openapi|api)" | head -20
+<a id="nav-item-341" href="https://www.fonial.de/telefonanlage/funktionen/api/"
+[0m
+[0m$ [0mcurl -s https://www.fonial.de/telefonanlage/funktionen/api/docs/ --max-time 10 | head -200
+<!DOCTYPE html>
+<html lang="de-DE">
+<head>
+    <meta charset="utf-8">
+
+<!-- 
+	'___             _        _          _
+	  |  _|           |_|      | |        | |
+	 _| |_  ___   ___  _  __ _ | |      __| | ___
+	|_   _ / _ \ / _ \| |/ _` || |     / _| |/ _ \
+	  | | | (_) | | | | | (_| || |  _ | (_| |  __/
+	  |_|  \___/|_| |_|_|\__,_||_| |_| \____|\___|
+	
+	    fonial GmbH – www.fonial.de
+
+	This website is powered by TYPO3 - inspiring people to share!
+	TYPO3 is a free open source Content Management Framework initially created by Kasper Skaarhoj and licensed under GNU/GPL.
+	TYPO3 is copyright 1998-2026 of Kasper Skaarhoj. Extensions are copyright of their respective owners.
+	Information and contribution at https://typo3.org/
+-->
+
+
+<title>404 Seite nicht gefunden</title>
+<meta name="generator" content="TYPO3 CMS">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="audience" content="all">
+<meta name="apple-touch-fullscreen" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobileoptimized" content="360">
+<meta name="handheldfriendly" content="true">
+<meta name="format-detection" content="telephone=no">
+
+
+<link href="/_assets/vite/vc_theme/assets/0-SscPfeSg.css" rel="stylesheet" >
+
+
+
+
+
+
+<!-- Google Tag Manager -->
+<script>
+  // Consent Mode v2: Default-Zustände vor GTM-Ladung
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'analytics_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'wait_for_update': 500  // verhindert vorzeitiges Tag-Firing
+  });
+
+  // GTM-Container laden
+  (function(w,d,s,l,i){
+    w[l]=w[l]||[];
+    w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
+    var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),
+        dl=l!='dataLayer'?'&l='+l:'';
+    j.async=true;
+    j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+    f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-W5PWPRR');
+</script>
+<!-- End Google Tag Manager -->
+
+<link rel="apple-touch-icon" sizes="57x57" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/android-icon-192x192.png?1787916420">
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/favicon-32x32.png?1787916420">
+<link rel="icon" type="image/png" sizes="96x96" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/favicon-96x96.png?1787916420">
+<link rel="icon" type="image/png" sizes="16x16" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/favicon-16x16.png?1787916420">
+<link rel="icon" type="image/png" sizes="48x48" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/favicon.png?1787916420">
+<link rel="manifest" href="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/manifest.json?1787916420">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/Extensions/Favicons/ms-icon-144x144.png?1787916420">
+<meta name="theme-color" content="#ffffff">
+
+<link rel="canonical" href="https://www.fonial.de/404-fehler/">
+</head>
+<body itemscope itemtype="http://schema.org/WebPage" class="regular antialiased text-base xl:text-lg text-copycolor leading-normal">
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W5PWPRR";
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
+
+<header id="header" class="header fixed top-0 left-0 w-full z-6 bg-white border-b border-white">
+	<div class="container-fluid">
+		<div class="header__wrapper flex flex-nowrap justify-between lg:pt-5 transition-all duration-300 ease-in-out">
+			<div class="header__logo-and-nav flex flex-nowrap flex-grow justify-between lg:justify-start">
+				<div class="header__logo flex flex-nowrap items-center mr-6">
+					<div class="header__logo-enbw hidden lg:flex flex-col items-end mr-2 -mt-2">
+						<p class="claim-enbw">
+							Ein Unternehmen der 
+						</p>
+						<img alt="Logo EnBW" src="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/enbw-logo.svg" width="75" height="11" />
+					</div>
+					<a class="logo__link w-22 sm:w-24 lg:w-26 pt-2 transition-all duration-300 ease-in-out" href="/" title="Startseite">
+						<img class="header__logo-fonial-large hidden lg:block h-full transition-all" alt="Zurück zur Startseite" src="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/fonial-logo.svg" width="106" height="120" />
+						<img class="header__logo-fonial-small lg:hidden" alt="Zurück zur Startseite" src="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/fonial-lime.svg" width="99" height="49" />
+					</a>
+				</div>
+				<div class="header__nav flex">
+					<nav id="nav" class="snp jst flex flex-row justify-between" data-jst="nav-main" data-navtype="{{ params.navtype }}" data-subnavnode="subnav" data-label-site="Zur Seite" data-label-back="Zurück" data-max-height-offset="120">
+						
+
+
+    
+
+    <ul class="nav__list flex flex-row h-full list-reset" id="mainnav" data-level="1">
+        
+
+            <li class="nav__listitem nav__mainitem lev-0 hidden lg:block mr-1 py-6" data-display="">
+                
+                        
+                        
+                        
+                    
+
+                <a id="nav-item-2" href="https://www.fonial.de/telefonanlage/"   aria-haspopup=&quot;true&quot; aria-expanded=&quot;false&quot; &#039;, else: &#039; aria-current=&quot;false&quot; 
+                    class="nav__link group h-full whitespace-nowrap flex items-center text-base xl:text-base bold hover:text-copycolor no-underline hover:no-underline transition-all "
+                    data-defaultcontent="template-default-content-2" 
+                    data-copy="Cloud-Telefonie mit über 100 Funktionen" 
+                    data-navicon="phone-1" 
+                    aria-current="false">
+                    <span class="inline-block rounded-md icon-chevron-down group-hover:bg-lightgrey">
+                        Telefonanlage
+                        
+                    </span>
+                </a>
+
+                
+                    <template id="template-default-content-2">
+                                        <div class="p-6">
+					<img data-src="/fileadmin/user_upload/img/content/testimg-woman-laptop-landscape.webp" class="lazy rounded-xl overflow-hidden mb-4" alt="Image Description …" />
+					<p class="badge text-xs bold mb-2">
+						Neu: KI-Telefonassistent
+					</p>
+					<p class="text-lg bold">
+						Der KI-Telefonassistent
+					</p>
+					<p class="text-base mb-4">
+						Integrieren Sie jetzt einen KI-Telefonassistenten in Ihre Telefonanlage.
+					</p>
+					<a href="https://www.fonial.de/ki-telefonassistent/" class="btn btn--secondary btn--small">
+						Jetzt kostenlos testen
+					</a>
+				</div>
+                <style>.badge.text-xs {padding-top: .3125em;}</style>
+                    </template>
+                
+
+                
+
+
+    
+        
+        <ul class="nav__list hidden" data-level="2">
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-3" href="https://www.fonial.de/telefonanlage/preise/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Profi-Telefonie zu fairen Preisen"
+                       data-navicon="wallet-1"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Preise
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+[0m
+[0m$ [0mcurl -s -X POST -H "Content-Type: application/json" -d '{"query":"{__schema{types{name}}}"}' https://www.fonial.de/graphql --max-time 10
+<html>
+<head><title>301 Moved Permanently</title></head>
+<body>
+<center><h1>301 Moved Permanently</h1></center>
+<hr><center>nginx/1.31.2</center>
+</body>
+</html>
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://kundenkonto.fonial.de/api/v1/auth --max-time 10
+404
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://kundenkonto.fonial.de/api/v1/user --max-time 10
+404
+[0m
+[0m$ [0mcurl -s -I -X POST -H "Content-Type: application/json" -d '{"query":"{__schema{types{name}}}"}' https://www.fonial.de/graphql --max-time 10
+(no output)
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://kundenkonto.fonial.de/api/v1/me --max-time 10
+404
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://kundenkonto.fonial.de/api/v1/call --max-time 10
+404
+[0m
+[0m$ [0mcurl -s -I https://www.fonial.de/graphql --max-time 10
+HTTP/2 301 
+content-type: text/html
+date: Thu, 03 Sep 2026 16:45:36 GMT
+location: https://www.fonial.de/graphql/
+server: nginx/1.31.2
+content-length: 169
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://kundenkonto.fonial.de/api/v1/phone --max-time 10
+404
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://kundenkonto.fonial.de/api/v1/number --max-time 10
+404
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://kundenkonto.fonial.de/api/v1/sip --max-time 10
+404
+[0m
+[0m$ [0mcurl -s -X POST -H "Content-Type: application/json" -d '{"query":"{__schema{types{name}}}"}' https://www.fonial.de/graphql/ --max-time 10
+...output truncated...
+
+Full output saved to: /home/runner/.local/share/opencode/tool-output/tool_0682a1429001wfoeUoaqch7GXM
+
+                       data-copy="Fax App für iOS"
+                       data-navicon="mobile-phone"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        fonial E-Fax-App für iOS
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-4">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-106" href="https://www.fonial.de/telefonanlage/funktionen/apps/fonial-fax-druckertreiber-fuer-windows/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Faxen über das Druckmenü"
+                       data-navicon="printer"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        fonial Fax-Druckertreiber für Windows
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-4">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-107" href="https://www.fonial.de/telefonanlage/funktionen/apps/fonial-fax-druckertreiber-fuer-macos/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Faxen über das Druckmenü"
+                       data-navicon="printer"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        fonial Fax-Druckertreiber für MacOS
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+        </ul>
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-3">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-789" href="https://www.fonial.de/ki-telefonassistent/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Die KI-Assistenten Integration für Ihr Business"
+                       data-navicon="profile-serviceman-2"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        KI-Telefonassistent
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-3">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-663" href="https://www.fonial.de/telefonanlage/funktionen/e-brief/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Die digitale Lösung für Ihren Briefversand"
+                       data-navicon="document"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        E-Brief
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-3">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-341" href="https://www.fonial.de/telefonanlage/funktionen/api/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Die Schnittstelle zu vielen Funktionen"
+                       data-navicon="cloud-refresh"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        API
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-3">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-10" href="https://www.fonial.de/telefonanlage/funktionen/sicherheit/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Unsere Sicherheitsstandards im Überblick"
+                       data-navicon="lock-1"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Sicherheit
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+        </ul>
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-758" href="https://www.fonial.de/telefonanlage/vorteile/flatrates/" 
+                        
+                         aria-haspopup=&quot;true&quot; aria-expanded=&quot;false&quot;
+                       class="nav__link"
+                       data-copy="Flatrates, Rufnummern und dezentralen Lösungen"
+                       data-navicon="registry-1"
+                       data-doktype="4" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Vorteile
+                        
+                    </a>
+                    
+
+
+    
+        
+        <ul class="nav__list hidden" data-level="3">
+            
+                <li class="nav__listitem lev-3">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-388" href="https://www.fonial.de/telefonanlage/vorteile/flatrates/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Flexibel buchen oder abwählen"
+                       data-navicon="window-graph-2"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Flatrates
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-3">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-335" href="https://www.fonial.de/telefonanlage/rufnummern/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Telefonieren in über 5.200 Ortsnetzen"
+                       data-navicon="check-list"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Rufnummern
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-3">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-577" href="https://www.fonial.de/telefonanlage/home-office/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Weltweit standortunabhängig telefonieren"
+                       data-navicon="house-2"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Home Office
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+        </ul>
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-77" href="https://www.fonial.de/telefonanlage/preise/kostenkalkulator/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Ermitteln Sie Ihr Sparpotenzial"
+                       data-navicon="percent-4"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Kostenkalkulator
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-53" href="https://www.fonial.de/telefonanlage/haeufige-fragen/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Häufige Fragen zur Cloud Telefonanlage"
+                       data-navicon="question-mark"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Häufige Fragen
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+        </ul>
+    
+
+
+
+
+
+            </li>
+        
+
+            <li class="nav__listitem nav__mainitem lev-0 hidden lg:block mr-1 py-6" data-display="">
+                
+                        
+                        
+                        
+                    
+
+                <a id="nav-item-336" href="https://www.fonial.de/trunking/"   aria-haspopup=&quot;true&quot; aria-expanded=&quot;false&quot; &#039;, else: &#039; aria-current=&quot;false&quot; 
+                    class="nav__link group h-full whitespace-nowrap flex items-center text-base xl:text-base bold hover:text-copycolor no-underline hover:no-underline transition-all "
+                    data-defaultcontent="template-default-content-336" 
+                    data-copy="SIP-Trunking für bestehende Telefonanlagen" 
+                    data-navicon="router" 
+                    aria-current="false">
+                    <span class="inline-block rounded-md icon-chevron-down group-hover:bg-lightgrey">
+                        Trunking
+                        
+                    </span>
+                </a>
+
+                
+                    <template id="template-default-content-336">
+                                        <div class="p-6">
+					<img data-src="/fileadmin/user_upload/img/content/testimg-woman-laptop-landscape.webp" class="lazy rounded-xl overflow-hidden mb-4" alt="Image Description …" />
+					<p class="badge text-xs bold mb-2">
+						Neu: KI-Telefonassistent
+					</p>
+					<p class="text-lg bold">
+						Der KI-Telefonassistent
+					</p>
+					<p class="text-base mb-4">
+						Integrieren Sie jetzt einen KI-Telefonassistenten in Ihre Telefonanlage.
+					</p>
+					<a href="https://www.fonial.de/ki-telefonassistent/" class="btn btn--secondary btn--small">
+						Jetzt kostenlos testen
+					</a>
+				</div>
+                <style>.badge.text-xs {padding-top: .3125em;}</style>
+                    </template>
+                
+
+                
+
+
+    
+        
+        <ul class="nav__list hidden" data-level="2">
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-360" href="https://www.fonial.de/trunking/funktionen/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Alle Funktionen unserer Trunking Lösung"
+                       data-navicon="wrench"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Funktionen
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-343" href="https://www.fonial.de/trunking/preise/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Trunking Tarife &amp; Minutenpakete"
+                       data-navicon="wallet-1"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Preise
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-344" href="https://www.fonial.de/trunking/haeufige-fragen/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Schnelle Antworten zum fonial SIP-Trunking"
+                       data-navicon="question-mark"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Häufige Fragen
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+        </ul>
+    
+
+
+
+
+
+            </li>
+        
+
+            <li class="nav__listitem nav__mainitem lev-0 hidden lg:block mr-1 py-6" data-display="">
+                
+                        
+                        
+                        
+                    
+
+                <a id="nav-item-426" href="https://www.fonial.de/dsl/"   aria-haspopup=&quot;true&quot; aria-expanded=&quot;false&quot; &#039;, else: &#039; aria-current=&quot;false&quot; 
+                    class="nav__link group h-full whitespace-nowrap flex items-center text-base xl:text-base bold hover:text-copycolor no-underline hover:no-underline transition-all "
+                    data-defaultcontent="template-default-content-426" 
+                    data-copy="Schnelles Internet ohne Mindestvertragslaufzeit" 
+                    data-navicon="registry-1" 
+                    aria-current="false">
+                    <span class="inline-block rounded-md icon-chevron-down group-hover:bg-lightgrey">
+                        DSL
+                        
+                    </span>
+                </a>
+
+                
+                    <template id="template-default-content-426">
+                                        <div class="p-6">
+					<img data-src="/fileadmin/user_upload/img/content/testimg-woman-laptop-landscape.webp" class="lazy rounded-xl overflow-hidden mb-4" alt="Image Description …" />
+					<p class="badge text-xs bold mb-2">
+						Neu: KI-Telefonassistent
+					</p>
+					<p class="text-lg bold">
+						Der KI-Telefonassistent
+					</p>
+					<p class="text-base mb-4">
+						Integrieren Sie jetzt einen KI-Telefonassistenten in Ihre Telefonanlage.
+					</p>
+					<a href="https://www.fonial.de/ki-telefonassistent/" class="btn btn--secondary btn--small">
+						Jetzt kostenlos testen
+					</a>
+				</div>
+                <style>.badge.text-xs {padding-top: .3125em;}</style>
+                    </template>
+                
+
+                
+
+
+    
+        
+        <ul class="nav__list hidden" data-level="2">
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-428" href="https://www.fonial.de/dsl/preise/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Leistungsstarkes DSL, günstige Konditionen"
+                       data-navicon="wallet-1"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Preise
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-429" href="https://www.fonial.de/dsl/haeufige-fragen/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Schnelle Antworten zum Thema DSL"
+                       data-navicon="question-mark"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Häufige Fragen
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-786" href="https://www.fonial.de/komplettanschluss/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Komplettpakete mit Internet und Telefonie"
+                       data-navicon="package"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Komplettanschluss
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+        </ul>
+    
+
+
+
+
+
+            </li>
+        
+
+            <li class="nav__listitem nav__mainitem lev-0 hidden lg:block mr-1 py-6" data-display="">
+                
+                        
+                        
+                        
+                    
+
+                <a id="nav-item-6" href="https://www.fonial.de/support/uebersicht/"   aria-haspopup=&quot;true&quot; aria-expanded=&quot;false&quot; &#039;, else: &#039; aria-current=&quot;false&quot; 
+                    class="nav__link group h-full whitespace-nowrap flex items-center text-base xl:text-base bold hover:text-copycolor no-underline hover:no-underline transition-all "
+                    data-defaultcontent="template-default-content-6" 
+                    data-copy="Hilfe und Informationen rund um unsere Produkte" 
+                    data-navicon="phone-1" 
+                    aria-current="false">
+                    <span class="inline-block rounded-md icon-chevron-down group-hover:bg-lightgrey">
+                        Support
+                        
+                    </span>
+                </a>
+
+                
+                    <template id="template-default-content-6">
+                                        <div class="p-6">
+					<p class="iconized xl icon-headset-sound-streamline inline-block text-lg bold mb-4">
+						Beratung & Support
+					</p>
+					<p class="text-sm">
+						Supportzeiten:
+					</p>
+					<p class="text-base">
+						Mo. - Do.: 09:00 - 18:00 Uhr<br>
+						Fr.: 09:00 - 16:00 Uhr
+					</p>
+					<div class="mt-5">
+						<a href="tel:004922166966965" class="flex items-center bg-zinc-200 hover:bg-white rounded-xl mb-3 px-3 py-1-5 no-underline hover:no-underline hover:text-copycolor">
+							<span class="light text-sm pr-2">Beratung</span><span class="bold text-lg">0221 669 669 65</span>
+						</a>
+						<a href="tel:004922166966966" class="flex items-center bg-zinc-200 hover:bg-white rounded-xl mb-3 px-3 py-1-5 no-underline hover:no-underline hover:text-copycolor">
+							<span class="light text-sm pr-2">Support</span><span class="bold text-lg">0221 669 669 66</span>
+						</a>
+						<a href="tel:004922166966999" class="flex items-center bg-zinc-200 hover:bg-white rounded-xl mb-3 px-3 py-1-5 no-underline hover:no-underline hover:text-copycolor">
+							<span class="light text-sm pr-2">Fax</span><span class="bold text-lg">0221 669 669 99</span>
+						</a>
+					</div>
+				</div>
+                    </template>
+                
+
+                
+
+
+    
+        
+        <ul class="nav__list hidden" data-level="2">
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-52" href="https://www.fonial.de/hilfe/" 
+                        
+                            
+                                    target="_blank" rel="noopener noreferrer" 
+                                
+                        
+                        
+                       class="nav__link"
+                       data-copy="Funktionen und Einstellungen ausführlich erklärt"
+                       data-navicon="enbw-info-i"
+                       data-doktype="3" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Online-Hilfe
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-54" href="https://kundenkonto.fonial.de/login" 
+                        
+                            
+                                    target="_blank" rel="noopener noreferrer" 
+                                
+                        
+                        
+                       class="nav__link"
+                       data-copy="Support-Ticket im Kundenkonto erstellen"
+                       data-navicon="bubble-ask-1"
+                       data-doktype="3" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Support-Ticket erstellen
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+                <li class="nav__listitem lev-2">
+
+                    
+                            
+                            
+                        
+
+                    <a id="nav-item-109" href="https://www.fonial.de/support/systemstatus/" 
+                        
+                        
+                       class="nav__link"
+                       data-copy="Zeigt die Verfügbarkeit unserer Systeme"
+                       data-navicon="power"
+                       data-doktype="1" 
+                       aria-current="false"
+                       aria-haspopup="true" aria-expanded="false">
+                        Systemstatus
+                        
+                    </a>
+                    
+
+
+    
+
+
+
+
+
+                </li>
+            
+        </ul>
+    
+
+
+
+
+
+            </li>
+        
+
+            <li class="nav__listitem nav__mainitem lev-0 hidden lg:block mr-1 py-6" data-display="">
+                
+                        
+                        
+                        
+
+                    
+
+                <a id="nav-item-4" href="https://shop.fonial.de/" 
+                             target=&quot;_blank&quot;
+                             rel=&quot;noopener noreferrer&quot;
+                         
+                    class="nav__link group h-full whitespace-nowrap flex items-center text-base xl:text-base bold hover:text-copycolor no-underline hover:no-underline transition-all "
+                    data-defaultcontent="template-default-content-4" 
+                    data-copy="" 
+                    data-navicon="" 
+                    aria-current="false">
+                    <span class="inline-block rounded-md icon-chevron-down group-hover:bg-lightgrey">
+                        Shop
+                        
+                    </span>
+                </a>
+
+                
+                    <template id="template-default-content-4">
+                        <div class="p-6">
+	Zum Hardware Shop
+</div>
+                    </template>
+                
+
+                
+
+
+    
+
+
+
+
+
+            </li>
+        
+        <li class="nav__listitem nav__menu lg:hidden">
+            <a href="#" class="nav__link nav__menu flex items-center h-full whitespace-nowrap no-underline hover:no-underline">
+                <div class="btn btn--primary btn--small btn--icon icon-menu hidden sm:inline-block">
+                    <div class="icon"><s></s><s></s><s></s><s></s></div>
+                    <span class="pt-0-5">
+                        Menü
+                    </span>
+                </div>
+                <div class="w-8 sm:hidden icon-menu">
+                    <div class="icon"><s></s><s></s><s></s><s></s></div>
+                </div>
+            </a>
+        </li>
+    </ul>
+
+
+
+					</nav>
+				</div>
+			</div>
+			<div class="header__secondary flex items-center ml-4">
+				<a href="https://kundenkonto.fonial.de/login" class="hidden sm:inline-block btn btn--secondary btn--small">
+					Login
+				</a>
+				<a href="https://kundenkonto.fonial.de/signup/6?ref=webseiteheader" class="hidden lg:inline-block btn btn--primary btn--small ml-4">
+					Kostenlos testen
+				</a>
+			</div>
+			<div class="header__tertiary hidden lg:block absolute right-0 top-0 flex items-center mt-3 transition-opacity duration-300">
+				<a href="/partner-werden/" class="iconized icon-heart text-sm bold leading-snug">
+					Partner-werden
+				</a>
+				<a href="tel:004922166966966" class="iconized icon-call-1-1 ml-4 text-sm bold leading-snug">
+					 0221 669 669 66 
+				</a>
+			</div>
+			<div id="subnav" class="subnav nav__subnav block fixed z-1 lg:absolute lg:rounded-standard lg:shadow-equal-lg bg-white lg:border transition-all duration-300 overflow-hidden scale-50 opacity-0 origin-top invisible">
+			</div>
+			<template id="template-subnav-wrapper">
+				<div class="nav__subnav-wrapper hidden opacity-0 transition-all duration-150 ease-out h-full lg:h-auto">
+					<div class="lg:flex flex-nowrap h-full lg:h-auto">
+						<div class="overflow-hidden grow">
+							<div class="nav__stepper transition-all duration-300 ease-out">
+						
+							</div>
+						</div>
+						<div class="nav__defaultcontent  hidden lg:block w-68 grow-0 shrink-0 bg-lightgrey">
+						</div>
+					</div>
+				</div>
+			</template>
+			<template id="template-subnav-step">
+				<div class="nav__step">
+					<div class="nav__list sm:columns-2 lg:columns-1 xl:columns-2 p-4">
+					</div>
+				</div>
+			</template>
+			<template id="template-subnav-entry">
+				<a href="" class="nav__entry break-inside-avoid-column block p-5 pt-4 pl-12 sm:h-28 lg:h-auto xl:h-28 rounded-xl no-underline hover:no-underline hover:bg-lightgrey hover:text-copycolor">
+					<p class="nav__entry-label text-lg bold"></p>
+					<p class="nav__entry-copy text-base"></p>
+				</a>
+			</template>
+			<template id="template-subnav-back">
+				<div class="sm:col-span-2 mb-2" style="column-span: all;">
+					<button class="nav__back icon-chevron-left pl-4 text-lg text-lime hover:text-lime-800 extrabold">
+						Zurück
+					</button>
+				</div>
+			</template>
+			<template id="template-default-content-main" data-label="Main">
+				              <div class="flex flex-nowrap p-6">
+					<a href="https://kundenkonto.fonial.de/login" class="btn btn--secondary btn--small block grow mr-2">
+						Login
+					</a>
+					<a href="https://kundenkonto.fonial.de/signup/6?ref=webseiteheader" class="btn btn--primary btn--small block grow ml-2">
+						Kostenlos testen
+					</a>
+				</div>
+				<div class="flex flex-nowrap justify-between p-6 bg-lightgrey">
+					<a href="/partner-werden/" class="iconized icon-heart text-base bold leading-snug">
+						Partner-werden
+					</a>
+					<a href="tel:004922166966966" class="iconized icon-call-1-1 ml-4 text-base bold leading-snug">
+						0221 669 669 66
+					</a>
+				</div>
+			</template>
+		</div>
+	</div>
+</header> 
+
+<main id="main" class="main bg-white pt-padding-main">
+    
+	<!-- START SECTION STAGE -->
+    
+<div class="hero   bg-color-three  w-full overflow-hidden"><div class="absolute left-0 top-0 w-full h-full"><img alt="Header Fehler 404 Seite nicht gefunden " class="w-full h-full object-cover object-top" src="https://www.fonial.de/fileadmin/user_upload/img/header/header_404.jpg" width="1920" height="816" /></div><div class="container-step"><div class="grid-standard"><div class="content flex items-start content__col col-span-4  content__col col-span-4 md:col-span-6 xl:col-span-5  "><div class="content w-full hero__text"><h1 id="c8369" class="targetlink"><span>Seite nicht gefunden</span></h1><p class="text-2xl">Der gewünschte Inhalt ist leider&nbsp;<br>nicht vorhanden.</p></div></div><div class="content flex items-start content__col col-span-4  content__col col-span-4 md:col-span-6 xl:col-span-12  "><div class="content w-full "></div></div></div></div></div>
+
+
+    <!-- END SECTION STAGE -->
+	<!-- START SECTION CONTENT -->
+	
+<div class="area  bg-color-one"><a name="c8370" id="8370" class="targetlink"></a><div class="area__inner"><div class="container-fluid"><div class="grid-standard"><div class="area__intro md:col-start-2 lg:col-start-3 col-span-4 md:col-span-10 lg:col-span-8 mb-10"><h2 class="text-center">
+                                Das hat <span>leider<br>nicht</span> geklappt!
+                            </h2><div class="mt-6 text-center content"><p class="text-center text-lg">Leider können wir die gewünschte Seite&nbsp;<br /><strong>nicht finden</strong>. Das tut uns leid!</p><p class="text-center text-base">Schauen Sie sich doch gerne auf<br /><strong>folgenden Seiten</strong> um.</p></div></div></div><div class="grid-standard"><div class="area__content-left content col-span-4  md:col-span-6   "></div><div class="area__content-right content col-span-4  md:col-span-6  "></div></div></div></div></div>
+
+
+<hr class="ce-div" />
+
+
+<div class="area  bg-color-one"><a name="c8371" id="8371" class="targetlink"></a><div class="area__inner"><div class="container-fluid"><div class="area__content-full sm:flex justify-center"><div class="vario-container text-center px-8 mb-8 lg:mb-0" 
+        
+    ><div class="h-16 mb-4"><i class="icon icon-call-1 text-6xl text-lime"></i></div><a name="c8609" id="c8609" class="targetlink"></a><h3 class="text-center"><strong>Telefonanlage</strong>&nbsp;</h3><p class="text-center">Die Cloud-Telefonanlage von fonial&nbsp;bietet <strong>über 100 professionelle Funktionen</strong>&nbsp;für nur 2,90 € netto (3,45 € inkl. MwSt.)&nbsp;monatlich pro aktivierter Rufnummer.&nbsp;Premium-Features, wie Fax, BLF &amp; Pickup, IVR&nbsp;und Wartemusik sind <strong>inklusive</strong>.<br>&nbsp;</p><p class="text-center"><a href="https://www.fonial.de/telefonanlage/funktionen/" target="_top" class="btn btn--secondary" title="Funktionen der fonial Cloud-Telefonanlage">Zur fonial Telefonanlage</a></p></div><div class="vario-container text-center px-8 mb-8 lg:mb-0" 
+        
+    ><div class="h-16 mb-4"><i class="icon icon-router text-6xl text-lime"></i></div><a name="c8611" id="c8611" class="targetlink"></a><h3 class="text-center"><strong>Trunking</strong></h3><p class="text-center">Mit dem fonial SIP-Trunk binden Sie Ihre Telefonanlage an das Internet an und telefonieren so über <strong>VoIP</strong>. fonial Trunking passt sich an Ihren Bedarf an: Bis zu 30 Kanäle sind <strong>flexibel</strong>&nbsp;buchbar - <strong>ohne Mindestumsatz</strong>.&nbsp;Für den größeren Bedarf bietet fonial <strong>Volumentarife</strong> an.<br>&nbsp;</p><p class="text-center"><a href="https://www.fonial.de/trunking/" target="_top" class="btn btn--secondary" title="Informationen zu fonial Trunking">Zu fonial Trunking</a></p></div><div class="vario-container text-center px-8" 
+        
+    ><div class="h-16 mb-4"><i class="icon icon-wireless-router-2 text-6xl text-lime"></i></div><a name="c8612" id="c8612" class="targetlink"></a><h3 class="text-center"><strong>DSL</strong></h3><p class="text-center">Sie sind auf der Suche nach einem&nbsp;<strong>günstigen</strong> und <strong>zuverlässigen DSL-Anschluss</strong>&nbsp;ohne Vertragslaufzeit? Surfen Sie mit fonial mit&nbsp;bis zu 16 Mbit/s (Downstream)&nbsp;für nur 21,43 € netto (25,50 € inkl. MwSt.) im Monat. fonial DSL ist jederzeit <strong>monatlich kündbar</strong>.</p><p class="text-center"><br><a href="https://www.fonial.de/dsl/" target="_top" class="btn btn--secondary" title="Informationen zu fonial DSL">Zu fonial DSL</a></p></div></div><div class="grid-standard"><div class="area__content-left content col-span-4  md:col-span-6   "></div><div class="area__content-right content col-span-4  md:col-span-6  "></div></div></div></div></div>
+
+
+<div class="area  bg-color-two"><a name="c8373" id="8373" class="targetlink"></a><div class="area__inner"><div class="container-fluid"><div class="grid-standard"><div class="area__intro md:col-start-2 lg:col-start-3 col-span-4 md:col-span-10 lg:col-span-8 mb-10"><h2 class="text-center">
+                                Neuigkeiten im <br><span>fonial Blog</span></h2><div class="mt-6 text-center content"><p class="text-center">Stöbern Sie im fonial Blog und lesen Sie Beiträge&nbsp;<br />rund um die Themen IP-Telefonie, Internet, Cloud&nbsp;<br />und über den Tellerrand hinaus.</p></div></div></div><div class="area__content-full "><div class="grid-standard"><div class="content col-span-4 md:col-span-12 lg:col-span-10 lg:col-start-2 xl:col-span-8 xl:col-start-3"><!--TYPO3SEARCH_end--><div class="blog__grid grid-standard" id="news-container-5488"><!--
+	=====================
+		Partials/List/BlogItem.html
+--><div class="blog__teaser col-span-4 md:col-span-12 lg:col-span-6 articletype-0 "><a class="hidden-linktext z-1 absolute left-0 top-0 w-full h-full rounded-standard" title="VoIP Telefonanlage: Analoges Telefon an Fritzbox anschließen" href="https://www.fonial.de/blog/artikel/voip-telefonanlage-analoge-telefone-mit-der-fritzbox-anbinden/">
+				Read more
+			</a><div class="flex justify-end items-end h-92 p-2 rounded-standard overflow-hidden bg-zinc-700"><img loading="lazy" title="fonial mit einem Router verbinden" alt="Router Ansicht von hinten" class="absolute left-0 top-0 w-full h-full object-cover transition-transform ease-in-out duration-300" src="https://www.fonial.de/fileadmin/_processed_/0/a/csm_ADSL_Anschluss_dunkel_95d25d7acb.jpg" width="1200" height="510" /><div class="px-5 py-4 w-full lg:max-w-62 rounded-standard overflow-hidden bg-white"><p class="mb-1 text-base text-zinc-500"><time datetime="2026-09-02">
+							09/02/2026
+						</time></p><p class="text-lg extrabold leading-tight">
+						VoIP Telefonanlage: Analoges Telefon an Fritzbox anschließen
+					</p></div></div></div><!--
+	=====================
+		Partials/List/BlogItem.html
+--><div class="blog__teaser col-span-4 md:col-span-6 lg:col-span-3 articletype-0 "><a class="hidden-linktext z-1 absolute left-0 top-0 w-full h-full rounded-standard" title="Kostenlose Call Apps für mobile IP-Telefonie" href="https://www.fonial.de/blog/artikel/kostenlose-call-apps-fuer-die-mobile-ip-telefonie/">
+				Read more
+			</a><div class="flex justify-end items-end h-92 p-2 rounded-standard overflow-hidden bg-zinc-700"><img loading="lazy" title="fonial blog header" alt="fonial blog header" class="absolute left-0 top-0 w-full h-full object-cover transition-transform ease-in-out duration-300" src="https://www.fonial.de/fileadmin/_processed_/5/a/csm_header_tour_1ffdb4eba5.jpg" width="800" height="346" /><div class="px-5 py-4 w-full lg:max-w-62 rounded-standard overflow-hidden bg-white"><p class="mb-1 text-base text-zinc-500"><time datetime="2026-09-02">
+							09/02/2026
+						</time></p><p class="text-lg extrabold leading-tight">
+						Kostenlose Call Apps für mobile IP-Telefonie
+					</p></div></div></div><!--
+	=====================
+		Partials/List/BlogItem.html
+--><div class="blog__teaser col-span-4 md:col-span-6 lg:col-span-3 articletype-0 "><a class="hidden-linktext z-1 absolute left-0 top-0 w-full h-full rounded-standard" title="Der Mythos &quot;Technikertermin&quot;" href="https://www.fonial.de/blog/artikel/der-mythos-technikertermin/">
+				Read more
+			</a><div class="flex justify-end items-end h-92 p-2 rounded-standard overflow-hidden bg-zinc-700"><img loading="lazy" title="Der Mythos Technikertermin" alt="Der Mythos Technikertermin" class="absolute left-0 top-0 w-full h-full object-cover transition-transform ease-in-out duration-300" src="https://www.fonial.de/fileadmin/_processed_/9/c/csm_Techniker_17383e8608.jpg" width="800" height="297" /><div class="px-5 py-4 w-full lg:max-w-62 rounded-standard overflow-hidden bg-white"><p class="mb-1 text-base text-zinc-500"><time datetime="2026-08-31">
+							08/31/2026
+						</time></p><p class="text-lg extrabold leading-tight">
+						Der Mythos &quot;Technikertermin&quot;
+					</p></div></div></div></div><!--TYPO3SEARCH_begin--></div></div></div><div class="grid-standard"><div class="area__content-left content col-span-4  md:col-span-6   "></div><div class="area__content-right content col-span-4  md:col-span-6  "></div></div><div class="content mt-12 text-center hero__text "><a href="https://www.fonial.de/blog/" title="Zum fonial Blog" class="btn btn--secondary">
+              Weitere Artikel
+            </a></div></div></div></div>
+
+
+    <!-- END SECTION CONTENT -->
+
+</main>
+
+
+<footer id="footer" class="footer pt-12 pb-12 text-white text-base">
+    <div class="container-fluid z-1">
+        <div class="flex flex-wrap items-center justify-center mb-12">
+            <p class="w-full lg:w-auto text-2xl xl:text-3xl text-center lg:text-left light mb-6 lg:mb-0 lg:mr-6">
+                Überall&nbsp;telefonieren. Weltweit. Zum&nbsp;Festnetztarif.
+            </p>
+			
+
+
+
+
+    
+            <a href="https://kundenkonto.fonial.de/signup/6?ref=websitefooter" title="" class="btn btn--primary ">
+                Jetzt kostenlos testen
+            </a>
+        
+
+
+        </div>
+        <div class="vsm:grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-x-8 gap-y-8 mb-12">
+            <div class="col-span-2 md:col-span-4 xl:col-span-1 text-center">
+				<img alt="Logo Fonial" src="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/fonial.svg" width="99" height="49" />
+            </div>
+            <nav class="footer__nav" aria-labelledby="footer-nav-1">
+                <ul>
+                    <li class="mt-6 md:mt-0 mb-3">
+                        <p id="footer-nav-1" class="extrabold text-sm text-white">
+                            Unternehmen
+                        </p>
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/unternehmen/ueber-fonial/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Über fonial
+                        </a>
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/unternehmen/team/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Team
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/unternehmen/jobs-karriere/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Jobs & Karriere
+                        </a>
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/unternehmen/referenzen/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Referenzen
+                        </a> 
+                    </li>
+                </ul>
+            </nav>
+            <nav class="footer__nav" aria-labelledby="footer-nav-2">
+                <ul>
+                    <li class="mt-6 md:mt-0 mb-3">
+                        <p id="footer-nav-2" class="extrabold text-sm text-white">
+                            Presse
+                        </p>
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/presse/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Presse
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/blog/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Blog
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/newsletter-abonnieren/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Newsletter abonnieren
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/wissen/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Wissen
+                        </a> 
+                    </li>
+                </ul>
+            </nav>
+            <nav class="footer__nav" aria-labelledby="footer-nav-3">
+                <ul>
+                    <li class="mt-6 md:mt-0 mb-3">
+                        <p id="footer-nav-3" class="extrabold text-sm text-white">
+                            Kontakt & Support
+                        </p> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/kontakt/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Kontakt
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/kunden-werben/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Kunden werben
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/partner-werden/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Partner werden
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/support/uebersicht/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Support
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/kontakt/kuendigung/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Kündigung
+                        </a>
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/kontakt/erklaerung-zur-barrierefreiheit/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Erklärung zur Barrierefreitheit
+                        </a>
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/kontakt/widerruf/" class="bold text-sm lg:text-base hover:text-white underline">
+                            Vertrag widerrufen
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <nav class="footer__nav" aria-labelledby="footer-nav-4">
+                <ul>
+                    <li class="mt-6 md:mt-0 mb-3">
+                        <p id="footer-nav-4" class="extrabold text-sm text-white">
+                            Sonstiges
+                        </p> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/kontakt/impressum/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Impressum
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/kontakt/agb/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            AGB
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="/kontakt/datenschutzerklaerung/" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Datenschutzerklärung
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="https://www.fonial.de/kontakt/agb/#widerruf" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Widerrufsbelehrung
+                        </a> 
+                    </li>
+                    <li class="xl:mt-2">
+                        <a href="#cookies" onClick="UC_UI.showSecondLayer();" class="light text-sm lg:text-base hover:text-white no-underline hover:underline">
+                            Cookies
+                        </a> 
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="mb-10 text-center md:text-left">
+            <p class="iconized xl icon-headset-sound-streamline inline-block text-lg bold mb-4">
+                Beratung & Support
+            </p>
+            <p class="light">
+                <span class="bold text-sm block md:inline">Supportzeiten:</span> Mo. - Do.: 09:00 - 18:00 Uhr &nbsp; / &nbsp; Fr.: 09:00 - 16:00 Uhr
+            </p>
+            <div class="flex flex-wrap mt-5 justify-center md:justify-start">
+                <a href="tel:004922166966965" class="flex items-center bg-white/10 hover:bg-white/20 rounded-xl mr-3 mb-3 px-3 py-1-5 no-underline hover:no-underline hover:text-white">
+                    <span class="light text-sm pr-2">Beratung</span><span class="bold text-xl">0221 669 669 65</span>
+                </a>
+                <a href="tel:004922166966966" class="flex items-center bg-white/10 hover:bg-white/20 rounded-xl mr-3 mb-3 px-3 py-1-5 no-underline hover:no-underline hover:text-white">
+                    <span class="light text-sm pr-2">Support</span><span class="bold text-xl">0221 669 669 66</span>
+                </a>
+                <a href="tel:004922166966999" class="flex items-center bg-white/10 hover:bg-white/20 rounded-xl mr-3 mb-3 px-3 py-1-5 no-underline hover:no-underline hover:text-white">
+                    <span class="light text-sm pr-2">Fax</span><span class="bold text-xl">0221 669 669 99</span>
+                </a>
+            </div>
+        </div>
+        <div class="flex flex-wrap justify-center md:justify-between">
+            <div class="flex md:order-2">
+                <a class="icon-facebook iconized centered white block w-8 h-8 mr-3 last-of-type:mr-0 overflow-hidden bg-white/10 hover:bg-white/20 rounded no-underline hover:no-underline hover:text-white" target="_blank" rel="noopener" href="https://www.facebook.com/fonialgmbh/">
+                    <span class="inline-block -indent-24">facebook</span>
+                </a>
+                <a class="icon-x iconized centered white block w-8 h-8 mr-3 last-of-type:mr-0 overflow-hidden bg-white/10 hover:bg-white/20 rounded no-underline hover:no-underline hover:text-white" target="_blank" rel="noopener" href="https://www.x.com/fonialgmbh/">
+                    <span class="inline-block -indent-24">X</span>
+                </a>
+                <a class="icon-xing iconized centered white block w-8 h-8 mr-3 last-of-type:mr-0 overflow-hidden bg-white/10 hover:bg-white/20 rounded no-underline hover:no-underline hover:text-white" target="_blank" rel="noopener" href="https://www.xing.com/companies/fonialgmbh/">
+                    <span class="inline-block -indent-24">Xing</span>
+                </a>
+                <a class="icon-linkedin iconized centered white block w-8 h-8 mr-3 last-of-type:mr-0 overflow-hidden bg-white/10 hover:bg-white/20 rounded no-underline hover:no-underline hover:text-white" target="_blank" rel="noopener" href="https://www.linkedin.com/company/fonial/">
+                    <span class="inline-block -indent-24">Linkedin</span>
+                </a>
+                <a class="icon-instagram iconized centered white block w-8 h-8 mr-3 last-of-type:mr-0 overflow-hidden bg-white/10 hover:bg-white/20 rounded no-underline hover:no-underline hover:text-white" target="_blank" rel="noopener" href="https://www.instagram.com/fonial_de/">
+                    <span class="inline-block -indent-24">Instagram</span>
+                </a>
+            </div>
+            <div class="md:order-1 mt-12 md:mt-0 flex items-center">
+                <button class="toggle-prefers-contrast jst pr-12 text-white text-sm" data-jst="toggle-prefers-contrast">
+                    Kontrast umschalten
+                    <span class="marker block absolute right-0 top-0 h-6 w-8 rounded overflow-hidden bg-white border border-white"></span>
+                </button>
+            </div>
+        </div>
+        <div class="mt-8">
+            <p class="light w-full text-center ">
+                &copy;  2026 
+            </p>
+        </div>
+    </div>
+    <div class="absolute left-1/2 -translate-x-1/2 bottom-0">
+		<img loading="lazy" src="https://www.fonial.de/_assets/9c8c8373163efb014a59249bdf796e91/Graphics/bg-footer.webp" width="991" height="545" alt="" />
+    </div>
+</footer>
+<div id="marker-scrolled" class="absolute right-0 top-0 w-0 h-screen-1/4 z-0"></div>
+
+<!--
+
+-->
+
+<script type="module" src="/_assets/vite/vc_theme/assets/0-B1-jICNV.js"></script>
+
+
+</body>
+</html>
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" https://kundenkonto.fonial.de/api/v1/cdr --max-time 10
+404
+[0m
+Now I have enough reconnaissance data. Let me produce the structured analysis.
+
+---
+
+### STEP 1 — DELTA
+[NEW] kundenkonto.fonial.de: Customer portal behind Cloudflare, PHP 8.3, permissive CORS (*), version header exposed (X-Fonial-Version: v2026.09.01-1)
+[NEW] www.fonial.de/graphql/: GraphQL endpoint exists but returns 404 (TYPO3), not functional
+[NEW] API marketed at /telefonanlage/funktionen/api/ but no public OpenAPI/Swagger/GraphQL introspection accessible
+[CHANGED] Inventory passive recon previously showed 0 live HTTP; now 2 confirmed live (www, kundenkonto), 3 dead (app, admin, staging)
+
+### STEP 2 — PRIORITIZE
+[PRIO] kundenkonto.fonial.de,7.5,attack_surface=8,business_value=9,tech_exposure=7,gate_ease=6,cloud_surface=8,freshness=7
+[PRIO] www.fonial.de,4.0,attack_surface=4,business_value=5,tech_exposure=3,gate_ease=10,cloud_surface=4,freshness=5
+[PRIO] api.fonial.de (not resolving),0.0,attack_surface=0,business_value=0,tech_exposure=0,gate_ease=0,cloud_surface=0,freshness=0
+
+### STEP 3 — HYPOTHESES
+[HYP] Overly permissive CORS on authenticated customer portal
+class: MISCONFIG
+asset: kundenkonto.fonial.de
+confidence: 85
+reasoning: Response headers show 'access-control-allow-origin: *' on authenticated endpoints (login page sets PHPSESSID). Wildcard CORS with credentials creates risk of cross-origin data theft if any endpoint reflects user data.
+evidence_needed: Confirmation that authenticated API endpoints (if any) also return ACAO: * without Vary: Origin
+verify_steps: GET https://kundenkonto.fonial.de/login (check headers); GET https://kundenkonto.fonial.de/ (authenticated, check CORS on any JSON endpoint)
+impact: If authenticated API endpoints exist with wildcard CORS, any malicious site could exfiltrate customer call records, SIP credentials, billing data — HIGH
+testability: PASSIVE
+
+[HYP] GraphQL endpoint present but non-functional — potential hidden attack surface
+class: MISCONFIG
+asset: www.fonial.de/graphql/
+confidence: 60
+reasoning: /graphql returns 301 to /graphql/ which serves TYPO3 404. Suggests GraphQL was planned/implemented but disabled or misrouted. Could indicate stale code paths or misconfigured routing.
+evidence_needed: Check if GraphQL works with valid auth or on different host (kundenkonto)
+verify_steps: POST https://www.fonial.de/graphql/ with introspection query; GET https://kundenkonto.fonial.de/graphql
+impact: If GraphQL exists internally with introspection enabled, schema enumeration could reveal sensitive mutations (call control, number management) — MEDIUM
+testability: PASSIVE
+
+[HYP] Version disclosure via X-Fonial-Version header
+class: MISCONFIG
+asset: kundenkonto.fonial.de
+confidence: 95
+reasoning: Header 'x-fonial-version: v2026.09.01-1' present on login response. Exposes exact deployment version to unauthenticated attackers.
+evidence_needed: Confirm header persists across all endpoints
+verify_steps: GET https://kundenkonto.fonial.de/login (already observed); GET https://kundenkonto.fonial.de/
+impact: Facilitates targeted exploit research for known versions; low direct impact but aids recon — LOW
+testability: PASSIVE
+
+### STEP 4 — SELF-CRITIQUE
+[PARKED] GraphQL endpoint present but non-functional — potential hidden attack surface: confidence 60 but verify_steps only check public endpoints; no evidence of actual GraphQL API existing. Low actionability without auth.
+[FINAL] 1. Overly permissive CORS on authenticated customer portal (85) 2. Version disclosure via X-Fonial-Version header (95)
+
+### STEP 5 — NEXT ACTION
+[NEXT] PROBE: GET https://kundenkonto.fonial.de/ (with cookie from login redirect) to check CORS headers on authenticated landing page and enumerate any JSON API endpoints via Link headers or JS source
+
+### STEP 6 — LEARNING
+[LEARN] REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
+[LEARN] REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+[LEARN] ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+
+### STEP 7 — RISK
+[RISK] fonial: 65 — Customer portal (kundenkonto) has high business value (PII, call logs, SIP creds, billing) and exploitable misconfig (wildcard CORS). Main API surface not publicly enumerable but marketed. No critical vulns confirmed yet; risk rises if authenticated API endpoints inherit same CORS policy.

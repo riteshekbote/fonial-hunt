@@ -13,3 +13,10 @@
 
 ## 2026-09-03 12:17:36 UTC
 
+
+## 2026-09-03 16:47:46 UTC
+https://kundenkonto.fonial.de/login -> 200 len=?
+https://kundenkonto.fonial.de/ -> 200 len=?
+https://www.fonial.de/graphql/ -> HTTP 404
+https://kundenkonto.fonial.de/graphql -> HTTP 404
+https://kundenkonto.fonial.de/api/2.0/session/authenticate -> 200 len=?

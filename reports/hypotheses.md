@@ -9,3 +9,14 @@
 ## RANKED HYPOTHESES 2026-09-03 07:36:10 UTC
 
 ## RANKED HYPOTHESES 2026-09-03 12:17:36 UTC
+
+## RANKED HYPOTHESES 2026-09-03 16:47:39 UTC
+- [85] kundenkonto.fonial.de: Overly permissive CORS on authenticated customer portal (from art/lead_nemotron3.txt)
+- [72] kundenkonto.fonial.de/api/2.0/session/authenticate: API session auth lacks brute-force protection enabling credential stuffing (from art/lead_bigpickle.txt)
+- NEXT(hypotheses-nemotron3.txt): PROBE: GET https://kundenkonto.fonial.de/ (with cookie from login redirect) to check CORS headers on authenticated landing page and enumerate any JSON API endpo
+- NEXT(hypotheses-bigpickle.txt): PROBE: POST https://kundenkonto.fonial.de/api/2.0/session/authenticate — send 20 rapid requests with different passwords to the same SID to confirm no rate limi
+- LEARN: REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
+- LEARN: REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+- LEARN: ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+- LEARN: REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origi
+- LEARN: ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanism
