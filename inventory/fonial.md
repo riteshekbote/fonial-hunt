@@ -48,3 +48,18 @@ www.fonial.de
 - NEW Two distinct backends: session endpoints return `text/json` (no PHPSESSID); data endpoints return `text/json;charset=UTF-8` and set `PHPSESSID` with Secure;HttpOnly
 - CHANGED Probe results confirm: `/login` 200, `/` 200, `/graphql` 404 on both hosts, `/api/2.0/session/authenticate` 200
 - CHANGED Knowledge base updated: ACCEPTED dual-backend architecture → session confusion attack surface; REJECTED CORS direct-exploit (SID in body, no credentials)
+
+## 2026-09-03 21:56:14 UTC
+- NEW Two backend systems: session endpoints (text/json, no PHPSESSID) vs data endpoints (text/json;charset=UTF-8, sets PHPSESSID)
+- NEW www.fonial.de/shop/ — Hardware e-commerce (Magento-like, redirects from fonial.de/shop)
+- NEW www.fonial.de/hilfe/ — Help center (separate PHP app)
+- NEW www.fonial.de — TYPO3 CMS, PHP/8.3.3, nginx/1.31.2
+- CHANGED fonial.de → 301 to www.fonial.de (was previously unresolved; nginx/1.31.2 confirmed)
+- CHANGED app.fonial.de — Transport error (DNS/SSL unreachable)
+- CHANGED admin.fonial.de — Transport error (DNS/SSL unreachable)
+- CHANGED staging.fonial.de — Timeout (unreachable)
+- NEW API dual-session binding confirmed: data endpoints (/devices/get, /evn/get) set PHPSESSID AND read authz SID from body — unauthenticated SID -> `"reason":"session unauthenticated"`; absent/unknown SID
+- NEW /api/2.0/session without cookie returns `{"status":"ok","sid":"<uuid4>"}` and sets NO PHPSESSID; presenting a bogus PHPSESSID header causes it to reply with `PHPSESSID=deleted; Max-Age=0`.
+- NEW Confirmed SID is cleartext UUID v4 returned in body; data authz is bound to body SID auth-state, NOT to PHPSESSID cookie (parallel/session-confusion surface).
+- NEW Data endpoints (/devices/get, /evn/get) authorize by body SID only: unauthenticated SID -> `"reason":"session unauthenticated"`; absent/unknown -> `"reason":"session invalid"`. PHPSESSID set decorativ
+- NEW /api/2.0/session (no cookie) -> `{"status":"ok","sid":"<uuid4>"}` no PHPSESSID; bogus PHPSESSID header -> reply `PHPSESSID=deleted; Max-Age=0`. SID is cleartext UUID in body.
