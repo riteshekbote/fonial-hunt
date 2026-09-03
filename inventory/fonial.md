@@ -41,3 +41,10 @@ www.fonial.de
 - CHANGED app.fonial.de — Transport error (DNS/SSL unreachable)
 - CHANGED admin.fonial.de — Transport error (DNS/SSL unreachable)
 - CHANGED staging.fonial.de — Timeout (unreachable)
+
+## 2026-09-03 19:31:01 UTC
+- NEW kundenkonto.fonial.de/api/2.0 confirmed as POST-only REST API with dual-backend architecture (session vs data endpoints with different Content-Type headers and session mechanisms)
+- NEW CORS wildcard `access-control-allow-origin: *` on ALL API endpoints including `/session/authenticate` (no `allow-credentials`)
+- NEW Two distinct backends: session endpoints return `text/json` (no PHPSESSID); data endpoints return `text/json;charset=UTF-8` and set `PHPSESSID` with Secure;HttpOnly
+- CHANGED Probe results confirm: `/login` 200, `/` 200, `/graphql` 404 on both hosts, `/api/2.0/session/authenticate` 200
+- CHANGED Knowledge base updated: ACCEPTED dual-backend architecture → session confusion attack surface; REJECTED CORS direct-exploit (SID in body, no credentials)

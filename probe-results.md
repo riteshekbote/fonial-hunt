@@ -20,3 +20,9 @@ https://kundenkonto.fonial.de/ -> 200 len=?
 https://www.fonial.de/graphql/ -> HTTP 404
 https://kundenkonto.fonial.de/graphql -> HTTP 404
 https://kundenkonto.fonial.de/api/2.0/session/authenticate -> 200 len=?
+
+## 2026-09-03 19:31:07 UTC
+https://kundenkonto.fonial.de/ -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/session -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/session/authenticate -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/ -> HTTP 404
