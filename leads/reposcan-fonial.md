@@ -17,3 +17,12 @@ reasoning: The fonial-de organization has zero public repositories. All "fonial"
 impact: No source-code secrets/insecure patterns can be discovered via this vector.
 verify_steps: Visit https://github.com/fonial-de?tab=repositories to confirm.
 TARGET_ORG not configured for fonial; skipping public-org deep scan.
+## REPOSCAN 2026-09-04 14:06:43 UTC
+[HYP] <N/A>
+class: N/A
+asset: N/A
+confidence: 0
+reasoning: No candidate repositories were provided; github_orgs is set to none-configured in scope.yml:37-38. No audit possible.
+impact: None
+verify_steps: N/A
+TARGET_ORG not configured for fonial; skipping public-org deep scan.
