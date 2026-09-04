@@ -92,3 +92,5 @@ www.fonial.de
 - NEW File/audio sub-endpoints may hit separate backend — SSRF/path-traversal candidates
 - NEW Session-backend candidates: /session/validate, /session/refresh, /password/*, /2fa/* may exist
 - NEW TYPO3 eID handlers (?eID=xxx) on www.fonial.de untested
+
+## 2026-09-04 07:33:52 UTC

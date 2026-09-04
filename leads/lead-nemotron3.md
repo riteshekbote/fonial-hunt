@@ -282,3 +282,88 @@ testability: AUTH_HELPED
 [LEARN] ACCEPTED dual-session binding @ kundenkonto.fonial.de/api/2.0: Data endpoints authorize by body SID only; PHPSESSID parallel/decorative; /session issues cleartext UUID sid and deletes unknown PHPSESSID
 [LEARN] REJECTED brute-force/credential-stuffing @ /api/2.0/session/authenticate: Out of scope (rate-limit/lockout policy) per program
 [RISK] fonial: 70 — Customer portal (kundenkonto) has high business value (PII, CDR, SIP creds, billing, call control) and confirmed dual-backend architecture creating session confusion surface. CORS wildcard on auth domain confirmed. Main API not publicly documented but live. Risk elevated due to enterprise telephony data sensitivity and architectural anomaly.
+## 2026-09-04 07:33:43 UTC [target] (model nemotron3)
+[PRIO] kundenkonto.fonial.de/api/2.0,9.05,attack_surface=9,business_value=10,tech_exposure=8,gate_ease=8,cloud_surface=9,freshness=10
+[PRIO] kundenkonto.fonial.de,7.70,attack_surface=8,business_value=9,tech_exposure=7,gate_ease=6,cloud_surface=8,freshness=7
+[PRIO] www.fonial.de,5.10,attack_surface=4,business_value=5,tech_exposure=3,gate_ease=10,cloud_surface=4,freshness=5
+[HYP] CRUD write endpoints bypass SID authorization
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 70
+reasoning: Read endpoints (/devices/get, /evn/get) authorize by body SID only; PHPSESSID decorative. Write verbs (add/update/delete) untested. Dual-backend architecture suggests data layer may not enforce SID auth-state on mutating operations.
+evidence_needed: Write endpoint (e.g., /devices/add) accepts unauthenticated SID or SID from Account A with PHPSESSID from Account B and performs state change
+verify_steps: 1) POST /api/2.0/session → get SID_unauth; 2) POST /api/2.0/devices/add with body {"sid": SID_unauth, "data":{...}} → observe if 200/state-change vs "session unauthenticated"; 3) If blocked, repeat with authenticated SID_A + Cookie: PHPSESSID_B (cross-bind)
+impact: Unauthorized device provisioning, SIP credential modification, call forwarding changes, billing manipulation — CRITICAL
+testability: AUTH_HELPED
+[HYP] Authenticated landing page inherits wildcard CORS without Vary: Origin
+class: MISCONFIG
+asset: kundenkonto.fonial.de
+confidence: 80
+reasoning: Login page returns `access-control-allow-origin: *` with PHPSESSID. Authenticated landing page likely shares middleware. If any JSON API endpoints (e.g., /api/2.0/evn/get called by frontend JS) also return ACAO: * without `Vary: Origin`, cross-origin read of CDR/SIP/billing data is possible.
+evidence_needed: Authenticated GET / returns ACAO: * without Vary: Origin; JS source references JSON API endpoints that reflect user data
+verify_steps: 1) GET https://kundenkonto.fonial.de/ with Cookie: PHPSESSID=<from_login_redirect> → check response headers for ACAO and Vary; 2) View page source → grep for /api/2.0/ or fetch/XHR patterns; 3) If JSON endpoints found, test them directly with Origin header
+impact: Malicious site exfiltrates call records, SIP credentials, phone numbers, billing data — HIGH
+testability: PASSIVE
+[HYP] TYPO3 eID handlers expose internal API/debug endpoints
+class: MISCONFIG
+asset: www.fonial.de
+confidence: 45
+reasoning: TYPO3 CMS on www.fonial.de (PHP 8.3, nginx). eID handlers (`?eID=xxx`) often expose AJAX endpoints, debug tools, or internal APIs without auth. Unenumerated attack surface.
+evidence_needed: Enumeration of valid eID parameters returning non-404 responses with sensitive data or functionality
+verify_steps: 1) GET https://www.fonial.de/?eID=dump → check status/body; 2) Common eID wordlist: `dump`, `debug`, `api`, `ajax`, `tx_*`, `backend` → observe non-404; 3) Any 200/500 response → inspect for PII/config/debug
+impact: Information disclosure, potential RCE via deserialization, internal API access — MEDIUM
+testability: PASSIVE
+[PARKED] TYPO3 eID handlers expose internal API/debug endpoints: confidence 45 (borderline), low business value asset (www.fional.de marketing site), passive enumeration only — deprioritized behind API/core portal
+[FINAL] 1. Authenticated landing page inherits wildcard CORS without Vary: Origin (80) 2. CRUD write endpoints bypass SID authorization (70)
+[NEXT] PROBE: GET https://kundenkonto.fonial.de/ with Cookie: PHPSESSID=<from_login_redirect> to check CORS headers on authenticated landing page and enumerate any JSON API endpoints referenced in JS
+[LEARN] ACCEPTED CRUD pattern @ kundenkonto.fonial.de/api/2.0: /{resource}/{action} confirmed by /devices/get, /evn/get; ~30 likely siblings
+[LEARN] ACCEPTED dual-session binding @ kundenkonto.fonial.de/api/2.0: Data endpoints authorize by body SID only; PHPSESSID decorative; /session issues cleartext UUID sid
+[LEARN] ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
+[LEARN] ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+[LEARN] REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
+[LEARN] REJECTED brute-force/credential-stuffing @ /api/2.0/session/authenticate: Out of scope (rate-limit/lockout policy) per program
+[LEARN] REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
+[LEARN] REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+[RISK] fonial: 70 — Customer portal (kundenkonto) has high business value (PII, CDR, SIP creds, billing, call control) and confirmed dual-backend architecture creating session confusion surface. CORS wildcard on auth domain confirmed. Main API not publicly documented but live with ~30 CRUD endpoints. Risk elevated due to enterprise telephony data sensitivity and architectural anomaly.
+[PRIO] kundenkonto.fonial.de/api/2.0,9.05,attack_surface=9,business_value=10,tech_exposure=8,gate_ease=8,cloud_surface=9,freshness=10
+[PRIO] kundenkonto.fonial.de,7.70,attack_surface=8,business_value=9,tech_exposure=7,gate_ease=6,cloud_surface=8,freshness=7
+[PRIO] www.fonial.de,5.10,attack_surface=4,business_value=5,tech_exposure=3,gate_ease=10,cloud_surface=4,freshness=5
+[HYP] CRUD write endpoints bypass SID authorization
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 70
+reasoning: Read endpoints (/devices/get, /evn/get) authorize by body SID only; PHPSESSID decorative. Write verbs (add/update/delete) untested. Dual-backend architecture suggests data layer may not enforce SID auth-state on mutating operations.
+evidence_needed: Write endpoint (e.g., /devices/add) accepts unauthenticated SID or SID from Account A with PHPSESSID from Account B and performs state change
+verify_steps: 1) POST /api/2.0/session → get SID_unauth; 2) POST /api/2.0/devices/add with body {"sid": SID_unauth, "data":{...}} → observe if 200/state-change vs "session unauthenticated"; 3) If blocked, repeat with authenticated SID_A + Cookie: PHPSESSID_B (cross-bind)
+impact: Unauthorized device provisioning, SIP credential modification, call forwarding changes, billing manipulation — CRITICAL
+testability: AUTH_HELPED
+[HYP] Authenticated landing page inherits wildcard CORS without Vary: Origin
+class: MISCONFIG
+asset: kundenkonto.fonial.de
+confidence: 80
+reasoning: Login page returns `access-control-allow-origin: *` with PHPSESSID. Authenticated landing page likely shares middleware. If any JSON API endpoints (e.g., /api/2.0/evn/get called by frontend JS) also return ACAO: * without `Vary: Origin`, cross-origin read of CDR/SIP/billing data is possible.
+evidence_needed: Authenticated GET / returns ACAO: * without Vary: Origin; JS source references JSON API endpoints that reflect user data
+verify_steps: 1) GET https://kundenkonto.fonial.de/ with Cookie: PHPSESSID=<from_login_redirect> → check response headers for ACAO and Vary; 2) View page source → grep for /api/2.0/ or fetch/XHR patterns; 3) If JSON endpoints found, test them directly with Origin header
+impact: Malicious site exfiltrates call records, SIP credentials, phone numbers, billing data — HIGH
+testability: PASSIVE
+[HYP] TYPO3 eID handlers expose internal API/debug endpoints
+class: MISCONFIG
+asset: www.fonial.de
+confidence: 45
+reasoning: TYPO3 CMS on www.fonial.de (PHP 8.3, nginx). eID handlers (`?eID=xxx`) often expose AJAX endpoints, debug tools, or internal APIs without auth. Unenumerated attack surface.
+evidence_needed: Enumeration of valid eID parameters returning non-404 responses with sensitive data or functionality
+verify_steps: 1) GET https://www.fonial.de/?eID=dump → check status/body; 2) Common eID wordlist: `dump`, `debug`, `api`, `ajax`, `tx_*`, `backend` → observe non-404; 3) Any 200/500 response → inspect for PII/config/debug
+impact: Information disclosure, potential RCE via deserialization, internal API access — MEDIUM
+testability: PASSIVE
+[PARKED] TYPO3 eID handlers expose internal API/debug endpoints: confidence 45 (borderline), low business value asset (www.fional.de marketing site), passive enumeration only — deprioritized behind API/core portal
+[FINAL] 1. Authenticated landing page inherits wildcard CORS without Vary: Origin (80) 2. CRUD write endpoints bypass SID authorization (70)
+[NEXT] PROBE: GET https://kundenkonto.fonial.de/ with Cookie: PHPSESSID=<from_login_redirect> to check CORS headers on authenticated landing page and enumerate any JSON API endpoints referenced in JS
+[LEARN] ACCEPTED CRUD pattern @ kundenkonto.fonial.de/api/2.0: /{resource}/{action} confirmed by /devices/get, /evn/get; ~30 likely siblings
+[LEARN] ACCEPTED dual-session binding @ kundenkonto.fonial.de/api/2.0: Data endpoints authorize by body SID only; PHPSESSID decorative; /session issues cleartext UUID sid
+[LEARN] ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
+[LEARN] ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+[LEARN] REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
+[LEARN] REJECTED brute-force/credential-stuffing @ /api/2.0/session/authenticate: Out of scope (rate-limit/lockout policy) per program
+[LEARN] REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
+[LEARN] REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+[RISK] fonial: 70 — Customer portal (kundenkonto) has high business value (PII, CDR, SIP creds, billing, call control) and confirmed dual-backend architecture creating session confusion surface. CORS wildcard on auth domain confirmed. Main API not publicly documented but live with ~30 CRUD endpoints. Risk elevated due to enterprise telephony data sensitivity and architectural anomaly.
