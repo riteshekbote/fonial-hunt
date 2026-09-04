@@ -53,3 +53,6 @@ https://kundenkonto.fonial.de/api/2.0/devices/add -> HTTP 404
 https://kundenkonto.fonial.de/ -> 200 len=?
 https://kundenkonto.fonial.de/wizard/ -> 200 len=?
 https://kundenkonto.fonial.de/settings/menu/toggle -> 200 len=?
+
+## 2026-09-04 19:22:04 UTC
+https://kundenkonto.fonial.de/ -> 200 len=?

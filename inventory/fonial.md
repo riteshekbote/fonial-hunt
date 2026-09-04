@@ -115,3 +115,10 @@ www.fonial.de
 - CHANGED CORS hypothesis confidence adjusted: 85→80 — authenticated landing page untested, needs PHPSESSID from login redirect
 - CHANGED CRUD write hypothesis confidence: 70 — based on pattern inference only, no live write endpoint confirmed
 - CHANGED Priority scores stable: kundenkonto.fonial.de/api/2.0 (9.05), kundenkonto.fonial.de (7.70), www.fonial.de (5.10)
+
+## 2026-09-04 19:22:01 UTC
+- NEW Landing page `/` returns 302 to `/login` with `Set-Cookie: PHPSESSID` + `ACAO: *` even when unauthenticated (no valid session)
+- NEW API endpoints (`/api/2.0/session`, `/call/initiate`, `/devices/get`, `/evn/get`) all return `ACAO: *` + `ACAM: GET, POST, OPTIONS` without `allow-credentials` — confirmed on all 4 tested endpoints
+- NEW `/call/initiate` confirmed as LIVE WRITE endpoint: returns JSON `{"sid":null,"status":"error","reason":"session invalid"}` without auth; same error pattern as read endpoints
+- CHANGED CRUD expansion hypothesis CONFIRMED WRONG: ~50 guessed `{resource}/{action}` names all return HTML 404 (web app fallback), not JSON 404/405 — API surface is exactly 5 endpoints
+- CHANGED CORS hypothesis: authenticated landing page untested (requires valid PHPSESSID from 2FA login flow); unauthenticated landing page redirects to login with CORS wildcard

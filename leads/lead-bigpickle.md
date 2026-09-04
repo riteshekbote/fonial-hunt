@@ -454,3 +454,4 @@ testability: HUMAN_ONLY
 [LEARN] REJECTED brute-force/credential-stuffing: Out of scope.
 [LEARN] ACCEPTED dual-session binding @ kundenkonto.fonial.de/api/2.0: Data endpoints authorize by body SID only; PHPSESSID decorative.
 [RISK] fonial: 55 — Narrow API surface (5 endpoints) limits total attack area, but call/initiate is high-severity WRITE (outbound telephony). Dual-backend session confusion persists as primary vector. 2FA + Cloudflare reduce automated exploitation. No demonstrated cross-tenant leak; gated behind valid credentials.
+## 2026-09-04 19:06:53 UTC [target] (model bigpickle)

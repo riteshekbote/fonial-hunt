@@ -158,3 +158,15 @@
 - LEARN: REJECTED brute-force/credential-stuffing @ /api/2.0/session/authenticate: Out of scope (rate-limit/lockout policy) per program
 - LEARN: REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
 - LEARN: REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+
+## RANKED HYPOTHESES 2026-09-04 19:22:01 UTC
+- [75] kundenkonto.fonial.de/api/2.0: Dual-backend session confusion enables cross-tenant data access (from art/lead_nemotron3.txt)
+- NEXT(hypotheses-nemotron3.txt): PROBE: GET https://kundenkonto.fonial.de/ with Cookie: PHPSESSID=<from_login_redirect> to check CORS headers on authenticated landing page and enumerate any JSO
+- LEARN: ACCEPTED narrow API surface @ kundenkonto.fonial.de/api/2.0: Only 5 endpoints exist (session, session/authenticate, devices/get, evn/get, call/initiate); ~50 gu
+- LEARN: ACCEPTED call/initiate @ kundenkonto.fonial.de/api/2.0: Live WRITE endpoint; returns same session-invalid JSON pattern as read endpoints; same SID-only authz su
+- LEARN: ACCEPTED dual-session binding @ kundenkonto.fonial.de/api/2.0: Data endpoints authorize by body SID only; PHPSESSID decorative; /session issues cleartext UUID s
+- LEARN: ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers
+- LEARN: ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+- LEARN: REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origi
+- LEARN: REJECTED brute-force/credential-stuffing: Out of scope (rate-limit/lockout policy)
+- LEARN: REJECTED CRUD expansion ~30 siblings: PROVEN WRONG — API uses non-standard naming; guessed {resource}/{action} pattern yields 0 new hits

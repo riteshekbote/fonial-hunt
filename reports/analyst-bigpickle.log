@@ -4251,3 +4251,172 @@ Analysis complete. Summary of findings:
 **STEP 5 — NEXT**: `HUMAN` — obtain 2 valid test accounts to execute cross-binding test (SID B + PHPSESSID A) on `/call/initiate`, `/devices/get`, `/evn/get`. **Passive automation is exhausted without credentials.**
 
 **Key insight**: The confirmed API surface is remarkably narrow (5 endpoints) but includes `call/initiate` — a write endpoint that can initiate real outbound telephony calls. If the SID-only authz is cross-tenant-exploitable via the dual-backend session confusion, this enables toll fraud / unauthorized call control, which is CRITICAL severity.
+===== ANALYST bigpickle 2026-09-04 19:22:01 UTC =====
+[0m
+> build · big-pickle
+[0m
+I'll analyze this bug bounty hunting task. Let me start by understanding the current state and checking my working environment.
+[0m$ [0mls -la /home/runner/work/fonial-hunt/fonial-hunt 2>/dev/null && echo "---" && ls -la /tmp/opencode 2>/dev/null
+total 148
+drwxr-xr-x 12 runner runner  4096 Sep  4 19:06 .
+drwxr-xr-x  3 runner runner  4096 Sep  4 19:06 ..
+drwxr-xr-x  7 runner runner  4096 Sep  4 19:06 .git
+drwxr-xr-x  3 runner runner  4096 Sep  4 19:06 .github
+-rw-r--r--  1 runner runner  1740 Sep  4 19:06 README.md
+-rw-r--r--  1 runner runner   160 Sep  4 19:06 analyst-out.txt
+-rw-r--r--  1 runner runner 31941 Sep  4 19:06 analyst-prompt.txt
+-rw-r--r--  1 runner runner 28127 Sep  4 19:06 ctx.txt
+drwxr-xr-x  2 runner runner  4096 Sep  4 19:06 inventory
+drwxr-xr-x  2 runner runner  4096 Sep  4 19:06 knowledge
+drwxr-xr-x  2 runner runner  4096 Sep  4 19:06 leads
+-rw-r--r--  1 runner runner  1644 Sep  4 19:06 probe-results.md
+drwxr-xr-x  2 runner runner  4096 Sep  4 19:06 recon-notes
+drwxr-xr-x  2 runner runner  4096 Sep  4 19:06 reports
+drwxr-xr-x  2 runner runner  4096 Sep  4 19:06 reposcan-raw
+-rw-r--r--  1 runner runner  3227 Sep  4 19:06 scope.yml
+drwxr-xr-x  2 runner runner  4096 Sep  4 19:06 scripts
+-rw-r--r--  1 runner runner    33 Sep  4 19:06 state_bigpickle.json
+-rw-r--r--  1 runner runner    33 Sep  4 19:06 state_laguna.json
+-rw-r--r--  1 runner runner    33 Sep  4 19:06 state_ling3.json
+-rw-r--r--  1 runner runner    33 Sep  4 19:06 state_longcat.json
+-rw-r--r--  1 runner runner    33 Sep  4 19:06 state_mimo.json
+-rw-r--r--  1 runner runner    33 Sep  4 19:06 state_nemotron3.json
+drwxr-xr-x  2 runner runner  4096 Sep  4 19:06 triage
+---
+total 8
+drwxr-xr-x  2 runner runner 4096 Sep  4 19:06 .
+drwxrwxrwt 16 root   root   4096 Sep  4 19:06 ..
+[0m
+[0m→ [0mRead probe-results.md
+[0m→ [0mRead scope.yml
+Let me explore the key context files to understand the current state and prior findings.
+[0m
+[0m$ [0mls -la /home/runner/work/fonial-hunt/fonial-hunt/inventory /home/runner/work/fonial-hunt/fonial-hunt/knowledge /home/runner/work/fonial-hunt/fonial-hunt/leads /home/runner/work/fonial-hunt/fonial-hunt/scripts /home/runner/work/fonial-hunt/fonial-hunt/triage /home/runner/work/fonial-hunt/fonial-hunt/recon-notes
+/home/runner/work/fonial-hunt/fonial-hunt/inventory:
+total 20
+drwxr-xr-x  2 runner runner  4096 Sep  4 19:06 .
+drwxr-xr-x 12 runner runner  4096 Sep  4 19:06 ..
+-rw-r--r--  1 runner runner 10340 Sep  4 19:06 fonial.md
+
+/home/runner/work/fonial-hunt/fonial-hunt/knowledge:
+total 16
+drwxr-xr-x  2 runner runner 4096 Sep  4 19:06 .
+drwxr-xr-x 12 runner runner 4096 Sep  4 19:06 ..
+-rw-r--r--  1 runner runner 5552 Sep  4 19:06 index.md
+
+/home/runner/work/fonial-hunt/fonial-hunt/leads:
+total 140
+drwxr-xr-x  2 runner runner  4096 Sep  4 19:06 .
+drwxr-xr-x 12 runner runner  4096 Sep  4 19:06 ..
+-rw-r--r--  1 runner runner 53017 Sep  4 19:06 lead-bigpickle.md
+-rw-r--r--  1 runner runner   408 Sep  4 19:06 lead-laguna.md
+-rw-r--r--  1 runner runner   400 Sep  4 19:06 lead-ling3.md
+-rw-r--r--  1 runner runner   416 Sep  4 19:06 lead-longcat.md
+-rw-r--r--  1 runner runner    18 Sep  4 19:06 lead-mimo.md
+-rw-r--r--  1 runner runner 59928 Sep  4 19:06 lead-nemotron3.md
+-rw-r--r--  1 runner runner  1404 Sep  4 19:06 reposcan-fonial.md
+
+/home/runner/work/fonial-hunt/fonial-hunt/recon-notes:
+total 12
+drwxr-xr-x  2 runner runner 4096 Sep  4 19:06 .
+drwxr-xr-x 12 runner runner 4096 Sep  4 19:06 ..
+-rw-r--r--  1 runner runner  814 Sep  4 19:06 DEDICATED-DEEP.md
+
+/home/runner/work/fonial-hunt/fonial-hunt/scripts:
+total 28
+drwxr-xr-x  2 runner runner  4096 Sep  4 19:06 .
+drwxr-xr-x 12 runner runner  4096 Sep  4 19:06 ..
+-rw-r--r--  1 runner runner 16987 Sep  4 19:06 sync-issues.py
+
+/home/runner/work/fonial-hunt/fonial-hunt/triage:
+total 68
+drwxr-xr-x  2 runner runner  4096 Sep  4 19:06 .
+drwxr-xr-x 12 runner runner  4096 Sep  4 19:06 ..
+-rw-r--r--  1 runner runner     0 Sep  4 19:06 .gitkeep
+-rw-r--r--  1 runner runner   143 Sep  4 19:06 run-2026-09-02-21-52.md
+-rw-r--r--  1 runner runner   168 Sep  4 19:06 run-2026-09-02-23-50.md
+-rw-r--r--  1 runner runner   191 Sep  4 19:06 run-2026-09-03-02-54.md
+-rw-r--r--  1 runner runner   188 Sep  4 19:06 run-2026-09-03-07-46.md
+-rw-r--r--  1 runner runner   174 Sep  4 19:06 run-2026-09-03-12-35.md
+-rw-r--r--  1 runner runner   234 Sep  4 19:06 run-2026-09-03-16-40.md
+-rw-r--r--  1 runner runner   333 Sep  4 19:06 run-2026-09-03-19-27.md
+-rw-r--r--  1 runner runner   722 Sep  4 19:06 run-2026-09-03-21-53.md
+-rw-r--r--  1 runner runner   143 Sep  4 19:06 run-2026-09-03-23-46.md
+-rw-r--r--  1 runner runner   253 Sep  4 19:06 run-2026-09-04-02-53.md
+-rw-r--r--  1 runner runner 11910 Sep  4 19:06 run-2026-09-04-07-44.md
+-rw-r--r--  1 runner runner   205 Sep  4 19:06 run-2026-09-04-12-29.md
+-rw-r--r--  1 runner runner   158 Sep  4 19:06 run-2026-09-04-16-35.md
+[0m
+[0m→ [0mRead leads/lead-bigpickle.md
+Let me look at the key context: the existing lead files, the knowledge index, the inventory, and my last lead. Let me focus on the most relevant files.
+[0m→ [0mRead inventory/fonial.md
+[0m→ [0mRead leads/lead-bigpickle.md[90m [offset=436][0m
+[0m→ [0mRead knowledge/index.md
+I have a comprehensive understanding of the state. Let me look at the tail of the bigpickle lead and the nemotron3 lead for the latest hypotheses, and check the knowledge index.
+I now have a thorough understanding of the current state. The analyst session has been running through repeated iterations. Let me evaluate the current situation and consider what passive probes I can still run.
+
+Key observations from my state:
+- The API surface is confirmed at 5 endpoints
+- All data endpoints authorize by body SID only
+- The primary open question is SID↔PHPSESSID cross-binding (HUMAN_ONLY — needs 2 valid accounts)
+- Frontend routes /wizard/, /settings/menu/toggle were probed and returned 200 (from probe-results.md)
+
+Let me review my most recent probe results from the tail. The last probe (16:35) showed `/wizard/` and `/settings/menu/toggle` returning 200. These were probed and returned 200 — but that's a 200 on the web app HTML fallback, so it may just be SPA fallback (200 for any route), not actual unauth access.
+
+Let me think about what NEW passive probes are still available that I haven't exhausted. The instructions say: "Breadth over the full inventory for anomalies (odd status codes, id/uid/email/user_id params, versioned /api/v1|v2|beta|internal, debug/test flags, swagger/openapi/json), then depth on top-3 anomalies."
+
+Key unexplored angles for passive probing:
+1. **Other API versions**: `/api/v1`, `/api/1.0`, `/api/internal`, `/api/beta` — different versioned namespaces may have weaker auth.
+2. **HTTP method variance on data endpoints**: The known endpoints are POST-only. But have we tested HEAD/OPTIONS/GET on the confirmed data endpoints to distinguish the API backend from the SPA fallback? The 404's were HTML fallback.
+3. **www.fonial.de TYPO3**: eID handlers, other TYPO3-specific paths like `/typo3/`, `/index.php`, installation tool `/typo3/install/`.
+4. **www.fonial.de/hilfe/ and /shop/** — separate apps.
+5. **The `/api/2.0/` root returning HTML 404** means the web app swallows unknown API routes — confirming admins must know endpoint names; the real API is narrow.
+
+Let me consider what would actually be a productive passive probe. The cross-binding test is HUMAN_ONLY. But let me check whether there are other API version prefixes worth probing, and whether the data endpoints respond differently to GET vs POST (to distinguish real API vs SPA catch-all). If the API is truly POST-only and GET returns HTML-404 fallback, that's consistent with prior findings.
+
+Actually, let me reconsider the most valuable NEW probe. Given prior runs probed `/devices/add` (404), `/graphql` (404), `/api/2.0/` (404), `?eID=dump` (404), `/wizard/` (200), `/settings/menu/toggle` (200) — the latter two being SPA-fallback 200s.
+
+Given the exhaustive probing that's happened, and my own state indicates the top hypotheses are all HUMAN_ONLY, the highest-value NEW passive probe would be to:
+1. Probe alternate API versions (`/api/v1/`, `/api/3.0/`, `/api/internal/`) — if any returns a non-HTML/JSON or different backend, that's a brand-new attack surface.
+2. Probe the two live frontend routes `/wizard/` and `/settings/menu/toggle` with actual method variance (they got 200 as GET — but are they SPA fallback or real? A distinguishing check: POST to `/settings/menu/toggle` and see if it returns JSON vs HTML).
+
+Let me run a few genuinely new passive probes. I'll do them at low rate. Let me check network access first.
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "connect test: %{http_code}\n" --max-time 15 https://www.fonial.de/ 2>&1 | head -5
+connect test: 200
+[0m
+Network access works. Let me run a focused set of genuinely new passive probes to find anomalies. I'll batch independent one-off probes carefully.
+
+Key new angles to test:
+1. **Alternate API version namespaces** on kundenkonto — `/api/v1`, `/api/1.0`, `/api/internal`, `/api/beta` — legitimately new (prior runs only guessed `/api/2.0/{name}` paths).
+2. **Method variance on `/settings/menu/toggle`** — POST to see if it's a real backend action vs SPA fallback returning 200 for everything.
+
+Let me run these probes in a tight, rate-limited batch.
+[0m$ [0mfor p in "api/v1/2" "api/1.0/session" "api/internal/session" "api/beta/session"; do
+  echo "=== /$p (GET) ==="
+  curl -s -o /tmp/probe_body.txt -w "code=%{http_code} type=%{content_type} len=%{size_download}\n" --max-time 15 "https://kundenkonto.fonial.de/$p"
+  sleep 1
+done
+=== /api/v1/2 (GET) ===
+code=404 type=text/html; charset=UTF-8 len=8892
+=== /api/1.0/session (GET) ===
+code=404 type=text/html; charset=UTF-8 len=8892
+=== /api/internal/session (GET) ===
+code=404 type=text/html; charset=UTF-8 len=8892
+=== /api/beta/session (GET) ===
+code=404 type=text/html; charset=UTF-8 len=8892
+[0m
+[93m[1m! [0mpermission requested: external_directory (/tmp/*); auto-rejecting
+[0m✗ [0mecho "=== /settings/menu/toggle POST ==="
+curl -s -o /tmp/b1.txt -w "code=%{http_code} type=%{content_type} len=%{size_download}\n" --max-time 15 -X POST "https://kundenkonto.fonial.de/settings/menu/toggle"
+sleep 1
+echo "=== /settings/menu/toggle GET (headers) ==="
+curl -s -D - -o /dev/null --max-time 15 "https://kundenkonto.fonial.de/settings/menu/toggle" | head -20
+sleep 1
+echo "=== /api/2.0/session POST ==="
+curl -s -o /tmp/b2.txt -w "code=%{http_code} type=%{content_type} len=%{size_download}\n" --max-time 15 -X POST "https://kundenkonto.fonial.de/api/2.0/session"
+sleep 1
+echo "--- /api/2.0/session body ---"
+cat /tmp/b2.txt failed
+[91m[1mError: [0mThe user rejected permission to use this specific tool call.
+All HTML-404 (SPA fallback). Now let me test method variance on `/settings/menu/toggle` and `/wizard/` — the two routes that returned 200. If POST returns different behavior (JSON vs 200 HTML vs 405), it reveals whether these are real backend actions or pure SPA catch-all routes. Also I'll test whether POST to `/api/2.0/session` actually returns the JSON (confirming the API backend is distinct from the SPA that 404s other paths).
