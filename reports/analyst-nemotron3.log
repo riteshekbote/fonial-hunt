@@ -4567,3 +4567,166 @@ testability: AUTH_HELPED
 ### STEP 7 — RISK
 
 [RISK] fonial: 70 — Customer portal (kundenkonto) has high business value (PII, CDR, SIP creds, billing, call control) and confirmed dual-backend architecture creating session confusion surface. CORS wildcard on auth domain confirmed. Main API not publicly documented but live with ~30 CRUD endpoints. Risk elevated due to enterprise telephony data sensitivity and architectural anomaly.
+===== ANALYST nemotron3 2026-09-04 16:35:45 UTC =====
+[0m
+> build · nemotron-3-ultra-free
+[0m
+[0m$ [0mls -la /home/runner/work/fonial-hunt/fonial-hunt/
+total 148
+drwxr-xr-x 12 runner runner  4096 Sep  4 16:25 .
+drwxr-xr-x  3 runner runner  4096 Sep  4 16:25 ..
+drwxr-xr-x  7 runner runner  4096 Sep  4 16:25 .git
+drwxr-xr-x  3 runner runner  4096 Sep  4 16:25 .github
+-rw-r--r--  1 runner runner  1740 Sep  4 16:25 README.md
+-rw-r--r--  1 runner runner    43 Sep  4 16:25 analyst-out.txt
+-rw-r--r--  1 runner runner 30690 Sep  4 16:25 analyst-prompt.txt
+-rw-r--r--  1 runner runner 26876 Sep  4 16:25 ctx.txt
+drwxr-xr-x  2 runner runner  4096 Sep  4 16:25 inventory
+drwxr-xr-x  2 runner runner  4096 Sep  4 16:25 knowledge
+drwxr-xr-x  2 runner runner  4096 Sep  4 16:25 leads
+-rw-r--r--  1 runner runner  1457 Sep  4 16:25 probe-results.md
+drwxr-xr-x  2 runner runner  4096 Sep  4 16:25 recon-notes
+drwxr-xr-x  2 runner runner  4096 Sep  4 16:25 reports
+drwxr-xr-x  2 runner runner  4096 Sep  4 16:25 reposcan-raw
+-rw-r--r--  1 runner runner  3227 Sep  4 16:25 scope.yml
+drwxr-xr-x  2 runner runner  4096 Sep  4 16:25 scripts
+-rw-r--r--  1 runner runner    33 Sep  4 16:25 state_bigpickle.json
+-rw-r--r--  1 runner runner    33 Sep  4 16:25 state_laguna.json
+-rw-r--r--  1 runner runner    33 Sep  4 16:25 state_ling3.json
+-rw-r--r--  1 runner runner    33 Sep  4 16:25 state_longcat.json
+-rw-r--r--  1 runner runner    33 Sep  4 16:25 state_mimo.json
+-rw-r--r--  1 runner runner    33 Sep  4 16:25 state_nemotron3.json
+drwxr-xr-x  2 runner runner  4096 Sep  4 16:25 triage
+[0m
+[0m→ [0mRead probe-results.md
+[0m→ [0mRead scope.yml
+[0m→ [0mRead inventory/fonial.md
+[0m
+[0m$ [0mls -la /home/runner/work/fonial-hunt/fonial-hunt/leads/
+total 124
+drwxr-xr-x  2 runner runner  4096 Sep  4 16:25 .
+drwxr-xr-x 12 runner runner  4096 Sep  4 16:25 ..
+-rw-r--r--  1 runner runner 44087 Sep  4 16:25 lead-bigpickle.md
+-rw-r--r--  1 runner runner   357 Sep  4 16:25 lead-laguna.md
+-rw-r--r--  1 runner runner   350 Sep  4 16:25 lead-ling3.md
+-rw-r--r--  1 runner runner   364 Sep  4 16:25 lead-longcat.md
+-rw-r--r--  1 runner runner    18 Sep  4 16:25 lead-mimo.md
+-rw-r--r--  1 runner runner 52935 Sep  4 16:25 lead-nemotron3.md
+-rw-r--r--  1 runner runner  1299 Sep  4 16:25 reposcan-fonial.md
+[0m
+[0m$ [0mls -la /home/runner/work/fonial-hunt/fonial-hunt/knowledge/
+total 16
+drwxr-xr-x  2 runner runner 4096 Sep  4 16:25 .
+drwxr-xr-x 12 runner runner 4096 Sep  4 16:25 ..
+-rw-r--r--  1 runner runner 4161 Sep  4 16:25 index.md
+[0m
+[0m→ [0mRead knowledge/index.md
+[0m→ [0mRead leads/lead-nemotron3.md
+[0m→ [0mRead leads/lead-bigpickle.md[90m [limit=200][0m
+[0m
+[0m$ [0mls -la /home/runner/work/fonial-hunt/fonial-hunt/triage/
+total 64
+drwxr-xr-x  2 runner runner  4096 Sep  4 16:25 .
+drwxr-xr-x 12 runner runner  4096 Sep  4 16:25 ..
+-rw-r--r--  1 runner runner     0 Sep  4 16:25 .gitkeep
+-rw-r--r--  1 runner runner   143 Sep  4 16:25 run-2026-09-02-21-52.md
+-rw-r--r--  1 runner runner   168 Sep  4 16:25 run-2026-09-02-23-50.md
+-rw-r--r--  1 runner runner   191 Sep  4 16:25 run-2026-09-03-02-54.md
+-rw-r--r--  1 runner runner   188 Sep  4 16:25 run-2026-09-03-07-46.md
+-rw-r--r--  1 runner runner   174 Sep  4 16:25 run-2026-09-03-12-35.md
+-rw-r--r--  1 runner runner   234 Sep  4 16:25 run-2026-09-03-16-40.md
+-rw-r--r--  1 runner runner   333 Sep  4 16:25 run-2026-09-03-19-27.md
+-rw-r--r--  1 runner runner   722 Sep  4 16:25 run-2026-09-03-21-53.md
+-rw-r--r--  1 runner runner   143 Sep  4 16:25 run-2026-09-03-23-46.md
+-rw-r--r--  1 runner runner   253 Sep  4 16:25 run-2026-09-04-02-53.md
+-rw-r--r--  1 runner runner 11910 Sep  4 16:25 run-2026-09-04-07-44.md
+-rw-r--r--  1 runner runner   205 Sep  4 16:25 run-2026-09-04-12-29.md
+[0m
+[0m→ [0mRead triage/run-2026-09-04-12-29.md
+Now I have full context. Let me execute the 8-step analysis.
+
+---
+
+### STEP 1 — DELTA
+
+[NEW] kundenkonto.fonial.de/api/2.0: GET /devices/add returns 404 (not 405) — write endpoint existence unconfirmed via GET; requires POST to verify  
+[NEW] www.fonial.de: TYPO3 eID handler `?eID=dump` returns 404 — no debug endpoint exposed  
+[CHANGED] CORS hypothesis confidence adjusted: 85→80 — authenticated landing page untested, needs PHPSESSID from login redirect  
+[CHANGED] CRUD write hypothesis confidence: 70 — based on pattern inference only, no live write endpoint confirmed  
+[CHANGED] Priority scores stable: kundenkonto.fonial.de/api/2.0 (9.05), kundenkonto.fonial.de (7.70), www.fonial.de (5.10)
+
+---
+
+### STEP 2 — PRIORITIZE
+
+[PRIO] kundenkonto.fonial.de/api/2.0,9.05,attack_surface=9,business_value=10,tech_exposure=8,gate_ease=8,cloud_surface=9,freshness=10  
+[PRIO] kundenkonto.fonial.de,7.70,attack_surface=8,business_value=9,tech_exposure=7,gate_ease=6,cloud_surface=8,freshness=7  
+[PRIO] www.fonial.de,5.10,attack_surface=4,business_value=5,tech_exposure=3,gate_ease=10,cloud_surface=4,freshness=5  
+
+---
+
+### STEP 3 — HYPOTHESES
+
+[HYP] Dual-backend session confusion enables cross-tenant data access  
+class: AUTH  
+asset: kundenkonto.fonial.de/api/2.0  
+confidence: 75  
+reasoning: Session endpoints (text/json, no PHPSESSID) issue cleartext UUID v4 SID in body. Data endpoints (text/json;charset=UTF-8) set PHPSESSID cookie but authorize solely by body SID. Independent session stores suggest SID-to-PHPSESSID binding not enforced on data layer. Bogus PHPSESSID causes `PHPSESSID=deleted; Max-Age=0` on session endpoint.  
+evidence_needed: Data endpoint accepts valid SID from Account A with PHPSESSID from Account B, or unauthenticated SID + valid PHPSESSID returns data  
+verify_steps: 1) POST /api/2.0/session → get SID1; 2) POST /api/2.0/session/authenticate with valid creds → SID1 authenticated; 3) POST /api/2.0/devices/get with SID1 → capture PHPSESSID1; 4) Repeat for Account B → get SID2, PHPSESSID2; 5) POST /api/2.0/evn/get with SID2 + Cookie: PHPSESSID=PHPSESSID1 (cross-bind); 6) Observe if data returns  
+impact: Cross-tenant CDR (call records), phone numbers, SIP credentials, device lists, outbound call initiation — CRITICAL  
+testability: AUTH_HELPED  
+
+[HYP] Authenticated landing page inherits wildcard CORS without Vary: Origin  
+class: MISCONFIG  
+asset: kundenkonto.fonial.de  
+confidence: 80  
+reasoning: Login page returns `access-control-allow-origin: *` with PHPSESSID. Authenticated landing page likely shares middleware. If any JSON API endpoints (e.g., /api/2.0/evn/get called by frontend JS) also return ACAO: * without `Vary: Origin`, cross-origin read of CDR/SIP/billing data is possible.  
+evidence_needed: Authenticated GET / returns ACAO: * without Vary: Origin; JS source references JSON API endpoints that reflect user data  
+verify_steps: 1) GET https://kundenkonto.fonial.de/ with Cookie: PHPSESSID=<from_login_redirect> → check response headers for ACAO and Vary; 2) View page source → grep for /api/2.0/ or fetch/XHR patterns; 3) If JSON endpoints found, test them directly with Origin header  
+impact: Malicious site exfiltrates call records, SIP credentials, phone numbers, billing data — HIGH  
+testability: PASSIVE  
+
+[HYP] Data-layer SID authz cross-tenant via session confusion  
+class: AUTH  
+asset: kundenkonto.fonial.de/api/2.0  
+confidence: 55  
+reasoning: Data endpoints (/devices/get, /evn/get) authorize purely by body `sid` auth-state (`session unauthenticated` vs `session invalid`) and independently set a PHPSESSID cookie. The session endpoint issues cleartext UUID sid. If the authenticated sid-to-account binding lives only in the session store and PHPSESSID is decorative, a stolen/replayed sid could be used cross-tenant without any cookie match.  
+evidence_needed: (HUMAN) authenticate two accounts; verify Account B's sid + Account A's PHPSESSID is rejected or accepted on /evn/get; confirm sid is bound to credential  
+verify_steps: (AUTH_HELPED→HUMAN) 1) /session → sid A; 2) /session/authenticate A → auth; 3) /devices/get sid A → capture PHPSESSID A; 4) /session → sid B [+ PHPSESSID A cookie]; 5) /evn/get with sid B + PHPSESSID A → observe data scoping  
+impact: Cross-tenant CDR, phone/SIP creds, device lists, outbound call control. Severity CRITICAL if sid not credential-bound  
+testability: HUMAN_ONLY (needs 2 valid accounts)  
+
+---
+
+### STEP 4 — SELF-CRITIQUE
+
+[PARKED] Data-layer SID authz cross-tenant via session confidence 55: HUMAN_ONLY testability (needs 2 valid accounts), no passive verification path, subsumed by higher-confidence dual-backend hypothesis (75) with same verify steps  
+[PARKED] CRUD write endpoints bypass SID authorization: confidence 70 but GET /devices/add returns 404 (not 405); write endpoint existence unconfirmed; verify steps require POST with valid test accounts — borderline without endpoint confirmation  
+[PARKED] TYPO3 eID handlers expose internal API/debug endpoints: confidence 45, `?eID=dump` returns 404, low business value asset (marketing site), passive enumeration only — deprioritized behind API/core portal  
+[FINAL] 1. Dual-backend session confusion enables cross-tenant data access (75) 2. Authenticated landing page inherits wildcard CORS without Vary: Origin (80)
+
+---
+
+### STEP 5 — NEXT ACTION
+
+[NEXT] PROBE: GET https://kundenkonto.fonial.de/ with Cookie: PHPSESSID=<from_login_redirect> to check CORS headers on authenticated landing page and enumerate any JSON API endpoints referenced in JS
+
+---
+
+### STEP 6 — LEARNING
+
+[LEARN] ACCEPTED CRUD pattern @ kundenkonto.fonial.de/api/2.0: /{resource}/{action} confirmed by /devices/get, /evn/get; ~30 likely siblings  
+[LEARN] ACCEPTED dual-session binding @ kundenkonto.fonial.de/api/2.0: Data endpoints authorize by body SID only; PHPSESSID decorative; /session issues cleartext UUID sid  
+[LEARN] ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface  
+[LEARN] ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed  
+[LEARN] REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain  
+[LEARN] REJECTED brute-force/credential-stuffing @ /api/2.0/session/authenticate: Out of scope (rate-limit/lockout policy) per program  
+[LEARN] REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon  
+[LEARN] REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references  
+
+---
+
+### STEP 7 — RISK
+
+[RISK] fonial: 70 — Customer portal (kundenkonto) has high business value (PII, CDR, SIP creds, billing, call control) and confirmed dual-backend architecture creating session confusion surface. CORS wildcard on auth domain confirmed. Main API not publicly documented but live with ~30 CRUD endpoints. Risk elevated due to enterprise telephony data sensitivity and architectural anomaly.

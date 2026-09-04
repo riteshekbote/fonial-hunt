@@ -100,3 +100,18 @@ www.fonial.de
 - NEW www.fonial.de: TYPO3 eID handler `?eID=dump` returns 404 — no debug endpoint exposed
 - CHANGED CORS hypothesis confidence adjusted: 85→80 (nemotron3) — authenticated landing page untested, needs PHPSESSID from login redirect
 - CHANGED CRUD write hypothesis confidence: 70 — based on pattern inference only, no live write endpoint confirmed
+
+## 2026-09-04 16:35:45 UTC
+- NEW API surface is 5 endpoints, NOT ~30: session, session/authenticate, devices/get, evn/get, call/initiate — all other guessed names return HTML 404 (web app fallback)
+- NEW /call/initiate confirmed LIVE WRITE endpoint: POST returns JSON {"sid":null,"reason":"session invalid"} without auth
+- NEW Frontend HTML exposes routes: /wizard/, /settings/menu/toggle, /help/suggest/__search__, /settings/ticket/
+- CHANGED CRUD expansion hypothesis (70→30): ~50 guessed {resource}/{action} names all HTML-404; API uses non-standard naming or narrow surface
+- NEW API surface is 5 endpoints, NOT ~30: session, session/authenticate, devices/get, evn/get, call/initiate — all other guessed names return HTML 404
+- NEW /call/initiate confirmed LIVE WRITE endpoint: POST returns JSON session-invalid without auth
+- NEW Frontend HTML exposes routes: /wizard/, /settings/menu/toggle, /help/suggest/, /settings/ticket/
+- CHANGED CRUD expansion hypothesis (70→30): ~50 guessed {resource}/{action} names all HTML-404; API uses non-standard naming or narrow surface
+- NEW kundenkonto.fonial.de/api/2.0: GET /devices/add returns 404 (not 405) — write endpoint existence unconfirmed via GET; requires POST to verify
+- NEW www.fonial.de: TYPO3 eID handler `?eID=dump` returns 404 — no debug endpoint exposed
+- CHANGED CORS hypothesis confidence adjusted: 85→80 — authenticated landing page untested, needs PHPSESSID from login redirect
+- CHANGED CRUD write hypothesis confidence: 70 — based on pattern inference only, no live write endpoint confirmed
+- CHANGED Priority scores stable: kundenkonto.fonial.de/api/2.0 (9.05), kundenkonto.fonial.de (7.70), www.fonial.de (5.10)
