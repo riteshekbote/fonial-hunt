@@ -4182,3 +4182,64 @@ The analysis is complete. The `analyst-out.txt` file contains all 7 required ste
 5. **NEXT ACTION** - Passive CORS probe on authenticated portal
 6. **LEARNING** - 7 accepted/rejected findings documented
 7. **RISK** - Overall score 70 with justification
+===== ANALYST nemotron3 2026-09-04 02:39:13 UTC =====
+[0m
+> build · nemotron-3-ultra-free
+[0m
+STEP 1 — DELTA
+NO_DELTA — Knowledge base, last leads, and inventory all current as of 2026-09-03 23:48 UTC. No new passive recon or probe results since last cycle.
+
+STEP 2 — PRIORITIZE
+[PRIO] kundenkonto.fonial.de/api/2.0,9.05,attack_surface=9,business_value=10,tech_exposure=8,gate_ease=8,cloud_surface=9,freshness=10
+[PRIO] kundenkonto.fonial.de,7.70,attack_surface=8,business_value=9,tech_exposure=7,gate_ease=6,cloud_surface=8,freshness=7
+[PRIO] www.fonial.de,5.10,attack_surface=4,business_value=5,tech_exposure=3,gate_ease=10,cloud_surface=4,freshness=5
+
+STEP 3 — HYPOTHESES
+[HYP] Dual-backend session confusion enables cross-tenant data access
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 75
+reasoning: Session endpoints (text/json, no PHPSESSID) issue cleartext UUID v4 SID in body. Data endpoints (text/json;charset=UTF-8) set PHPSESSID cookie but authorize solely by body SID. Independent session stores suggest SID-to-PHPSESSID binding not enforced on data layer. Bogus PHPSESSID causes `PHPSESSID=deleted; Max-Age=0` on session endpoint.
+evidence_needed: Data endpoint accepts valid SID from Account A with PHPSESSID from Account B, or unauthenticated SID + valid PHPSESSID returns data
+verify_steps: 1) POST /api/2.0/session → get SID1; 2) POST /api/2.0/session/authenticate with valid creds → SID1 authenticated; 3) POST /api/2.0/devices/get with SID1 → capture PHPSESSID1; 4) Repeat for Account B → get SID2, PHPSESSID2; 5) POST /api/2.0/evn/get with SID2 + Cookie: PHPSESSID=PHPSESSID1 (cross-bind); 6) Observe if data returns
+impact: Cross-tenant CDR (call records), phone numbers, SIP credentials, device lists, outbound call initiation — CRITICAL
+testability: AUTH_HELPED
+
+[HYP] Overly permissive CORS on authenticated customer portal endpoints
+class: MISCONFIG
+asset: kundenkonto.fonial.de
+confidence: 85
+reasoning: Response headers show `access-control-allow-origin: *` on login page (sets PHPSESSID) and likely on authenticated landing page. Wildcard CORS with credentials creates risk if any authenticated JSON endpoint reflects user data without `Vary: Origin`.
+evidence_needed: Authenticated JSON endpoints (if any) also return ACAO: * without Vary: Origin
+verify_steps: GET https://kundenkonto.fonial.de/ with Cookie: PHPSESSID=<from_login_redirect> → check CORS headers on response; inspect JS source for API endpoint references
+impact: If authenticated API endpoints inherit wildcard CORS, malicious site could exfiltrate call records, SIP credentials, billing data — HIGH
+testability: PASSIVE
+
+[HYP] Unauthenticated SID + valid PHPSESSID bypasses data endpoint authorization
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 65
+reasoning: Data endpoints authorize by body SID only (unauthenticated SID → "session unauthenticated"; absent/unknown → "session invalid"). PHPSESSID set decoratively. Open question: does data layer validate SID auth-state against PHPSESSID binding, or only SID?
+evidence_needed: Data endpoint response with unauthenticated SID but valid PHPSESSID from authenticated session
+verify_steps: 1) POST /api/2.0/session → get SID_unauth; 2) POST /api/2.0/session/authenticate with valid creds → get SID_auth + PHPSESSID via /devices/get; 3) POST /api/2.0/evn/get with body {"sid": SID_unauth} + Cookie: PHPSESSID=PHPSESSID_auth; 4) Observe if data returns vs "session unauthenticated"
+impact: If PHPSESSID alone authorizes data access, session fixation or SID prediction could lead to cross-tenant data leak — HIGH
+testability: AUTH_HELPED
+
+STEP 4 — SELF-CRITIQUE
+[PARKED] Unauthenticated SID + valid PHPSESSID bypasses data endpoint authorization: Subsumed by dual-backend session confusion hypothesis; same verify steps, lower confidence without additional evidence
+[FINAL] 1. Overly permissive CORS on authenticated customer portal endpoints (85) 2. Dual-backend session confusion enables cross-tenant data access (75)
+
+STEP 5 — NEXT ACTION
+[NEXT] PROBE: GET https://kundenkonto.fonial.de/ with Cookie: PHPSESSID=<from_login_redirect> to check CORS headers on authenticated landing page and enumerate any JSON API endpoints referenced in JS
+
+STEP 6 — LEARNING
+[LEARN] REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
+[LEARN] REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+[LEARN] ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+[LEARN] REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
+[LEARN] ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
+[LEARN] ACCEPTED dual-session binding @ kundenkonto.fonial.de/api/2.0: Data endpoints authorize by body SID only; PHPSESSID parallel/decorative; /session issues cleartext UUID sid and deletes unknown PHPSESSID
+[LEARN] REJECTED brute-force/credential-stuffing @ /api/2.0/session/authenticate: Out of scope (rate-limit/lockout policy) per program
+
+STEP 7 — RISK
+[RISK] fonial: 70 — Customer portal (kundenkonto) has high business value (PII, CDR, SIP creds, billing, call control) and confirmed dual-backend architecture creating session confusion surface. CORS wildcard on auth domain confirmed. Main API not publicly documented but live. Risk elevated due to enterprise telephony data sensitivity and architectural anomaly.

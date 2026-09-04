@@ -85,3 +85,10 @@ www.fonial.de
 - NEW /api/2.0/session returns cleartext UUID v4 SID in body; presenting bogus PHPSESSID causes `PHPSESSID=deleted; Max-Age=0` response
 - CHANGED CORS wildcard `access-control-allow-origin: *` confirmed on kundenkonto.fonial.de (auth domain) but direct exploit rejected (SID in body, no allow-credentials)
 - CHANGED Brute-force/credential-stuffing on /api/2.0/session/authenticate rejected as out-of-scope per program rules
+
+## 2026-09-04 02:39:13 UTC
+- NEW /api/2.0 endpoint namespace inference: 4 confirmed endpoints → ~30 likely siblings based on /{resource}/{action} pattern
+- NEW CRUD verb set {get, add, update, delete} likely applies — write paths may have different authz behavior
+- NEW File/audio sub-endpoints may hit separate backend — SSRF/path-traversal candidates
+- NEW Session-backend candidates: /session/validate, /session/refresh, /password/*, /2fa/* may exist
+- NEW TYPO3 eID handlers (?eID=xxx) on www.fonial.de untested

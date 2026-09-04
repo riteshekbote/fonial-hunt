@@ -35,3 +35,7 @@ https://kundenkonto.fonial.de/api/2.0/ -> HTTP 404
 
 ## 2026-09-03 23:48:46 UTC
 https://kundenkonto.fonial.de/ -> 200 len=?
+
+## 2026-09-04 02:39:17 UTC
+https://kundenkonto.fonial.de/ -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/devices/add -> HTTP 404
