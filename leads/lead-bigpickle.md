@@ -484,3 +484,27 @@ testability: PASSIVE
 [LEARN] REJECTED frontend-unauth @ kundenkonto.fonial.de: /wizard/, /settings/menu/toggle, /settings/ticket/ all 302 → /login; frontend auth-gated; no unauth config/setup surface.
 [LEARN] ACCEPTED narrow-API @ kundenkonto.fonial.de/api/2.0: exactly 5 endpoints; this closes passive discovery on the API (split-frontend + SPA routes enumerated).
 [RISK] fonial: 50 — Surface fully mapped and narrow (5 endpoints + auth-gated SPA). CORS misconfig is real but non-exploitable as configured (no creds, SID-in-body). Dual-backend SID/PHPSESSID confusion remains the single high-value vector but is unproven and gated behind 2 valid accounts (2FA + Cloudflare). call/initiate adds toll-fraud upside if cross-riding works. Passive phase complete; risk caps at 50 until human cross-bind test.
+## 2026-09-04 23:17:16 UTC [target] (model bigpickle)
+[PRIO] kundenkonto.fonial.de/api/2.0, 8.5, a=7 b=10 t=7 g=7 c=8 f=10
+[PRIO] kundenkonto.fonial.de (frontend/SPA bundle), 6.0, a=6 b=7 t=5 g=7 c=5 f=8
+[PRIO] www.fonial.de, 4.0, a=4 b=5 t=3 g=10 c=4 f=5
+[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: Data endpoints authorize by body SID only (unauth → "session unauthenticated", unknown → "session invalid"); PHPSESSID set decoratively in parallel; /session deletes unknown PHPSESSIDs and returns cleartext UUID sid in body. If SID↔credential binding is weak, one SID can ride another tenant's PHPSESSID state on 3 endpoints incl. WRITE call/initiate.
+evidence_needed: (HUMAN) authenticate 2 accounts; cross-bind SID-A + PHPSESSID-B on each endpoint; any response ≠ session-invalid = cross-tenant CRITICAL
+verify_steps: 1) /session → SID-A → /session/authenticate(A) → PHPSESSID-A; 2) repeat → B pair; 3) POST /devices/get {"sid":"SID-B"} + Cookie PHPSESSID=A; 4) same on /evn/get, /call/initiate
+impact: Cross-tenant CDR + device visibility + outbound call control (toll fraud). CRITICAL.
+testability: HUMAN_ONLY
+[HYP] SPA JS bundle exposes undocumented endpoints and exact write-param schema
+class: OTHER
+asset: kundenkonto.fonial.de SPA bundle (script src from /login HTML)
+confidence: 55
+reasoning: ~50 blind {resource}/{action} names all hit HTML-404 wall → API uses non-standard naming, fuzz is dead. The SPA driving the 5 known endpoints must embed endpoint paths + param names in JS; that's the only remaining low-cost way to prove surface=5 and recover call/initiate body fields so the cross-bind test is field-accurate.
+evidence_needed: bundle grep reveals ≥1 new /api/2.0/ string OR exact write-param set; clean 5/5-only result closes discovery with high confidence
+verify_steps: 1) GET https://kundenkonto.fonial.de/ (302→/login), parse HTML for <script src>; 2) GET each bundle (static, ≤1rps); 3) rg -o 'api/2\.0/[a-z/_-]+' plus window-context for sid|number|caller|callee|dest|queue
+impact: reopens surface if new endpoint, else yields precise call/initiate schema → sharper HUMAN verify matrix. LOW-MED.
+testability: PASSIVE
+[NEXT] PROBE: GET https://kundenkonto.fonial.de/ → follow to /login HTML → extract <script src> list → GET each JS bundle → grep 'api/2.0/' and {sid,number,caller,callee,dest,queue}; any new endpoint reopens surface, else finalize call/initiate body schema for the HUMAN cross-bind matrix.
+[RISK] fonial: 50 — Passive phase complete; surface narrow (5 endpoints), every high-value vector gated behind 2FA credentials (Cloudflare + 2FA). CORS wildcard real but non-exploitable as configured (no allow-credentials, SID-in-body). Top vector dual-backend cross-bind (75) unproven and HUMAN-gated; JS bundle grep is last passive upside — could reopen surface or sharpen call/initiate write-authz test. Risk caps at 50 until the 2-account cross-bind matrix.
