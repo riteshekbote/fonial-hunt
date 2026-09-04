@@ -455,3 +455,32 @@ testability: HUMAN_ONLY
 [LEARN] ACCEPTED dual-session binding @ kundenkonto.fonial.de/api/2.0: Data endpoints authorize by body SID only; PHPSESSID decorative.
 [RISK] fonial: 55 — Narrow API surface (5 endpoints) limits total attack area, but call/initiate is high-severity WRITE (outbound telephony). Dual-backend session confusion persists as primary vector. 2FA + Cloudflare reduce automated exploitation. No demonstrated cross-tenant leak; gated behind valid credentials.
 ## 2026-09-04 19:06:53 UTC [target] (model bigpickle)
+## 2026-09-04 21:33:03 UTC [target] (model bigpickle)
+[PRIO] kundenkonto.fonial.de/api/2.0, 8.5, a=7 b=10 t=7 g=7 c=8 f=10
+[PRIO] kundenkonto.fonial.de (auth portal), 6.0, a=6 b=7 t=5 g=7 c=5 f=8
+[PRIO] www.fonial.de, 4.0, a=4 b=5 t=3 g=10 c=4 f=5
+[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: Data endpoints authorize by body SID only (unauth SID → "session unauthenticated", unknown → "session invalid"); PHPSESSID set decoratively in parallel and /session deletes unknown PHPSESSIDs; SID is a cleartext UUID returned client-side. If SID↔credential binding is weak, one SID can ride another tenant's PHPSESSID state on 3 endpoints incl. WRITE call/initiate.
+evidence_needed: (HUMAN) authenticate 2 accounts; cross-bind SID-A + PHPSESSID-B on devices/get, evn/get, call/initiate; any data return = cross-tenant CRITICAL.
+verify_steps: (HUMAN) 1) /session → SID-A → /session/authenticate(A) → note PHPSESSID-A; 2) repeat → SID-B + PHPSESSID-B; 3) POST /devices/get {"sid":"SID-B"} with Cookie PHPSESSID=A; 4) same cross-bind on /evn/get, /call/initiate.
+impact: Cross-tenant CDR + device + outbound call control (toll fraud). CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Frontend wizard/settings routes expose unauthenticated actions
+class: MISCONFIG
+asset: kundenkonto.fonial.de/wizard/, /settings/*
+confidence: 25
+reasoning: Routes exist in HTML SPA bundle; all return 302 → /login without PHPSESSID; login-required 302 implies app-level gate, consistent with SPA expecting authenticated session. No unauth behavior observed.
+evidence_needed: none — tested; all auth-gated.
+verify_steps: none (probed).
+impact: none observed. LOW.
+testability: PASSIVE
+[PARKED] Frontend wizard/settings routes: probed — all 302 → /login; no unauthenticated surface; confidence 25 < 40. Kill.
+[FINAL] 1. Dual-backend SID cross-binding cross-tenant on 3 data endpoints (75, HUMAN_ONLY) 2. call/initiate WRITE SID authz / cross-tenant call control (55, HUMAN_ONLY, folded into FINAL-1 verify matrix)
+[NEXT] HUMAN: obtain 2 valid test accounts; execute 2-account cross-bind matrix: for each of /devices/get, /evn/get, /call/initiate POST SID-B body + Cookie PHPSESSID=A; any response ≠ {"sid":null,"status":"error","reason":"session invalid"} = cross-tenant CRITICAL. Passive surface exhausted — all remaining value is gated behind credentials.
+[LEARN] ACCEPTED MISCONFIG @ kundenkonto.fonial.de: CORS wildcard (ACAO *, ACAM GET/POST/OPTIONS) consistent on all 5 API endpoints + both landing/login pages; no allow-credentials anywhere → no cookie cross-origin exfil channel; SID-in-body required.
+[LEARN] REJECTED frontend-unauth @ kundenkonto.fonial.de: /wizard/, /settings/menu/toggle, /settings/ticket/ all 302 → /login; frontend auth-gated; no unauth config/setup surface.
+[LEARN] ACCEPTED narrow-API @ kundenkonto.fonial.de/api/2.0: exactly 5 endpoints; this closes passive discovery on the API (split-frontend + SPA routes enumerated).
+[RISK] fonial: 50 — Surface fully mapped and narrow (5 endpoints + auth-gated SPA). CORS misconfig is real but non-exploitable as configured (no creds, SID-in-body). Dual-backend SID/PHPSESSID confusion remains the single high-value vector but is unproven and gated behind 2 valid accounts (2FA + Cloudflare). call/initiate adds toll-fraud upside if cross-riding works. Passive phase complete; risk caps at 50 until human cross-bind test.

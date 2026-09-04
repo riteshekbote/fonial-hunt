@@ -122,3 +122,12 @@ www.fonial.de
 - NEW `/call/initiate` confirmed as LIVE WRITE endpoint: returns JSON `{"sid":null,"status":"error","reason":"session invalid"}` without auth; same error pattern as read endpoints
 - CHANGED CRUD expansion hypothesis CONFIRMED WRONG: ~50 guessed `{resource}/{action}` names all return HTML 404 (web app fallback), not JSON 404/405 — API surface is exactly 5 endpoints
 - CHANGED CORS hypothesis: authenticated landing page untested (requires valid PHPSESSID from 2FA login flow); unauthenticated landing page redirects to login with CORS wildcard
+
+## 2026-09-04 21:36:27 UTC
+- NEW API surface confirmed at exactly 5 endpoints: `/api/2.0/session`, `/api/2.0/session/authenticate`, `/api/2.0/devices/get`, `/api/2.0/evn/get`, `/api/2.0/call/initiate` — ~50 guessed `{resource}/{actio
+- NEW `/call/initiate` confirmed as LIVE WRITE endpoint: POST returns JSON `{"sid":null,"status":"error","reason":"session invalid"}` without auth; identical error pattern to read endpoints
+- NEW Landing page `/` returns 302 to `/login` with `Set-Cookie: PHPSESSID` + `ACAO: *` even when unauthenticated (no valid session)
+- NEW All 4 tested API endpoints return `ACAO: *` + `ACAM: GET, POST, OPTIONS` without `allow-credentials` — confirmed on session, call/initiate, devices/get, evn/get
+- NEW Frontend HTML exposes routes: `/wizard/`, `/settings/menu/toggle`, `/help/suggest/__search__`, `/settings/ticket/`
+- CHANGED CRUD expansion hypothesis CONFIRMED WRONG: API uses non-standard naming, narrow surface
+- CHANGED CORS hypothesis: authenticated landing page still untested (requires valid PHPSESSID from 2FA login flow); unauthenticated landing page redirects to login with CORS wildcard
