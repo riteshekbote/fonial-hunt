@@ -94,3 +94,9 @@ www.fonial.de
 - NEW TYPO3 eID handlers (?eID=xxx) on www.fonial.de untested
 
 ## 2026-09-04 07:33:52 UTC
+
+## 2026-09-04 12:20:45 UTC
+- NEW kundenkonto.fonial.de/api/2.0: GET /devices/add returns 404 (not 405) — write endpoint does not respond to GET; existence unconfirmed
+- NEW www.fonial.de: TYPO3 eID handler `?eID=dump` returns 404 — no debug endpoint exposed
+- CHANGED CORS hypothesis confidence adjusted: 85→80 (nemotron3) — authenticated landing page untested, needs PHPSESSID from login redirect
+- CHANGED CRUD write hypothesis confidence: 70 — based on pattern inference only, no live write endpoint confirmed
