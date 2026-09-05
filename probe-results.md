@@ -62,3 +62,9 @@ https://kundenkonto.fonial.de/ -> 200 len=?
 
 ## 2026-09-04 23:17:58 UTC
 https://kundenkonto.fonial.de/ -> 200 len=?
+
+## 2026-09-05 01:10:49 UTC
+https://kundenkonto.fonial.de/ -> 200 len=?
+https://dslkonto.fonial.de/app_dev.php/ -> 200 len=?
+https://dslkonto.fonial.de/app_dev.php/forgot/request -> 200 len=?
+https://dslkonto.fonial.de/app_dev.php/register -> HTTP 500

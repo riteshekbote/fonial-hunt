@@ -4534,3 +4534,249 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 [RISK] fonial: 50 — Passive phase complete; surface narrow (5 endpoints), every high-value vector gated behind 2FA credentials (Cloudflare + 2FA). CORS wildcard real but non-exploitable as configured (no allow-credentials, SID-in-body). Top vector dual-backend cross-bind (75) unproven and HUMAN-gated; JS bundle grep is last passive upside — could reopen surface or sharpen call/initiate write-authz test. Risk caps at 50 until the 2-account cross-bind matrix.
+===== ANALYST bigpickle 2026-09-05 01:10:40 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mcurl -sS -L --max-time 20 -D /tmp/opencode/fonial_login_headers.txt 'https://kundenkonto.fonial.de/login' -o /tmp/opencode/fonial_login.html; echo "---HEADERS---"; head -40 /tmp/opencode/fonial_login_headers.txt; echo "---SCRIPTS---"; grep -oE '<script[^>]+src="[^"]+"' /tmp/opencode/fonial_login.html | head -30
+---HEADERS---
+HTTP/2 200 
+date: Sat, 05 Sep 2026 01:02:46 GMT
+content-type: text/html; charset=UTF-8
+server: cloudflare
+cache-control: max-age=0, must-revalidate, private
+expires: Sat, 05 Sep 2026 01:02:46 GMT
+set-cookie: PHPSESSID=v290mcb6as4giflnsh3c048rj5; path=/; secure; httponly; samesite=lax
+x-fonial-version: v2026.09.01-1
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cf-cache-status: DYNAMIC
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=RtK6JdykNQLwATJAgdUJPt7yOk2peiTcdEMDJqU9gTOELdbmpxTJbFcW7Tly%2FlS3npK4P8LQYbKquvyrJKY1sUeCb%2Fo3bl%2B%2FGLKrCuklYeXYOK3V0MtIZl6DCHB%2F3BMT6GbO9F0cYg%3D%3D"}]}
+cf-ray: a3614f6f4b7a0dac-SJC
+
+---SCRIPTS---
+<script src="/bundles/fonial/frontend/js/lib/jquery-2.1.3.min.js"
+<script src="/bundles/fonial/frontend/js/lib/bootstrap.min.js"
+[0m
+[0m$ [0mgrep -oE '(src|href)="[^"]*"' /tmp/opencode/fonial_login.html | sort -u | head -60
+href="/bundles/fonial/frontend/css/bootstrap-timepicker.css"
+href="/bundles/fonial/frontend/css/bootstrap.min.css"
+href="/bundles/fonial/frontend/css/chosen.css"
+href="/bundles/fonial/frontend/css/datepicker.css"
+href="/bundles/fonial/frontend/css/fonts.css"
+href="/bundles/fonial/frontend/css/styles.css"
+href="/bundles/fonial/frontend/css/sweet-alert.css"
+href="/favicon.ico"
+href="/forgot/request"
+href="/signup"
+href="https://dslkonto.fonial.de/"
+href="https://kundenkonto.fonial.de/login"
+href="https://www.fonial.de/kontakt/datenschutzerklaerung/"
+href="https://www.fonial.de/kontakt/erklaerung-zur-barrierefreiheit/"
+href="https://www.fonial.de/kontakt/impressum/"
+src="/bundles/fonial/frontend/images/logo_enbw_w.svg"
+src="/bundles/fonial/frontend/js/lib/bootstrap.min.js"
+src="/bundles/fonial/frontend/js/lib/jquery-2.1.3.min.js"
+src="https://www.googletagmanager.com/ns.html?id=GTM-W5PWPRR"
+[0m
+[0m$ [0mgrep -oE 'api[a-zA-Z/0-9_.-]*|/api/' /tmp/opencode/fonial_login.html | sort -u | head; echo "---INLINE JS api refs---"; grep -oE '([A-Za-z0-9_]+\.)?(api|ajax|url)\s*[:=(]' /tmp/opencode/fonial_login.html | sort | uniq -c | head
+---INLINE JS api refs---
+      2 url(
+[0m
+[0m$ [0mcurl -sS -L --max-time 20 -D - 'https://dslkonto.fonial.de/' -o /tmp/opencode/dsl_index.html 2>&1 | head -30; echo "===BODY SIZE==="; wc -c /tmp/opencode/dsl_index.html
+HTTP/1.1 302 Found
+Server: nginx/1.10.3
+Content-Type: text/html; charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Set-Cookie: PHPSESSID=07dts3qb2bjev83roqihm8nn6p; path=/; HttpOnly
+Cache-Control: no-cache
+Date: Sat, 05 Sep 2026 01:03:17 GMT
+Location: https://dslkonto.fonial.de/login
+Strict-Transport-Security: max-age=31536000
+X-Frame-Options: DENY
+
+HTTP/1.1 200 OK
+Server: nginx/1.10.3
+Content-Type: text/html; charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Set-Cookie: PHPSESSID=5rpg3544c3745cr0osp0c9buih; path=/; HttpOnly
+Cache-Control: no-cache
+Date: Sat, 05 Sep 2026 01:03:17 GMT
+Strict-Transport-Security: max-age=31536000
+X-Frame-Options: DENY
+
+===BODY SIZE===
+6039 /tmp/opencode/dsl_index.html
+[0m
+[0m$ [0mgrep -oE '(src|href|action)="[^"]*"' /tmp/opencode/dsl_index.html | sort -u; echo "---inline api/url/action refs---"; grep -oiE 'api[^"<]{0,40}|action="[^"]*"|url\s*[:=]|ajax' /tmp/opencode/dsl_index.html | sort -u | head -30
+action="/login_check"
+href="/assets/frontend/css/bootstrap-timepicker.css"
+href="/assets/frontend/css/bootstrap.min.css"
+href="/assets/frontend/css/chosen.css"
+href="/assets/frontend/css/datepicker.css"
+href="/assets/frontend/css/sweet-alert.css"
+href="/assets/frontend/themes/fonial/css/fonts.css"
+href="/assets/frontend/themes/fonial/css/theme.css"
+href="/assets/frontend/themes/fonial/favicon/favicon.png"
+href="/forgot/request"
+href="https://dslkonto.fonial.de/login"
+src="/assets/frontend/js/lib/bootstrap.min.js"
+src="/assets/frontend/js/lib/jquery-2.1.3.min.js"
+src="/assets/frontend/themes/fonial/svg/logo_alternate.svg"
+---inline api/url/action refs---
+action="/login_check"
+[0m
+[0m$ [0msleep 1; curl -sS --max-time 15 -o /dev/null -w 'GET /api/2.0/session => %{http_code} %{content_type}\n' 'https://dslkonto.fonial.de/api/2.0/session'; sleep 1; curl -sS --max-time 15 -o /dev/null -w 'GET /api/2.0 => %{http_code} %{content_type}\n' 'https://dslkonto.fonial.de/api/2.0'; sleep 1; curl -sS --max-time 15 -o /dev/null -w 'GET /_profiler => %{http_code}\n' 'https://dslkonto.fonial.de/_profiler'; sleep 1; curl -sS --max-time 15 -o /dev/null -w 'GET /app_dev.php => %{http_code}\n' 'https://dslkonto.fonial.de/app_dev.php'; sleep 1; curl -sS --max-time 15 -o /dev/null -w 'GET /admin => %{http_code}\n' 'https://dslkonto.fonial.de/admin'
+GET /api/2.0/session => 500 text/html; charset=UTF-8
+GET /api/2.0 => 500 text/html; charset=UTF-8
+GET /_profiler => 500
+GET /app_dev.php => 302
+GET /admin => 500
+[0m
+[0m$ [0msleep 1; curl -sS --max-time 15 -D - 'https://dslkonto.fonial.de/app_dev.php' -o /tmp/opencode/dsl_dev.html | grep -iE 'location|HTTP/'; echo "---dev body---"; head -5 /tmp/opencode/dsl_dev.html; sleep 1; curl -sS --max-time 15 'https://dslkonto.fonial.de/api/2.0/session' | head -c 1200
+HTTP/1.1 302 Found
+Location: https://dslkonto.fonial.de/app_dev.php/login
+---dev body---
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="refresh" content="0;url=https://dslkonto.fonial.de/app_dev.php/login" />
+[0m
+[0m$ [0msleep 1; curl -sS --max-time 15 -o /dev/null -w 'GET /app_dev.php/_profiler => %{http_code} %{redirect_url}\n' 'https://dslkonto.fonial.de/app_dev.php/_profiler'; sleep 2; curl -sS --max-time 15 -o /dev/null -w 'GET /app_dev.php/_wdt => %{http_code} %{redirect_url}\n' 'https://dslkonto.fonial.de/app_dev.php/_wdt'; sleep 2; curl -sS --max-time 15 'https://dslkonto.fonial.de/app_dev.php/login' -o /tmp/opencode/dsl_dev_login.html -D /tmp/opencode/dsl_dev_login_h.txt; grep -cE 'webprofiler|WDT|data-controller' /tmp/opencode/dsl_dev_login.html; echo "---dev login headers---"; grep -iE 'x-|server|set-cookie' /tmp/opencode/dsl_dev_login_h.txt
+GET /app_dev.php/_profiler => 404 
+GET /app_dev.php/_wdt => 404 
+0
+---dev login headers---
+Server: nginx/1.10.3
+Set-Cookie: PHPSESSID=6ubfvbmaos4n3nu61kvengrrh7; path=/; HttpOnly
+Strict-Transport-Security: max-age=31536000
+X-Frame-Options: DENY
+[0m
+[0m$ [0msleep 1; curl -sS --max-time 15 'https://dslkonto.fonial.de/app_dev.php/api/2.0/session' -o /tmp/opencode/dsl_dev_api500.html -w 'http=%{http_code} size=%{size_download}\n'; grep -oiE '(exception|file|line|stack trace|Symfony\\Component|\.php)' /tmp/opencode/dsl_dev_api500.html | sort | uniq -c | head
+http=404 size=105604
+     47 .php
+     34 Exception
+      1 Stack Trace
+    118 Symfony\Component
+      7 exception
+      1 file
+     74 line
+[0m
+[0m$ [0mgrep -oE 'No route found[^<]*|app/Resources[^<]{0,120}|/var/www[^<]{0,120}|src/[^<]{0,100}' /tmp/opencode/dsl_dev_api500.html | sort -u | head -20; echo "---exception headline---"; grep -oE '<h1[^>]*>[^<]*|class="exception">[^<]*|<title>[^<]*' /tmp/opencode/dsl_dev_api500.html | sort -u | head
+No route found for &quot;GET /api/2.0/session&quot;
+No route found for &quot;GET /api/2.0/session&quot; (404 Not Found)
+No route found for &quot;GET /api/2.0/session&quot;&nbsp;
+No route found for &quot;GET /api/2.0/session&quot;&quot; at /pkg/srv/application_2026_07_02_1410/var/symfony/cache/fonial/app_frontend/classes.php line 2134
+src/Symfony/Component/EventDispatcher/Debug/TraceableEventDispatcher.php at line 133&nbsp;
+src/Symfony/Component/EventDispatcher/Debug/TraceableEventDispatcher.php line 133
+src/Symfony/Component/EventDispatcher/Debug/WrappedListener.php at line 61&nbsp;
+src/Symfony/Component/EventDispatcher/Debug/WrappedListener.php line 61
+---exception headline---
+<h1>No route found for &quot;GET /api/2.0/session&quot;
+<title>    No route found for &quot;GET /api/2.0/session&quot; (404 Not Found)
+[0m
+[0m$ [0msleep 1; curl -sS --max-time 15 'https://kundenkonto.fonial.de/api/2.0/session' -D /tmp/opencode/kd_get_h.txt -o /tmp/opencode/kd_get_s.txt -w 'kundenkonto GET session => http=%{http_code} size=%{size_download}\n'; grep -iE 'server:|content-type|access-control|x-fonial' /tmp/opencode/kd_get_h.txt; head -c 300 /tmp/opencode/kd_get_s.txt; echo; echo "===DSL main-host 500 body==="; sleep 2; curl -sS --max-time 15 'https://dslkonto.fonial.de/api/2.0/session' -o /tmp/opencode/dsl_main500.txt -w 'dsl GET session => http=%{http_code} size=%{size_download}\n'; head -c 300 /tmp/opencode/dsl_main500.txt
+kundenkonto GET session => http=200 size=60
+content-type: text/json; charset=UTF-8
+server: cloudflare
+x-fonial-version: v2026.09.01-1
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+{"status":"ok","sid":"7be780da-cbbb-430b-8bae-718aba9a1b6d"}
+===DSL main-host 500 body===
+dsl GET session => http=500 size=0
+[0m
+[0m$ [0msleep 1; curl -sS --max-time 15 -X OPTIONS -D - -o /dev/null 'https://dslkonto.fonial.de/api/2.0/session' | grep -iE 'HTTP/|server:|location:|allow|access-control|content-type'; echo "===DSL 500 full headers==="; sleep 2; curl -sS --max-time 15 -D - -o /dev/null 'https://dslkonto.fonial.de/api/2.0/devices/get' | grep -iE 'HTTP/|server:|location:|access-control|content-type|set-cookie'
+HTTP/1.1 500 Internal Server Error
+Server: nginx/1.10.3
+Content-Type: text/html; charset=UTF-8
+===DSL 500 full headers===
+HTTP/1.1 500 Internal Server Error
+Server: nginx/1.10.3
+Content-Type: text/html; charset=UTF-8
+Set-Cookie: PHPSESSID=rsn88s5m3hg4jfk6ofh2ljcksp; path=/; HttpOnly
+[0m
+[0m$ [0mcurl -sS --max-time 15 'https://kundenkonto.fonial.de/signup' -D /tmp/opencode/signup_h.txt -o /tmp/opencode/signup.html -w 'GET /signup => http=%{http_code} size=%{size_download}\n'; grep -ciE 'form|register|anmeld|erstellen|konto' /tmp/opencode/signup.html | head -1; grep -oiE '<form[^>]*>' /tmp/opencode/signup.html | head -3
+GET /signup => http=302 size=322
+3
+[0m
+[0m$ [0mgrep -iE '^location|^set-cookie' /tmp/opencode/signup_h.txt
+location: /signup/register/55
+set-cookie: PHPSESSID=kc37s58rukcm4tdo1vj5vqr3rb; path=/; secure; httponly; samesite=lax
+[0m
+[0m$ [0mcurl -sS --max-time 15 'https://kundenkonto.fonial.de/signup/register/55' -D /tmp/opencode/reg_h.txt -o /tmp/opencode/reg.html -w 'GET /signup/register/55 => http=%{http_code} size=%{size_download}\n'; grep -oiE '<form[^>]*action="[^"]*"' /tmp/opencode/reg.html | head -5; grep -oiE 'name="[^"]+"' /tmp/opencode/reg.html | sort -u | head -40
+GET /signup/register/55 => http=302 size=286
+[0m
+[0m$ [0mgrep -iE '^location' /tmp/opencode/reg_h.txt; sleep 1; curl -sS --max-time 15 -L 'https://kundenkonto.fonial.de/signup/register/55' -o /tmp/opencode/reg_final.html -w 'final http=%{http_code} url=%{url_effective} size=%{size_download}\n'; grep -oiE '<form[^>]*action="[^"]*"' /tmp/opencode/reg_final.html | head -5; grep -oiE 'name="[a-z_]+"' /tmp/opencode/reg_final.html | sort -u | head -40
+location: /signup/55
+curl: (47) Maximum (50) redirects followed
+final http=302 url=https://kundenkonto.fonial.de/signup/register/55 size=286
+grep: /tmp/opencode/reg_final.html: No such file or directory
+grep: /tmp/opencode/reg_final.html: No such file or directory
+[0m
+## STEP 1 — DELTA
+
+- [NEW] dslkonto.fonial.de — undocumented sibling customer portal (DSL customer konto), discovered via footer link on kundenkonto /login. nginx/1.10.3, PHP/Symfony, no Cloudflare front, 302 / → /login, `PHPSESSID` non-Secure.
+- [NEW] dslkonto.fonial.de/app_dev.php — Symfony dev front controller live with NO IP restriction: dev-mode pages serve (200 /login), debug exception pages expose absolute server path `/pkg/srv/application_2026_07_02_1410/var/symfony/cache/fonial/app_frontend/classes.php`, deploy tag `application_2026_07_02_1410`, and dev listeners (TraceableEventDispatcher). `_profiler`/`_wdt` → 404.
+- [NEW] dslkonto.fonial.de/api/2.0/* — own API namespace exists but is implementation-distinct from kundenkonto: GET/OPTIONS /api/2.0/session, /api/2.0, /api/2.0/devices/get all → 500 whitescreen (empty body, sets fresh PHPSESSID). app_dev 404s the same path → catch-all PHP handler on main host fatals on non-POST; NOT the shared kundenkonto backend.
+- [CHANGED] kundenkonto.fonial.de/api/2.0/session — GET now confirmed to mint a cleartext SID `{"status":"ok","sid":"<uuid4>"}` (was recorded POST-only; endpoint accepts GET too).
+- [NEW] kundenkonto.fonial.de/signup — public funnel: /signup → 302 → /signup/register/55 → 302 → /signup/55 → redirect loop; product-id path segments present (`register/55`).
+- [CHANGED] SPA-bundle hypothesis from last NEXT: /login is a legacy Symfony page (jquery-2.1.3 + bootstrap only, no API refs) — no pre-auth SPA bundle to grep; premise dead, SPA is post-auth.
+
+## STEP 2 — PRIORITIZE
+
+- [PRIO] kundenkonto.fonial.de/api/2.0, 8.5, a=7 b=10 t=7 g=7 c=8 f=10
+- [PRIO] dslkonto.fonial.de, 6.5, a=5 b=6 t=9 g=8 c=2 f=10
+- [PRIO] kundenkonto.fonial.de (frontend/signup), 6.0, a=6 b=7 t=5 g=7 c=5 f=8
+- [PRIO] www.fonial.de, 4.0, a=4 b=5 t=3 g=10 c=4 f=5
+
+## STEP 3 — HYPOTHESES
+
+[HYP] app_dev.php Symfony dev-mode debug exposure on DSL customer portal leaks internal paths and may expose further debug routes
+class: MISCONFIG
+asset: dslkonto.fonial.de (/app_dev.php/*)
+confidence: 70
+reasoning: /app_dev.php serves the app (200 login, 302 redirects) without any observed IP allowlist; triggered 404 renders full Symfony debug exception page confirming Env=dev, leaking /pkg/srv/application_2026_07_02_1410/…cache/fonial/app_frontend/classes.php, deploy tag, TraceableEventDispatcher/WrappedListener (dev-only). Main host /api/2.0/* fatals to empty 500 (PHP method-guard). _profiler/_wdt 404 — profiler disabled.
+evidence_needed: any additional dev-only disclosure: debug page source-snippets, /env/.env access via app_dev, dev-only routes responding on app_dev but not /; or acceptance as leftover-dev-entrypoint finding.
+verify_steps: 1) GET /app_dev.php/login (200, dev boot); 2) GET /app_dev.php/api/2.0/session → 404 debug page (already captured, path leak); 3) GET /app_dev.php/_profiler, /app_dev.php/_wdt (404, profiler off); 4) GET /app_dev.php/forgot/request, /app_dev.php/register for non-main-host routes; 5) OPTIONS /api/2.0/session on main host (500, method-guard confirmed).
+impact: Info disclosure (filesystem layout, deploy artifact tags, Symfony internals) + dev-mode debug pages available pre-auth; enables targeted exploit dev. LOW-MED, benign-alone but a genuine left-over-dev build.
+testability: PASSIVE
+
+[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access; SID also mintable via GET, and public signup funnel may let an attacker self-register the second account
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 78
+reasoning: Data endpoints authorize by body SID only; GET /api/2.0/session now confirmed to mint cleartext SID (no POST needed); /signup → /signup/register/55 public funnel exists (loops pre-auth, needs full flow) → potential self-registration reduces HUMAN gate; PHPSESSID decorative and /session deletes unknown ones.
+evidence_needed: (HUMAN or AUTH_HELPED) 2 valid SIDs from 2 tenants; cross-bind SID-A + PHPSESSID-B on devices/get, evn/get, call/initiate; public-funnel completion to mint account-2 without vendor help.
+verify_steps: 1) GET /api/2.0/session → SID-A (done); 2) repeat anonymous → SID-X; confirm any 2 distinct SIDs auth-independent (session unauthenticated vs invalid); 3) HUMAN: complete /signup funnel to create 2nd tenant; 4) POST devices/get {"sid":SID-B} + Cookie PHPSESSID=A on all 3 endpoints.
+impact: Cross-tenant CDR + device visibility + outbound call control (toll fraud). CRITICAL.
+testability: HUMAN_ONLY (upgrading to AUTH_HELPED if self-registration completes)
+
+## STEP 4 — SELF-CRITIQUE
+
+- [PARKED] signup/register/{id} product-id IDOR: 302-loop only, no observable state, body post-auth, conf 30 < 40. Kill.
+- [PARKED] dslkonto /api/2.0 shared-with-kundenkonto backend: disproven — response profile (500 empty, no ACAO, nginx 1.10.3, PHPSESSID non-Secure) is distinct from kundenkonto (Cloudflare, text/json, ACAO *). conf 35 < 40. Kill.
+- [FINAL] 1. dslkonto app_dev.php dev-mode debug exposure (70, PASSIVE). 2. Dual-backend SID/PHPSESSID cross-binding cross-tenant (78, HUMAN/AUTH_HELPED; GET SID mint + public signup funnel added to evidence matrix).
+
+## STEP 5 — NEXT ACTION
+
+[NEXT] PROBE: GET https://dslkonto.fonial.de/app_dev.php/ (200 dev boot, confirm no IP block), then GET https://dslkonto.fonial.de/app_dev.php/forgot/request and https://dslkonto.fonial.de/app_dev.php/register — compares dev vs main-host route sets on the new DSK portal to bound the dev-debug exposure; continue ≤1rps GET-only.
+
+## STEP 6 — LEARNING
+
+- [LEARN] ACCEPTED MISCONFIG @ dslkonto.fonial.de/app_dev.php: Symfony dev front controller enabled without IP restriction; debug exception pages leak absolute server paths + deploy artifact tag; profiler/WDT disabled.
+- [LEARN] ACCEPTED MISCONFIG @ dslkonto.fonial.de/api/2.0: independent API namespace from kundenkonto — GET/OPTIONS → empty 500 (PHP method-guard fatal), no ACAO, PHPSESSID non-Secure, nginx/1.10.3, no Cloudflare.
+- [LEARN] ACCEPTED dual-session binding @ kundenkonto.fonial.de/api/2.0/session: GET also mints cleartext SID `{"status":"ok","sid":"<uuid4>"}` — session endpoint not POST-only.
+- [LEARN] REJECTED SPA-bundle discovery @ kundenkonto.fonial.de: /login is legacy Symfony HTML (jquery/bootstrap), no pre-auth SPA bundle; only remaining API schema source is post-auth.
+- [LEARN] ACCEPTED surface @ kundenkonto.fonial.de/signup: public registration funnel at /signup → /signup/register/55 (product-id param), 302-loops pre-auth; potential self-registration path to a 2nd tenant.
+
+## STEP 7 — RISK
+
+[RISK] fonial: 58 — Surface expanded: new live customer portal (DSL) with confirmed dev-mode Symfony debug exposure (pre-auth path/config leak) and an independent /api/2.0 namespace, plus a GET SID-mint on the existing VoIP API and a public self-registration funnel. CORS wildcard remains non-exploitable as configured and dual-backend cross-bind (78) still unproven and credential-gated, so risk stays moderate; 50→58 on breadth + confirmed-but-low-severity info disclosure.

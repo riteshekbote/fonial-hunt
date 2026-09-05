@@ -508,3 +508,24 @@ impact: reopens surface if new endpoint, else yields precise call/initiate schem
 testability: PASSIVE
 [NEXT] PROBE: GET https://kundenkonto.fonial.de/ → follow to /login HTML → extract <script src> list → GET each JS bundle → grep 'api/2.0/' and {sid,number,caller,callee,dest,queue}; any new endpoint reopens surface, else finalize call/initiate body schema for the HUMAN cross-bind matrix.
 [RISK] fonial: 50 — Passive phase complete; surface narrow (5 endpoints), every high-value vector gated behind 2FA credentials (Cloudflare + 2FA). CORS wildcard real but non-exploitable as configured (no allow-credentials, SID-in-body). Top vector dual-backend cross-bind (75) unproven and HUMAN-gated; JS bundle grep is last passive upside — could reopen surface or sharpen call/initiate write-authz test. Risk caps at 50 until the 2-account cross-bind matrix.
+## 2026-09-05 01:06:51 UTC [target] (model bigpickle)
+[HYP] app_dev.php Symfony dev-mode debug exposure on DSL customer portal leaks internal paths and may expose further debug routes
+class: MISCONFIG
+asset: dslkonto.fonial.de (/app_dev.php/*)
+confidence: 70
+reasoning: /app_dev.php serves the app (200 login, 302 redirects) without any observed IP allowlist; triggered 404 renders full Symfony debug exception page confirming Env=dev, leaking /pkg/srv/application_2026_07_02_1410/…cache/fonial/app_frontend/classes.php, deploy tag, TraceableEventDispatcher/WrappedListener (dev-only). Main host /api/2.0/* fatals to empty 500 (PHP method-guard). _profiler/_wdt 404 — profiler disabled.
+evidence_needed: any additional dev-only disclosure: debug page source-snippets, /env/.env access via app_dev, dev-only routes responding on app_dev but not /; or acceptance as leftover-dev-entrypoint finding.
+verify_steps: 1) GET /app_dev.php/login (200, dev boot); 2) GET /app_dev.php/api/2.0/session → 404 debug page (already captured, path leak); 3) GET /app_dev.php/_profiler, /app_dev.php/_wdt (404, profiler off); 4) GET /app_dev.php/forgot/request, /app_dev.php/register for non-main-host routes; 5) OPTIONS /api/2.0/session on main host (500, method-guard confirmed).
+impact: Info disclosure (filesystem layout, deploy artifact tags, Symfony internals) + dev-mode debug pages available pre-auth; enables targeted exploit dev. LOW-MED, benign-alone but a genuine left-over-dev build.
+testability: PASSIVE
+[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access; SID also mintable via GET, and public signup funnel may let an attacker self-register the second account
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 78
+reasoning: Data endpoints authorize by body SID only; GET /api/2.0/session now confirmed to mint cleartext SID (no POST needed); /signup → /signup/register/55 public funnel exists (loops pre-auth, needs full flow) → potential self-registration reduces HUMAN gate; PHPSESSID decorative and /session deletes unknown ones.
+evidence_needed: (HUMAN or AUTH_HELPED) 2 valid SIDs from 2 tenants; cross-bind SID-A + PHPSESSID-B on devices/get, evn/get, call/initiate; public-funnel completion to mint account-2 without vendor help.
+verify_steps: 1) GET /api/2.0/session → SID-A (done); 2) repeat anonymous → SID-X; confirm any 2 distinct SIDs auth-independent (session unauthenticated vs invalid); 3) HUMAN: complete /signup funnel to create 2nd tenant; 4) POST devices/get {"sid":SID-B} + Cookie PHPSESSID=A on all 3 endpoints.
+impact: Cross-tenant CDR + device visibility + outbound call control (toll fraud). CRITICAL.
+testability: HUMAN_ONLY (upgrading to AUTH_HELPED if self-registration completes)
+[NEXT] PROBE: GET https://dslkonto.fonial.de/app_dev.php/ (200 dev boot, confirm no IP block), then GET https://dslkonto.fonial.de/app_dev.php/forgot/request and https://dslkonto.fonial.de/app_dev.php/register — compares dev vs main-host route sets on the new DSK portal to bound the dev-debug exposure; continue ≤1rps GET-only.
+[RISK] fonial: 58 — Surface expanded: new live customer portal (DSL) with confirmed dev-mode Symfony debug exposure (pre-auth path/config leak) and an independent /api/2.0 namespace, plus a GET SID-mint on the existing VoIP API and a public self-registration funnel. CORS wildcard remains non-exploitable as configured and dual-backend cross-bind (78) still unproven and credential-gated, so risk stays moderate; 50→58 on breadth + confirmed-but-low-severity info disclosure.

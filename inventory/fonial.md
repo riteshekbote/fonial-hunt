@@ -140,3 +140,12 @@ www.fonial.de
 - NEW kundenkonto.fonial.de: Frontend HTML exposes SPA routes: /wizard/, /settings/menu/toggle, /help/suggest/__search__, /settings/ticket/ — all 302 to /login (auth-gated)
 - CHANGED CRUD expansion hypothesis CONFIRMED WRONG: API uses non-standard naming, narrow surface (5 endpoints only)
 - CHANGED CORS hypothesis: Authenticated landing page still untested (requires valid PHPSESSID from 2FA login flow); unauthenticated landing page redirects to login with CORS wildcard
+
+## 2026-09-05 01:10:40 UTC
+- NEW kundenkonto.fonial.de/api/2.0: API surface confirmed at exactly 5 endpoints — /session, /session/authenticate, /devices/get, /evn/get, /call/initiate; ~50 guessed {resource}/{action} names all return 
+- NEW kundenkonto.fonial.de/api/2.0/call/initiate: Live WRITE endpoint confirmed; returns identical JSON error pattern {"sid":null,"status":"error","reason":"session invalid"} as read endpoints without auth
+- NEW kundenkonto.fonial.de: Landing page / returns 302 to /login with Set-Cookie: PHPSESSID + ACAO: * even when unauthenticated (no valid session)
+- NEW kundenkonto.fonial.de/api/2.0: All 4 tested API endpoints return ACAO: * + ACAM: GET, POST, OPTIONS without allow-credentials — confirmed on session, call/initiate, devices/get, evn/get
+- NEW kundenkonto.fonial.de: Frontend HTML exposes SPA routes: /wizard/, /settings/menu/toggle, /help/suggest/__search__, /settings/ticket/ — all 302 to /login (auth-gated)
+- CHANGED CRUD expansion hypothesis CONFIRMED WRONG: API uses non-standard naming, narrow surface (5 endpoints only)
+- CHANGED CORS hypothesis: Authenticated landing page still untested (requires valid PHPSESSID from 2FA login flow); unauthenticated landing page redirects to login with CORS wildcard
