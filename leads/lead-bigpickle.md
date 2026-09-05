@@ -876,3 +876,27 @@ evidence_needed: 2 valid SIDs from 2 tenants; cross-bind SID-B body + PHPSESSID-
 verify_steps: 1) POST /api/2.0/session → SID-A; POST /session/authenticate (tenant A) → PHPSESSID-A. 2) Same for tenant B → SID-B, PHPSESSID-B. 3) POST /devices/get {"sid":"SID-B"} + Cookie: PHPSESSID=<A>; repeat /evn/get, /call/initiate. 4) If tenant-2 unavailable: complete /signup funnel linked from /login on test data.
 impact: Cross-tenant CDR, SIP device visibility, number enumeration, outbound call control (toll fraud). CRITICAL.
 testability: HUMAN_ONLY
+## 2026-09-05 22:40:06 UTC [target] (model bigpickle)
+[PRIO] kundenkonto.fonial.de/api/2.0,9.05,a=9,b=10,t=8,g=8,c=9,f=10
+[PRIO] dslkonto.fonial.de,8.80,a=9,b=8,t=9,g=10,c=7,f=10
+[PRIO] kundenkonto.fonial.de,7.70,a=8,b=9,t=7,g=6,c=8,f=7
+[PRIO] go/admin.fonial.de (62.146.7.20 legacy box),4.95,a=4,b=4,t=3,g=10,c=0,f=10
+[PRIO] www.fonial.de,5.10,a=4,b=5,t=3,g=10,c=4,f=5
+[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: Data endpoints authorize by body SID only (unauth SID→"session unauthenticated", unknown→"session invalid"); PHPSESSID decorative/parallel on a second backend (distinct Content-Type headers + independent cookie behavior); /session mints cleartext UUID v4 and deletes unknown PHPSESSIDs. This cycle also closed the last unexamined passive class (subdomain takeover: dead hosts all own-netblock A records, no cloud CNAMEs) — no new passive surface appeared anywhere. SID↔credential binding remains untestable without two tenants.
+evidence_needed: 2 valid SIDs from 2 tenants; cross-bind SID-B body + PHPSESSID-A cookie on each data endpoint; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = CRITICAL.
+verify_steps: 1) POST /api/2.0/session → SID-A; POST /session/authenticate (tenant A) → PHPSESSID-A. 2) Same for tenant B → SID-B, PHPSESSID-B. 3) POST /devices/get {"sid":"SID-B"} + Cookie: PHPSESSID=<A>; repeat /evn/get, /call/initiate (observe headers too — check ACAO/Vary on authenticated pages, folding the parked CORS-inheritance check). 4) If tenant-2 unavailable: complete /signup funnel linked from /login page.
+impact: Cross-tenant CDR, SIP device visibility, number enumeration, outbound call control (toll fraud). CRITICAL.
+testability: HUMAN_ONLY
+[PARKED] dslkonto profiler token rotation (aggregate [85]): every /_profiler/{token} returns 404 (retested 3x); even if accessible it is excluded-class under scope.yml "Descriptive error messages / Stack Traces" and lives on the lower-value DSL portal. Dead.
+[PARKED] go/admin legacy box: app cannot boot (Composer platform check pre-routing → 500 everywhere); only exposed facts are old nginx version + descriptive error = BOTH scope.yml OUT-OF-SCOPE classes. No reachable functionality to exploit.
+[PARKED] dslkonto dev-mode exposure + buslogic, CRUD expansion, brute-force, SSRF/www, CORS direct-exploit: unchanged, previously rejected/parked.
+[FINAL] Dual-backend SID/PHPSESSID cross-bind (75, HUMAN_ONLY) — sole survivor; every alternative is closed or excluded-class. Passive phase is exhaustively complete.
+[NEXT] HUMAN: kundenkonto 2-account cross-bind matrix — GET/POST /api/2.0/session for SID-A and SID-B; authenticate both tenants; then POST {"sid":"SID-B"} + Cookie: PHPSESSID=<A> to /devices/get, /evn/get, /call/initiate (also capture authenticated-page CORS headers for the folded inheritance check). Any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = cross-tenant CRITICAL; a successful /call/initiate to an attacker number = CRITICAL toll fraud. If a 2nd tenant is unavailable, complete the /signup funnel linked from /login. Passive surface is fully exhausted — this matrix is the sole remaining gate.
+[LEARN] ACCEPTED subdomain-takeover @ fonial.de dead hosts: app/admin/staging all resolve to fonial's own 62.146.7.2x netblock with no cloud CNAMEs → takeover class closed; admin/go share legacy box 62.146.7.20 (nginx 1.10.3, non-booting PHP app).
+[LEARN] ACCEPTED legacy-box @ go.fonial.de: Composer platform check (requires PHP >7.2.5) aborts all routing → HTTP 500 on every path; /app_dev.php→301. Non-bootable; only out-of-scope classes (old versions, descriptive errors) exposed.
+[LEARN] REJECTED profiler-access @ dslkonto.fonial.de/app_dev.php/_profiler/{token}: 404 on all rotating tokens incl. 031fa8; class excluded by scope.yml regardless. Confirms prior parking.
+[RISK] fonial: 55 — This cycle's new live discovery (go/admin legacy box) adds a subdomain to the inventory but exposes only excluded-class content (dead PHP boot, old nginx, bare 404s); no new exploitable surface, and the subdomain-takeover class is now closed for all dead hosts (own netblock, no CNAMEs). All high-value upside remains the credential-gated dual-backend SID/PHPSESSID cross-bind (75, HUMAN_ONLY): proven = CRITICAL cross-tenant/toll-fraud, disproven = engagement closes flat with zero reportable findings. Risk is moderate, monotone-decreasing, fully contingent on human credential acquisition.

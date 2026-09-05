@@ -68,3 +68,6 @@
 - 2026-09-05 REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references.
 - 2026-09-05 REJECTED dev-mode-exposure @ dslkonto.fonial.de/app_dev.php: leaked content = stack traces + fs paths only; scope.yml excludes "Descriptive error messages or headers". Not reportable standalone.
 - 2026-09-05 REJECTED dslkonto buslogic: no attacker-controllable params; registration broken on prod/dev. Dead.
+- 2026-09-05 ACCEPTED subdomain-takeover @ fonial.de dead hosts: app/admin/staging all resolve to fonial's own 62.146.7.2x netblock with no cloud CNAMEs → takeover class closed; admin/go share legacy box 62.146.7.20 (nginx 1.10.3, non-booting PHP app).
+- 2026-09-05 ACCEPTED legacy-box @ go.fonial.de: Composer platform check (requires PHP >7.2.5) aborts all routing → HTTP 500 on every path; /app_dev.php→301. Non-bootable; only out-of-scope classes (old versions, descriptive errors) exposed.
+- 2026-09-05 REJECTED profiler-access @ dslkonto.fonial.de/app_dev.php/_profiler/{token}: 404 on all rotating tokens incl. 031fa8; class excluded by scope.yml regardless. Confirms prior parking.

@@ -6204,3 +6204,265 @@ testability: HUMAN_ONLY
 
 **STEP 7 — RISK**
 - [RISK] fonial: 50 — Last open passive anomaly bucket (dslkonto profiler/WDT) closed; leaked content again excluded-class, and nemotron3's ranked [85] hypothesis is refuted by probe evidence. Remaining upside is entirely the credential-gated SID/PHPSESSID cross-bind (75, HUMAN_ONLY): proven → CRITICAL cross-tenant/toll-fraud; disproven → engagement closes flat with zero reportable findings. Risk moderate, monotone-decreasing, contingent on human 2-tenant credentials.
+===== ANALYST bigpickle 2026-09-05 22:40:15 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mls -la; echo "---"; git log --oneline -5 2>/dev/null
+total 192
+drwxr-xr-x 12 runner runner  4096 Sep  5 22:35 .
+drwxr-xr-x  3 runner runner  4096 Sep  5 22:35 ..
+drwxr-xr-x  7 runner runner  4096 Sep  5 22:35 .git
+drwxr-xr-x  3 runner runner  4096 Sep  5 22:35 .github
+-rw-r--r--  1 runner runner  1740 Sep  5 22:35 README.md
+-rw-r--r--  1 runner runner    32 Sep  5 22:35 analyst-out.txt
+-rw-r--r--  1 runner runner 50960 Sep  5 22:35 analyst-prompt.txt
+-rw-r--r--  1 runner runner 47146 Sep  5 22:35 ctx.txt
+drwxr-xr-x  2 runner runner  4096 Sep  5 22:35 inventory
+drwxr-xr-x  2 runner runner  4096 Sep  5 22:35 knowledge
+drwxr-xr-x  2 runner runner  4096 Sep  5 22:35 leads
+-rw-r--r--  1 runner runner  4120 Sep  5 22:35 probe-results.md
+drwxr-xr-x  2 runner runner  4096 Sep  5 22:35 recon-notes
+drwxr-xr-x  2 runner runner  4096 Sep  5 22:35 reports
+drwxr-xr-x  2 runner runner  4096 Sep  5 22:35 reposcan-raw
+-rw-r--r--  1 runner runner  3227 Sep  5 22:35 scope.yml
+drwxr-xr-x  2 runner runner  4096 Sep  5 22:35 scripts
+-rw-r--r--  1 runner runner    33 Sep  5 22:35 state_bigpickle.json
+-rw-r--r--  1 runner runner    33 Sep  5 22:35 state_laguna.json
+-rw-r--r--  1 runner runner    33 Sep  5 22:35 state_ling3.json
+-rw-r--r--  1 runner runner    33 Sep  5 22:35 state_longcat.json
+-rw-r--r--  1 runner runner    33 Sep  5 22:35 state_mimo.json
+-rw-r--r--  1 runner runner    33 Sep  5 22:35 state_nemotron3.json
+drwxr-xr-x  2 runner runner  4096 Sep  5 22:35 triage
+---
+517a297 reposcan 2026-09-05-21-43
+[0m
+[0m✱ [0mGlob "**/*.md"[90m 37 matches[0m
+[0m✱ [0mGlob "**/*.yml"[90m 1 match[0m
+[0m✱ [0mGlob "**/*.txt"[90m 9 matches[0m
+[0m→ [0mRead scope.yml
+[0m→ [0mRead inventory/fonial.md
+[0m→ [0mRead leads/lead-bigpickle.md
+[0m→ [0mRead probe-results.md
+[0m→ [0mRead leads/lead-bigpickle.md[90m [offset=437][0m
+[0m→ [0mRead triage/run-2026-09-05-20-42.md
+[0m→ [0mRead knowledge/index.md
+[0m→ [0mRead leads/lead-bigpickle.md[90m [offset=771][0m
+[0m
+[0m$ [0mcat state_bigpickle.json; echo; cat analyst-out.txt; echo; git status --short
+{"phase": "POC", "target": "api"}
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mls -la; echo "---"; git log --oneline -5 2>/dev/null
+total 192
+drwxr-xr-x 12 runner runner  4096 Sep  5 22:35 .
+drwxr-xr-x  3 runner runner  4096 Sep  5 22:35 ..
+drwxr-xr-x  7 runner runner  4096 Sep  5 22:35 .git
+drwxr-xr-x  3 runner runner  4096 Sep  5 22:35 .github
+-rw-r--r--  1 runner runner  1740 Sep  5 22:35 README.md
+-rw-r--r--  1 runner runner    32 Sep  5 22:35 analyst-out.txt
+-rw-r--r--  1 runner runner 50960 Sep  5 22:35 analyst-prompt.txt
+-rw-r--r--  1 runner runner 47146 Sep  5 22:35 ctx.txt
+drwxr-xr-x  2 runner runner  4096 Sep  5 22:35 inventory
+drwxr-xr-x  2 runner runner  4096 Sep  5 22:35 knowledge
+drwxr-xr-x  2 runner runner  4096 Sep  5 22:35 leads
+-rw-r--r--  1 runner runner  4120 Sep  5 22:35 probe-results.md
+drwxr-xr-x  2 runner runner  4096 Sep  5 22:35 recon-notes
+drwxr-xr-x  2 runner runner  4096 Sep  5 22:35 reports
+drwxr-xr-x  2 runner runner  4096 Sep  5 22:35 reposcan-raw
+-rw-r--r--  1 runner runner  3227 Sep  5 22:35 scope.yml
+drwxr-xr-x  2 runner runner  4096 Sep  5 22:35 scripts
+-rw-r--r--  1 runner runner    33 Sep  5 22:35 state_bigpickle.json
+-rw-r--r--  1 runner runner    33 Sep  5 22:35 state_laguna.json
+-rw-r--r--  1 runner runner    33 Sep  5 22:35 state_ling3.json
+-rw-r--r--  1 runner runner    33 Sep  5 22:35 state_longcat.json
+-rw-r--r--  1 runner runner    33 Sep  5 22:35 state_mimo.json
+-rw-r--r--  1 runner runner    33 Sep  5 22:35 state_nemotron3.json
+drwxr-xr-x  2 runner runner  4096 Sep  5 22:35 triage
+---
+517a297 reposcan 2026-09-05-21-43
+[0m
+[0m✱ [0mGlob "**/*.md"[90m 37 matches[0m
+[0m✱ [0mGlob "**/*.yml"[90m 1 match[0m
+[0m✱ [0mGlob "**/*.txt"[90m 9 matches[0m
+[0m→ [0mRead scope.yml
+[0m→ [0mRead inventory/fonial.md
+[0m→ [0mRead leads/lead-bigpickle.md
+[0m→ [0mRead probe-results.md
+[0m→ [0mRead leads/lead-bigpickle.md[90m [offset=437][0m
+[0m→ [0mRead triage/run-2026-09-05-20-42.md
+[0m→ [0mRead knowledge/index.md
+[0m→ [0mRead leads/lead-bigpickle.md[90m [offset=771][0m
+
+?? analyst-out.txt
+?? analyst-prompt.txt
+?? ctx.txt
+[0m
+[0m→ [0mRead reports/hypotheses-bigpickle.txt
+[0m
+[0m$ [0mcommand -v dig host nslookup drill 2>/dev/null; echo "---"; python3 -c "import dns" 2>&1 | head -1
+/usr/bin/dig
+/usr/bin/host
+/usr/bin/nslookup
+---
+Traceback (most recent call last):
+[0m
+Full picture assembled. The `/_profiler/031fa8` PROBE in the aggregate is stale (already answered `404` at 16:25, 18:29, 20:46). One genuinely unexamined gap remains: the 3 dead hosts (`app`/`admin`/`staging.fonial.de`) were only HTTP-probed — their DNS records were never classified. That's the passive-first subdomain-takeover check. Running it now.
+[0m$ [0mfor h in app admin staging www kundenkonto dslkonto ""; do d="${h:+$h.}fonial.de"; printf "%-28s " "$d"; getent ahosts "$d" 2>/dev/null | head -1 || echo "NO_AHOSTS"; done
+app.fonial.de                62.146.7.21     STREAM app.fonial.de
+admin.fonial.de              62.146.7.20     STREAM admin.fonial.de
+staging.fonial.de            62.146.7.23     STREAM staging.fonial.de
+www.fonial.de                176.9.53.190    STREAM www.fonial.de
+kundenkonto.fonial.de        104.26.12.183   STREAM kundenkonto.fonial.de
+dslkonto.fonial.de           62.146.7.50     STREAM dslkonto.fonial.de
+fonial.de                    176.9.53.190    STREAM fonial.de
+[0m
+DNS resolves — the 3 "dead" hosts have A records on 62.146.7.2x (same range as dslkonto.fonial.de = fonial's own netblock), not cloud CNAMEs. Checking CNAMEs and PTR to close out the takeover class.
+[0m$ [0mfor h in app admin staging dslkonto www kundenkonto; do echo "== $h.fonial.de =="; dig +short CNAME $h.fonial.de; dig +short A $h.fonial.de; done; echo "== PTR =="; for ip in 62.146.7.21 62.146.7.20 62.146.7.23 62.146.7.50; do echo "-- $ip"; dig +short -x $ip; done
+== app.fonial.de ==
+62.146.7.21
+== admin.fonial.de ==
+62.146.7.20
+== staging.fonial.de ==
+62.146.7.23
+== dslkonto.fonial.de ==
+62.146.7.50
+== www.fonial.de ==
+176.9.53.190
+== kundenkonto.fonial.de ==
+104.26.12.183
+104.26.13.183
+172.67.73.16
+== PTR ==
+-- 62.146.7.21
+-- 62.146.7.20
+-- 62.146.7.23
+-- 62.146.7.50
+[0m
+[0m$ [0mtimeout 12 bash -c 'for h in app.fonial.de admin.fonial.de staging.fonial.de; do echo "== $h :443"; curl -sk -o /dev/null -w "%{http_code} %{remote_ip}\n" --connect-timeout 6 --max-time 8 "https://$h/" 2>&1 | tail -1; done'
+== app.fonial.de :443
+000 
+== admin.fonial.de :443
+404 62.146.7.20
+== staging.fonial.de :443
+000
+[0m
+[0m$ [0mtimeout 10 curl -sk -D - -o /dev/null --connect-timeout 6 --max-time 8 "https://admin.fonial.de/" 2>&1 | head -30
+HTTP/2 404 
+server: nginx/1.10.3
+date: Sat, 05 Sep 2026 22:37:17 GMT
+content-type: text/plain; charset=utf-8
+content-length: 19
+x-content-type-options: nosniff
+[0m
+`admin.fonial.de:443` just answered **404** — previously recorded as dead/transport-error. That reopens surface. Investigating headers and the others on :80/:8080.
+[0m$ [0mfor h in app admin staging dslkonto; do for p in 80 443 8080 8443; do code=$(timeout 6 curl -sk -o /dev/null -w "%{http_code}" --connect-timeout 5 --max-time 5 "http://$h.fonial.de:$p/" 2>/dev/null); echo "$h.fonial.de:$p -> ${code:-noresp}"; sleep 1; done; done
+app.fonial.de:80 -> 000
+app.fonial.de:443 -> 000
+app.fonial.de:8080 -> 000
+app.fonial.de:8443 -> 000
+admin.fonial.de:80 -> 301
+admin.fonial.de:443 -> 400
+admin.fonial.de:8080 -> 000
+admin.fonial.de:8443 -> 000
+staging.fonial.de:80 -> 000
+staging.fonial.de:443 -> 000
+staging.fonial.de:8080 -> 000
+staging.fonial.de:8443 -> 000
+dslkonto.fonial.de:80 -> 301
+dslkonto.fonial.de:443 -> 400
+dslkonto.fonial.de:8080 -> 000
+dslkonto.fonial.de:8443 -> 000
+[0m
+[0m$ [0mtimeout 10 curl -sk --connect-timeout 6 --max-time 8 "https://admin.fonial.de/" 2>&1; echo; echo "--- 301 target :80 ---"; timeout 6 curl -s -D - -o /dev/null --max-time 5 "http://admin.fonial.de/" 2>&1 | tr -d '\r' | grep -iE 'HTTP/|location|server'
+404 page not found
+
+--- 301 target :80 ---
+HTTP/1.1 301 Moved Permanently
+Server: nginx/1.10.3
+Location: https://go.fonial.de/
+[0m
+`admin.fonial.de` 301s to a **new, un-inventoried subdomain**: `go.fonial.de`. Resolving and probing it read-only.
+[0m$ [0mdig +short A go.fonial.de; dig +short CNAME go.fonial.de; dig +short MX fonial.de | head -3; echo "---"; timeout 12 curl -s -D - --connect-timeout 6 --max-time 10 "http://go.fonial.de/" 2>&1 | tr -d '\r' | head -25
+62.146.7.20
+0 fonial-de.mail.protection.outlook.com.
+---
+HTTP/1.1 301 Moved Permanently
+Server: nginx/1.10.3
+Date: Sat, 05 Sep 2026 22:38:52 GMT
+Content-Type: text/html
+Content-Length: 185
+Connection: keep-alive
+Location: https://go.fonial.de/
+
+<html>
+<head><title>301 Moved Permanently</title></head>
+<body bgcolor="white">
+<center><h1>301 Moved Permanently</h1></center>
+<hr><center>nginx/1.10.3</center>
+</body>
+</html>
+[0m
+[0m$ [0mtimeout 12 curl -sk -D - --connect-timeout 6 --max-time 10 "https://go.fonial.de/" 2>&1 | tr -d '\r' | head -30
+HTTP/2 500 
+server: nginx/1.10.3
+date: Sat, 05 Sep 2026 22:38:55 GMT
+content-type: text/html; charset=UTF-8
+
+Composer detected issues in your platform:
+
+Your Composer dependencies require a PHP version "> 7.2.5".
+[0m
+`go.fonial.de` — a new subdomain on the same legacy box (nginx 1.10.3) running a PHP app that fails to boot: `Composer detected issues: dependencies require PHP > 7.2.5`. That's a dead deploy. Checking whether any app path boots on it (read-only, ≤1rps).
+[0m$ [0mfor p in /login /admin /app_dev.php /api /health /status; do code=$(timeout 8 curl -sk -o /dev/null -w "%{http_code}" --connect-timeout 5 --max-time 7 "https://go.fonial.de$p" 2>/dev/null); echo "go.fonial.de$p -> ${code:-noresp}"; sleep 1; done
+go.fonial.de/login -> 500
+go.fonial.de/admin -> 500
+go.fonial.de/app_dev.php -> 301
+go.fonial.de/api -> 500
+go.fonial.de/health -> 500
+go.fonial.de/status -> 500
+[0m
+All surface checks complete. Emitting structured blocks.
+
+STEP 1 — DELTA:
+- [NEW] go.fonial.de discovered (absent from inventory): 62.146.7.20 (fonial netblock), nginx/1.10.3, PHP Composer app dead at boot (`Composer detected issues... require PHP > 7.2.5`), HTTP 500 on /login /admin /api /health /status, /app_dev.php→301. Non-bootable legacy deploy.
+- [CHANGED] admin.fonial.de reclassified "dead" → legacy nginx alive: :443 bare default-vhost 404 text/plain, :80 301→https://go.fonial.de/. No admin panel.
+- [CHANGED] app/staging.fonial.de confirmed truly unresponsive (000 on :80/:443/:8080/:8443) — firewalled/powered-off, not takeover candidates.
+- [CHANGED] Subdomain-takeover class CLOSED for all 3 dead hosts: direct A records to fonial's own 62.146.7.2x netblock, zero CNAMEs to any cloud provider.
+- [CONFIRMED] Stale aggregate `NEXT PROBE /_profiler/031fa8` already answered: HTTP 404 (re-tested 16:25, 18:29, 20:46). Profiler token path dead.
+
+STEP 2 — PRIORITIZE:
+[PRIO] kundenkonto.fonial.de/api/2.0,9.05,a=9,b=10,t=8,g=8,c=9,f=10
+[PRIO] dslkonto.fonial.de,8.80,a=9,b=8,t=9,g=10,c=7,f=10
+[PRIO] kundenkonto.fonial.de,7.70,a=8,b=9,t=7,g=6,c=8,f=7
+[PRIO] go/admin.fonial.de (62.146.7.20 legacy box),4.95,a=4,b=4,t=3,g=10,c=0,f=10
+[PRIO] www.fonial.de,5.10,a=4,b=5,t=3,g=10,c=4,f=5
+
+STEP 3 — HYPOTHESES:
+[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: Data endpoints authorize by body SID only (unauth SID→"session unauthenticated", unknown→"session invalid"); PHPSESSID decorative/parallel on a second backend (distinct Content-Type headers + independent cookie behavior); /session mints cleartext UUID v4 and deletes unknown PHPSESSIDs. This cycle also closed the last unexamined passive class (subdomain takeover: dead hosts all own-netblock A records, no cloud CNAMEs) — no new passive surface appeared anywhere. SID↔credential binding remains untestable without two tenants.
+evidence_needed: 2 valid SIDs from 2 tenants; cross-bind SID-B body + PHPSESSID-A cookie on each data endpoint; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = CRITICAL.
+verify_steps: 1) POST /api/2.0/session → SID-A; POST /session/authenticate (tenant A) → PHPSESSID-A. 2) Same for tenant B → SID-B, PHPSESSID-B. 3) POST /devices/get {"sid":"SID-B"} + Cookie: PHPSESSID=<A>; repeat /evn/get, /call/initiate (observe headers too — check ACAO/Vary on authenticated pages, folding the parked CORS-inheritance check). 4) If tenant-2 unavailable: complete /signup funnel linked from /login page.
+impact: Cross-tenant CDR, SIP device visibility, number enumeration, outbound call control (toll fraud). CRITICAL.
+testability: HUMAN_ONLY
+
+STEP 4 — SELF-CRITIQUE:
+[PARKED] dslkonto profiler token rotation (aggregate [85]): every /_profiler/{token} returns 404 (retested 3x); even if accessible it is excluded-class under scope.yml "Descriptive error messages / Stack Traces" and lives on the lower-value DSL portal. Dead.
+[PARKED] go/admin legacy box: app cannot boot (Composer platform check pre-routing → 500 everywhere); only exposed facts are old nginx version + descriptive error = BOTH scope.yml OUT-OF-SCOPE classes. No reachable functionality to exploit.
+[PARKED] dslkonto dev-mode exposure + buslogic, CRUD expansion, brute-force, SSRF/www, CORS direct-exploit: unchanged, previously rejected/parked.
+[FINAL] Dual-backend SID/PHPSESSID cross-bind (75, HUMAN_ONLY) — sole survivor; every alternative is closed or excluded-class. Passive phase is exhaustively complete.
+
+STEP 5 — NEXT ACTION:
+[NEXT] HUMAN: kundenkonto 2-account cross-bind matrix — GET/POST /api/2.0/session for SID-A and SID-B; authenticate both tenants; then POST {"sid":"SID-B"} + Cookie: PHPSESSID=<A> to /devices/get, /evn/get, /call/initiate (also capture authenticated-page CORS headers for the folded inheritance check). Any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = cross-tenant CRITICAL; a successful /call/initiate to an attacker number = CRITICAL toll fraud. If a 2nd tenant is unavailable, complete the /signup funnel linked from /login. Passive surface is fully exhausted — this matrix is the sole remaining gate.
+
+STEP 6 — LEARNING:
+[LEARN] ACCEPTED subdomain-takeover @ fonial.de dead hosts: app/admin/staging all resolve to fonial's own 62.146.7.2x netblock with no cloud CNAMEs → takeover class closed; admin/go share legacy box 62.146.7.20 (nginx 1.10.3, non-booting PHP app).
+[LEARN] ACCEPTED legacy-box @ go.fonial.de: Composer platform check (requires PHP >7.2.5) aborts all routing → HTTP 500 on every path; /app_dev.php→301. Non-bootable; only out-of-scope classes (old versions, descriptive errors) exposed.
+[LEARN] REJECTED profiler-access @ dslkonto.fonial.de/app_dev.php/_profiler/{token}: 404 on all rotating tokens incl. 031fa8; class excluded by scope.yml regardless. Confirms prior parking.
+
+STEP 7 — RISK:
+[RISK] fonial: 55 — This cycle's new live discovery (go/admin legacy box) adds a subdomain to the inventory but exposes only excluded-class content (dead PHP boot, old nginx, bare 404s); no new exploitable surface, and the subdomain-takeover class is now closed for all dead hosts (own netblock, no CNAMEs). All high-value upside remains the credential-gated dual-backend SID/PHPSESSID cross-bind (75, HUMAN_ONLY): proven = CRITICAL cross-tenant/toll-fraud, disproven = engagement closes flat with zero reportable findings. Risk is moderate, monotone-decreasing, fully contingent on human credential acquisition.
