@@ -48,3 +48,8 @@
 - 2026-09-05 REJECTED CRUD expansion ~30 siblings: PROVEN WRONG — API uses non-standard naming; guessed {resource}/{action} pattern yields 0 new hits
 - 2026-09-05 REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
 - 2026-09-05 REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+- 2026-09-05 ACCEPTED MISCONFIG @ kundenkonto.fonial.de: CORS wildcard (ACAO *, ACAM GET/POST/OPTIONS) consistent on all 5 API endpoints + both landing/login pages; no allow-credentials anywhere → no cookie cross-origin exfil channel; SID-in-body required.
+- 2026-09-05 REJECTED frontend-unauth @ kundenkonto.fonial.de: /wizard/, /settings/menu/toggle, /settings/ticket/ all 302 → /login; frontend auth-gated; no unauth config/setup surface.
+- 2026-09-05 ACCEPTED narrow-API @ kundenkonto.fonial.de/api/2.0: exactly 5 endpoints; this closes passive discovery on the API (split-frontend + SPA routes enumerated).
+- 2026-09-05 REJECTED dev-mode-exposure @ dslkonto.fonial.de/app_dev.php: leaked content = stack traces + fs paths (deploy tag, bundle names) only, no env/param/session dump; falls under scope.yml "Descriptive error messages / Stack Traces" = OUT OF SCOPE clause → downgraded from report-ready to excluded/non-reportable standalone.
+- 2026-09-05 REJECTED dev-mode-exposure @ dslkonto.fonial.de/app_dev.php: leaked content = stack traces + fs paths (deploy tag, bundle names, exception semantics) only, no env/param/session dump observed; falls under scope.yml OUT-OF-SCOPE "Descriptive error messages / Stack Traces" clause → reclassified from report-ready to excluded-class/non-standalone.

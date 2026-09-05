@@ -157,3 +157,7 @@ www.fonial.de
 - CHANGED kundenkonto.fonial.de/api/2.0: CRUD expansion hypothesis CONFIRMED WRONG — exactly 5 endpoints, non-standard naming
 
 ## 2026-09-05 09:55:04 UTC
+
+## 2026-09-05 13:20:03 UTC
+- NEW dslkonto.fonial.de/app_dev.php/_profiler returns 404 with `X-Debug-Token: 0951e9` header (profiler exists but token-based access)
+- NEW kundenkonto.fonial.de/ landing page returns 302 to /login with `ACAO: *` + `PHPSESSID` cookie (unauthenticated)
