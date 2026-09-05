@@ -149,3 +149,9 @@ www.fonial.de
 - NEW kundenkonto.fonial.de: Frontend HTML exposes SPA routes: /wizard/, /settings/menu/toggle, /help/suggest/__search__, /settings/ticket/ — all 302 to /login (auth-gated)
 - CHANGED CRUD expansion hypothesis CONFIRMED WRONG: API uses non-standard naming, narrow surface (5 endpoints only)
 - CHANGED CORS hypothesis: Authenticated landing page still untested (requires valid PHPSESSID from 2FA login flow); unauthenticated landing page redirects to login with CORS wildcard
+
+## 2026-09-05 05:52:24 UTC
+- NEW dslkonto.fonial.de: Symfony dev-mode (`app_dev.php`) exposed on DSL customer portal — returns 200 on `/app_dev.php/`, 200 on `/app_dev.php/forgot/request`, 500 on `/app_dev.php/register`
+- NEW dslkonto.fonial.de: New in-scope asset discovered (DSL customer portal, separate from kundenkonto)
+- CHANGED kundenkonto.fonial.de/api/2.0: Authenticated landing page CORS still untested (requires valid PHPSESSID from 2FA login flow)
+- CHANGED kundenkonto.fonial.de/api/2.0: CRUD expansion hypothesis CONFIRMED WRONG — exactly 5 endpoints, non-standard naming

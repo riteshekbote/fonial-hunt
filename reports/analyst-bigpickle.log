@@ -4780,3 +4780,244 @@ testability: HUMAN_ONLY (upgrading to AUTH_HELPED if self-registration completes
 ## STEP 7 — RISK
 
 [RISK] fonial: 58 — Surface expanded: new live customer portal (DSL) with confirmed dev-mode Symfony debug exposure (pre-auth path/config leak) and an independent /api/2.0 namespace, plus a GET SID-mint on the existing VoIP API and a public self-registration funnel. CORS wildcard remains non-exploitable as configured and dual-backend cross-bind (78) still unproven and credential-gated, so risk stays moderate; 50→58 on breadth + confirmed-but-low-severity info disclosure.
+===== ANALYST bigpickle 2026-09-05 05:52:24 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "app_dev.php/: %{http_code} %{redirect_url} size=%{size_download}\n" --max-time 20 https://dslkonto.fonial.de/app_dev.php/ ; sleep 1.2; curl -s -o /dev/null -w "/forgot/request: %{http_code} %{redirect_url} size=%{size_download}\n" --max-time 20 https://dslkonto.fonial.de/forgot/request ; sleep 1.2; curl -s -o /dev/null -w "/register: %{http_code} %{redirect_url} size=%{size_download}\n" --max-time 20 https://dslkonto.fonial.de/register ; sleep 1.2; curl -s -o /dev/null -w "/app_dev.php/forgot/request: %{http_code} %{redirect_url} size=%{size_download}\n" --max-time 20 https://dslkonto.fonial.de/app_dev.php/forgot/request
+app_dev.php/: 302 https://dslkonto.fonial.de/app_dev.php/login size=420
+/forgot/request: 200  size=4224
+/register: 500  size=0
+/app_dev.php/forgot/request: 200  size=4248
+[0m
+[0m$ [0mcurl -s --max-time 20 https://dslkonto.fonial.de/app_dev.php/forgot/request -D /tmp/opencode/dsl_appdev_hdrs.txt -o /tmp/opencode/dsl_appdev_body.html; curl -s --max-time 20 https://dslkonto.fonial.de/forgot/request -o /tmp/opencode/dsl_main_body.html; sleep 1.2; curl -s --max-time 20 https://dslkonto.fonial.de/app_dev.php/login -o /tmp/opencode/dsl_appdev_login.html -D /tmp/opencode/dsl_appdev_login_hdrs.txt; echo "---HEADERS app_dev/forgot---"; cat /tmp/opencode/dsl_appdev_hdrs.txt; echo "---DIFF---"; diff /tmp/opencode/dsl_appdev_body.html /tmp/opencode/dsl_main_body.html
+---HEADERS app_dev/forgot---
+HTTP/1.1 200 OK
+Server: nginx/1.10.3
+Content-Type: text/html; charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Set-Cookie: PHPSESSID=hcht7aock55epqkom8dic8rp44; path=/; HttpOnly
+Cache-Control: no-cache
+Date: Sat, 05 Sep 2026 05:49:08 GMT
+Strict-Transport-Security: max-age=31536000
+X-Frame-Options: DENY
+
+---DIFF---
+21c21
+<     <link rel="canonical" href="https://dslkonto.fonial.de/app_dev.php/forgot/request" />
+---
+>     <link rel="canonical" href="https://dslkonto.fonial.de/forgot/request" />
+30c30
+<                                 <form action="/app_dev.php/forgot/send-email" method="POST" class="fos_user_resetting_request">
+---
+>                                 <form action="/forgot/send-email" method="POST" class="fos_user_resetting_request">
+[0m
+[0m$ [0mcurl -s --max-time 20 https://dslkonto.fonial.de/app_dev.php/zzz-nonexistent-route -o /tmp/opencode/dsl_debug404.html -w "status=%{http_code} size=%{size_download}\n"; echo "---debug markers---"; rg -o "Environment|Symfony|DEV|pkg/srv/[a-z0-9_/\.-]+|stack trace|Exception" /tmp/opencode/dsl_debug404.html | sort -u | head -20
+status=404 size=105646
+---debug markers---
+/bin/bash: line 1: rg: command not found
+[0m
+[0m$ [0mgrep -oE "Environment|Symfony|DEV|pkg/srv/[a-zA-Z0-9_/\.-]+|Exception thrown" /tmp/opencode/dsl_debug404.html | sort -u | head -20
+Symfony
+pkg/srv/application_2026_07_02_1410/app
+pkg/srv/application_2026_07_02_1410/app/bootstrap.php.cache
+pkg/srv/application_2026_07_02_1410/var
+pkg/srv/application_2026_07_02_1410/var/symfony/cache/fonial/app_frontend/appApp_frontendDebugProjectContainerUrlMatcher.php
+pkg/srv/application_2026_07_02_1410/var/symfony/cache/fonial/app_frontend/classes.php
+pkg/srv/application_2026_07_02_1410/vendor
+pkg/srv/application_2026_07_02_1410/vendor/symfony/symfony/src/Symfony/Component/EventDispatcher/Debug/TraceableEventDispatcher.php
+pkg/srv/application_2026_07_02_1410/vendor/symfony/symfony/src/Symfony/Component/EventDispatcher/Debug/WrappedListener.php
+pkg/srv/application_2026_07_02_1410/web
+pkg/srv/application_2026_07_02_1410/web/app_dev.php
+[0m
+[0m$ [0mcurl -s --max-time 20 -D /tmp/opencode/kk_login_hdrs.txt -o /tmp/opencode/kk_login.html https://kundenkonto.fonial.de/login; echo "---headers---"; grep -iE "HTTP/|server:|location:|access-control|x-fonial|set-cookie|content-type" /tmp/opencode/kk_login_hdrs.txt; echo "---scripts---"; grep -oE '<script[^>]+src="[^"]+"' /tmp/opencode/kk_login.html | head -20
+---headers---
+HTTP/2 200 
+content-type: text/html; charset=UTF-8
+server: cloudflare
+set-cookie: PHPSESSID=p8l23622h71jc2bfr88nbc3to5; path=/; secure; httponly; samesite=lax
+x-fonial-version: v2026.09.01-1
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+---scripts---
+<script src="/bundles/fonial/frontend/js/lib/jquery-2.1.3.min.js"
+<script src="/bundles/fonial/frontend/js/lib/bootstrap.min.js"
+[0m
+[0m$ [0mgrep -oE 'src="[^"]+\.(js|json)[^"]*"' /tmp/opencode/kk_login.html | sort -u; echo "---api refs in HTML---"; grep -oE 'api/2\.0/[a-zA-Z0-9_/\.-]+' /tmp/opencode/kk_login.html | sort -u | head
+src="/bundles/fonial/frontend/js/lib/bootstrap.min.js"
+src="/bundles/fonial/frontend/js/lib/jquery-2.1.3.min.js"
+---api refs in HTML---
+[0m
+[0m$ [0mgrep -oE '(src|href)="[^"]+"' /tmp/opencode/kk_login.html | sort -u | head -40; echo "---application js?---"; grep -oE '/bundles/fonial/frontend/[^"]+' /tmp/opencode/kk_login.html | sort -u
+href="/bundles/fonial/frontend/css/bootstrap-timepicker.css"
+href="/bundles/fonial/frontend/css/bootstrap.min.css"
+href="/bundles/fonial/frontend/css/chosen.css"
+href="/bundles/fonial/frontend/css/datepicker.css"
+href="/bundles/fonial/frontend/css/fonts.css"
+href="/bundles/fonial/frontend/css/styles.css"
+href="/bundles/fonial/frontend/css/sweet-alert.css"
+href="/favicon.ico"
+href="/forgot/request"
+href="/signup"
+href="https://dslkonto.fonial.de/"
+href="https://kundenkonto.fonial.de/login"
+href="https://www.fonial.de/kontakt/datenschutzerklaerung/"
+href="https://www.fonial.de/kontakt/erklaerung-zur-barrierefreiheit/"
+href="https://www.fonial.de/kontakt/impressum/"
+src="/bundles/fonial/frontend/images/logo_enbw_w.svg"
+src="/bundles/fonial/frontend/js/lib/bootstrap.min.js"
+src="/bundles/fonial/frontend/js/lib/jquery-2.1.3.min.js"
+src="https://www.googletagmanager.com/ns.html?id=GTM-W5PWPRR"
+---application js?---
+/bundles/fonial/frontend/css/bootstrap-timepicker.css
+/bundles/fonial/frontend/css/bootstrap.min.css
+/bundles/fonial/frontend/css/chosen.css
+/bundles/fonial/frontend/css/datepicker.css
+/bundles/fonial/frontend/css/fonts.css
+/bundles/fonial/frontend/css/styles.css
+/bundles/fonial/frontend/css/sweet-alert.css
+/bundles/fonial/frontend/images/logo_enbw_w.svg
+/bundles/fonial/frontend/js/lib/bootstrap.min.js
+/bundles/fonial/frontend/js/lib/jquery-2.1.3.min.js
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "app_dev/register: %{http_code} size=%{size_download}\n" --max-time 20 https://dslkonto.fonial.de/app_dev.php/register; sleep 1.2; curl -s -o /dev/null -w "app_dev/_profiler: %{http_code}\n" --max-time 20 https://dslkonto.fonial.de/app_dev.php/_profiler; sleep 1.2; curl -s -o /dev/null -w "app_dev.php/ (302 target): %{http_code}\n" --max-time 20 -L https://dslkonto.fonial.de/app_dev.php/login -D /tmp/opencode/dsl_login_hdrs.txt; echo "---app_dev login headers---"; grep -iE "HTTP/|server:|x-|set-cookie|debug" /tmp/opencode/dsl_login_hdrs.txt
+app_dev/register: 500 size=49139
+app_dev/_profiler: 404
+app_dev.php/ (302 target): 200
+---app_dev login headers---
+HTTP/1.1 200 OK
+Server: nginx/1.10.3
+Set-Cookie: PHPSESSID=1t400d46o1nh1fi31jlc4cct3q; path=/; HttpOnly
+Strict-Transport-Security: max-age=31536000
+X-Frame-Options: DENY
+[0m
+[0m$ [0mcurl -s --max-time 20 https://dslkonto.fonial.de/app_dev.php/register -o /tmp/opencode/dsl_debug500.html; grep -oE "(SQLSTATE|PDOException|SQL's|connection|mysql|pgsql|doctrine|parameter|pkg/srv/[a-zA-Z0-9_/\.-]+|\.env[^<]*)|\b[A-Z][a-z]+\\([^)]*Exception" /tmp/opencode/dsl_debug500.html | sort -u | head -30; echo "---class/type---"; grep -oE "class=\"[a-z_-]+\"" /tmp/opencode/dsl_debug500.html | sort -u | head; echo "---headlines---"; grep -oE '<span class="label [a-z_]+">[^<]+' /tmp/opencode/dsl_debug500.html | head
+pkg/srv/application_2026_07_02_1410/app
+pkg/srv/application_2026_07_02_1410/app/bootstrap.php.cache
+pkg/srv/application_2026_07_02_1410/src
+pkg/srv/application_2026_07_02_1410/src/User/UserBundle/Controller/RegistrationController.php
+pkg/srv/application_2026_07_02_1410/web
+pkg/srv/application_2026_07_02_1410/web/app_dev.php
+---class/type---
+class="block"
+class="block-exception"
+class="border-l"
+class="border-r"
+class="btn-bg"
+class="close-quote"
+class="error"
+class="error-count"
+class="form-row"
+class="header-logo"
+---headlines---
+[0m
+[0m$ [0mgrep -oE '(Exception|Error|message|thrown|in )<span[^>]*>[^<]{5,120}' /tmp/opencode/dsl_debug500.html | head; echo "---title---"; grep -oE '<title>[^<]+' /tmp/opencode/dsl_debug500.html; echo "---method/route---"; grep -oE '(GET|POST) /[a-zA-Z0-9_/\.-]+' /tmp/opencode/dsl_debug500.html | sort -u | head; echo "---line refs---"; grep -oE 'web/app_dev\.php:[0-9]+' /tmp/opencode/dsl_debug500.html | sort -u; echo "---handled exception name---"; grep -oE 'block-exception[^<]*<[^>]*>[^<]+' /tmp/opencode/dsl_debug500.html | head -3
+---title---
+<title>    Product not found. Did you set the default product? (500 Internal Server Error)
+---method/route---
+---line refs---
+---handled exception name---
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "dslkonto main /login: %{http_code}\n" --max-time 20 -D /tmp/opencode/dsl_main_hdrs.txt https://dslkonto.fonial.de/login; grep -iE "HTTP/|server:|x-fonial|x-|set-cookie" /tmp/opencode/dsl_main_hdrs.txt; echo "--- kundenkonto comparison already known: x-fonial-version v2026.09.01-1 ---"; sleep 1.2; curl -s -o /dev/null -w "dslkonto app_dev /api/2.0/session: %{http_code} size=%{size_download}\n" --max-time 20 https://dslkonto.fonial.de/app_dev.php/api/2.0/session
+dslkonto main /login: 200
+HTTP/1.1 200 OK
+Server: nginx/1.10.3
+Set-Cookie: PHPSESSID=bmtcnq79oqebl0sb1mohplrbsa; path=/; HttpOnly
+Strict-Transport-Security: max-age=31536000
+X-Frame-Options: DENY
+--- kundenkonto comparison already known: x-fonial-version v2026.09.01-1 ---
+dslkonto app_dev /api/2.0/session: 404 size=105604
+[0m
+[0m$ [0mgrep -oE '(SERVER|ENV|REQUEST|COOKIE|HTTP_[A-Z_]+|DATABASE[^< ]*|DB_[A-Z_]*|MYSQL[^< ]*|PG[^< ]*|REDIS[^< ]*|SALT[^< ]*|SECRET[^< ]*|PASSWORD[^< ]*)[^<]{0,30}' /tmp/opencode/dsl_debug500.html | sort -u | head -25; echo "---symfony parameters tab?---"; grep -oE 'Environment|Request headers|Request parameters|Server Parameters|Cookies|Session|Symfony Parameters' /tmp/opencode/dsl_debug500.html | sort -u
+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" />
+---symfony parameters tab?---
+Session
+[0m
+[0m$ [0mgrep -oE '<h[12][^>]*>[^<]{3,120}' /tmp/opencode/dsl_debug500.html | head; echo "---exception msg---"; grep -oE "Product not found[^<]{0,80}" /tmp/opencode/dsl_debug500.html | head -3; echo "---params/env tab vars---"; grep -oE 'id="[a-z-]+" class="[a-z-]+" data-tab' /tmp/opencode/dsl_debug500.html | head; echo "---footer breadcrumb---"; grep -oE 'app_frontend[^<]{0,60}|File: [^<]{0,80}|Line: [0-9]+' /tmp/opencode/dsl_debug500.html | sort -u | head
+<h1>Product not found. Did you set the default product?
+<h2>Stack Trace
+---exception msg---
+Product not found. Did you set the default product? (500 Internal Server Error)
+Product not found. Did you set the default product?
+Product not found. Did you set the default product?&quot; at /pkg/srv/application_2026_07_02_1410
+---params/env tab vars---
+---footer breadcrumb---
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "kundenkonto app_dev.php: %{http_code} size=%{size_download}\n" --max-time 20 https://kundenkonto.fonial.de/app_dev.php/; sleep 1.2; curl -s -o /dev/null -w "dslkonto _wdt: %{http_code}\n" --max-time 20 https://dslkonto.fonial.de/app_dev.php/_wdt; sleep 1.2; curl -s -o /dev/null -w "dslkonto main zzz: %{http_code} size=%{size_download}\n" --max-time 20 https://dslkonto.fonial.de/zzz-nonexistent-route
+kundenkonto app_dev.php: 404 size=8892
+dslkonto _wdt: 404
+dslkonto main zzz: 500 size=0
+[0m
+[0m$ [0mcurl -s --max-time 20 -D /tmp/opencode/dsl_api_hdrs.txt -w "\nstatus=%{http_code} size=%{size_download}\n" https://dslkonto.fonial.de/api/2.0/session | tail -3; echo "---headers---"; grep -iE "HTTP/|content-type|set-cookie|access-control|x-fonial" /tmp/opencode/dsl_api_hdrs.txt
+status=500 size=0
+---headers---
+HTTP/1.1 500 Internal Server Error
+Content-Type: text/html; charset=UTF-8
+Set-Cookie: PHPSESSID=8jm03pat2seo85dj377dhcue61; path=/; HttpOnly
+[0m
+[0m$ [0mfor p in config.php check.php app_dev.php/config.php app_dev.php/check.php app.php/login; do curl -s -o /dev/null -w "%{http_code} %{size_download}  /$p\n" --max-time 20 "https://dslkonto.fonial.de/$p"; sleep 1.1; done
+403 46  /config.php
+500 0  /check.php
+404 105569  /app_dev.php/config.php
+404 105562  /app_dev.php/check.php
+200 6063  /app.php/login
+[0m
+STEP 1 — DELTA
+- [NEW] dslkonto.fonial.de: `/app_dev.php/` is a public, un-IP-blocked Symfony dev front controller serving the full portal (302→`/login` 200; `/forgot/request` 200). No allowlist.
+- [NEW] dslkonto dev debug pages reach 500s, not just 404s: `/app_dev.php/register` → 105KB debug page titled "Product not found. Did you set the default product?" traced to `src/User/UserBundle/Controller/RegistrationController.php` under `pkg/srv/application_2026_07_02_1410/` → DSL registration is broken (default product never set); prod `/register` same 500 but silent (size 0).
+- [NEW] dslkonto prod unknown routes → silent empty 500 (not 404); only `app_dev.php` renders error pages. Three front controllers live: `/`, `/app.php` (200), `/app_dev.php`; `/config.php` → 403, `/check.php` → 500 empty, `_profiler`/`_wdt` 404.
+- [CHANGED] Stack split confirmed: dslkonto = nginx/1.10.3 HTTP/1.1 + Symfony 2/3-era monolith (FOSUserBundle, symfony/symfony), PHPSESSID HttpOnly without Secure; kundenkonto = Cloudflare HTTP/2 + PHP 8.3 SPA + `x-fonial-version`. Cross-linked on kundenkonto `/login`. `kundenkonto /app_dev.php` → 404 (web fallback).
+- [NEW] kundenkonto `/login` shell loads ONLY jquery-2.1.3 + bootstrap (no app bundle, no `api/2.0` refs) → SPA-bundle-grep lead dead passively; app JS is auth-gated. PHPSESSID on shell is `Secure; HttpOnly; SameSite=Lax`.
+- [CHANGED] DSL portal `/api/2.0/session` → 500 empty (its API namespace is broken/fatal, not minting) — no second dual-backend API.
+
+STEP 2 — PRIORITIZE
+- [PRIO] kundenkonto.fonial.de/api/2.0, 8.5, a=7 b=10 t=7 g=7 c=8 f=10
+- [PRIO] dslkonto.fonial.de/app_dev.php, 6.8, a=6 b=7 t=7 g=10 c=4 f=6
+- [PRIO] dslkonto.fonial.de (registration/product config), 4.5, a=4 b=7 t=6 g=9 c=3 f=5
+
+STEP 3 — HYPOTHESES
+[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: Data endpoints authorize by body SID only; PHPSESSID decorative; /session mints cleartext UUID via GET and deletes unknown PHPSESSIDs. All passive supersets on both portals now closed (kundenkonto surface=5, bundle grep dead; DSL API/register broken), leaving only the 2-account matrix to prove/disprove the binding.
+evidence_needed: (HUMAN) 2 valid SIDs from 2 tenants; cross-bind SID-A + PHPSESSID-B on each endpoint; any response ≠ session-invalid = cross-tenant CRITICAL. kundenkonto /signup funnel exists (login page links it) as self-registration path for account-2.
+verify_steps: 1) GET /api/2.0/session → SID-A; 2) second account → SID-B/PHPSESSID-B; 3) POST /devices/get {"sid":"SID-B"} + Cookie PHPSESSID=A; repeat /evn/get, /call/initiate; 4) try completing /signup funnel to mint account-2 without vendor help.
+impact: Cross-tenant CDR, device visibility, outbound call control (toll fraud). CRITICAL.
+testability: HUMAN_ONLY
+[HYP] app_dev.php Symfony dev-mode debug exposure is broader than 404-path leaks: POST-triggered 500 debug pages embed request/session/exception detail that prod silently suppresses
+class: MISCONFIG
+asset: dslkonto.fonial.de/app_dev.php/*
+confidence: 70
+reasoning: Confirmed pre-auth debug pages on 404 (paths, `pkg/srv/application_2026_07_02_1410`, TraceableEventDispatcher) AND on 500 (`/register`: "Product not found" + `User\UserBundle\RegistrationController`). Prod suppresses identical errors to empty 500. Debug tabs included Session; env/params tab not observed.
+evidence_needed: any debug page dumping env vars/DB params/cookies of the request, or a dev-only route that responds only via app_dev.php (toolbar/profiler off is a known 404).
+verify_steps: 1) GET /app_dev.php/register (done — session tab, no env dump); 2) GET /app_dev.php/zzz (done — path leak only); 3) GET /app_dev.php/_profiler, /_wdt (404, off); 4) GET /app_dev.php/config.php (403, blocked). Remaining POST-triggered pages restricted by passive-only rule.
+impact: Info disclosure (filesystem layout, deploy tag, internal bundle naming, exception semantics) pre-auth; enables targeted exploit dev. LOW-MED, benign alone — report as leftover-dev-build.
+testability: PASSIVE (mostly exhausted)
+[HYP] DSL portal default-product misconfiguration blocks registration — public self-signup on dslkonto dead, product-param logic may mis-handle attacker-supplied product selection elsewhere
+class: BUSLOGIC
+asset: dslkonto.fonial.de/register (and /signup-adjacent flows)
+confidence: 45
+reasoning: "Product not found. Did you set the default product?" fatals pre-auth on both prod (silent 500) and dev (debug). Suggests product-entity dependency with no default; a registration/onboarding-dependent flow exists in domain logic. No exploitable read/write path tested.
+evidence_needed: attacker-controllable product/id/plan parameter anywhere in the DSL flow that triggers different branch behavior than default-missing.
+verify_steps: 1) GET /app_dev.php/register (done, broken); 2) GET /register attending no params → 500; 3) GET /forgot/request and /login (200, normal). No param-injection surface found.
+impact: Availability of public signup (DoS-flavored → largely out of scope) + domain-logic insight. NI to LOW.
+testability: PASSIVE
+
+STEP 4 — SELF-CRITIQUE
+- [PARKED] DSL default-product BUSLOGIC: confidence 45 < 50, only DoS-flavored outcome, no param surface found. Kill.
+- [PARKED] app_dev.php env-dump extension: all GET-triggerable debug variants probed, env/params tab absent, profiler off, config.php 403. Accepted as info-disclosure finding; no further passive upside.
+- [FINAL] 1. kundenkonto dual-backend cross-bind cross-tenant on 3 endpoints (75, HUMAN_ONLY) — sole remaining high-value vector; all passive levers consumed. 2. dslkonto app_dev.php pre-auth debug exposure (70, PASSIVE→ACCEPTED) — reportable misconfig, severity LOW-MED.
+
+STEP 5 — NEXT ACTION
+[NEXT] HUMAN: kundenkonto 2-account cross-bind matrix — GET /api/2.0/session twice (SID-A, SID-B), then POST {"sid":"SID-B"} with Cookie PHPSESSID=A to /devices/get, /evn/get, /call/initiate; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = cross-tenant CRITICAL (toll-fraud upside). If account-2 is hard to source, first attempt the /signup funnel linked from /login.
+
+STEP 6 — LEARNING
+- [LEARN] ACCEPTED MISCONFIG @ dslkonto.fonial.de/app_dev.php: Public Symfony dev front controller, no IP allowlist; renders 404 AND 500 debug pages pre-auth leaking `pkg/srv/application_2026_07_02_1410/` paths, deploy-era Symfony monolith classes, internal bundle naming (User\UserBundle\RegistrationController), and exception messages ("Product not found. Did you set the default product?"). Prod suppresses identical errors to empty 500. config.php 403; _profiler/_wdt 404 — profiler off. LOW-MED info disclosure.
+- [LEARN] ACCEPTED @ dslkonto.fonial.de: registration is broken (default product unset) — public DSL self-signup funnel dead, mirroring the kundenkonto /signup pre-auth loop; no viable passive self-registration path on either portal.
+- [LEARN] ACCEPTED @ kundenkonto.fonial.de /login: shell loads only jquery-2.1.3 + bootstrap, zero `api/2.0` references — SPA app JS is auth-gated; closes the JS-bundle-reveals-endpoint-and-schema lead.
+- [LEARN] ACCEPTED MISCONFIG @ kundenkonto.fonial.de: PHPSESSID on SPA shell is `Secure; HttpOnly; SameSite=Lax`; CORS still `*` without allow-credentials → unchanged non-exploitable as configured.
+
+STEP 7 — RISK
+[RISK] fonial: 62 — Surface is now fully mapped on both live portals (kundenkonto 5-endpoint API + auth-gated SPA; dslkonto 3 front controllers, broken API namespace and registration). New confirmed-but-low finding: pre-auth Symfony app_dev.php debug exposure on a live customer portal (paths, deploy tag, exception/domain semantics; LOW-MED, report-friendly). All engineered high-value upside (dual-backend SID/PHPSESSID cross-bind, CORS+SID chain) remains credential-gated and unproven → risk stays moderate; one human cross-bind matrix (75) either lands CRITICAL cross-tenant/toll-fraud or definitively closes the engagement.
