@@ -155,3 +155,5 @@ www.fonial.de
 - NEW dslkonto.fonial.de: New in-scope asset discovered (DSL customer portal, separate from kundenkonto)
 - CHANGED kundenkonto.fonial.de/api/2.0: Authenticated landing page CORS still untested (requires valid PHPSESSID from 2FA login flow)
 - CHANGED kundenkonto.fonial.de/api/2.0: CRUD expansion hypothesis CONFIRMED WRONG — exactly 5 endpoints, non-standard naming
+
+## 2026-09-05 09:55:04 UTC

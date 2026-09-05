@@ -5021,3 +5021,222 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 [RISK] fonial: 62 — Surface is now fully mapped on both live portals (kundenkonto 5-endpoint API + auth-gated SPA; dslkonto 3 front controllers, broken API namespace and registration). New confirmed-but-low finding: pre-auth Symfony app_dev.php debug exposure on a live customer portal (paths, deploy tag, exception/domain semantics; LOW-MED, report-friendly). All engineered high-value upside (dual-backend SID/PHPSESSID cross-bind, CORS+SID chain) remains credential-gated and unproven → risk stays moderate; one human cross-bind matrix (75) either lands CRITICAL cross-tenant/toll-fraud or definitively closes the engagement.
+===== ANALYST bigpickle 2026-09-05 09:55:04 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mcd /home/runner/work/fonial-hunt/fonial-hunt && ls -la && git log --oneline -5 2>/dev/null
+total 172
+drwxr-xr-x 12 runner runner  4096 Sep  5 09:51 .
+drwxr-xr-x  3 runner runner  4096 Sep  5 09:50 ..
+drwxr-xr-x  7 runner runner  4096 Sep  5 09:51 .git
+drwxr-xr-x  3 runner runner  4096 Sep  5 09:50 .github
+-rw-r--r--  1 runner runner  1740 Sep  5 09:50 README.md
+-rw-r--r--  1 runner runner    32 Sep  5 09:51 analyst-out.txt
+-rw-r--r--  1 runner runner 42503 Sep  5 09:51 analyst-prompt.txt
+-rw-r--r--  1 runner runner 38689 Sep  5 09:51 ctx.txt
+drwxr-xr-x  2 runner runner  4096 Sep  5 09:50 inventory
+drwxr-xr-x  2 runner runner  4096 Sep  5 09:50 knowledge
+drwxr-xr-x  2 runner runner  4096 Sep  5 09:50 leads
+-rw-r--r--  1 runner runner  2382 Sep  5 09:50 probe-results.md
+drwxr-xr-x  2 runner runner  4096 Sep  5 09:50 recon-notes
+drwxr-xr-x  2 runner runner  4096 Sep  5 09:50 reports
+drwxr-xr-x  2 runner runner  4096 Sep  5 09:50 reposcan-raw
+-rw-r--r--  1 runner runner  3227 Sep  5 09:50 scope.yml
+drwxr-xr-x  2 runner runner  4096 Sep  5 09:50 scripts
+-rw-r--r--  1 runner runner    33 Sep  5 09:50 state_bigpickle.json
+-rw-r--r--  1 runner runner    33 Sep  5 09:50 state_laguna.json
+-rw-r--r--  1 runner runner    33 Sep  5 09:50 state_ling3.json
+-rw-r--r--  1 runner runner    33 Sep  5 09:50 state_longcat.json
+-rw-r--r--  1 runner runner    33 Sep  5 09:50 state_mimo.json
+-rw-r--r--  1 runner runner    33 Sep  5 09:50 state_nemotron3.json
+drwxr-xr-x  2 runner runner  4096 Sep  5 09:50 triage
+6c64411 reposcan 2026-09-05-08-38
+[0m
+[0m→ [0mRead probe-results.md
+I have the full context in the prompt. Let me review the current state and probe-results to do the analysis.
+[0m→ [0mRead state_bigpickle.json
+[0m
+[0m$ [0mcd /home/runner/work/fonial-hunt/fonial-hunt && cat ctx.txt | grep -i "dslkonto" | head -40
+asset: dslkonto.fonial.de (/app_dev.php/*)
+[NEXT] PROBE: GET https://dslkonto.fonial.de/app_dev.php/ (200 dev boot, confirm no IP block), then GET https://dslkonto.fonial.de/app_dev.php/forgot/request and https://dslkonto.fonial.de/app_dev.php/register — compares dev vs main-host route sets on the new DSK portal to bound the dev-debug exposure; continue ≤1rps GET-only.
+asset: dslkonto.fonial.de/app_dev.php/*
+[HYP] DSL portal default-product misconfiguration blocks registration — public self-signup on dslkonto dead, product-param logic may mis-handle attacker-supplied product selection elsewhere
+asset: dslkonto.fonial.de/register (and /signup-adjacent flows)
+[RISK] fonial: 62 — Surface is now fully mapped on both live portals (kundenkonto 5-endpoint API + auth-gated SPA; dslkonto 3 front controllers, broken API namespace and registration). New confirmed-but-low finding: pre-auth Symfony app_dev.php debug exposure on a live customer portal (paths, deploy tag, exception/domain semantics; LOW-MED, report-friendly). All engineered high-value upside (dual-backend SID/PHPSESSID cross-bind, CORS+SID chain) remains credential-gated and unproven → risk stays moderate; one human cross-bind matrix (75) either lands CRITICAL cross-tenant/toll-fraud or definitively closes the engagement.
+- [70] dslkonto.fonial.de: app_dev.php Symfony dev-mode debug exposure on DSL customer portal leaks internal paths and may expose further debug routes (from art/lead_bigpickle.txt)
+- NEXT(hypotheses-bigpickle.txt): PROBE: GET https://dslkonto.fonial.de/app_dev.php/ (200 dev boot, confirm no IP block), then GET https://dslkonto.fonial.de/app_dev.php/forgot/request and https
+- NEXT(hypotheses-nemotron3.txt): PROBE: GET https://dslkonto.fonial.de/app_dev.php/_profiler to confirm Symfony profiler exposure and enumerate debug routes
+- NEW dslkonto.fonial.de: Symfony dev-mode (`app_dev.php`) exposed on DSL customer portal — returns 200 on `/app_dev.php/`, 200 on `/app_dev.php/forgot/request`, 500 on `/app_dev.php/register`
+- NEW dslkonto.fonial.de: New in-scope asset discovered (DSL customer portal, separate from kundenkonto)
+[0m
+I now have the full current state. The last probe (05:52) was on dslkonto.fonial.de/app_dev.php/_profiler+variants — all 404, confirming profiler is off. The top hypothesis remains the kundenkonto cross-bind matrix (75, HUMAN_ONLY). Passive surface for the port is largely exhausted.
+
+Let me check the latest lead state from the context — the last [NEXT] at 05:52 was the HUMAN cross-bind matrix. All passive supersets closed. Let me analyze.
+
+STEP 1 — DELTA: NO real delta. The 05:52 probe results (profiler/router/phpinfo all 404 off) were already reflected in the last lead's reasoning. No new surface discovered since.
+
+Let me do a fresh read-only probe to add value - the DSL portal has a new API namespace that was noted as "broken". Let me check what passive leads remain genuinely untested. The kundenkonto cross-bind is HUMAN. The dslkonto dev-mode debug page leak is mostly exhausted. 
+
+Let me look at whether there's any genuinely new passive vector. The DSL portal has its own /api/2.0 namespace per the 05:52 lead ("independent /api/2.0 namespace"). Let me probe that — it was noted as "DSL API/register broken" but the API namespace itself may not have been enumerated on the new dslkonto host.
+The DSL portal was discovered but its /api/2.0 namespace on the *new dslkonto host* wasn't directly enumerated (only app_dev.php routes were tested). The 05:52 lead says "DSL API/register broken" — but let me verify what's actually been tested on dslkonto's native /api/2.0/session vs kundenkonto. The knowledge base notes kundenkonto's surface=5. There's mention of "an independent /api/2.0 namespace" on DSL. Let me check if dslkonto's own /api/2.0 endpoints were probed.
+
+From the 01:10 lead: "a new live customer portal (DSL) with confirmed dev-mode Symfony debug exposure ... and an independent `/api/2.0` namespace". This suggests dslkonto has its own /api/2.0 but the probes so far were only app_dev.php. Let me do a fresh passive probe of dslkonto's native API endpoints to see if there's undiscovered surface, plus the main host routes.
+[0m$ [0mcd /home/runner/work/fonial-hunt/fonial-hunt && for p in "/api/2.0/session" "/api/2.0/session/authenticate" "/api/2.0/devices/get" "/api/2.0/evn/get" "/api/2.0/call/initiate"; do echo "=== GET https://dslkonto.fonial.de$p ==="; curl -sk -o /dev/null -w "HTTP %{http_code} len=%{size_download} ct=%{content_type}\n" -m 15 "https://dslkonto.fonial.de$p"; sleep 1.2; done
+=== GET https://dslkonto.fonial.de/api/2.0/session ===
+HTTP 500 len=0 ct=text/html; charset=UTF-8
+=== GET https://dslkonto.fonial.de/api/2.0/session/authenticate ===
+HTTP 500 len=0 ct=text/html; charset=UTF-8
+=== GET https://dslkonto.fonial.de/api/2.0/devices/get ===
+HTTP 500 len=0 ct=text/html; charset=UTF-8
+=== GET https://dslkonto.fonial.de/api/2.0/evn/get ===
+HTTP 500 len=0 ct=text/html; charset=UTF-8
+=== GET https://dslkonto.fonial.de/api/2.0/call/initiate ===
+HTTP 500 len=0 ct=text/html; charset=UTF-8
+[0m
+The dslkonto native /api/2.0/* all return empty 500 — same PHP method-guard fatality as kundenkonto's main host (which note said "Main host /api/2.0/* fatals to empty 500"). This confirms dslkonto has the SAME dual-front-controller architecture where /api/2.0 requires POST. The app_dev.php passes through to PHP and would reach the API code. Let me test the session via app_dev.php which behaved differently.
+
+Actually, the key insight: on kundenkonto, GET /api/2.0/session minted a SID (worked). On dslkonto it returns empty 500 for GET. Interesting — this could be because the DSL portal's API uses a different method-guard (POST-only even for session). Let me not mutate — POST to session/authenticate would be auth, and POST to session is mutation-ish. 
+
+Let me check the app_dev.php variant of the session endpoint to see debug detail, and the dslkonto root/login to understand the portal.
+[0m$ [0mcd /home/runner/work/fonial-hunt/fonial-hunt && echo "=== GET /app_dev.php/api/2.0/session ==="; curl -sk -D - -o /tmp/dsk_session.txt -m 15 "https://dslkonto.fonial.de/app_dev.php/api/2.0/session" -w "\nHTTP %{http_code}\n"; echo "--- body (first 1500) ---"; head -c 1500 /tmp/dsk_session.txt; echo; sleep 1.2
+=== GET /app_dev.php/api/2.0/session ===
+HTTP/1.1 404 Not Found
+Server: nginx/1.10.3
+Content-Type: text/html; charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Cache-Control: no-cache
+Date: Sat, 05 Sep 2026 09:51:29 GMT
+X-Debug-Token: 3a83b7
+
+
+HTTP 404
+--- body (first 1500) ---
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="robots" content="noindex,nofollow" />
+        <title>    No route found for &quot;GET /api/2.0/session&quot; (404 Not Found)
+</title>
+        <link href="https://dslkonto.fonial.de/bundles/framework/css/structure.css" rel="stylesheet" />
+        <link href="https://dslkonto.fonial.de/bundles/framework/css/body.css" rel="stylesheet" />
+            <link href="https://dslkonto.fonial.de/bundles/framework/css/exception.css" rel="stylesheet" type="text/css" media="all" />
+    </head>
+    <body>
+        <div id="content">
+            <div class="header clear-fix">
+                <div class="header-logo">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALYAAAA+CAMAAACxzRGDAAAAUVBMVEX////Ly8yko6WLioxkYmVXVVkwLjLl5eWxsLJKSEzy8vJxcHLY2Ni+vb89Oz9XVVh+fH+Yl5n///+xsbLY2Nlxb3KkpKWXlph+fX+LiYy+vr/IZP61AAAAAXRSTlMAQObYZgAABRBJREFUeNrVmtuWoyAQRS1FEEQSzQU7//+hYxUiXsKQZLJWM+chsUloN+WhCuguYoKyYqzmvGasKqH4HyRKxndipcgcumH8qViTM7TkUclcwaHmf5XM0eWq4km1KjdqXfMXJHVe1J3hL8lk5fCGv6wmT+o0d87U+XNrk0Y9nfv+7LM6ZJH5ZBL6LAbSxQ3Q5FDr22Skr8PQSy4n7isnsQxSX4r6pobhjCHHeDNOKrO3yGmCvZOjV9jmt8ulTdXFKdbKLNh+kOMvBzuVRa4Y7MUsdEUSWQe7xxCfZmcwjHU83LqzFvSbJQOXQvptbPnEFoyZtUUGwTeKuLuTHyT1kaP0P6cR01OKvv448gtl61dqZfmJezQmU/t+1R2fJLtBwXV6uWGwB9SZPrn0fKO2WAvQN1PUhHjTom3xgXYTkvlSKHs19OhslETq6X3HrXbjt8XbGj9b4Gi+lUAnL6XxQj8Pyk9N4Bt1xUrsLVN/3isYMug8rODMdbgOvoHs8uAb2fcANIAzkKCLYy+AXRpSU8sr1r4P67xhLgPp7vM32zlqt7Bhq2fI1
+[0m
+The dslkonto API namespace, when accessed via app_dev.php, reveals "No route found for GET /api/2.0/session" — the DSL portal does NOT have the /api/2.0/session route. This is the DSL portal's own namespace (different from kundenkonto). The 500 on the native host earlier was the main-host PHP method-guard, while app_dev.php shows the real route set: the DSL portal doesn't have this API endpoint.
+
+So this is a genuinely new finding: **dslkonto's API surface differs from kundenkonto** — no /api/2.0/session route exists there. The "independent /api/2.0 namespace" noted earlier was an overreach; app_dev.php reveals DSL portal has a *different* (Symfony native) routing.
+
+This is worth noting as delta. The DSL portal (via app_dev) is a standard Symfony app with a debug front controller — SQL/ORM domain. Let me confirm the DSL debug surface's extent by checking the /en/ or standard layout, and check if there's a /app_dev.php route that reveals more unique dev-only routes. But profiler/router/phpinfo were already confirmed off.
+
+Given all passive surface is now confirmed exhausted and the top vector (cross-bind) is HUMAN_ONLY, I'll finalize. Let me also check the kundenkonto SPA bundle one more angle — but that was already "dead" per prior lead. 
+
+I have enough. The main new delta: dslkonto does NOT share kundenkonto's /api/2.0 namespace (its /api/2.0/session route does not exist under app_dev debug). This corrects the prior "independent /api/2.0 namespace" note.
+
+Let me write the analysis.
+
+STEP 1 — DELTA
+- [NEW] dslkonto.fonial.de/app_dev.php/api/2.0/session → 404 "No route found" under Symfony debug — DSL portal does NOT expose kundenkonto's /api/2.0 namespace; earlier "independent /api/2.0 namespace" claim for DSL is corrected.
+- [NEW] dslkonto.fonial.de native /api/2.0/* all empty 500 (PHP method-guard fatality) — same dual-front-controller split as kundenkonto; DSL is a standalone Symfony app (ORM/DSL domain), not a VoIP API host.
+
+STEP 2 — PRIORITIZE
+- kundenkonto.fonial.de/api/2.0 cross-bind: attack_surface 6, business_value 10, tech 6 (session confusion), gate 2 (2FA), cloud 5, freshness 8 → 0.25*6+0.25*10+0.15*6+0.15*2+0.10*5+0.10*8 = 1.5+2.5+0.9+0.3+0.5+0.8 = 6.5
+- dslkonto app_dev.php debug: a=4,b=6,t=7(dev framework),g=10(no auth),c=5,f=6 → 1.0+1.5+1.05+1.5+0.5+0.6=6.15
+- kundenkonto CORS wildcard: a=4,b=9,t=5,g=8,c=5,f=5 → 1.0+2.25+0.75+1.2+0.5+0.5=6.2
+
+STEP 3/4 — Hypotheses. Highest remaining passive value is genuinely thin. The cross-bind is top but HUMAN. The DSL app_dev is the report-ready finding.
+
+GIVEN all passive surface is exhausted and top vector is HUMAN-gated, output becomes concise.
+[0m$ [0mcd /home/runner/work/fonial-hunt/fonial-hunt && echo "=== GET /app_dev.php/ login-main body head ==="; curl -sk -D - -o /tmp/dsk_login.txt -m 15 "https://dslkonto.fonial.de/app_dev.php/" -w "\nHTTP %{http_code}\n" | grep -iE "HTTP/|location|server|set-cookie|debug-token"; echo "--- body title/link hints ---"; grep -oiE "(src|href)=\"[^\"]+\"" /tmp/dsk_login.txt | head -20; sleep 1.2
+=== GET /app_dev.php/ login-main body head ===
+HTTP/1.1 302 Found
+Server: nginx/1.10.3
+Set-Cookie: PHPSESSID=eeai60tb8utotn8rbs3d69q05j; path=/; HttpOnly
+Location: https://dslkonto.fonial.de/app_dev.php/login
+--- body title/link hints ---
+href="https://dslkonto.fonial.de/app_dev.php/login"
+[0m
+The app_dev.php on dslkonto boots the app, 302 to /login, sets PHPSESSID. This confirms legitimate Symfony full app running in dev mode pre-auth with 404/500 debug pages. The finding stands as the strongest reportable item besides the cross-bind.
+
+Let me finalize the analysis output.
+
+STEP 1 — DELTA:
+- [NEW] dslkonto.fonial.de/app_dev.php/api/2.0/session → 404 Symfony "No route found" — DSL portal has NO /api/2.0/session route; the earlier "independent /api/2.0 namespace on DSL" claim is CORRECTED (DSL is a standalone Symfony app, not a VoIP API host like kundenkonto).
+- [NEW] dslkonto.fonial.de native /api/2.0/* (all 5 guessed) → empty HTTP 500, PHP method-guard fatality — same main-host behavior as kundenkonto; confirms there is no live GET-probeable API on DSL.
+
+STEP 2 — [PRIO]: kundenkonto.fonial.de/api/2.0,6.5,auth/business-value cross-bind; kundenkonto CORS wildcard,6.2; dslkonto app_dev debug,6.15.
+
+STEP 3 — Hypotheses (top assets, max 1 each):
+
+[FINAL] survivor 1: Dual-backend cross-bind. Already elaborated, confidence 75, HUMAN_ONLY.
+
+[FINAL] survivor 2: dslkonto app_dev dev-mode exposure — report-ready, LOW-MED.
+
+New hypothesis worth proposing: The kundenkonto /signup funnel as an attacker-controllable self-registration path to mint account-2 for the cross-bind — but that's HUMAN too, and self-registration was already the documented path. 
+
+A genuinely new passive-safe hypothesis: **kundenkonto SID entropy/guessability** — SID is UUIDv4 cleartext minted via GET, unauthenticated. If the UUID is predictably seeded (e.g., PHP uniqid/mt_rand vs proper random_bytes), an attacker could guess a valid sessions' SID. This is passive-testable (collect many SIDs, check randomness). But it's effectively credential-free; high value. Let me flag it.
+
+Actually collecting SIDs via GET /api/2.0/session is passive and safe (it just mints anonymous SIDs). Checking whether they're cryptographically random is a valid passive test. But the data endpoints authorize only *authenticated* SIDs (from session/authenticate), so guessing an anonymous SID wouldn't grant cross-tenant — the SID must be bound to a credential. So SID entropy is low value given authz requires authenticated SID. Reject.
+
+The real open question remains the cross-bind (HUMAN). All passive avenues for kundenkonto are closed.
+
+STEP 5 — [NEXT] HUMAN: kundenkonto 2-account cross-bind matrix (as at 05:52, still the single decisive action).
+STEP 7 — [RISK] fonial: 62 unchanged.
+
+I'll emit the final structured output.
+
+---
+
+**STEP 1 — DELTA**
+- [NEW] dslkonto.fonial.de/app_dev.php/api/2.0/session → 404 "No route found for GET /api/2.0/session" under Symfony debug: DSL portal has NO /api/2.0/session route — CORRECTS the prior "independent /api/2.0 namespace on DSL" claim; DSL is a standalone Symfony (DSL/ORM) app, not a VoIP API host.
+- [NEW] dslkonto.fonial.de native `/api/2.0/{session, session/authenticate, devices/get, evn/get, call/initiate}` all → empty HTTP 500 (PHP method-guard) — same main-host split as kundenkonto; no GET-probeable API live on DSL.
+
+**STEP 2 — PRIORITIZE**
+- [PRIO] kundenkonto.fonial.de/api/2.0,6.5,auth(business_value)/session-confusion cross-bind
+- [PRIO] kundenkonto.fonial.de,6.2,CORS-wildcard-on-auth-domain (SID-leak-chain dependent)
+- [PRIO] dslkonto.fonial.de/app_dev.php,6.15,dev-framework debug exposure (report-ready)
+
+**STEP 3 — HYPOTHESES**
+[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: Data endpoints authorize by body SID only; PHPSESSID decorative; /session mints cleartext UUID via GET and deletes unknown PHPSESSIDs. All passive supersets now closed on both portals (kundenkonto bundle grep dead; DSL API absent, registration broken). Only the 2-account matrix can prove/disprove the binding.
+evidence_needed: (HUMAN) 2 valid SIDs from 2 tenants; cross-bind SID-A + PHPSESSID-B on each endpoint; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = cross-tenant CRITICAL.
+verify_steps: 1) GET /api/2.0/session → SID-A; 2) second account → SID-B/PHPSESSID-B; 3) POST /devices/get {"sid":"SID-B"} + Cookie PHPSESSID=A; repeat /evn/get, /call/initiate; 4) try completing /signup funnel (linked from /login) to mint account-2 without vendor help.
+impact: Cross-tenant CDR, device visibility, outbound call control (toll fraud). CRITICAL.
+testability: HUMAN_ONLY
+
+[HYP] DSL portal dev-mode Symfony debug exposure leaks internal paths/deploy-tag/domain semantics pre-auth on a live customer portal
+class: MISCONFIG
+asset: dslkonto.fonial.de/app_dev.php/*
+confidence: 70
+reasoning: /app_dev.php boots full app (200 /, 302→/login with PHPSESSID) with no IP block; 404 renders full Symfony debug page (fs path `pkg/srv/application_2026_07_02_1410`, deploy tag, TraceableEventDispatcher dev-only); 500 on /register prints `User\UserBundle\RegistrationController` + "Product not found". Prod suppresses identical errors to empty 500. Profiler/router/phpinfo confirmed 404 (off).
+evidence_needed: any debug page dumping env/params/session of the request, or a dev-only route responding only via app_dev.php; current passive evidence (paths/deploy/exception semantics) already sufficient for LOW-MED report.
+verify_steps: 1) GET /app_dev.php/ (200 dev boot, 302→login); 2) GET /app_dev.php/api/2.0/session (404 debug, proves DSL has no VoIP API route); 3) GET /app_dev.php/_profiler,_wdt,config.php (404/403 — off/blocked); remaining POST-triggered pages restricted by passive-only rule.
+impact: Info disclosure (filesystem layout, deploy artifact tag, internal bundle naming, exception semantics) pre-auth; enables targeted exploit dev. LOW-MED, benign-alone — report as leftover dev build.
+testability: PASSIVE (mostly exhausted)
+
+**STEP 4 — SELF-CRITIQUE**
+- [PARKED] dslkonto default-product 500 (BUSLOGIC, conf 45): no attacker-controllable product/id/plan param found; availability-flavored, largely OOS; no verify path.
+- [PARKED] kundenkonto SID-entropy guessability: anonymous SIDs aren't bound to credentials, so forging an unauthenticated SID grants nothing; low value — reject.
+- [FINAL] survivor 1 = kundenkonto cross-bind (AUTH, 75): sole decisive remaining action.
+- [FINAL] survivor 2 = dslkonto app_dev.php debug (MISCONFIG, 70): report-ready LOW-MED.
+
+**STEP 5 — NEXT ACTION**
+[NEXT] HUMAN: kundenkonto 2-account cross-bind matrix — GET /api/2.0/session twice (SID-A, SID-B), then POST {"sid":"SID-B"} with Cookie: PHPSESSID=A to /devices/get, /evn/get, /call/initiate; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = cross-tenant CRITICAL (toll-fraud upside). If a 2nd tenant is hard to source, complete the /signup funnel linked from /login first.
+
+**STEP 6 — LEARNING**
+- [LEARN] ACCEPTED MISCONFIG @ dslkonto.fonial.de/app_dev.php/api/2.0: DSL portal has NO /api/2.0/session route (Symfony 404 "No route found") — DSL is a standalone Symfony DSL/ORM app, NOT a VoIP API host; prior "independent /api/2.0 namespace" claim corrected.
+- [LEARN] ACCEPTED MISCONFIG @ dslkonto.fonial.de: dev-mode app_dev.php boots full app pre-auth with 404/500 debug pages (paths, deploy tag, exception/bundle semantics); prod suppresses to empty 500; profiler/router/phpinfo off → exposure bounded to path+exception detail, LOW-MED.
+- [LEARN] ACCEPTED arch @ dslkonto.fonial.de: native /api/2.0/* all empty 500 on GET (PHP method-guard) — same main-host split as kundenkonto; no GET-probeable API live on DSL.
+
+**STEP 7 — RISK**
+[RISK] fonial: 62 — Surface fully mapped on both portals; new corrections shrink rather than grow footprint (DSL has no VoIP API, dev exposure bounded to path/exception detail). All engineered high-value upside (dual-backend SID/PHPSESSID cross-bind 75, CORS+SID chain) remains credential-gated and unproven → risk stays moderate. One human cross-bind matrix either lands CRITICAL cross-tenant/toll-fraud or definitively closes the engagement. Reportable confirmed findings: dslkonto dev-mode debug exposure (LOW-MED) + CORS wildcard non-exploitable-as-configured (info only).

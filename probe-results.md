@@ -74,3 +74,12 @@ https://kundenkonto.fonial.de/ -> 200 len=?
 https://dslkonto.fonial.de/app_dev.php/_profiler -> HTTP 404
 https://dslkonto.fonial.de/app_dev.php/_profiler/router -> HTTP 404
 https://dslkonto.fonial.de/app_dev.php/_profiler/phpinfo -> HTTP 404
+
+## 2026-09-05 09:55:18 UTC
+https://kundenkonto.fonial.de/ -> 200 len=?
+https://dslkonto.fonial.de/app_dev.php/_profiler -> HTTP 404
+https://dslkonto.fonial.de/app_dev.php/_profiler/router -> HTTP 404
+https://dslkonto.fonial.de/app_dev.php/_profiler/phpinfo -> HTTP 404
+https://dslkonto.fonial.de/app_dev.php/ -> 200 len=?
+https://dslkonto.fonial.de/app_dev.php/forgot/request -> 200 len=?
+https://dslkonto.fonial.de/app_dev.php/register -> HTTP 500
