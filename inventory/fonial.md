@@ -161,3 +161,8 @@ www.fonial.de
 ## 2026-09-05 13:20:03 UTC
 - NEW dslkonto.fonial.de/app_dev.php/_profiler returns 404 with `X-Debug-Token: 0951e9` header (profiler exists but token-based access)
 - NEW kundenkonto.fonial.de/ landing page returns 302 to /login with `ACAO: *` + `PHPSESSID` cookie (unauthenticated)
+
+## 2026-09-05 16:25:11 UTC
+- NEW dslkonto.fonial.de/app_dev.php/_profiler returns 404 with rotating `X-Debug-Token` headers (token changes per request: 0951e9 → f2142c → a9d22c → d3687f → 031fa8) — profiler enabled but token-gated
+- NEW dslkonto.fonial.de/app_dev.php/register returns 500 with full Symfony exception page: stack trace, filesystem path `/pkg/srv/application_2026_07_02_1410/src`, bundle names, deploy tag — dev mode confi
+- CHANGED kundenkonto.fonial.de/ landing page CORS wildcard + PHPSESSID on unauthenticated 302→/login confirmed live (ACAO: *, ACAM: GET/POST/OPTIONS, no Vary: Origin)

@@ -53,3 +53,6 @@
 - 2026-09-05 ACCEPTED narrow-API @ kundenkonto.fonial.de/api/2.0: exactly 5 endpoints; this closes passive discovery on the API (split-frontend + SPA routes enumerated).
 - 2026-09-05 REJECTED dev-mode-exposure @ dslkonto.fonial.de/app_dev.php: leaked content = stack traces + fs paths (deploy tag, bundle names) only, no env/param/session dump; falls under scope.yml "Descriptive error messages / Stack Traces" = OUT OF SCOPE clause → downgraded from report-ready to excluded/non-reportable standalone.
 - 2026-09-05 REJECTED dev-mode-exposure @ dslkonto.fonial.de/app_dev.php: leaked content = stack traces + fs paths (deploy tag, bundle names, exception semantics) only, no env/param/session dump observed; falls under scope.yml OUT-OF-SCOPE "Descriptive error messages / Stack Traces" clause → reclassified from report-ready to excluded-class/non-standalone.
+- 2026-09-05 REJECTED dev-mode-exposure @ dslkonto.fonial.de/app_dev.php: leaked content = stack traces + fs paths only; scope.yml excludes "Descriptive error messages or headers".
+- 2026-09-05 REJECTED dslkonto buslogic: no attacker-controllable params; registration broken. Dead.
+- 2026-09-05 ACCEPTED narrow API surface @ kundenkonto.fonial.de/api/2.0: exactly 5 endpoints. Passive discovery closed.

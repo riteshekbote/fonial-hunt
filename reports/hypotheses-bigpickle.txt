@@ -1,138 +1,20 @@
-## 2026-09-05 13:13:44 UTC [target] (model bigpickle)
-[HYP] Frontend wizard/settings routes expose unauthenticated actions
-class: MISCONFIG
-asset: kundenkonto.fonial.de/wizard/, /settings/*
-confidence: 25
-reasoning: Routes exist in HTML SPA bundle; all return 302 → /login without PHPSESSID; login-required 302 implies app-level gate, consistent with SPA expecting authenticated session. No unauth behavior observed.
-evidence_needed: none — tested; all auth-gated.
-verify_steps: none (probed).
-impact: none observed. LOW.
-testability: PASSIVE
-[PARKED] Frontend wizard/settings routes: probed — all 302 → /login; no unauthenticated surface; confidence 25 < 40. Kill.
-[FINAL] 1. Dual-backend SID cross-binding cross-tenant on 3 data endpoints (75, HUMAN_ONLY) 2. call/initiate WRITE SID authz / cross-tenant call control (55, HUMAN_ONLY, folded into FINAL-1 verify matrix)
-[NEXT] HUMAN: obtain 2 valid test accounts; execute 2-account cross-bind matrix: for each of /devices/get, /evn/get, /call/initiate POST SID-B body + Cookie PHPSESSID=A; any response ≠ {"sid":null,"status":"error","reason":"session invalid"} = cross-tenant CRITICAL. Passive surface exhausted — all remaining value is gated behind credentials.
-[LEARN] ACCEPTED MISCONFIG @ kundenkonto.fonial.de: CORS wildcard (ACAO *, ACAM GET/POST/OPTIONS) consistent on all 5 API endpoints + both landing/login pages; no allow-credentials anywhere → no cookie cross-origin exfil channel; SID-in-body required.
-[LEARN] REJECTED frontend-unauth @ kundenkonto.fonial.de: /wizard/, /settings/menu/toggle, /settings/ticket/ all 302 → /login; frontend auth-gated; no unauth config/setup surface.
-[LEARN] ACCEPTED narrow-API @ kundenkonto.fonial.de/api/2.0: exactly 5 endpoints; this closes passive discovery on the API (split-frontend + SPA routes enumerated).
-[RISK] fonial: 50 — Surface fully mapped and narrow (5 endpoints + auth-gated SPA). CORS misconfig is real but non-exploitable as configured (no creds, SID-in-body). Dual-backend SID/PHPSESSID confusion remains the single high-value vector but is unproven and gated behind 2 valid accounts (2FA + Cloudflare). call/initiate adds toll-fraud upside if cross-riding works. Passive phase complete; risk caps at 50 until human cross-bind test.
-[PRIO] kundenkonto.fonial.de/api/2.0, 8.5, a=7 b=10 t=7 g=7 c=8 f=10
-[PRIO] kundenkonto.fonial.de (frontend/SPA bundle), 6.0, a=6 b=7 t=5 g=7 c=5 f=8
-[PRIO] www.fonial.de, 4.0, a=4 b=5 t=3 g=10 c=4 f=5
-[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
-class: AUTH
-asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
-confidence: 75
-reasoning: Data endpoints authorize by body SID only (unauth → "session unauthenticated", unknown → "session invalid"); PHPSESSID set decoratively in parallel; /session deletes unknown PHPSESSIDs and returns cleartext UUID sid in body. If SID↔credential binding is weak, one SID can ride another tenant's PHPSESSID state on 3 endpoints incl. WRITE call/initiate.
-evidence_needed: (HUMAN) authenticate 2 accounts; cross-bind SID-A + PHPSESSID-B on each endpoint; any response ≠ session-invalid = cross-tenant CRITICAL
-verify_steps: 1) /session → SID-A → /session/authenticate(A) → PHPSESSID-A; 2) repeat → B pair; 3) POST /devices/get {"sid":"SID-B"} + Cookie PHPSESSID=A; 4) same on /evn/get, /call/initiate
-impact: Cross-tenant CDR + device visibility + outbound call control (toll fraud). CRITICAL.
-testability: HUMAN_ONLY
-[HYP] SPA JS bundle exposes undocumented endpoints and exact write-param schema
-class: OTHER
-asset: kundenkonto.fonial.de SPA bundle (script src from /login HTML)
-confidence: 55
-reasoning: ~50 blind {resource}/{action} names all hit HTML-404 wall → API uses non-standard naming, fuzz is dead. The SPA driving the 5 known endpoints must embed endpoint paths + param names in JS; that's the only remaining low-cost way to prove surface=5 and recover call/initiate body fields so the cross-bind test is field-accurate.
-evidence_needed: bundle grep reveals ≥1 new /api/2.0/ string OR exact write-param set; clean 5/5-only result closes discovery with high confidence
-verify_steps: 1) GET https://kundenkonto.fonial.de/ (302→/login), parse HTML for <script src>; 2) GET each bundle (static, ≤1rps); 3) rg -o 'api/2\.0/[a-z/_-]+' plus window-context for sid|number|caller|callee|dest|queue
-impact: reopens surface if new endpoint, else yields precise call/initiate schema → sharper HUMAN verify matrix. LOW-MED.
-testability: PASSIVE
-[NEXT] PROBE: GET https://kundenkonto.fonial.de/ → follow to /login HTML → extract <script src> list → GET each JS bundle → grep 'api/2.0/' and {sid,number,caller,callee,dest,queue}; any new endpoint reopens surface, else finalize call/initiate body schema for the HUMAN cross-bind matrix.
-[RISK] fonial: 50 — Passive phase complete; surface narrow (5 endpoints), every high-value vector gated behind 2FA credentials (Cloudflare + 2FA). CORS wildcard real but non-exploitable as configured (no allow-credentials, SID-in-body). Top vector dual-backend cross-bind (75) unproven and HUMAN-gated; JS bundle grep is last passive upside — could reopen surface or sharpen call/initiate write-authz test. Risk caps at 50 until the 2-account cross-bind matrix.
-[HYP] app_dev.php Symfony dev-mode debug exposure on DSL customer portal leaks internal paths and may expose further debug routes
-class: MISCONFIG
-asset: dslkonto.fonial.de (/app_dev.php/*)
-confidence: 70
-reasoning: /app_dev.php serves the app (200 login, 302 redirects) without any observed IP allowlist; triggered 404 renders full Symfony debug exception page confirming Env=dev, leaking /pkg/srv/application_2026_07_02_1410/…cache/fonial/app_frontend/classes.php, deploy tag, TraceableEventDispatcher/WrappedListener (dev-only). Main host /api/2.0/* fatals to empty 500 (PHP method-guard). _profiler/_wdt 404 — profiler disabled.
-evidence_needed: any additional dev-only disclosure: debug page source-snippets, /env/.env access via app_dev, dev-only routes responding on app_dev but not /; or acceptance as leftover-dev-entrypoint finding.
-verify_steps: 1) GET /app_dev.php/login (200, dev boot); 2) GET /app_dev.php/api/2.0/session → 404 debug page (already captured, path leak); 3) GET /app_dev.php/_profiler, /app_dev.php/_wdt (404, profiler off); 4) GET /app_dev.php/forgot/request, /app_dev.php/register for non-main-host routes; 5) OPTIONS /api/2.0/session on main host (500, method-guard confirmed).
-impact: Info disclosure (filesystem layout, deploy artifact tags, Symfony internals) + dev-mode debug pages available pre-auth; enables targeted exploit dev. LOW-MED, benign-alone but a genuine left-over-dev build.
-testability: PASSIVE
-[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access; SID also mintable via GET, and public signup funnel may let an attacker self-register the second account
-class: AUTH
-asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
-confidence: 78
-reasoning: Data endpoints authorize by body SID only; GET /api/2.0/session now confirmed to mint cleartext SID (no POST needed); /signup → /signup/register/55 public funnel exists (loops pre-auth, needs full flow) → potential self-registration reduces HUMAN gate; PHPSESSID decorative and /session deletes unknown ones.
-evidence_needed: (HUMAN or AUTH_HELPED) 2 valid SIDs from 2 tenants; cross-bind SID-A + PHPSESSID-B on devices/get, evn/get, call/initiate; public-funnel completion to mint account-2 without vendor help.
-verify_steps: 1) GET /api/2.0/session → SID-A (done); 2) repeat anonymous → SID-X; confirm any 2 distinct SIDs auth-independent (session unauthenticated vs invalid); 3) HUMAN: complete /signup funnel to create 2nd tenant; 4) POST devices/get {"sid":SID-B} + Cookie PHPSESSID=A on all 3 endpoints.
-impact: Cross-tenant CDR + device visibility + outbound call control (toll fraud). CRITICAL.
-testability: HUMAN_ONLY (upgrading to AUTH_HELPED if self-registration completes)
-[NEXT] PROBE: GET https://dslkonto.fonial.de/app_dev.php/ (200 dev boot, confirm no IP block), then GET https://dslkonto.fonial.de/app_dev.php/forgot/request and https://dslkonto.fonial.de/app_dev.php/register — compares dev vs main-host route sets on the new DSK portal to bound the dev-debug exposure; continue ≤1rps GET-only.
-[RISK] fonial: 58 — Surface expanded: new live customer portal (DSL) with confirmed dev-mode Symfony debug exposure (pre-auth path/config leak) and an independent /api/2.0 namespace, plus a GET SID-mint on the existing VoIP API and a public self-registration funnel. CORS wildcard remains non-exploitable as configured and dual-backend cross-bind (78) still unproven and credential-gated, so risk stays moderate; 50→58 on breadth + confirmed-but-low-severity info disclosure.
-[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
-class: AUTH
-asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
-confidence: 75
-reasoning: Data endpoints authorize by body SID only; PHPSESSID decorative; /session mints cleartext UUID via GET and deletes unknown PHPSESSIDs. All passive supersets on both portals now closed (kundenkonto surface=5, bundle grep dead; DSL API/register broken), leaving only the 2-account matrix to prove/disprove the binding.
-evidence_needed: (HUMAN) 2 valid SIDs from 2 tenants; cross-bind SID-A + PHPSESSID-B on each endpoint; any response ≠ session-invalid = cross-tenant CRITICAL. kundenkonto /signup funnel exists (login page links it) as self-registration path for account-2.
-verify_steps: 1) GET /api/2.0/session → SID-A; 2) second account → SID-B/PHPSESSID-B; 3) POST /devices/get {"sid":"SID-B"} + Cookie PHPSESSID=A; repeat /evn/get, /call/initiate; 4) try completing /signup funnel to mint account-2 without vendor help.
-impact: Cross-tenant CDR, device visibility, outbound call control (toll fraud). CRITICAL.
-testability: HUMAN_ONLY
-[HYP] app_dev.php Symfony dev-mode debug exposure is broader than 404-path leaks: POST-triggered 500 debug pages embed request/session/exception detail that prod silently suppresses
-class: MISCONFIG
-asset: dslkonto.fonial.de/app_dev.php/*
-confidence: 70
-reasoning: Confirmed pre-auth debug pages on 404 (paths, `pkg/srv/application_2026_07_02_1410`, TraceableEventDispatcher) AND on 500 (`/register`: "Product not found" + `User\UserBundle\RegistrationController`). Prod suppresses identical errors to empty 500. Debug tabs included Session; env/params tab not observed.
-evidence_needed: any debug page dumping env vars/DB params/cookies of the request, or a dev-only route that responds only via app_dev.php (toolbar/profiler off is a known 404).
-verify_steps: 1) GET /app_dev.php/register (done — session tab, no env dump); 2) GET /app_dev.php/zzz (done — path leak only); 3) GET /app_dev.php/_profiler, /_wdt (404, off); 4) GET /app_dev.php/config.php (403, blocked). Remaining POST-triggered pages restricted by passive-only rule.
-impact: Info disclosure (filesystem layout, deploy tag, internal bundle naming, exception semantics) pre-auth; enables targeted exploit dev. LOW-MED, benign alone — report as leftover-dev-build.
-testability: PASSIVE (mostly exhausted)
-[HYP] DSL portal default-product misconfiguration blocks registration — public self-signup on dslkonto dead, product-param logic may mis-handle attacker-supplied product selection elsewhere
-class: BUSLOGIC
-asset: dslkonto.fonial.de/register (and /signup-adjacent flows)
-confidence: 45
-reasoning: "Product not found. Did you set the default product?" fatals pre-auth on both prod (silent 500) and dev (debug). Suggests product-entity dependency with no default; a registration/onboarding-dependent flow exists in domain logic. No exploitable read/write path tested.
-evidence_needed: attacker-controllable product/id/plan parameter anywhere in the DSL flow that triggers different branch behavior than default-missing.
-verify_steps: 1) GET /app_dev.php/register (done, broken); 2) GET /register attending no params → 500; 3) GET /forgot/request and /login (200, normal). No param-injection surface found.
-impact: Availability of public signup (DoS-flavored → largely out of scope) + domain-logic insight. NI to LOW.
-testability: PASSIVE
-[NEXT] HUMAN: kundenkonto 2-account cross-bind matrix — GET /api/2.0/session twice (SID-A, SID-B), then POST {"sid":"SID-B"} with Cookie PHPSESSID=A to /devices/get, /evn/get, /call/initiate; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = cross-tenant CRITICAL (toll-fraud upside). If account-2 is hard to source, first attempt the /signup funnel linked from /login.
-[RISK] fonial: 62 — Surface is now fully mapped on both live portals (kundenkonto 5-endpoint API + auth-gated SPA; dslkonto 3 front controllers, broken API namespace and registration). New confirmed-but-low finding: pre-auth Symfony app_dev.php debug exposure on a live customer portal (paths, deploy tag, exception/domain semantics; LOW-MED, report-friendly). All engineered high-value upside (dual-backend SID/PHPSESSID cross-bind, CORS+SID chain) remains credential-gated and unproven → risk stays moderate; one human cross-bind matrix (75) either lands CRITICAL cross-tenant/toll-fraud or definitively closes the engagement.
-asset: dslkonto.fonial.de (/app_dev.php/*)
-[NEXT] PROBE: GET https://dslkonto.fonial.de/app_dev.php/ (200 dev boot, confirm no IP block), then GET https://dslkonto.fonial.de/app_dev.php/forgot/request and https://dslkonto.fonial.de/app_dev.php/register — compares dev vs main-host route sets on the new DSK portal to bound the dev-debug exposure; continue ≤1rps GET-only.
-asset: dslkonto.fonial.de/app_dev.php/*
-[HYP] DSL portal default-product misconfiguration blocks registration — public self-signup on dslkonto dead, product-param logic may mis-handle attacker-supplied product selection elsewhere
-asset: dslkonto.fonial.de/register (and /signup-adjacent flows)
-[RISK] fonial: 62 — Surface is now fully mapped on both live portals (kundenkonto 5-endpoint API + auth-gated SPA; dslkonto 3 front controllers, broken API namespace and registration). New confirmed-but-low finding: pre-auth Symfony app_dev.php debug exposure on a live customer portal (paths, deploy tag, exception/domain semantics; LOW-MED, report-friendly). All engineered high-value upside (dual-backend SID/PHPSESSID cross-bind, CORS+SID chain) remains credential-gated and unproven → risk stays moderate; one human cross-bind matrix (75) either lands CRITICAL cross-tenant/toll-fraud or definitively closes the engagement.
-[FINAL] survivor 1: Dual-backend cross-bind. Already elaborated, confidence 75, HUMAN_ONLY.
-[FINAL] survivor 2: dslkonto app_dev dev-mode exposure — report-ready, LOW-MED.
-[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
-class: AUTH
-asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
-confidence: 75
-reasoning: Data endpoints authorize by body SID only; PHPSESSID decorative; /session mints cleartext UUID via GET and deletes unknown PHPSESSIDs. All passive supersets now closed on both portals (kundenkonto bundle grep dead; DSL API absent, registration broken). Only the 2-account matrix can prove/disprove the binding.
-evidence_needed: (HUMAN) 2 valid SIDs from 2 tenants; cross-bind SID-A + PHPSESSID-B on each endpoint; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = cross-tenant CRITICAL.
-verify_steps: 1) GET /api/2.0/session → SID-A; 2) second account → SID-B/PHPSESSID-B; 3) POST /devices/get {"sid":"SID-B"} + Cookie PHPSESSID=A; repeat /evn/get, /call/initiate; 4) try completing /signup funnel (linked from /login) to mint account-2 without vendor help.
-impact: Cross-tenant CDR, device visibility, outbound call control (toll fraud). CRITICAL.
-testability: HUMAN_ONLY
-[HYP] DSL portal dev-mode Symfony debug exposure leaks internal paths/deploy-tag/domain semantics pre-auth on a live customer portal
-class: MISCONFIG
-asset: dslkonto.fonial.de/app_dev.php/*
-confidence: 70
-reasoning: /app_dev.php boots full app (200 /, 302→/login with PHPSESSID) with no IP block; 404 renders full Symfony debug page (fs path `pkg/srv/application_2026_07_02_1410`, deploy tag, TraceableEventDispatcher dev-only); 500 on /register prints `User\UserBundle\RegistrationController` + "Product not found". Prod suppresses identical errors to empty 500. Profiler/router/phpinfo confirmed 404 (off).
-evidence_needed: any debug page dumping env/params/session of the request, or a dev-only route responding only via app_dev.php; current passive evidence (paths/deploy/exception semantics) already sufficient for LOW-MED report.
-verify_steps: 1) GET /app_dev.php/ (200 dev boot, 302→login); 2) GET /app_dev.php/api/2.0/session (404 debug, proves DSL has no VoIP API route); 3) GET /app_dev.php/_profiler,_wdt,config.php (404/403 — off/blocked); remaining POST-triggered pages restricted by passive-only rule.
-impact: Info disclosure (filesystem layout, deploy artifact tag, internal bundle naming, exception semantics) pre-auth; enables targeted exploit dev. LOW-MED, benign-alone — report as leftover dev build.
-testability: PASSIVE (mostly exhausted)
-[NEXT] HUMAN: kundenkonto 2-account cross-bind matrix — GET /api/2.0/session twice (SID-A, SID-B), then POST {"sid":"SID-B"} with Cookie: PHPSESSID=A to /devices/get, /evn/get, /call/initiate; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = cross-tenant CRITICAL (toll-fraud upside). If a 2nd tenant is hard to source, complete the /signup funnel linked from /login first.
-[RISK] fonial: 62 — Surface fully mapped on both portals; new corrections shrink rather than grow footprint (DSL has no VoIP API, dev exposure bounded to path/exception detail). All engineered high-value upside (dual-backend SID/PHPSESSID cross-bind 75, CORS+SID chain) remains credential-gated and unproven → risk stays moderate. One human cross-bind matrix either lands CRITICAL cross-tenant/toll-fraud or definitively closes the engagement. Reportable confirmed findings: dslkonto dev-mode debug exposure (LOW-MED) + CORS wildcard non-exploitable-as-configured (info only).
-[LEARN] REJECTED dev-mode-exposure @ dslkonto.fonial.de/app_dev.php: leaked content = stack traces + fs paths (deploy tag, bundle names) only, no env/param/session dump; falls under scope.yml "Descriptive error messages / Stack Traces" = OUT OF SCOPE clause → downgraded from report-ready to excluded/non-reportable standalone.
-[FINAL] survivor 1 (sole): Dual-backend SID/PHPSESSID cross-bind, confidence 75, HUMAN_ONLY. All else reclassified dead or excluded-class.
+## 2026-09-05 16:07:12 UTC [target] (model bigpickle)
 [PRIO] kundenkonto.fonial.de/api/2.0,9.05,a=9,b=10,t=8,g=8,c=9,f=10
 [PRIO] dslkonto.fonial.de,8.20,a=9,b=8,t=9,g=10,c=7,f=10
-[PRIO] kundenkonto.fonial.de,7.70,a=8,b=9,t=7,g=6,c=8,f=7
-[PRIO] www.fonial.de,5.10,a=4,b=5,t=3,g=10,c=4,f=5
 [HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
 class: AUTH
 asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
 confidence: 75
-reasoning: Data endpoints authorize by body SID only (unauth SID→"session unauthenticated", unknown→"session invalid"); PHPSESSID decorative/parallel; /session mints cleartext UUID via GET and deletes unknown PHPSESSIDs. All passive supersets closed (kundenkonto surface=5, SPA routes auth-gated, bundle grep dead; DSL has no VoIP API, registration broken). Only the 2-account matrix can prove/disprove SID↔credential binding.
-evidence_needed: (HUMAN) 2 valid SIDs from 2 tenants; cross-bind SID-B body + PHPSESSID-A cookie; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = cross-tenant CRITICAL.
-verify_steps: 1) GET /api/2.0/session → SID-A + authenticate → PHPSESSID-A; 2) 2nd tenant → SID-B/PHPSESSID-B; 3) POST /devices/get {"sid":"SID-B"} + Cookie PHPSESSID=A; repeat /evn/get, /call/initiate; 4) if 2nd tenant hard to source, complete /login-linked /signup funnel first.
+reasoning: Data endpoints authorize by body SID only; PHPSESSID decorative; /session issues cleartext UUID sid. All passive supersets closed; only 2-account matrix proves/disproves binding.
+evidence_needed: 2 valid SIDs from 2 tenants; cross-bind SID-B body + PHPSESSID-A cookie; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = CRITICAL.
+verify_steps: 1) GET /api/2.0/session → SID-A; 2) 2nd tenant → SID-B/PHPSESSID-B; 3) POST /devices/get {"sid":"SID-B"} + Cookie PHPSESSID=A; repeat /evn/get, /call/initiate.
 impact: Cross-tenant CDR, device visibility, outbound call control (toll fraud). CRITICAL.
 testability: HUMAN_ONLY
-[PARKED] dslkonto app_dev dev-mode exposure (my prior "report-ready" survivor #2): re-scored against scope.yml — leaked content is stack-traces + filesystem paths (deploy tag `application_2026_07_02_1410`, bundle names, exception semantics) with NO env/params/session-data dump observed. This is squarely the OUT-OF-SCOPE class "Descriptive error messages or headers (e.g. Stack Traces…)". Standalone report value low/weak. Downgraded below report threshold.
-[PARKED] dslkonto default-product buslogic (45): no attacker-controllable product/id/plan param surfaced; registration dead on prod and dev; no divergent branch. Dead.
-[FINAL] survivor 1 (sole): Dual-backend cross-bind, 75, HUMAN_ONLY. Every previously-carried low-vuln finding is either excluded-class (dev-mode stack traces) or dead (buslogic).
-[NEXT] HUMAN: kundenkonto 2-account cross-bind matrix — GET /api/2.0/session twice (SID-A, SID-B), authenticate both, then POST {"sid":"SID-B"} with Cookie: PHPSESSID=A to /devices/get, /evn/get, /call/initiate; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = cross-tenant CRITICAL (toll-fraud upside). If account-2 is hard to source, complete the /signup funnel linked from /login. Passive surface is exhausted — this matrix is the sole remaining gate to a definitive verdict.
-[LEARN] REJECTED dev-mode-exposure @ dslkonto.fonial.de/app_dev.php: leaked content = stack traces + fs paths (deploy tag, bundle names, exception semantics) only, no env/param/session dump observed; falls under scope.yml OUT-OF-SCOPE "Descriptive error messages / Stack Traces" clause → reclassified from report-ready to excluded-class/non-standalone.
-[RISK] fonial: 55 — Two corrections this cycle, both downward: the sole "report-ready" low finding (dslkonto dev-mode stack-trace leak) is excluded-class under scope.yml, and no new surface appeared across the full inventory. Remaining upside is entirely the credential-gated dual-backend cross-bind (75, HUMAN_ONLY) which, if proven, is CRITICAL cross-tenant/toll-fraud; if disproven, the engagement has no reportable finding and closes flat. Risk reflects convergence: moderate, and monotone-decreasing absent human credentials.
+[PARKED] dslkonto app_dev dev-mode exposure: re-scored against scope.yml — leaked content = stack traces + filesystem paths only; falls under OUT-OF-SCOPE "Descriptive error messages or headers". Standalone report value low. Downgraded below threshold.
+[PARKED] dslkonto default-product buslogic: no attacker-controllable parameter surfaced; registration dead on prod/dev. Dead.
+[FINAL] survivor 1 (sole): Dual-backend cross-bind, 75, HUMAN_ONLY. Every other finding either excluded-class or dead.
+[NEXT] HUMAN: kundenkonto 2-account cross-bind matrix — GET /api/2.0/session twice (SID-A, SID-B), authenticate both, then POST {"sid":"SID-B"} with Cookie: PHPSESSID=A to /devices/get, /evn/get, /call/initiate; any response ≠ `session invalid` = cross-tenant CRITICAL. If account-2 unavailable, complete /signup funnel linked from /login.
+[LEARN] REJECTED dev-mode-exposure @ dslkonto.fonial.de/app_dev.php: leaked content = stack traces + fs paths only; scope.yml excludes "Descriptive error messages or headers".
+[LEARN] REJECTED dslkonto buslogic: no attacker-controllable params; registration broken. Dead.
+[LEARN] ACCEPTED narrow API surface @ kundenkonto.fonial.de/api/2.0: exactly 5 endpoints. Passive discovery closed.
+[RISK] fonial: 55 — Two downward corrections: sole low finding (dev-mode stack traces) is excluded-class; no new surface appeared. Remaining upside = credential-gated dual-backend cross-bind (75, HUMAN_ONLY). If proven = CRITICAL cross-tenant/toll-fraud. If disproven = no reportable finding, engagement closes flat. Risk moderate, monotone-decreasing absent human credentials.
