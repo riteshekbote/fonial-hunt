@@ -293,3 +293,33 @@
 - LEARN: REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
 - LEARN: REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
 - LEARN: REJECTED dev-mode-exposure @ dslkonto.fonial.de/app_dev.php: leaked content = stack traces + fs paths (deploy tag, bundle names, exception semantics) only, no e
+
+## RANKED HYPOTHESES 2026-09-05 18:29:23 UTC
+- [85] dslkonto.fonial.de: Symfony dev-mode profiler token rotation enables route/config enumeration on dslkonto (from art/lead_nemotron3.txt)
+- [75] kundenkonto.fonial.de/api/2.0: Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints (from art/lead_bigpickle.txt)
+- NEXT(hypotheses-bigpickle.txt): HUMAN: kundenkonto 2-account cross-bind matrix — register or obtain 2 valid fonial accounts (A + B), then: (1) POST /api/2.0/session → SID-A; POST /api/2.0/sess
+- NEXT(hypotheses-nemotron3.txt): PROBE: GET https://dslkonto.fonial.de/app_dev.php/_profiler/031fa8 to confirm profiler UI access and enumerate debug routes
+- LEARN: ACCEPTED narrow API surface @ kundenkonto.fonial.de/api/2.0: exactly 5 endpoints. All passive discovery methods exhausted (~50 guessed names returned HTML-404).
+- LEARN: ACCEPTED call/initiate @ kundenkonto.fonial.de/api/2.0: Live WRITE endpoint confirmed; returns identical session-invalid JSON pattern as read endpoints; same SI
+- LEARN: ACCEPTED dual-session binding @ kundenkonto.fonial.de/api/2.0: Data endpoints authorize by body SID only; PHPSESSID decorative; /session issues cleartext UUID s
+- LEARN: ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers.
+- LEARN: ACCEPTED MISCONFIG @ kundenkonto.fonial.de: CORS wildcard (ACAO *, ACAM GET/POST/OPTIONS) consistent on all 5 API endpoints + both landing/login pages; no allow
+- LEARN: REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no allow-credentials, browser won't send cookies cross-origin 
+- LEARN: REJECTED brute-force/credential-stuffing: Out of scope per program (rate-limit/lockout policy).
+- LEARN: REJECTED CRUD expansion ~30 siblings: PROVEN WRONG — API uses non-standard naming; guessed {resource}/{action} pattern yields 0 new hits.
+- LEARN: REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon.
+- LEARN: REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references.
+- LEARN: REJECTED frontend-unauth @ kundenkonto.fonial.de: /wizard/, /settings/menu/toggle, /settings/ticket/ all 302 → /login; frontend auth-gated; no unauth config/set
+- LEARN: REJECTED dev-mode-exposure @ dslkonto.fonial.de/app_dev.php: leaked content = stack traces + fs paths only; scope.yml excludes "Descriptive error messages or he
+- LEARN: REJECTED dslkonto buslogic: no attacker-controllable params; registration broken on prod/dev. Dead.
+- LEARN: ACCEPTED narrow API surface @ kundenkonto.fonial.de/api/2.0: Only 5 endpoints exist (session, session/authenticate, devices/get, evn/get, call/initiate); ~50 gu
+- LEARN: ACCEPTED call/initiate @ kundenkonto.fonial.de/api/2.0: Live WRITE endpoint; returns same session-invalid JSON pattern as read endpoints; same SID-only authz su
+- LEARN: ACCEPTED dual-session binding @ kundenkonto.fonial.de/api/2.0: Data endpoints authorize by body SID only; PHPSESSID decorative; /session issues cleartext UUID s
+- LEARN: ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers
+- LEARN: ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+- LEARN: REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origi
+- LEARN: REJECTED brute-force/credential-stuffing: Out of scope (rate-limit/lockout policy)
+- LEARN: REJECTED CRUD expansion ~30 siblings: PROVEN WRONG — API uses non-standard naming; guessed {resource}/{action} pattern yields 0 new hits
+- LEARN: REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
+- LEARN: REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+- LEARN: REJECTED dev-mode-exposure @ dslkonto.fonial.de/app_dev.php: leaked content = stack traces + fs paths (deploy tag, bundle names, exception semantics) only, no e

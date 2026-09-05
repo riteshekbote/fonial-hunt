@@ -56,3 +56,15 @@
 - 2026-09-05 REJECTED dev-mode-exposure @ dslkonto.fonial.de/app_dev.php: leaked content = stack traces + fs paths only; scope.yml excludes "Descriptive error messages or headers".
 - 2026-09-05 REJECTED dslkonto buslogic: no attacker-controllable params; registration broken. Dead.
 - 2026-09-05 ACCEPTED narrow API surface @ kundenkonto.fonial.de/api/2.0: exactly 5 endpoints. Passive discovery closed.
+- 2026-09-05 ACCEPTED narrow API surface @ kundenkonto.fonial.de/api/2.0: exactly 5 endpoints. All passive discovery methods exhausted (~50 guessed names returned HTML-404). Surface closed.
+- 2026-09-05 ACCEPTED call/initiate @ kundenkonto.fonial.de/api/2.0: Live WRITE endpoint confirmed; returns identical session-invalid JSON pattern as read endpoints; same SID-only authz suspected.
+- 2026-09-05 ACCEPTED dual-session binding @ kundenkonto.fonial.de/api/2.0: Data endpoints authorize by body SID only; PHPSESSID decorative; /session issues cleartext UUID sid.
+- 2026-09-05 ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers.
+- 2026-09-05 ACCEPTED MISCONFIG @ kundenkonto.fonial.de: CORS wildcard (ACAO *, ACAM GET/POST/OPTIONS) consistent on all 5 API endpoints + both landing/login pages; no allow-credentials → no cookie cross-origin exfil channel; SID-in-body required.
+- 2026-09-05 REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no allow-credentials, browser won't send cookies cross-origin → low direct impact without SID leak chain.
+- 2026-09-05 REJECTED brute-force/credential-stuffing: Out of scope per program (rate-limit/lockout policy).
+- 2026-09-05 REJECTED CRUD expansion ~30 siblings: PROVEN WRONG — API uses non-standard naming; guessed {resource}/{action} pattern yields 0 new hits.
+- 2026-09-05 REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon.
+- 2026-09-05 REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references.
+- 2026-09-05 REJECTED dev-mode-exposure @ dslkonto.fonial.de/app_dev.php: leaked content = stack traces + fs paths only; scope.yml excludes "Descriptive error messages or headers". Not reportable standalone.
+- 2026-09-05 REJECTED dslkonto buslogic: no attacker-controllable params; registration broken on prod/dev. Dead.

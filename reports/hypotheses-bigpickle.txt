@@ -1,20 +1,33 @@
-## 2026-09-05 16:07:12 UTC [target] (model bigpickle)
+## 2026-09-05 18:22:20 UTC [target] (model bigpickle)
 [PRIO] kundenkonto.fonial.de/api/2.0,9.05,a=9,b=10,t=8,g=8,c=9,f=10
 [PRIO] dslkonto.fonial.de,8.20,a=9,b=8,t=9,g=10,c=7,f=10
+[PRIO] kundenkonto.fonial.de,7.70,a=8,b=9,t=7,g=6,c=8,f=7
+[PRIO] www.fonial.de,5.10,a=4,b=5,t=3,g=10,c=4,f=5
 [HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
 class: AUTH
 asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
 confidence: 75
-reasoning: Data endpoints authorize by body SID only; PHPSESSID decorative; /session issues cleartext UUID sid. All passive supersets closed; only 2-account matrix proves/disproves binding.
-evidence_needed: 2 valid SIDs from 2 tenants; cross-bind SID-B body + PHPSESSID-A cookie; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = CRITICAL.
-verify_steps: 1) GET /api/2.0/session → SID-A; 2) 2nd tenant → SID-B/PHPSESSID-B; 3) POST /devices/get {"sid":"SID-B"} + Cookie PHPSESSID=A; repeat /evn/get, /call/initiate.
-impact: Cross-tenant CDR, device visibility, outbound call control (toll fraud). CRITICAL.
+reasoning: Data endpoints authorize by body SID only (unauth SID→"session unauthenticated", unknown→"session invalid"); PHPSESSID decorative/parallel; /session mints cleartext UUID v4 via GET/POST and deletes unknown PHPSESSIDs. Two distinct backends (session vs data) confirmed by different Content-Type headers and independent cookie behavior. All passive supersets closed — surface is exactly 5 endpoints, SPA routes auth-gated, DSL has no VoIP API, registration broken. The only test that can prove/disprove SID↔credential binding is the 2-account cross-bind matrix.
+evidence_needed: (HUMAN) 2 valid SIDs from 2 different tenants; cross-bind SID-B body + PHPSESSID-A cookie on each data endpoint; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = cross-tenant CRITICAL.
+verify_steps: 1) Account A: POST /api/2.0/session → SID-A; POST /api/2.0/session/authenticate with creds → PHPSESSID-A set; 2) Account B: same flow → SID-B, PHPSESSID-B; 3) POST /devices/get {"sid":"SID-B"} + Cookie: PHPSESSID=<PHPSESSID-A>; repeat /evn/get, /call/initiate; 4) If 2nd tenant unavailable, complete /signup funnel linked from /login to self-register.
+impact: Cross-tenant CDR (call detail records), SIP device visibility, phone number enumeration, outbound call initiation (toll fraud). CRITICAL severity.
 testability: HUMAN_ONLY
-[PARKED] dslkonto app_dev dev-mode exposure: re-scored against scope.yml — leaked content = stack traces + filesystem paths only; falls under OUT-OF-SCOPE "Descriptive error messages or headers". Standalone report value low. Downgraded below threshold.
-[PARKED] dslkonto default-product buslogic: no attacker-controllable parameter surfaced; registration dead on prod/dev. Dead.
-[FINAL] survivor 1 (sole): Dual-backend cross-bind, 75, HUMAN_ONLY. Every other finding either excluded-class or dead.
-[NEXT] HUMAN: kundenkonto 2-account cross-bind matrix — GET /api/2.0/session twice (SID-A, SID-B), authenticate both, then POST {"sid":"SID-B"} with Cookie: PHPSESSID=A to /devices/get, /evn/get, /call/initiate; any response ≠ `session invalid` = cross-tenant CRITICAL. If account-2 unavailable, complete /signup funnel linked from /login.
-[LEARN] REJECTED dev-mode-exposure @ dslkonto.fonial.de/app_dev.php: leaked content = stack traces + fs paths only; scope.yml excludes "Descriptive error messages or headers".
-[LEARN] REJECTED dslkonto buslogic: no attacker-controllable params; registration broken. Dead.
-[LEARN] ACCEPTED narrow API surface @ kundenkonto.fonial.de/api/2.0: exactly 5 endpoints. Passive discovery closed.
-[RISK] fonial: 55 — Two downward corrections: sole low finding (dev-mode stack traces) is excluded-class; no new surface appeared. Remaining upside = credential-gated dual-backend cross-bind (75, HUMAN_ONLY). If proven = CRITICAL cross-tenant/toll-fraud. If disproven = no reportable finding, engagement closes flat. Risk moderate, monotone-decreasing absent human credentials.
+[PARKED] dslkonto app_dev dev-mode exposure: Leaked content is stack traces + filesystem paths (deploy tag, bundle names, exception semantics) only; no env/params/session-data dump observed. Scope.yml OUT-OF-SCOPE class "Descriptive error messages or headers (e.g. Stack Traces)". Cannot be elevated to reportable standalone even though it's genuinely present. Dead class.
+[PARKED] dslkonto default-product buslogic: Registration broken on both prod and dev; no attacker-controllable product/id/plan parameter surfaced in any tested path. Dead endpoint.
+[PARKED] dslkonto profiler token rotation: Tokens rotate per request (0951e9→f2142c→a9d22c→d3687f→031fa8) but every tested token returns 404 on /_profiler/{token}. Even if profiler UI existed and leaked env/params/session, the content would be class "Descriptive error messages" or would require auth-gated POST-triggered pages to dump sensitive data — both excluded by scope.yml. Additionally, the finding would be on dslkonto (DSL portal), not the VoIP API, reducing business value. Parked even if technically accessible.
+[FINAL] Survivor ranked:
+[NEXT] HUMAN: kundenkonto 2-account cross-bind matrix — register or obtain 2 valid fonial accounts (A + B), then: (1) POST /api/2.0/session → SID-A; POST /api/2.0/session/authenticate → PHPSESSID-A; (2) same for B → SID-B, PHPSESSID-B; (3) POST /devices/get {"sid":"SID-B"} + Cookie: PHPSESSID=<PHPSESSID-A> → any data = CRITICAL; repeat /evn/get, /call/initiate; (4) also test: POST /call/initiate {"sid":"SID-B", ...params} + Cookie PHPSESSID=A → outbound call to attacker number = CRITICAL toll fraud. If account-2 unavailable, complete /signup funnel linked from /login page. Passive surface is exhausted — this matrix is the sole gate to a definitive verdict.
+[LEARN] ACCEPTED narrow API surface @ kundenkonto.fonial.de/api/2.0: exactly 5 endpoints. All passive discovery methods exhausted (~50 guessed names returned HTML-404). Surface closed.
+[LEARN] ACCEPTED call/initiate @ kundenkonto.fonial.de/api/2.0: Live WRITE endpoint confirmed; returns identical session-invalid JSON pattern as read endpoints; same SID-only authz suspected.
+[LEARN] ACCEPTED dual-session binding @ kundenkonto.fonial.de/api/2.0: Data endpoints authorize by body SID only; PHPSESSID decorative; /session issues cleartext UUID sid.
+[LEARN] ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers.
+[LEARN] ACCEPTED MISCONFIG @ kundenkonto.fonial.de: CORS wildcard (ACAO *, ACAM GET/POST/OPTIONS) consistent on all 5 API endpoints + both landing/login pages; no allow-credentials → no cookie cross-origin exfil channel; SID-in-body required.
+[LEARN] REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no allow-credentials, browser won't send cookies cross-origin → low direct impact without SID leak chain.
+[LEARN] REJECTED brute-force/credential-stuffing: Out of scope per program (rate-limit/lockout policy).
+[LEARN] REJECTED CRUD expansion ~30 siblings: PROVEN WRONG — API uses non-standard naming; guessed {resource}/{action} pattern yields 0 new hits.
+[LEARN] REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon.
+[LEARN] REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references.
+[LEARN] REJECTED frontend-unauth @ kundenkonto.fonial.de: /wizard/, /settings/menu/toggle, /settings/ticket/ all 302 → /login; frontend auth-gated; no unauth config/setup surface.
+[LEARN] REJECTED dev-mode-exposure @ dslkonto.fonial.de/app_dev.php: leaked content = stack traces + fs paths only; scope.yml excludes "Descriptive error messages or headers". Not reportable standalone.
+[LEARN] REJECTED dslkonto buslogic: no attacker-controllable params; registration broken on prod/dev. Dead.
+[RISK] fonial: 55 — Surface fully mapped on both portals (kundenkonto = 5 API endpoints + auth-gated SPA; dslkonto = Symfony dev-mode but excluded-class; www = marketing only; 3 hosts dead). All previously-carried low-vuln findings have been either excluded-class (dev-mode stack traces) or dead (buslogic, CRUD expansion). The sole remaining high-value hypothesis — dual-backend SID/PHPSESSID cross-binding enabling cross-tenant CDR/toll-fraud — is at 75% confidence but HUMAN_ONLY: it requires 2 valid test accounts from different tenants to prove. If the cross-bind succeeds, this is CRITICAL (cross-tenant data + outbound call control). If it fails (SID and PHPSESSID are actually cross-checked server-side), the engagement closes flat with zero reportable findings. Risk is moderate, monotone-decreasing, and entirely contingent on human credential acquisition. No passive-only path to a reportable finding exists.

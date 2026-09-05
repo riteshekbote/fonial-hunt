@@ -1,7 +1,8 @@
-## 2026-09-05 16:25:02 UTC [target] (model nemotron3)
-[NEW] dslkonto.fonial.de/app_dev.php/_profiler returns 404 with rotating `X-Debug-Token` headers (token changes per request: 0951e9 → f2142c → a9d22c → d3687f → 031fa8) — profiler enabled but token-gated
-[NEW] dslkonto.fonial.de/app_dev.php/register returns 500 with full Symfony exception page: stack trace, filesystem path `/pkg/srv/application_2026_07_02_1410/src`, bundle names, deploy tag — dev mode confirmed exposed
-[CHANGED] kundenkonto.fonial.de/ landing page CORS wildcard + PHPSESSID on unauthenticated 302→/login confirmed live (ACAO: *, ACAM: GET/POST/OPTIONS, no Vary: Origin)
+## 2026-09-05 18:29:13 UTC [target] (model nemotron3)
+[NEW] dslkonto.fonial.de/app_dev.php/_profiler/{token} returns 404 with rotating X-Debug-Token headers (0951e9→f2142c→a9d22c→d3687f→031fa8→9b9a21→342ae7→78335a) — profiler enabled but token-gated, no direct UI access confirmed
+[NEW] kundenkonto.fonial.de/api/2.0/call/initiate confirmed LIVE WRITE endpoint; identical "session unauthenticated" JSON error pattern as read endpoints; same SID-only authz
+[NEW] kundenkonto.fonial.de/ landing page CORS wildcard + PHPSESSID on unauthenticated 302→/login confirmed live (ACAO: *, ACAM: GET/POST/OPTIONS, no Vary: Origin)
+[CHANGED] dslkonto dev-mode exposure reclassified: scope.yml excludes "Descriptive error messages / Stack Traces" — stack traces + fs paths only, no env/param/session dump → NON-REPORTABLE standalone
 [PRIO] dslkonto.fonial.de,8.95,attack_surface=9,business_value=9,tech_exposure=10,gate_ease=10,cloud_surface=7,freshness=10
 [PRIO] kundenkonto.fonial.de/api/2.0,9.05,attack_surface=9,business_value=10,tech_exposure=8,gate_ease=8,cloud_surface=9,freshness=10
 [PRIO] kundenkonto.fonial.de,7.95,attack_surface=8,business_value=9,tech_exposure=8,gate_ease=6,cloud_surface=8,freshness=8
@@ -10,7 +11,7 @@
 class: MISCONFIG
 asset: dslkonto.fonial.de
 confidence: 85
-reasoning: app_dev.php returns 200 on /forgot/request, 302 on root, 500 on /register with full exception page. _profiler/* endpoints return 404 but emit X-Debug-Token header that rotates per request (0951e9→f2142c→a9d22c→d3687f→031fa8). Token suggests profiler accessible via /_profiler/{token}. Dev mode typically exposes /_profiler/{token}, /_profiler/router, /_profiler/phpinfo.
+reasoning: app_dev.php returns 200 on /forgot/request, 302 on root, 500 on /register with full exception page. _profiler/* endpoints return 404 but emit X-Debug-Token header that rotates per request (0951e9→f2142c→a9d22c→d3687f→031fa8→9b9a21→342ae7→78335a). Token suggests profiler accessible via /_profiler/{token}. Dev mode typically exposes /_profiler/{token}, /_profiler/router, /_profiler/phpinfo.
 evidence_needed: GET /app_dev.php/_profiler/{valid_token} returns profiler UI; /_profiler/router dumps all routes; /_profiler/phpinfo leaks env vars/secrets
 verify_steps: 1) GET https://dslkonto.fonial.de/app_dev.php/_profiler/031fa8 (latest token from /register 500); 2) GET https://dslkonto.fonial.de/app_dev.php/_profiler/router; 3) GET https://dslkonto.fonial.de/app_dev.php/_profiler/phpinfo
 impact: Full route map, internal service URLs, database credentials, API keys, session tokens, PII in logs — CRITICAL
