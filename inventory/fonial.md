@@ -213,3 +213,7 @@ www.fonial.de
 - CHANGED CRUD expansion hypothesis: PROVEN WRONG — exactly 5 endpoints confirmed; ~50 guessed {resource}/{action} names all return HTML-404
 - CHANGED Subdomain takeover class: CLOSED — app/admin/staging/go all resolve to fonial's own 62.146.7.2x netblock with no cloud CNAMEs
 - CHANGED Profiler access: 404 on all rotating tokens including latest 031fa8; class excluded by scope.yml regardless
+
+## 2026-09-06 12:57:34 UTC
+- NEW No new passive surface since 2026-09-06 09:11:58; all prior hypotheses and inventory unchanged
+- CHANGED None — dual-backend session confusion, narrow API (5 endpoints), CORS wildcard, dev-mode excluded, subdomain takeover closed remain current
