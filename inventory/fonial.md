@@ -219,3 +219,5 @@ www.fonial.de
 - CHANGED None — dual-backend session confusion, narrow API (5 endpoints), CORS wildcard, dev-mode excluded, subdomain takeover closed remain current
 
 ## 2026-09-06 16:13:10 UTC
+
+## 2026-09-06 18:10:57 UTC
