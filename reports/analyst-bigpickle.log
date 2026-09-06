@@ -6466,3 +6466,256 @@ STEP 6 — LEARNING:
 
 STEP 7 — RISK:
 [RISK] fonial: 55 — This cycle's new live discovery (go/admin legacy box) adds a subdomain to the inventory but exposes only excluded-class content (dead PHP boot, old nginx, bare 404s); no new exploitable surface, and the subdomain-takeover class is now closed for all dead hosts (own netblock, no CNAMEs). All high-value upside remains the credential-gated dual-backend SID/PHPSESSID cross-bind (75, HUMAN_ONLY): proven = CRITICAL cross-tenant/toll-fraud, disproven = engagement closes flat with zero reportable findings. Risk is moderate, monotone-decreasing, fully contingent on human credential acquisition.
+===== ANALYST bigpickle 2026-09-06 00:18:57 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mls -la && find . -maxdepth 2 -type f \( -name "*.md" -o -name "*.txt" -o -name "*.yml" -o -name "*.json" \) | head -50
+total 200
+drwxr-xr-x 12 runner runner  4096 Sep  6 00:11 .
+drwxr-xr-x  3 runner runner  4096 Sep  6 00:11 ..
+drwxr-xr-x  7 runner runner  4096 Sep  6 00:11 .git
+drwxr-xr-x  3 runner runner  4096 Sep  6 00:11 .github
+-rw-r--r--  1 runner runner  1740 Sep  6 00:11 README.md
+-rw-r--r--  1 runner runner    32 Sep  6 00:11 analyst-out.txt
+-rw-r--r--  1 runner runner 53625 Sep  6 00:11 analyst-prompt.txt
+-rw-r--r--  1 runner runner 49811 Sep  6 00:11 ctx.txt
+drwxr-xr-x  2 runner runner  4096 Sep  6 00:11 inventory
+drwxr-xr-x  2 runner runner  4096 Sep  6 00:11 knowledge
+drwxr-xr-x  2 runner runner  4096 Sep  6 00:11 leads
+-rw-r--r--  1 runner runner  4260 Sep  6 00:11 probe-results.md
+drwxr-xr-x  2 runner runner  4096 Sep  6 00:11 recon-notes
+drwxr-xr-x  2 runner runner  4096 Sep  6 00:11 reports
+drwxr-xr-x  2 runner runner  4096 Sep  6 00:11 reposcan-raw
+-rw-r--r--  1 runner runner  3227 Sep  6 00:11 scope.yml
+drwxr-xr-x  2 runner runner  4096 Sep  6 00:11 scripts
+-rw-r--r--  1 runner runner    33 Sep  6 00:11 state_bigpickle.json
+-rw-r--r--  1 runner runner    33 Sep  6 00:11 state_laguna.json
+-rw-r--r--  1 runner runner    33 Sep  6 00:11 state_ling3.json
+-rw-r--r--  1 runner runner    33 Sep  6 00:11 state_longcat.json
+-rw-r--r--  1 runner runner    33 Sep  6 00:11 state_mimo.json
+-rw-r--r--  1 runner runner    33 Sep  6 00:11 state_nemotron3.json
+drwxr-xr-x  2 runner runner  4096 Sep  6 00:11 triage
+./analyst-out.txt
+./state_nemotron3.json
+./triage/run-2026-09-04-19-08.md
+./triage/run-2026-09-04-16-35.md
+./triage/run-2026-09-05-05-49.md
+./triage/run-2026-09-04-02-53.md
+./triage/run-2026-09-02-21-52.md
+./triage/run-2026-09-03-16-40.md
+./triage/run-2026-09-02-23-50.md
+./triage/run-2026-09-03-21-53.md
+./triage/run-2026-09-05-09-57.md
+./triage/run-2026-09-05-13-17.md
+./triage/run-2026-09-05-01-04.md
+./triage/run-2026-09-03-23-46.md
+./triage/run-2026-09-05-22-38.md
+./triage/run-2026-09-04-07-44.md
+./triage/run-2026-09-04-12-29.md
+./triage/run-2026-09-03-07-46.md
+./triage/run-2026-09-05-18-22.md
+./triage/run-2026-09-05-20-42.md
+./triage/run-2026-09-04-21-33.md
+./triage/run-2026-09-05-16-08.md
+./triage/run-2026-09-03-12-35.md
+./triage/run-2026-09-04-23-17.md
+./triage/run-2026-09-03-19-27.md
+./triage/run-2026-09-03-02-54.md
+./state_ling3.json
+./recon-notes/DEDICATED-DEEP.md
+./state_longcat.json
+./inventory/fonial.md
+./knowledge/index.md
+./analyst-prompt.txt
+./state_bigpickle.json
+./probe-results.md
+./reports/hypotheses-ling3.txt
+./reports/hypotheses-bigpickle.txt
+./reports/hypotheses-longcat.txt
+./reports/hypotheses-laguna.txt
+./reports/hypotheses-nemotron3.txt
+./reports/hypotheses.md
+./reports/valid-bugs.md
+./scope.yml
+./leads/lead-nemotron3.md
+./leads/lead-bigpickle.md
+./leads/lead-laguna.md
+./leads/lead-ling3.md
+./leads/lead-mimo.md
+./leads/lead-longcat.md
+./leads/reposcan-fonial.md
+./reposcan-raw/summary.txt
+[0m
+[0m✱ [0mGlob "**/*.{md,txt,yml,yaml,json}"[90m 54 matches[0m
+[0m→ [0mRead triage/run-2026-09-05-22-38.md
+[0m→ [0mRead probe-results.md
+[0m→ [0mRead reports/hypotheses-bigpickle.txt
+[0m✱ [0mGrep "shop|hilfe|help/suggest|magento|search|GraphQL|graphql"[90m 57 matches[0m
+[0m→ [0mRead knowledge/index.md
+[0m
+[0m$ [0mfor u in "https://www.fonial.de/shop/" "https://www.fonial.de/shop/rest/V1/products" "https://www.fonial.de/shop/graphql" "https://www.fonial.de/hilfe/" "https://www.fonial.de/shop/rest/V1/"; do
+  code=$(curl -s -o /dev/null -m 15 -w "%{http_code}" -A "Mozilla/5.0" -L "$u" 2>/dev/null)
+  echo "$code  $u"
+  sleep 1
+done
+200  https://www.fonial.de/shop/
+401  https://www.fonial.de/shop/rest/V1/products
+500  https://www.fonial.de/shop/graphql
+200  https://www.fonial.de/hilfe/
+404  https://www.fonial.de/shop/rest/V1/
+[0m
+`/shop/rest/V1/products` → 401 and `/shop/graphql` → 500 is a real new delta (Magento REST + GraphQL alive on www). Probing read-only:
+[0m$ [0mecho "== HEAD /shop/graphql =="; curl -s -I -m 15 -A "Mozilla/5.0" "https://www.fonial.de/shop/graphql" 2>/dev/null | head -15; sleep 1
+echo "== GET /shop/graphql?query introspection (read-only) =="; curl -s -m 15 -A "Mozilla/5.0" -o /tmp/gql.json -w "HTTP %{http_code} len=%{size_download}\n" "https://www.fonial.de/shop/graphql?query=%7B__schema%7BqueryType%7Bname%7D%7D%7D" 2>/dev/null; echo "--- body ---"; head -c 500 /tmp/gql.json; echo; sleep 1
+echo "== GET /shop/rest/V1/categories =="; curl -s -m 15 -A "Mozilla/5.0" -o /tmp/cat.json -w "HTTP %{http_code} len=%{size_download}\n" "https://www.fonial.de/shop/rest/V1/categories" 2>/dev/null; head -c 300 /tmp/cat.json; echo; sleep 1
+echo "== HEAD /shop/rest/V1/products =="; curl -s -I -m 15 -A "Mozilla/5.0" "https://www.fonial.de/shop/rest/V1/products" 2>/dev/null | head -15
+== HEAD /shop/graphql ==
+HTTP/2 301 
+content-type: text/html
+date: Sun, 06 Sep 2026 00:13:04 GMT
+location: https://shop.fonial.de/graphql
+server: nginx/1.31.2
+content-length: 169
+
+== GET /shop/graphql?query introspection (read-only) ==
+HTTP 301 len=169
+--- body ---
+<html>
+<head><title>301 Moved Permanently</title></head>
+<body>
+<center><h1>301 Moved Permanently</h1></center>
+<hr><center>nginx/1.31.2</center>
+</body>
+</html>
+
+== GET /shop/rest/V1/categories ==
+HTTP 301 len=169
+<html>
+<head><title>301 Moved Permanently</title></head>
+<body>
+<center><h1>301 Moved Permanently</h1></center>
+<hr><center>nginx/1.31.2</center>
+</body>
+</html>
+
+== HEAD /shop/rest/V1/products ==
+HTTP/2 301 
+content-type: text/html
+date: Sun, 06 Sep 2026 00:13:09 GMT
+location: https://shop.fonial.de/rest/V1/products
+server: nginx/1.31.2
+content-length: 169
+[0m
+`/shop/*` → 301 to **shop.fonial.de** — a NEW host absent from inventory. Direct probes on it:
+[0m$ [0mecho "== shop.fonial.de/ =="; curl -s -I -m 15 -A "Mozilla/5.0" "https://shop.fonial.de/" 2>/dev/null | head -20; sleep 1
+echo "== shop.fonial.de/graphql (no query) =="; curl -s -m 15 -A "Mozilla/5.0" -o /tmp/g1.json -w "HTTP %{http_code} len=%{size_download}\n" "https://shop.fonial.de/graphql" 2>/dev/null; head -c 400 /tmp/g1.json; echo; sleep 1
+echo "== shop.fonial.de/graphql GET introspection =="; curl -s -m 15 -A "Mozilla/5.0" -o /tmp/g2.json -w "HTTP %{http_code} len=%{size_download}\n" "https://shop.fonial.de/graphql?query=%7B__schema%7BqueryType%7Bname%7D%7D%7D" 2>/dev/null; head -c 600 /tmp/g2.json; echo; sleep 1
+echo "== shop.fonial.de/rest/V1/categories =="; curl -s -m 15 -A "Mozilla/5.0" -o /tmp/c1.json -w "HTTP %{http_code} len=%{size_download}\n" "https://shop.fonial.de/rest/V1/categories" 2>/dev/null; head -c 400 /tmp/c1.json
+== shop.fonial.de/ ==
+HTTP/2 200 
+cache-control: max-age=0, must-revalidate, no-cache, no-store
+content-security-policy-report-only: font-src fonts.gstatic.com use.typekit.net *.typekit.net *.gstatic.com www.paypalobjects.com https://use.typekit.net data: 'self' 'unsafe-inline'; form-action geostag.cardinalcommerce.com geo.cardinalcommerce.com 1eafstag.cardinalcommerce.com 1eaf.cardinalcommerce.com centinelapistag.cardinalcommerce.com centinelapi.cardinalcommerce.com pilot-payflowlink.paypal.com www.paypal.com www.sandbox.paypal.com *.paypal.com *.cardinalcommerce.com 3ds-secure.cardcomplete.com www.clicksafe.lloydstsb.com pay.activa-card.com *.wirecard.com acs.sia.eu *.touchtechpayments.com www.securesuite.co.uk rsa3dsauth.com *.monzo.com *.arcot.com *.wlp-acs.com * 'self' 'unsafe-inline'; frame-ancestors 'self'; frame-src fast.amc.demdex.net *.adobe.com bid.g.doubleclick.net *.youtube.com *.youtube-nocookie.com geostag.cardinalcommerce.com geo.cardinalcommerce.com 1eafstag.cardinalcommerce.com 1eaf.cardinalcommerce.com centinelapistag.cardinalcommerce.com centinelapi.cardinalcommerce.com www.paypal.com www.sandbox.paypal.com pilot-payflowlink.paypal.com player.vimeo.com https://www.google.com/recaptcha/ *.braintreegateway.com *.paypal.com google.com *.google.com c.paypal.com checkout.paypal.com assets.braintreegateway.com pay.google.com *.cardinalcommerce.com * 'self' 'unsafe-inline'; img-src assets.adobedtm.com amcglobal.sc.omtrdc.net dpm.demdex.net cm.everesttech.net *.adobe.com widgets.magentocommerce.com data: www.googleadservices.com www.google-analytics.com googleads.g.doubleclick.net www.google.com bid.g.doubleclick.net analytics.google.com www.googletagmanager.com *.ftcdn.net *.behance.net t.paypal.com www.paypal.com www.paypalobjects.com fpdbs.paypal.com fpdbs.sandbox.paypal.com *.vimeocdn.com i.ytimg.com *.youtube.com p.typekit.net *.paypal.com *.typekit.net *.gstatic.com validator.swagger.io www.sandbox.paypal.com b.stats.paypal.com dub.stats.paypal.com assets.braintreegateway.com c.paypal.com checkout.paypal.com https://www.google.com https://www.google.de data: 'self' 'unsafe-inline'; script-src assets.adobedtm.com *.adobe.com www.googleadservices.com www.google-analytics.com googleads.g.doubleclick.net analytics.google.com www.googletagmanager.com *.newrelic.com *.nr-data.net geostag.cardinalcommerce.com 1eafstag.cardinalcommerce.com geoapi.cardinalcommerce.com 1eafapi.cardinalcommerce.com songbird.cardinalcommerce.com includestest.ccdc02.com *.commerce-payment-services.com commerce-payments-sdk.adobe.io www.paypal.com www.sandbox.paypal.com www.paypalobjects.com t.paypal.com s.ytimg.com www.googleapis.com vimeo.com www.vimeo.com *.vimeocdn.com *.youtube.com https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/ amcglobal.sc.omtrdc.net *.magento-ds.com use.typekit.net *.typekit.net google.com *.google.com *.cdn-apple.com *.braintreegateway.com js.braintreegateway.com assets.braintreegateway.com c.paypal.com pay.google.com api.braintreegateway.com api.sandbox.braintreegateway.com client-analytics.braintreegateway.com client-analytics.sandbox.braintreegateway.com *.paypal.com songbirdstag.cardinalcommerce.com 'self' 'unsafe-inline' 'unsafe-eval'; style-src *.adobe.com fonts.googleapis.com assets.braintreegateway.com https://use.typekit.net https://p.typekit.net 'self' 'unsafe-inline'; object-src 'self' 'unsafe-inline'; media-src *.adobe.com 'self' 'unsafe-inline'; manifest-src 'self' 'unsafe-inline'; connect-src dpm.demdex.net amcglobal.sc.omtrdc.net www.google-analytics.com www.googleadservices.com analytics.google.com www.googletagmanager.com *.newrelic.com *.nr-data.net vimeo.com geostag.cardinalcommerce.com geo.cardinalcommerce.com 1eafstag.cardinalcommerce.com 1eaf.cardinalcommerce.com centinelapistag.cardinalcommerce.com centinelapi.cardinalcommerce.com www.sandbox.paypal.com www.paypalobjects.com www.paypal.com pilot-payflowlink.paypal.com *.adobe.io performance.typekit.net *.sentry.io *.paypal.com google.com *.google.com *.braintreegateway.com *.braintree-api.com api.braintreegateway.com api.sandbox.braintreegateway.com client-analytics.braintreegateway.com client-analytics.sandbox.braintreegateway.com *.cardinalcommerce.com https://www.google-analytics.com https://stats.g.doubleclick.net 'self' 'unsafe-inline'; child-src assets.braintreegateway.com c.paypal.com *.paypal.com http: https: blob: 'self' 'unsafe-inline'; default-src 'self' 'unsafe-inline' 'unsafe-eval'; base-uri 'self' 'unsafe-inline';
+content-type: text/html; charset=UTF-8
+date: Sun, 06 Sep 2026 00:13:26 GMT
+expires: Sat, 06 Sep 2025 00:13:26 GMT
+pragma: no-cache
+server: nginx/1.31.2
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-powered-by: PHP/8.3.3
+x-xss-protection: 1; mode=block
+content-length: 146536
+
+== shop.fonial.de/graphql (no query) ==
+HTTP 500 len=93
+{"errors":[{"message":"Syntax Error: Unexpected <EOF>","locations":[{"line":1,"column":1}]}]}
+== shop.fonial.de/graphql GET introspection ==
+HTTP 200 len=52
+{"data":{"__schema":{"queryType":{"name":"Query"}}}}
+== shop.fonial.de/rest/V1/categories ==
+HTTP 401 len=136
+{"message":"Der Verbraucher ist nicht berechtigt, auf %resources zuzugreifen.","parameters":{"resources":"Magento_Catalog::categories"}}
+[0m
+Genuine new asset: **shop.fonial.de** (Magento 2, PHP/8.3.3) with **live GraphQL + working introspection**. Enumerating schema (read-only GET):
+[0m$ [0mq='query%7B__schema%7BqueryType%7Bfields%7Bname%7D%7DmutationType%7Bfields%7Bname%7D%7D%7D%7D'
+curl -s -m 30 -A "Mozilla/5.0" -o /tmp/schema_q.json -w "HTTP %{http_code} len=%{size_download}\n" "https://shop.fonial.de/graphql?query=$q" 2>/dev/null
+echo "--- queries ---"; python3 -c "import json;d=json.load(open('/tmp/schema_q.json'));print(', '.join(f['name'] for f in d['data']['__schema']['queryType']['fields']))" 2>/dev/null
+echo "--- mutations ---"; python3 -c "import json;d=json.load(open('/tmp/schema_q.json'));print(', '.join(f['name'] for f in d['data']['__schema']['mutationType']['fields']))" 2>/dev/null
+HTTP 200 len=3032
+--- queries ---
+attributesForm, attributesList, availableStores, cart, categories, checkoutAgreements, cmsBlocks, cmsPage, compareList, countries, country, currency, customAttributeMetadataV2, customer, customerCart, customerDownloadableProducts, customerPaymentTokens, getHostedProUrl, getPayflowLinkToken, getPaymentConfig, getPaymentOrder, getPaymentSDK, getVaultConfig, guestOrder, guestOrderByToken, isEmailAvailable, pickupLocations, productReviewRatingsMetadata, products, recaptchaV3Config, route, storeConfig
+--- mutations ---
+addBundleProductsToCart, addConfigurableProductsToCart, addDownloadableProductsToCart, addProductsToCart, addProductsToCompareList, addProductsToNewCart, addProductsToWishlist, addSimpleProductsToCart, addVirtualProductsToCart, addWishlistItemsToCart, applyCouponToCart, assignCompareListToCustomer, assignCustomerToGuestCart, cancelOrder, changeCustomerPassword, completeOrder, confirmEmail, contactUs, createBraintreeClientToken, createBraintreePayPalClientToken, createBraintreePayPalVaultClientToken, createCompareList, createCustomer, createCustomerAddress, createCustomerV2, createGuestCart, createPayflowProToken, createPaymentOrder, createPaypalExpressToken, createProductReview, createVaultCardPaymentToken, createVaultCardSetupToken, deleteCompareList, deleteCustomer, deleteCustomerAddress, deletePaymentToken, estimateShippingMethods, estimateTotals, generateCustomerToken, generateCustomerTokenAsAdmin, handlePayflowProResponse, mergeCarts, placeOrder, removeCouponFromCart, removeItemFromCart, removeProductsFromCompareList, removeProductsFromWishlist, reorderItems, requestPasswordResetEmail, resetPassword, revokeCustomerToken, sendEmailToFriend, setBillingAddressOnCart, setCartAsInactive, setGuestEmailOnCart, setPaymentMethodOnCart, setShippingAddressesOnCart, setShippingMethodsOnCart, subscribeEmailToNewsletter, syncPaymentOrder, updateCartItems, updateCustomer, updateCustomerAddress, updateCustomerEmail, updateCustomerV2, updateProductsInWishlist
+[0m
+Schema exposes the full Magento storefront GraphQL (money-flow mutations: `placeOrder`, `applyCouponToCart`, `createGuestCart`, `guestOrderByToken`, `generateCustomerTokenAsAdmin`). Checking hot-field args + swagger/REST guest endpoints (GET/HEAD only):
+[0m$ [0mq='query%7B__schema%7BqueryType%7Bfields%7Bname+args%7Bname+type%7Bname+kind%7D%7D%7DmutationType%7Bfields%7Bname%7B...+on+Field+args%7Bname+type%7Bname+kind%7D%7D%7D%7D%7D%7D'
+curl -s -m 30 -A "Mozilla/5.0" -o /tmp/schema_args.json -w "HTTP %{http_code} len=%{size_download}\n" "https://shop.fonial.de/graphql?query=$q" 2>/dev/null
+python3 - <<'EOF'
+import json
+d=json.load(open('/tmp/schema_args.json'))['data']['__schema']
+want_q={'guestOrder','guestOrderByToken','cart','customer','products','route','isEmailAvailable'}
+want_m={'placeOrder','applyCouponToCart','createGuestCart','generateCustomerTokenAsAdmin','createCustomerV2','setGuestEmailOnCart','reorderItems','setShippingAddressesOnCart'}
+for f in d['queryType']['fields']:
+    if f['name'] in want_q:
+        print('Q',f['name'],[(a['name'],a['type']['name'] or a['type']['kind']) for a in f['args']])
+for f in d['mutationType']['fields']:
+    if f['name'] in want_m:
+        print('M',f['name'],[(a['name'],a['type']['name'] or a['type']['kind']) for a in f['args']])
+EOF
+sleep 1
+echo "== HEAD /rest/swagger.json =="; curl -s -I -m 15 -A "Mozilla/5.0" "https://shop.fonial.de/rest/swagger.json" 2>/dev/null | head -8
+HTTP 500 len=110
+Traceback (most recent call last):
+  File "<stdin>", line 2, in <module>
+KeyError: 'data'
+== HEAD /rest/swagger.json ==
+HTTP/2 405 
+cache-control: no-store
+content-type: application/json; charset=utf-8
+date: Sun, 06 Sep 2026 00:14:10 GMT
+server: nginx/1.31.2
+x-powered-by: PHP/8.3.3
+content-length: 0
+[0m
+[0m$ [0mq='query%7B__schema%7BqueryType%7Bfields%7Bname+args%7Bname+type%7Bname+kind%7D%7D%7D%7DmutationType%7Bfields%7Bname+args%7Bname+type%7Bname+kind%7D%7D%7D%7D%7D'
+curl -s -m 30 -A "Mozilla/5.0" -o /tmp/schema_args.json -w "HTTP %{http_code} len=%{size_download}\n" "https://shop.fonial.de/graphql?query=$q" 2>/dev/null
+python3 - <<'EOF'
+import json
+d=json.load(open('/tmp/schema_args.json'))['data']['__schema']
+want_q={'guestOrder','guestOrderByToken','cart','customer','products','route','isEmailAvailable'}
+want_m={'placeOrder','applyCouponToCart','createGuestCart','generateCustomerTokenAsAdmin','createCustomerV2','setGuestEmailOnCart','reorderItems','setShippingAddressesOnCart','setPaymentMethodOnCart'}
+for f in d['queryType']['fields']:
+    if f['name'] in want_q:
+        print('Q',f['name'],[(a['name'],a['type']['name'] or a['type']['kind']) for a in f['args']])
+for f in d['mutationType']['fields']:
+    if f['name'] in want_m:
+        print('M',f['name'],[(a['name'],a['type']['name'] or a['type']['kind']) for a in f['args']])
+EOF
+sleep 1
+echo "== GET /rest/swagger.json =="; curl -s -m 15 -A "Mozilla/5.0" -o /tmp/swagger.json -w "HTTP %{http_code} len=%{size_download}\n" "https://shop.fonial.de/rest/swagger.json" 2>/dev/null; head -c 200 /tmp/swagger.json
+HTTP 500 len=105
+Traceback (most recent call last):
+  File "<stdin>", line 2, in <module>
+KeyError: 'data'
+== GET /rest/swagger.json ==
+HTTP 400 len=66
+{"message":"Die angegebene Anfrage kann nicht bearbeitet werden."}
+[0m
+[93m[1m! [0mpermission requested: external_directory (/tmp/*); auto-rejecting
+[0m✗ [0mcat /tmp/schema_args.json | head -c 400; echo
+q='query+IntrospectionQuery+%7B+__schema+%7B+queryType+%7B+fields+%7B+name+args+%7B+name+type+%7B+name+kind%7D+%7D+%7D+%7D+mutationType+%7B+fields+%7B+name+args+%7B+name+type+%7B+name+kind%7D+%7D+%7D+%7D+%7D+%7D'
+curl -s -m 30 -A "Mozilla/5.0" -o /tmp/schema_args.json -w "HTTP %{http_code} len=%{size_download}\n" --data-urlencode "query=query IntrospectionQuery { __schema { queryType { fields { name args { name type { name kind } } } } mutationType { fields { name args { name type { name kind } } } } } }" "https://shop.fonial.de/graphql" 2>/dev/null
+python3 - <<'EOF'
+import json
+d=json.load(open('/tmp/schema_args.json'))['data']['__schema']
+want_q={'guestOrder','guestOrderByToken','cart','customer','products','route','isEmailAvailable'}
+want_m={'placeOrder','applyCouponToCart','createGuestCart','generateCustomerTokenAsAdmin','createCustomerV2','setGuestEmailOnCart','reorderItems','setShippingAddressesOnCart','setPaymentMethodOnCart'}
+for f in d['queryType']['fields']:
+    if f['name'] in want_q:
+        print('Q',f['name'],[(a['name'],a['type']['name'] or a['type']['kind']) for a in f['args']])
+for f in d['mutationType']['fields']:
+    if f['name'] in want_m:
+        print('M',f['name'],[(a['name'],a['type']['name'] or a['type']['kind']) for a in f['args']])
+EOF failed
+[91m[1mError: [0mThe user rejected permission to use this specific tool call.
