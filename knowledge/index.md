@@ -86,3 +86,11 @@
 - 2026-09-06 ACCEPTED subdomain-takeover @ fonial.de dead hosts: app/admin/staging all resolve to fonial's own 62.146.7.2x netblock with no cloud CNAMEs → takeover class closed
 - 2026-09-06 ACCEPTED legacy-box @ go.fonial.de: Composer platform check (requires PHP >7.2.5) aborts all routing → HTTP 500 on every path; /app_dev.php→301. Non-bootable; only out-of-scope classes exposed.
 - 2026-09-06 REJECTED profiler-access @ dslkonto.fonial.de/app_dev.php/_profiler/{token}: 404 on all rotating tokens incl. 031fa8; class excluded by scope.yml regardless.
+- 2026-09-06 ACCEPTED narrow API surface @ kundenkonto.fonial.de/api/2.0: exactly 5 endpoints; ~50 guesses HTML-404. Passive discovery closed.
+- 2026-09-06 ACCEPTED call/initiate @ kundenkonto.fonial.de/api/2.0: Live WRITE endpoint; identical session-invalid pattern; SID-only authz.
+- 2026-09-06 ACCEPTED dual-session binding @ kundenkonto.fonial.de/api/2.0: body SID only; PHPSESSID decorative; /session cleartext UUID sid.
+- 2026-09-06 ACCEPTED dual-backend @ kundenkonto.fonial.de/api/2.0: two distinct servers, different response headers.
+- 2026-09-06 ACCEPTED MISCONFIG @ kundenkonto.fonial.de: CORS wildcard on all 5 API endpoints + landing/login; no allow-credentials → no cookie exfil; SID-in-body.
+- 2026-09-06 REJECTED subdomain-takeover/dev-mode-exposure/profiler/buslogic/CRUD/brute-force/SSRF/www/IDOR/www/CORS-direct-exploit: unchanged, closed/excluded.
+- 2026-09-06 REJECTED dev-mode-exposure @ dslkonto.fonial.de/app_dev.php: leaked content = stack traces + fs paths (deploy tag, bundle names, exception semantics) only, no env/param/session dump observed; falls under scope.yml OUT-OF-SCOPE "Descriptive error messages / Stack Traces" clause → reclassified from report-ready to excluded-class/non-standalone
+- 2026-09-06 REJECTED dev-mode-exposure @ dslkonto.fonial.de/app_dev.php: leaked content = stack traces + fs paths (deploy tag, bundle names, exception semantics) only, no env/param/session dump observed; falls under scope.yml OUT-OF-SCOPE "Descriptive error messages / Stack Traces" clause → reclassified from report-ready to excluded-class/non-standalone

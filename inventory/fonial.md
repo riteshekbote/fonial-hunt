@@ -199,3 +199,17 @@ www.fonial.de
 - CHANGED Profiler access: 404 on all rotating tokens including latest 031fa8; class excluded by scope.yml regardless
 
 ## 2026-09-06 04:48:50 UTC
+
+## 2026-09-06 09:11:58 UTC
+- NEW No new passive surface since 04:48. Both prior agents atomized /signup/register/55 (CSRF _token + AccountAddress/AccountContact/email + trunkTariff 19/21/22); /signup/{id} cosmetic. All portlet passiv
+- NEW dslkonto.fonial.de/app_dev.php/_profiler/{token} returns 404 with rotating X-Debug-Token headers (8 tokens observed: 0951e9→f2142c→a9d22c→d3687f→031fa8→9b9a21→342ae7→78335a) — profiler enabled but tok
+- NEW kundenkonto.fonial.de/api/2.0/call/initiate confirmed LIVE WRITE endpoint; identical "session unauthenticated" JSON error pattern as read endpoints; same SID-only authz
+- NEW kundenkonto.fonial.de/ landing page CORS wildcard + PHPSESSID on unauthenticated 302→/login confirmed live (ACAO: *, ACAM: GET/POST/OPTIONS, no Vary: Origin)
+- CHANGED dslkonto dev-mode exposure reclassified: scope.yml excludes "Descriptive error messages / Stack Traces" — stack traces + fs paths only, no env/param/session dump → NON-REPORTABLE standalone
+- NEW dslkonto.fonial.de/app_dev.php/_profiler/{token}: 8 rotating X-Debug-Token headers observed (0951e9→f2142c→a9d22c→d3687f→031fa8→9b9a21→342ae7→78335a), all return 404 — profiler token-gated but no UI a
+- NEW kundenkonto.fonial.de/api/2.0/call/initiate: Live WRITE endpoint confirmed; identical "session invalid" JSON error pattern as read endpoints; same SID-only authz
+- NEW kundenkonto.fonial.de/ landing page: CORS wildcard (ACAO: *, ACAM: GET/POST/OPTIONS) + PHPSESSID on unauthenticated 302→/login confirmed live; no Vary: Origin
+- CHANGED dslkonto dev-mode exposure: Reclassified per scope.yml OUT-OF-SCOPE "Descriptive error messages / Stack Traces" — stack traces + fs paths only, no env/param/session dump → NON-REPORTABLE standalone
+- CHANGED CRUD expansion hypothesis: PROVEN WRONG — exactly 5 endpoints confirmed; ~50 guessed {resource}/{action} names all return HTML-404
+- CHANGED Subdomain takeover class: CLOSED — app/admin/staging/go all resolve to fonial's own 62.146.7.2x netblock with no cloud CNAMEs
+- CHANGED Profiler access: 404 on all rotating tokens including latest 031fa8; class excluded by scope.yml regardless

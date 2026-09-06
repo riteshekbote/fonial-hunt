@@ -7166,3 +7166,232 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 [RISK] fonial: 55 — This cycle added no exploitable surface: the /signup/{id} param is cosmetic (no IDOR), the pre-auth login page exposes no app bundle, and the signup funnel merely hardens the HUMAN path (2nd tenant is obtainable via /signup/register/55). All high-value upside remains the dual-backend SID/PHPSESSID cross-bind (75, HUMAN_ONLY): proven = CRITICAL cross-tenant/toll-fraud, disproven = engagement closes flat. Risk moderate, monotone-decreasing, fully contingent on acquisition of 1→2 test accounts; no passive-only path to a reportable finding remains.
+===== ANALYST bigpickle 2026-09-06 09:11:58 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m✱ [0mGlob "**/*"[90m 67 matches[0m
+[0m→ [0mRead .
+I'll analyze the current state of the fonial engagement and identify the next steps.
+[0m→ [0mRead triage/run-2026-09-06-04-47.md
+I'm the current analyst for fonial. Let me review the latest state and previous cycle's output to determine the delta and next steps. Let me check the latest triage run and my prior log.
+[0m→ [0mRead reports/analyst-bigpickle.log[90m [offset=1, limit=80][0m
+[0m
+[0m$ [0mtail -60 /home/runner/work/fonial-hunt/fonial-hunt/reports/analyst-bigpickle.log
+name="fonial_user_registration[AccountContact]
+name="fonial_user_registration[AccountContact]
+name="fonial_user_registration[AccountContact]
+name="fonial_user_registration[AccountContact]
+name="fonial_user_registration[AccountContact]
+name="fonial_user_registration[email]
+name="fonial_user_registration[Submit]
+name="fonial_user_registration[_token]
+[0m
+[0m$ [0mcd /tmp/opencode/kk && grep -oiE '<input[^>]*type="hidden"[^>]*>' regfinal.html | head -20; echo "---selects/options---"; grep -oiE '<select[^>]*name="[^"]*"' regfinal.html; echo "---trunk tariff options---"; grep -oE 'value="[0-9]+"[^>]*>[^<]*' regfinal.html | head
+<input type="hidden"     id="fonial_user_registration__token" name="fonial_user_registration[_token]" value="4c00f78c99afc2b5f88ef02a6f299269._9gt050M2qnKqtS_TQ_cNZBy4lTos_3WyLzSkon9sEw.mI1846xKlMqw9eL1ICKERf8BqHnbwM2-ge6Q-sG_8z6MrXu-wlic-r3ImQ" />
+---selects/options---
+<select     id="fonial_user_registration_AccountContact_contactTitle" name="fonial_user_registration[AccountContact][contactTitle]"
+---trunk tariff options---
+value="19" checked=""> Tarif wählen
+value="21"> Tarif wählen
+value="22"> Tarif wählen
+[0m
+[0m→ [0mRead inventory/fonial.md[90m [offset=60][0m
+[0m→ [0mRead knowledge/index.md
+All exploration confirms the state is unchanged in substance; this cycle I ran new read-only probes (login/signup funnel anatomy). Composing the structured output.
+
+STEP 1 — DELTA
+- [NEW] kundenkonto.fonial.de/signup: Self-registration funnel LIVE — `/signup`→`/signup/register/55`⇄`/signup/55` bounce (302+PHPSESSID), final form = "Registrierung für fonial PLUS" with CSRF `fonial_user_registration[_token]`, AccountAddress/AccountContact/email fields, `trunkTariff` select (19/21/22). Concrete 2nd-tenant acquisition path for the cross-bind matrix — HUMAN.
+- [NEW] kundenkonto.fonial.de/login: Symfony form auth (`POST /login_check`, `_username`/`_password`/`_csrf_token`) is a third parallel auth path alongside `/api/2.0/session/authenticate` + `/api/2.0/session`.
+- [NEW] kundenkonto.fonial.de/signup/{id}: path id is cosmetic — any value (`abc`, `0`, `9999999999`) renders the identical fonial PLUS form; no tariff/tenant lookup.
+- [NEW] kundenkonto.fonial.de/ pre-auth: login page loads only jquery-2.1.3 + bootstrap; SPA app bundle not reachable without a session → JS-based endpoint enumeration closed pre-auth.
+
+STEP 2 — PRIORITIZE
+- [PRIO] kundenkonto.fonial.de/api/2.0,9.05,a=9,b=10,t=8,g=8,c=9,f=10
+- [PRIO] kundenkonto.fonial.de,7.70,a=8,b=9,t=7,g=6,c=8,f=7
+- [PRIO] www.fonial.de,5.10,a=4,b=5,t=3,g=10,c=4,f=5
+
+STEP 3 — HYPOTHESES
+[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: Data endpoints authorize by body SID only (unauth SID→"session unauthenticated", unknown→"session invalid"); PHPSESSID decorative/parallel; /session mints cleartext UUID v4 and deletes unknown PHPSESSIDs. This cycle added: a third independent auth path (Symfony /login_check form) and a live self-registration funnel, both on the same origin. SID↔credential binding remains the sole unanswered question and is now concretely acquirable via test accounts.
+evidence_needed: 2 valid SIDs from 2 tenants + their PHPSESSIDs (from ANY auth path: /api/2.0/session/authenticate or form /login_check); cross-bind SID-B body + PHPSESSID-A cookie on each data endpoint; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = CRITICAL.
+verify_steps: 1) Tenant A: POST /api/2.0/session → SID-A; authenticate (API or /login_check) → PHPSESSID-A; 2) Tenant B via /signup/register/55 (POST with `fonial_user_registration[_token]` + email + account fields, then same SID+auth flow) → SID-B, PHPSESSID-B; 3) POST /devices/get {"sid":"SID-B"} + Cookie: PHPSESSID=<A>; repeat /evn/get, /call/initiate; 4) also POST /call/initiate {"sid":"SID-B"} + Cookie PHPSESSID=<A> → outbound call to attacker number = toll fraud. Any non-"session invalid" response = cross-tenant CRITICAL.
+impact: Cross-tenant CDR, SIP device visibility, number enumeration, outbound call control (toll fraud). CRITICAL.
+testability: HUMAN_ONLY
+
+STEP 4 — SELF-CRITIQUE
+- [PARKED] signup-idor @ kundenkonto.fonial.de/signup/{id}: id echoed not looked up (abc/0/9999999999 all render identical PLUS form) + CSRF token gates the POST — no data exposure. Dead.
+- [PARKED] JS-bundle endpoint enumeration: SPA bundle not reachable without session (login page = jquery+bootstrap only). Gated behind the same credentials. 
+- [PARKED] dslkonto profiler/dev-mode, go/admin legacy box, CRUD expansion, brute-force, CORS direct-exploit, SSRF/www, IDOR/www: unchanged, previously rejected.
+- [FINAL] Dual-backend SID/PHPSESSID cross-bind (75, HUMAN_ONLY) — sole survivor. Passive surface is exhaustively complete across portlets.
+
+STEP 5 — NEXT ACTION
+[NEXT] HUMAN: kundenkonto 2-account cross-bind matrix — get/register 2 tenants (2nd via LIVE /signup/register/55 with CSRF `fonial_user_registration[_token]` + email/account fields, or existing A+B accounts). For each: POST /api/2.0/session → SID, authenticate (API /session/authenticate or Symfony /login_check) → PHPSESSID. Then POST {"sid":"SID-B"} + Cookie: PHPSESSID=<A> to /devices/get, /evn/get, /call/initiate; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = cross-tenant CRITICAL; successful /call/initiate to attacker-pwned number = CRITICAL toll fraud. Also capture authenticated-page CORS/Vary headers for the folded inheritance check. Passive-only phase is closed — this matrix is the sole remaining gate.
+
+STEP 6 — LEARNING
+- [LEARN] ACCEPTED signup-funnel @ kundenkonto.fonial.de: /signup/register/55 renders "fonial PLUS" self-registration (CSRF token + AccountAddress/AccountContact/email + trunkTariff 19/21/22) — viable 2nd-tenant path for the cross-bind matrix.
+- [LEARN] REJECTED signup-idor @ kundenkonto.fonial.de/signup/{id}: id value is echoed, not resolved — abc/0/9999999999 all yield the identical form; no tenant/tariff cross-tenant exposure.
+- [LEARN] ACCEPTED third-auth-path @ kundenkonto.fonial.de: Symfony form /login_check (csrf+username+password) runs parallel to /api/2.0/session/authenticate + /api/2.0/session — reinforces the cross-binding surface on the portal origin.
+
+STEP 7 — RISK
+[RISK] fonial: 55 — This cycle added no exploitable surface: the /signup/{id} param is cosmetic (no IDOR), the pre-auth login page exposes no app bundle, and the signup funnel merely hardens the HUMAN path (2nd tenant is obtainable via /signup/register/55). All high-value upside remains the dual-backend SID/PHPSESSID cross-bind (75, HUMAN_ONLY): proven = CRITICAL cross-tenant/toll-fraud, disproven = engagement closes flat. Risk moderate, monotone-decreasing, fully contingent on acquisition of 1→2 test accounts; no passive-only path to a reportable finding remains.
+[0m
+[0m→ [0mRead reports/hypotheses-nemotron3.txt
+Let me look at the most recent cycle's output from my own log to establish the delta correctly, and check other agents' recent hypotheses.
+[0m→ [0mRead state_bigpickle.json
+I have the full picture. The previous cycle (04:48 UTC) established the sole remaining hypothesis. Let me review my previous probe cycle's delta and confirm there's nothing new to add in this cycle. The passive surface is exhaustively mapped, and the only survivor is the HUMAN_ONLY cross-bind matrix.
+
+Let me check if there's any state in my own state file indicating this cycle's starting point, and whether the CSRF token detail on /signup/register/55 was already captured (it was - in my last log tail). 
+
+The key insight: this cycle I should verify whether any new passive surface could exist that hasn't been examined, since hypotheses favor monotone-decreasing. Let me consider whether there's truly nothing left to do passively, and if the /signup/register/55 CSRF form fields were fully atomiced.
+
+Since the engagement state is stable and the last cycle fully enumerated the signup funnel, my delta is essentially that I need to confirm no new info and emit the structured output. The subsequent cycle appears to be a continuation where the sole survivor remains HUMAN_ONLY. Let me verify the current state file timestamp to route this correctly.
+[0m
+[0m# [0mTodos
+[✓] Confirm no new passive surface since 04:48 cycle
+[•] Emit structured analyst output (8 steps)
+[0m
+My state is stable. This is another cycle in the POC phase for the api target. The passive surface is exhaustively mapped across all portlets, and the sole remaining hypothesis (dual-backend SID/PHPSESSID cross-bind) is HUMAN_ONLY.
+
+Let me do a final check to make sure there is no overlooked passive surface. Let me verify the signup funnel's CSR field anatomy was complete and whether there are any other unexplored classes. Given the exhaustive history, I'll consider whether a fresh angle exists.
+
+One thing I should consider: the previous cycle noted `/help/suggest/__search__` and `/settings/ticket/` as SPA routes. And `/wizard/`. All auth-gated. The login page showed only jquery+bootstrap, so no JS enumeration pre-auth.
+
+Given the exhaustive state, my structured output should confirm NO_DELTA in passive surface (nothing new since last cycle at 04:48, since I and nemotron3 both fully mapped the signup funnel), keep the sole human hypothesis, and emit the HUMAN next action.
+
+Let me write the structured analyst output.
+[0m$ [0mcat >> /home/runner/work/fonial-hunt/fonial-hunt/reports/analyst-bigpickle.log << 'EOF'
+
+===== ANALYST bigpickle 2026-09-06 (post-04:48 cycle) =====
+STEP 1 — DELTA
+[NEW] No new passive surface since 04:48. Both prior agents atomized /signup/register/55 (CSRF _token + AccountAddress/AccountContact/email + trunkTariff 19/21/22); /signup/{id} cosmetic. All portlet passive classes closed.
+STEP 2 — PRIORITIZE
+[PRIO] kundenkonto.fonial.de/api/2.0,9.05,a=9,b=10,t=8,g=8,c=9,f=10
+[PRIO] dslkonto.fonial.de,8.80,a=9,b=8,t=9,g=10,c=7,f=10
+[PRIO] kundenkonto.fonial.de,7.70,a=8,b=9,t=7,g=6,c=8,f=7
+[PRIO] www.fonial.de,5.10,a=4,b=5,t=3,g=10,c=4,f=5
+STEP 3 — HYPOTHESES
+[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: Data endpoints authorize by body SID only (unauth SID→session unauthenticated, unknown→session invalid); PHPSESSID decorative/parallel second backend; /session mints cleartext UUID v4 and deletes unknown PHPSESSIDs. Three parallel auth paths on same origin (/api/2.0/session/authenticate, Symfony /login_check, live /signup/register/55). SID↔credential binding remains sole unanswered question, acquirable via 1→2 test accounts. All alternatives closed or excluded.
+evidence_needed: 2 valid SIDs from 2 tenants + PHPSESSIDs (any auth path); cross-bind SID-B body + PHPSESSID-A cookie on data endpoints; any response ≠ {"sid":null,"status":"error","reason":"session invalid"} = CRITICAL.
+verify_steps: 1) Tenant A: POST /api/2.0/session→SID-A; authenticate→PHPSESSID-A. 2) Tenant B via /signup/register/55 (CSRF+email+account)→SID-B,PHPSESSID-B. 3) POST /devices/get {"sid":"SID-B"}+Cookie:PHPSESSID=<A>; repeat /evn/get,/call/initiate. 4) /call/initiate to attacker number=toll fraud.
+impact: Cross-tenant CDR, SIP device visibility, number enumeration, outbound call control (toll fraud). CRITICAL.
+testability: HUMAN_ONLY
+STEP 4 — SELF-CRITIQUE
+[PARKED] signup-idor: /signup/{id} echoed not resolved; CSRF-gated. Dead.
+[PARKED] authenticated-page CORS inheritance: folded into same HUMAN matrix. Not standalone.
+[PARKED] JS-bundle endpoint enumeration: SPA bundle unreachable pre-auth. Gated.
+[PARKED] dslkonto profiler/dev-mode, go/admin legacy, CRUD expansion, brute-force, CORS direct-exploit, SSRF/www, IDOR/www: unchanged, rejected/excluded.
+[FINAL] Dual-backend SID/PHPSESSID cross-bind (75, HUMAN_ONLY) — sole survivor. No passive-only path to reportable finding remains.
+STEP 5 — NEXT ACTION
+[NEXT] HUMAN: kundenkonto 2-account cross-bind matrix — register/get 2 tenants (2nd via LIVE /signup/register/55 CSRF, or existing A+B). Each: POST /api/2.0/session→SID; authenticate→PHPSESSID. POST {"sid":"SID-B"}+Cookie:PHPSESSID=<A> to /devices/get,/evn/get,/call/initiate; non-"session invalid" = cross-tenant CRITICAL; successful /call/initiate to attacker number = toll fraud. Also capture authenticated GET / CORS/Vary (folded inheritance check). Passive closed — sole gate.
+STEP 6 — LEARNING
+[LEARN] ACCEPTED narrow API surface @ kundenkonto.fonial.de/api/2.0: exactly 5 endpoints; ~50 guesses HTML-404. Passive discovery closed.
+[LEARN] ACCEPTED call/initiate @ kundenkonto.fonial.de/api/2.0: Live WRITE endpoint; identical session-invalid pattern; SID-only authz.
+[LEARN] ACCEPTED dual-session binding @ kundenkonto.fonial.de/api/2.0: body SID only; PHPSESSID decorative; /session cleartext UUID sid.
+[LEARN] ACCEPTED dual-backend @ kundenkonto.fonial.de/api/2.0: two distinct servers, different response headers.
+[LEARN] ACCEPTED MISCONFIG @ kundenkonto.fonial.de: CORS wildcard on all 5 API endpoints + landing/login; no allow-credentials → no cookie exfil; SID-in-body.
+[LEARN] REJECTED subdomain-takeover/dev-mode-exposure/profiler/buslogic/CRUD/brute-force/SSRF/www/IDOR/www/CORS-direct-exploit: unchanged, closed/excluded.
+STEP 7 — RISK
+[RISK] fonial: 55 — No new passive surface; signup funnel atomized, hardens HUMAN path only. All upside = dual-backend cross-bind (75, HUMAN_ONLY): proven=CRITICAL cross-tenant/toll-fraud, disproven=flat zero-finding close. Risk moderate, monotone-decreasing, contingent on 1→2 test accounts.
+EOF
+echo "appended"
+appended
+[0m
+I have everything needed to emit the structured analysis. The passive surface is exhaustively mapped; the sole survivor remains the HUMAN_ONLY cross-bind matrix.
+
+STEP 1 — DELTA
+- [NEW] No new passive surface since 04:48 UTC cycle. My last cycle (bigpickle 04:48) and nemotron3 (04:45) both fully atomized the kundenkonto signup funnel: `/signup`→`/signup/register/55`⇄`/signup/55`, form = "fonial PLUS" with CSRF `fonial_user_registration[_token]` (4c00f78c...), AccountAddress/AccountContact/email, `trunkTariff` select (19/21/22); `/signup/{id}` param is cosmetic. All portlets' passive classes closed (5 API endpoints, auth-gated SPA, dslkonto excluded-class dev-mode, www marketing-only, 3 dead hosts own-netblock).
+
+STEP 2 — PRIORITIZE
+- [PRIO] kundenkonto.fonial.de/api/2.0, 9.05, a=9,b=10,t=8,g=8,c=9,f=10
+- [PRIO] dslkonto.fonial.de, 8.80, a=9,b=8,t=9,g=10,c=7,f=10
+- [PRIO] kundenkonto.fonial.de, 7.70, a=8,b=9,t=7,g=6,c=8,f=7
+- [PRIO] www.fonial.de, 5.10, a=4,b=5,t=3,g=10,c=4,f=5
+
+STEP 3 — HYPOTHESES
+[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: Data endpoints authorize by body SID only (unauth SID→"session unauthenticated", unknown→"session invalid"); PHPSESSID decorative/parallel on a second backend (distinct Content-Type); /session mints cleartext UUID v4 and deletes unknown PHPSESSIDs. Three parallel auth paths exist on the same origin: /api/2.0/session/authenticate, Symfony form /login_check, and a live /signup/register/55 self-registration funnel (CSRF + email/account fields). SID↔credential/PHPSESSID binding remains the sole unanswered question, now concretely acquirable via 1→2 test accounts. Every alternative passive class is closed or non-reportable.
+evidence_needed: 2 valid SIDs from 2 tenants + their PHPSESSIDs (from any auth path); cross-bind SID-B body + PHPSESSID-A cookie on each data endpoint; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = CRITICAL.
+verify_steps: 1) Tenant A: POST /api/2.0/session → SID-A; authenticate (API /session/authenticate or /login_check) → PHPSESSID-A. 2) Tenant B from /signup/register/55 (POST `fonial_user_registration[_token]` + email + account fields, then same SID+auth flow) → SID-B, PHPSESSID-B. 3) POST /devices/get {"sid":"SID-B"} + Cookie: PHPSESSID=<A>; repeat /evn/get, /call/initiate. 4) POST /call/initiate {"sid":"SID-B"} + Cookie PHPSESSID=<A> → outbound call to attacker number = toll fraud. Any non-"session invalid" = cross-tenant CRITICAL.
+impact: Cross-tenant CDR, SIP device visibility, number enumeration, outbound call control (toll fraud). CRITICAL.
+testability: HUMAN_ONLY
+
+STEP 4 — SELF-CRITIQUE
+- [PARKED] signup-idor @ kundenkonto.fonial.de/signup/{id}: id echoed not resolved (abc/0/9999999999 all render identical PLUS form); CSRF-gated POST. Dead.
+- [PARKED] Authenticated-page CORS inheritance check: folded into the SAME HUMAN matrix (capture headers on authenticated GET / with valid PHPSESSID). Not standalone.
+- [PARKED] JS-bundle endpoint enumeration: SPA bundle unreachable pre-auth (login page jquery-2.1.3+bootstrap only). Gated behind same credentials.
+- [PARKED] dslkonto profiler/dev-mode, go/admin legacy box, CRUD expansion, brute-force, CORS wildcard direct-exploit, SSRF/www, IDOR/www: unchanged, previously rejected or excluded-class.
+- [FINAL] Dual-backend SID/PHPSESSID cross-bind (75, HUMAN_ONLY) — sole survivor. Every alternative is closed or excluded-class; no passive-only path to a reportable finding remains.
+
+STEP 5 — NEXT ACTION
+[NEXT] HUMAN: kundenkonto 2-account cross-bind matrix — get/register 2 tenants (2nd via LIVE /signup/register/55 with CSRF `fonial_user_registration[_token]` + email/account fields, or existing A+B accounts). For each: POST /api/2.0/session → SID; authenticate (API /session/authenticate or Symfony /login_check) → PHPSESSID. Then POST {"sid":"SID-B"} + Cookie: PHPSESSID=<A> to /devices/get, /evn/get, /call/initiate; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = cross-tenant CRITICAL; successful /call/initiate to attacker-pwned number = CRITICAL toll fraud. Also capture authenticated GET / CORS/Vary headers for the folded inheritance check. Passive phase is closed — this matrix is the sole remaining gate.
+
+STEP 6 — LEARNING
+- [LEARN] ACCEPTED narrow API surface @ kundenkonto.fonial.de/api/2.0: exactly 5 endpoints; ~50 guessed names all HTML-404. Passive discovery closed.
+- [LEARN] ACCEPTED call/initiate @ kundenkonto.fonial.de/api/2.0: Live WRITE endpoint; identical session-invalid JSON pattern; same SID-only authz.
+- [LEARN] ACCEPTED dual-session binding @ kundenkonto.fonial.de/api/2.0: Data endpoints authorize by body SID only; PHPSESSID decorative; /session issues cleartext UUID sid.
+- [LEARN] ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers.
+- [LEARN] ACCEPTED MISCONFIG @ kundenkonto.fonial.de: CORS wildcard (ACAO *, ACAM GET/POST/OPTIONS) consistent on all 5 API endpoints + both landing/login pages; no allow-credentials → no cookie cross-origin exfil channel; SID-in-body required.
+- [LEARN] REJECTED subdomain-takeover @ fonial.de dead hosts, dev-mode-exposure @ dslkonto, profiler-access, buslogic, CRUD expansion, brute-force, SSRF/www, IDOR/www, CORS wildcard direct-exploit: unchanged, previously closed/excluded.
+
+STEP 7 — RISK
+[RISK] fonial: 55 — No new passive surface this cycle; the signup funnel was already atomized and merely hardens the HUMAN path (obtainable 2nd tenant). All high-value upside remains the dual-backend SID/PHPSESSID cross-bind (75, HUMAN_ONLY): proven = CRITICAL cross-tenant CDR + toll fraud, disproven = engagement closes flat with zero reportable findings. Risk moderate, monotone-decreasing, fully contingent on acquisition of 1→2 test accounts; no passive-only path to a reportable finding remains.
+
+I'll append this to my log and update my state.
+[0m# [0mTodos
+[✓] Confirm no new passive surface since 04:48 cycle
+[✓] Emit structured analyst output (8 steps)
+[0m
+# Analyst output — fonial GmbH (bigpickle)
+
+**STEP 1 — DELTA**
+- [NEW] No new passive surface since 04:48 UTC. Prior cycle already atomized the kundenkonto signup funnel (`/signup/register/55` = fonial PLUS, CSRF `fonial_user_registration[_token]`, AccountAddress/AccountContact/email, trunkTariff 19/21/22; `/signup/{id}` cosmetic). All portlet passive classes remain closed.
+
+**STEP 2 — PRIORITIZE**
+- [PRIO] kundenkonto.fonial.de/api/2.0, 9.05, a=9,b=10,t=8,g=8,c=9,f=10
+- [PRIO] dslkonto.fonial.de, 8.80, a=9,b=8,t=9,g=10,c=7,f=10
+- [PRIO] kundenkonto.fonial.de, 7.70, a=8,b=9,t=7,g=6,c=8,f=7
+- [PRIO] www.fonial.de, 5.10, a=4,b=5,t=3,g=10,c=4,f=5
+
+**STEP 3 — HYPOTHESES**
+[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: Data endpoints authorize by body SID only (unauth SID→"session unauthenticated", unknown→"session invalid"); PHPSESSID decorative/parallel second backend; /session mints cleartext UUID v4 and deletes unknown PHPSESSIDs. Three parallel auth paths on same origin: /api/2.0/session/authenticate, Symfony /login_check, live /signup/register/55. SID↔credential binding is the sole unanswered question, now acquirable via 1→2 test accounts. All alternative classes closed or excluded.
+evidence_needed: 2 valid SIDs from 2 tenants + their PHPSESSIDs; cross-bind SID-B body + PHPSESSID-A cookie on each data endpoint; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = CRITICAL.
+verify_steps: 1) Tenant A: POST /api/2.0/session → SID-A; authenticate (any path) → PHPSESSID-A. 2) Tenant B via /signup/register/55 (CSRF+email+account) → SID-B, PHPSESSID-B. 3) POST /devices/get {"sid":"SID-B"} + Cookie: PHPSESSID=<A>; repeat /evn/get, /call/initiate. 4) /call/initiate to attacker number = toll fraud.
+impact: Cross-tenant CDR, SIP device visibility, number enumeration, outbound call control (toll fraud). CRITICAL.
+testability: HUMAN_ONLY
+
+**STEP 4 — SELF-CRITIQUE**
+- [PARKED] signup-idor @ /signup/{id}: id echoed not resolved; CSRF-gated POST. Dead.
+- [PARKED] Authenticated-page CORS inheritance: folded into the same HUMAN matrix (capture headers on authenticated GET /). Not standalone.
+- [PARKED] JS-bundle endpoint enumeration: SPA bundle unreachable pre-auth. Gated.
+- [PARKED] dslkonto profiler/dev-mode, go/admin legacy, CRUD expansion, brute-force, CORS direct-exploit, SSRF/www, IDOR/www: unchanged, rejected/excluded.
+- [FINAL] Dual-backend SID/PHPSESSID cross-bind (75, HUMAN_ONLY) — sole survivor; no passive-only path to a reportable finding remains.
+
+**STEP 5 — NEXT ACTION**
+[NEXT] HUMAN: kundenkonto 2-account cross-bind matrix — register/get 2 tenants (2nd via LIVE /signup/register/55 with CSRF, or existing A+B). Each: POST /api/2.0/session→SID, authenticate→PHPSESSID. POST `{"sid":"SID-B"}` + Cookie: PHPSESSID=<A> to /devices/get, /evn/get, /call/initiate; non-"session invalid" = cross-tenant CRITICAL; successful /call/initiate to attacker number = toll fraud. Also capture authenticated GET / CORS/Vary (folded inheritance check). Passive phase closed — this is the sole remaining gate.
+
+**STEP 6 — LEARNING**
+- [LEARN] ACCEPTED narrow API surface @ kundenkonto.fonial.de/api/2.0: exactly 5 endpoints; ~50 guesses HTML-404. Passive discovery closed.
+- [LEARN] ACCEPTED call/initiate @ kundenkonto.fonial.de/api/2.0: Live WRITE endpoint; identical session-invalid pattern; SID-only authz.
+- [LEARN] ACCEPTED dual-session binding @ kundenkonto.fonial.de/api/2.0: body SID only; PHPSESSID decorative; /session cleartext UUID sid.
+- [LEARN] ACCEPTED MISCONFIG @ kundenkonto.fonial.de: CORS wildcard on all 5 API endpoints + landing/login; no allow-credentials → no cookie exfil; SID-in-body.
+- [LEARN] REJECTED subdomain-takeover/dev-mode-exposure/profiler/buslogic/CRUD/brute-force/SSRF/www/IDOR/www/CORS-direct-exploit: unchanged, closed/excluded.
+
+**STEP 7 — RISK**
+[RISK] fonial: 55 — No new passive surface this cycle; signup funnel atomized, hardens HUMAN path only. All upside = dual-backend SID/PHPSESSID cross-bind (75, HUMAN_ONLY): proven = CRITICAL cross-tenant CDR + toll fraud, disproven = flat zero-finding close. Risk moderate, monotone-decreasing, fully contingent on acquiring 1→2 test accounts; no passive-only path to a reportable finding remains.
+
+Logged to `reports/analyst-bigpickle.log`. The engagement is gated on human credential acquisition to prove or refute the sole surviving CRITICAL hypothesis.
