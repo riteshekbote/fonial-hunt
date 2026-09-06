@@ -146,3 +146,11 @@ https://kundenkonto.fonial.de/api/2.0/session -> 200 len=?
 https://kundenkonto.fonial.de/api/2.0/session/authenticate -> 200 len=?
 https://kundenkonto.fonial.de/api/2.0/devices/get -> 200 len=?
 https://kundenkonto.fonial.de/api/2.0/evn/get -> 200 len=?
+
+## 2026-09-06 16:13:20 UTC
+https://kundenkonto.fonial.de/ -> 200 len=?
+https://dslkonto.fonial.de/app_dev.php/_profiler/031fa8 -> HTTP 404
+https://kundenkonto.fonial.de/api/2.0/session -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/session/authenticate -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/devices/get -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/evn/get -> 200 len=?

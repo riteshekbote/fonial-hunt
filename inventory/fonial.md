@@ -217,3 +217,5 @@ www.fonial.de
 ## 2026-09-06 12:57:34 UTC
 - NEW No new passive surface since 2026-09-06 09:11:58; all prior hypotheses and inventory unchanged
 - CHANGED None — dual-backend session confusion, narrow API (5 endpoints), CORS wildcard, dev-mode excluded, subdomain takeover closed remain current
+
+## 2026-09-06 16:13:10 UTC
