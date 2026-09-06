@@ -7728,3 +7728,126 @@ testability: HUMAN_ONLY
 
 ## STEP 7 — RISK
 [RISK] fonial: 55 — No new passive surface this cycle; all high-value upside remains the dual-backend SID/PHPSESSID cross-bind (75, HUMAN_ONLY): proven = CRITICAL cross-tenant CDR + toll fraud, disproven = engagement closes flat with zero reportable findings. Risk moderate, monotone-decreasing, fully contingent on acquisition of 1→2 test accounts (account_creation=restricted in scope.yml, so requires program-sanctioned test accounts); no passive-only path to a reportable finding remains.
+===== ANALYST bigpickle 2026-09-06 20:31:22 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m# [0mTodos
+[•] Update hypotheses file with current analysis
+[ ] Update knowledge base with final state
+[ ] Verify inventory accuracy
+[0m
+[0m✱ [0mGlob "art/*.txt"[90m 0 matches[0m
+[0m✱ [0mGlob "art/*.md"[90m 0 matches[0m
+[0m→ [0mRead .
+[0m→ [0mRead knowledge
+[0m→ [0mRead leads
+[0m→ [0mRead inventory
+[0m→ [0mRead knowledge/index.md
+[0m→ [0mRead leads/lead-bigpickle.md
+[0m→ [0mRead inventory/fonial.md
+[0m→ [0mRead leads/lead-nemotron3.md
+[0m→ [0mRead README.md
+I have full context on the state. The analysis has reached a clear terminal conclusion: passive discovery is closed and the only remaining lead is a HUMAN_ONLY test requiring two valid test accounts. Let me check the last few leads to see if there's any change, then write the analysis output.
+
+Let me look at the most recent state files to see if there's any new input delta.
+[0m→ [0mRead analyst-out.txt
+[0m→ [0mRead analyst-prompt.txt
+I have complete context. The analysis is at a terminal state — passive discovery is fully closed across all in-scope assets, and the sole remaining lead is the HUMAN_ONLY dual-backend SID/PHPSESSID cross-binding test that requires two valid test accounts. Let me check the analyst output format and write my output. Let me look at what the analyst-output expects.
+[0m
+[0m# [0mTodos
+[•] Update hypotheses file with current analysis
+[ ] Update knowledge base with final state
+[ ] Verify inventory accuracy
+[0m
+I now have complete context. The state is at a terminal/closed position: passive discovery is fully exhausted across all in-scope assets, and the sole surviving hypothesis is the HUMAN_ONLY dual-backend SID/PHPSESSID cross-binding test requiring two valid test accounts. There is no new surface to probe this cycle.
+
+Let me write my analysis output as the structured blocks. Since the analyst-out.txt is just a log, my output should be the structured blocks. Let me produce the analysis.
+
+STEP 1 — DELTA: The state has not changed since the last cycle at 18:10:57. Inventory unchanged. Knowledge base unchanged. The only hypothesis remains the HUMAN_ONLY cross-bind matrix.
+
+Let me write the output blocks. I'll note NO_DELTA since nothing new appeared.
+I have full context. The state has not progressed since the last cycle — passive discovery remains closed, and the sole surviving hypothesis is the HUMAN_ONLY dual-backend SID/PHPSESSID cross-binding matrix requiring two valid test accounts. There is no new passive surface to probe. Let me verify there is no new live passive signal worth checking before finalizing (read-only GET on the API root to confirm surface unchanged), then produce the structured analysis.
+[0m$ [0mcurl -s -m 20 -i https://kundenkonto.fonial.de/api/2.0/session 2>&1 | head -40; echo "-----"; curl -s -m 20 -i -X POST https://kundenkonto.fonial.de/api/2.0/call/initiate -H 'Content-Type: application/json' -d '{}' 2>&1 | head -20
+HTTP/2 200 
+date: Sun, 06 Sep 2026 20:28:26 GMT
+content-type: text/json; charset=UTF-8
+server: cloudflare
+cache-control: max-age=0, must-revalidate, private
+expires: Sun, 06 Sep 2026 20:28:26 GMT
+x-fonial-version: v2026.09.01-1
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+cf-cache-status: DYNAMIC
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=Yy7CpCM72WllrFEpjTv2d9qAWi2uVAP97OeOKRkoW3YbwlBN4Go%2Fqzl%2BTHn%2FmyGrLNLHgihbY1bhIPin7npp4kskLZtjgHMi%2BM7GID%2B6JV3wWtMJOzFQLbFLAvUHV6rGkykJGLkouA%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cf-ray: a3703857bbc09b55-LAX
+
+{"status":"ok","sid":"9ecbce38-3795-4114-927e-dae928cb59a6"}-----
+HTTP/2 200 
+date: Sun, 06 Sep 2026 20:28:27 GMT
+content-type: text/json;charset=UTF-8
+server: cloudflare
+cache-control: no-cache, private
+set-cookie: PHPSESSID=vqh1pfiics1irr3nu07le2t7mu; path=/; secure; HttpOnly
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+cf-cache-status: DYNAMIC
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=jBVF91gt1a63YCSIgAzMgHZaOxuPspN4pVXdFh%2BXNRrissXOTFCR6il7usv1qhM3woZfUQmGPzU5%2Fwt7POnvlYjL0Q6nUTzV5G95jeQzH4qQb%2B3xaU8KwsZ0ARMG5CREsauTe6UA8w%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cf-ray: a370385b4b3027d8-LAX
+
+{"sid":null,"status":"error","reason":"session invalid"}
+[0m
+[0m# [0mTodos
+[✓] Update hypotheses file with current analysis
+[ ] Update knowledge base with final state
+[✓] Verify inventory accuracy
+[0m
+Confirmed live surface unchanged: `/api/2.0/session` returns cleartext UUID sid with CORS wildcard; `/api/2.0/call/initiate` sets PHPSESSID decoratively and returns the identical `session invalid` JSON pattern. Endpoints, headers, behavior all consistent with the knowledge base. NO_DELTA.
+
+Now I'll finalize the structured analysis. The state is terminal at POC with the single HUMAN_ONLY gate remaining.
+STEP 1 — DELTA
+[NEW] Live re-probe 2026-09-06 20:28 UTC confirms surface unchanged: /api/2.0/session returns cleartext UUID sid + ACAO:*; /api/2.0/call/initiate sets decorative PHPSESSID and returns `{"sid":null,"status":"error","reason":"session invalid"}` — identical to KB.
+
+STEP 2 — PRIORITIZE
+[PRIO] kundenkonto.fonial.de/api/2.0,9.05,a=9,b=10,t=8,g=8,c=9,f=10
+[PRIO] dslkonto.fonial.de,8.80,a=9,b=8,t=9,g=10,c=7,f=10
+[PRIO] kundenkonto.fonial.de,7.70,a=8,b=9,t=7,g=6,c=8,f=7
+[PRIO] www.fonial.de,5.10,a=4,b=5,t=3,g=10,c=4,f=5
+
+STEP 3 — HYPOTHESES
+[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: Live re-probe confirms data endpoints authorize by body SID only (unauth→"session unauthenticated", unknown→"session invalid"); PHPSESSID set decoratively on a distinct second backend; /session mints cleartext UUID v4 and deletes unknown PHPSESSIDs. Three parallel auth paths same origin: /api/2.0/session/authenticate, Symfony /login_check, live /signup/register/55 (CSRF+email+account, trunkTariff 19/21/22). SID↔credential/PHPSESSID binding is the sole unanswered question; every alternative class closed/excluded. No passive-only path to confirm.
+evidence_needed: 2 valid SIDs from 2 tenants + their PHPSESSIDs (any auth path); cross-bind SID-B body + PHPSESSID-A cookie on each data endpoint; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = CRITICAL.
+verify_steps: 1) Tenant A: POST /api/2.0/session → SID-A; authenticate (API /session/authenticate or /login_check) → PHPSESSID-A. 2) Tenant B (existing A+B, or via LIVE /signup/register/55 with CSRF `fonial_user_registration[_token]` + email/account fields + trunkTariff 19/21/22) → SID-B, PHPSESSID-B. 3) POST /devices/get {"sid":"SID-B"} + Cookie: PHPSESSID=<A>; repeat /evn/get, /call/initiate. 4) /call/initiate to attacker-pwned number = toll fraud. Also capture authenticated GET / CORS/Vary headers (folded inheritance check).
+impact: Cross-tenant CDR, SIP device visibility, number enumeration, outbound call control (toll fraud). CRITICAL.
+testability: HUMAN_ONLY
+
+STEP 4 — SELF-CRITIQUE
+[PARKED] JS-bundle endpoint enumeration: SPA bundle unreachable pre-auth. Gated.
+[PARKED] signup-idor: /signup/{id} echoed not resolved; CSRF-gated. Dead.
+[PARKED] authenticated-page CORS inheritance: folded into same HUMAN matrix. Not standalone.
+[PARKED] dslkonto profiler/dev-mode, go/admin legacy, CRUD expansion, brute-force, CORS direct-exploit, SSRF/www, IDOR/www: unchanged, rejected/excluded.
+[FINAL] Dual-backend SID/PHPSESSID cross-bind (confidence 75, HUMAN_ONLY) — sole survivor. No passive-only path to reportable finding remains.
+
+STEP 5 — NEXT ACTION
+[NEXT] HUMAN: kundenkonto 2-account cross-bind matrix — register/get 2 tenants (2nd via LIVE /signup/register/55 with CSRF `fonial_user_registration[_token]` + email/account fields + trunkTariff 19/21/22, or existing A+B accounts). For each: POST /api/2.0/session → SID; authenticate (API /session/authenticate or Symfony /login_check) → PHPSESSID. Then POST {"sid":"SID-B"} + Cookie: PHPSESSID=<A> to /devices/get, /evn/get, /call/initiate; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}` = cross-tenant CRITICAL; successful /call/initiate to attacker-pwned number = CRITICAL toll fraud. Also capture authenticated GET / CORS/Vary headers (folded inheritance check). Passive phase is closed — this matrix is the sole remaining gate.
+
+STEP 6 — LEARNING
+[LEARN] ACCEPTED narrow API surface @ kundenkonto.fonial.de/api/2.0: exactly 5 endpoints; ~50 guesses HTML-404. Passive discovery closed.
+[LEARN] ACCEPTED call/initiate @ kundenkonto.fonial.de/api/2.0: Live WRITE endpoint; identical session-invalid pattern; SID-only authz.
+[LEARN] ACCEPTED dual-session binding @ kundenkonto.fonial.de/api/2.0: body SID only; PHPSESSID decorative; /session cleartext UUID sid.
+[LEARN] ACCEPTED dual-backend @ kundenkonto.fonial.de/api/2.0: two distinct servers, different response headers.
+[LEARN] ACCEPTED MISCONFIG @ kundenkonto.fonial.de: CORS wildcard on all 5 API endpoints + landing/login; no allow-credentials → no cookie exfil; SID-in-body.
+[LEARN] REJECTED subdomain-takeover/dev-mode-exposure/profiler/buslogic/CRUD/brute-force/SSRF/www/IDOR/www/CORS-direct-exploit: unchanged, closed/excluded.
+
+STEP 7 — RISK
+[RISK] fonial: 55 — Live re-probe 2026-09-06 20:28 UTC confirms no new passive surface; all high-value upside remains the dual-backend SID/PHPSESSID cross-bind (75, HUMAN_ONLY): proven = CRITICAL cross-tenant CDR + toll fraud, disproven = flat zero-finding close. Risk moderate, monotone-decreasing, fully contingent on acquisition of 1→2 test accounts (account_creation=restricted in scope.yml, requires program-sanctioned test accounts); no passive-only path to a reportable finding remains.
