@@ -7851,3 +7851,377 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 [RISK] fonial: 55 — Live re-probe 2026-09-06 20:28 UTC confirms no new passive surface; all high-value upside remains the dual-backend SID/PHPSESSID cross-bind (75, HUMAN_ONLY): proven = CRITICAL cross-tenant CDR + toll fraud, disproven = flat zero-finding close. Risk moderate, monotone-decreasing, fully contingent on acquisition of 1→2 test accounts (account_creation=restricted in scope.yml, requires program-sanctioned test accounts); no passive-only path to a reportable finding remains.
+===== ANALYST bigpickle 2026-09-06 22:22:42 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mfor u in \
+"1|https://kundenkonto.fonial.de/api/2.0/session" \
+"2|https://kundenkonto.fonial.de/api/2.0/devices/get" \
+"3|https://kundenkonto.fonial.de/api/2.0/call/initiate" \
+"4|https://kundenkonto.fonial.de/signup/register/55" \
+"5|https://www.fonial.de/shop/" \
+"6|https://www.fonial.de/hilfe/" ; do
+  t="${u%%|*}"; url="${u#*|}"
+  echo "=== [$t] GET $url ==="
+  curl -sS -m 15 -o /dev/null -D - -A "Mozilla/5.0" -X GET "$url" 2>&1 | sed 's/^/  /'
+  sleep 1
+done
+=== [1] GET https://kundenkonto.fonial.de/api/2.0/session ===
+  HTTP/2 200 
+  date: Sun, 06 Sep 2026 22:19:06 GMT
+  content-type: text/json; charset=UTF-8
+  server: cloudflare
+  cache-control: max-age=0, must-revalidate, private
+  expires: Sun, 06 Sep 2026 22:19:06 GMT
+  x-fonial-version: v2026.09.01-1
+  access-control-allow-origin: *
+  access-control-allow-methods: GET, POST, OPTIONS
+  strict-transport-security: max-age=31536000
+  x-frame-options: DENY
+  cf-cache-status: DYNAMIC
+  report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=uZmEyWDbdD%2BdMl%2BIkiznnUmxrXS1GQ5JbSpbwEw%2F9Ltpjx4H1JVyJ3y4CwPD5zHqbUpJBBCidcQc6ygsGq4rWylU071QehDGqHFiBikFtY3hGc9qvw88hxiD4cH3zGzm7fQDwaGXNw%3D%3D"}]}
+  nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+  cf-ray: a370da6fdd8c9913-SJC
+  
+=== [2] GET https://kundenkonto.fonial.de/api/2.0/devices/get ===
+  HTTP/2 200 
+  date: Sun, 06 Sep 2026 22:19:07 GMT
+  content-type: text/json;charset=UTF-8
+  server: cloudflare
+  cache-control: no-cache, private
+  set-cookie: PHPSESSID=v47cjvj8153dms2rv5gepku5f9; path=/; secure; HttpOnly
+  access-control-allow-origin: *
+  access-control-allow-methods: GET, POST, OPTIONS
+  strict-transport-security: max-age=31536000
+  x-frame-options: DENY
+  cf-cache-status: DYNAMIC
+  report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=VTRNmhOia%2Fo7gTMh9GeCCF9JI84jFmaEP%2FZHm17Psf2GtETSpSRRiC8ynP1okBxZYycbVJUXud2tix6NFpj6JT5TMfE7jZAGBNwEh13j9i4uKxqPBCos7UVAjCW3Wc1HDEK7ZHoBFg%3D%3D"}]}
+  nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+  cf-ray: a370da7999d21701-SJC
+  
+=== [3] GET https://kundenkonto.fonial.de/api/2.0/call/initiate ===
+  HTTP/2 200 
+  date: Sun, 06 Sep 2026 22:19:09 GMT
+  content-type: text/json;charset=UTF-8
+  server: cloudflare
+  cache-control: no-cache, private
+  set-cookie: PHPSESSID=1b35ir7s9klc4etfk1dtrhjv0i; path=/; secure; HttpOnly
+  access-control-allow-origin: *
+  access-control-allow-methods: GET, POST, OPTIONS
+  strict-transport-security: max-age=31536000
+  x-frame-options: DENY
+  cf-cache-status: DYNAMIC
+  report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=TD940h3tZdRrhl%2B2UzruPlx9T1b5wM3krH3YWu09Eh6hdaJb0doF3tDGSYPQ4FZ3FAfrumcWU9SiG1W4QlEooGWOat3HZqSAqBSzebtC71zJVt2K2bSPBNIxu8Oo%2BAFf1j%2Fu%2BNcyJA%3D%3D"}]}
+  nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+  cf-ray: a370da834d4c67b3-SJC
+  
+=== [4] GET https://kundenkonto.fonial.de/signup/register/55 ===
+  HTTP/2 302 
+  date: Sun, 06 Sep 2026 22:19:10 GMT
+  content-type: text/html; charset=utf-8
+  server: cloudflare
+  cache-control: max-age=0, must-revalidate, private
+  expires: Sun, 06 Sep 2026 22:19:10 GMT
+  location: /signup/55
+  x-fonial-version: v2026.09.01-1
+  access-control-allow-origin: *
+  access-control-allow-methods: GET, POST, OPTIONS
+  strict-transport-security: max-age=31536000
+  x-frame-options: DENY
+  cf-cache-status: DYNAMIC
+  report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=N2Bjn8117h1qrnOp4xNdhfnpS1sna0vpytg4oUWKc10jO9SIk4%2B2PrcuuDkGBApjm8shC5jY%2BBoYr7qgfArns6hrfDPI83dqPTt%2FSe%2Fv%2BhFj%2B1HXm2AeAbZ9Btva2PPPBwdbpEicRA%3D%3D"}]}
+  nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+  cf-ray: a370da8ceafceffe-SJC
+  
+=== [5] GET https://www.fonial.de/shop/ ===
+  HTTP/2 301 
+  content-type: text/html
+  date: Sun, 06 Sep 2026 22:19:12 GMT
+  location: https://shop.fonial.de
+  server: nginx/1.31.2
+  content-length: 169
+  
+=== [6] GET https://www.fonial.de/hilfe/ ===
+  HTTP/2 200 
+  cache-control: private, no-store
+  cache-control: max-age=0
+  content-language: de
+  content-type: text/html; charset=utf-8
+  date: Sun, 06 Sep 2026 22:19:14 GMT
+  expires: Sun, 06 Sep 2026 22:19:13 GMT
+  server: nginx/1.31.2
+  vary: Accept-Encoding
+  vary: Accept-Encoding
+  x-content-type-options: nosniff
+  x-content-type-options: nosniff
+  x-frame-options: SAMEORIGIN
+  x-ua-compatible: IE=edge
+  x-xss-protection: 1; mode=block
+[0m
+`shop.fonial.de` — new hostname surfaced (www.fonial.de/shop/ → 301). Not in inventory. Probing it.
+[0m$ [0mecho "=== DNS shop.fonial.de ==="; getent hosts shop.fonial.de 2>&1; dig +short shop.fonial.de A 2>&1 | head; dig +short shop.fonial.de CNAME 2>&1 | head
+sleep 1
+echo "=== GET https://shop.fonial.de/ ==="
+curl -sS -m 15 -o /dev/null -D - -A "Mozilla/5.0" "https://shop.fonial.de/" 2>&1
+sleep 1
+echo "=== GET https://shop.fonial.de/ headers+shortbody ==="
+curl -sS -m 15 -o /tmp/opencode/shop_body.html -w "HTTP %{http_code} size=%{size_download} final=%{url_effective}\n" -D - -A "Mozilla/5.0" -L "https://shop.fonial.de/" 2>&1
+=== DNS shop.fonial.de ===
+176.9.53.190    shop.fonial.de
+176.9.53.190
+=== GET https://shop.fonial.de/ ===
+HTTP/2 200 
+cache-control: max-age=0, must-revalidate, no-cache, no-store
+content-security-policy-report-only: font-src fonts.gstatic.com use.typekit.net *.typekit.net *.gstatic.com www.paypalobjects.com https://use.typekit.net data: 'self' 'unsafe-inline'; form-action geostag.cardinalcommerce.com geo.cardinalcommerce.com 1eafstag.cardinalcommerce.com 1eaf.cardinalcommerce.com centinelapistag.cardinalcommerce.com centinelapi.cardinalcommerce.com pilot-payflowlink.paypal.com www.paypal.com www.sandbox.paypal.com *.paypal.com *.cardinalcommerce.com 3ds-secure.cardcomplete.com www.clicksafe.lloydstsb.com pay.activa-card.com *.wirecard.com acs.sia.eu *.touchtechpayments.com www.securesuite.co.uk rsa3dsauth.com *.monzo.com *.arcot.com *.wlp-acs.com * 'self' 'unsafe-inline'; frame-ancestors 'self'; frame-src fast.amc.demdex.net *.adobe.com bid.g.doubleclick.net *.youtube.com *.youtube-nocookie.com geostag.cardinalcommerce.com geo.cardinalcommerce.com 1eafstag.cardinalcommerce.com 1eaf.cardinalcommerce.com centinelapistag.cardinalcommerce.com centinelapi.cardinalcommerce.com www.paypal.com www.sandbox.paypal.com pilot-payflowlink.paypal.com player.vimeo.com https://www.google.com/recaptcha/ *.braintreegateway.com *.paypal.com google.com *.google.com c.paypal.com checkout.paypal.com assets.braintreegateway.com pay.google.com *.cardinalcommerce.com * 'self' 'unsafe-inline'; img-src assets.adobedtm.com amcglobal.sc.omtrdc.net dpm.demdex.net cm.everesttech.net *.adobe.com widgets.magentocommerce.com data: www.googleadservices.com www.google-analytics.com googleads.g.doubleclick.net www.google.com bid.g.doubleclick.net analytics.google.com www.googletagmanager.com *.ftcdn.net *.behance.net t.paypal.com www.paypal.com www.paypalobjects.com fpdbs.paypal.com fpdbs.sandbox.paypal.com *.vimeocdn.com i.ytimg.com *.youtube.com p.typekit.net *.paypal.com *.typekit.net *.gstatic.com validator.swagger.io www.sandbox.paypal.com b.stats.paypal.com dub.stats.paypal.com assets.braintreegateway.com c.paypal.com checkout.paypal.com https://www.google.com https://www.google.de data: 'self' 'unsafe-inline'; script-src assets.adobedtm.com *.adobe.com www.googleadservices.com www.google-analytics.com googleads.g.doubleclick.net analytics.google.com www.googletagmanager.com *.newrelic.com *.nr-data.net geostag.cardinalcommerce.com 1eafstag.cardinalcommerce.com geoapi.cardinalcommerce.com 1eafapi.cardinalcommerce.com songbird.cardinalcommerce.com includestest.ccdc02.com *.commerce-payment-services.com commerce-payments-sdk.adobe.io www.paypal.com www.sandbox.paypal.com www.paypalobjects.com t.paypal.com s.ytimg.com www.googleapis.com vimeo.com www.vimeo.com *.vimeocdn.com *.youtube.com https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/ amcglobal.sc.omtrdc.net *.magento-ds.com use.typekit.net *.typekit.net google.com *.google.com *.cdn-apple.com *.braintreegateway.com js.braintreegateway.com assets.braintreegateway.com c.paypal.com pay.google.com api.braintreegateway.com api.sandbox.braintreegateway.com client-analytics.braintreegateway.com client-analytics.sandbox.braintreegateway.com *.paypal.com songbirdstag.cardinalcommerce.com 'self' 'unsafe-inline' 'unsafe-eval'; style-src *.adobe.com fonts.googleapis.com assets.braintreegateway.com https://use.typekit.net https://p.typekit.net 'self' 'unsafe-inline'; object-src 'self' 'unsafe-inline'; media-src *.adobe.com 'self' 'unsafe-inline'; manifest-src 'self' 'unsafe-inline'; connect-src dpm.demdex.net amcglobal.sc.omtrdc.net www.google-analytics.com www.googleadservices.com analytics.google.com www.googletagmanager.com *.newrelic.com *.nr-data.net vimeo.com geostag.cardinalcommerce.com geo.cardinalcommerce.com 1eafstag.cardinalcommerce.com 1eaf.cardinalcommerce.com centinelapistag.cardinalcommerce.com centinelapi.cardinalcommerce.com www.sandbox.paypal.com www.paypalobjects.com www.paypal.com pilot-payflowlink.paypal.com *.adobe.io performance.typekit.net *.sentry.io *.paypal.com google.com *.google.com *.braintreegateway.com *.braintree-api.com api.braintreegateway.com api.sandbox.braintreegateway.com client-analytics.braintreegateway.com client-analytics.sandbox.braintreegateway.com *.cardinalcommerce.com https://www.google-analytics.com https://stats.g.doubleclick.net 'self' 'unsafe-inline'; child-src assets.braintreegateway.com c.paypal.com *.paypal.com http: https: blob: 'self' 'unsafe-inline'; default-src 'self' 'unsafe-inline' 'unsafe-eval'; base-uri 'self' 'unsafe-inline';
+content-type: text/html; charset=UTF-8
+date: Sun, 06 Sep 2026 22:19:30 GMT
+expires: Sat, 06 Sep 2025 22:19:30 GMT
+pragma: no-cache
+server: nginx/1.31.2
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-powered-by: PHP/8.3.3
+x-xss-protection: 1; mode=block
+
+=== GET https://shop.fonial.de/ headers+shortbody ===
+HTTP/2 200 
+cache-control: max-age=0, must-revalidate, no-cache, no-store
+content-security-policy-report-only: font-src fonts.gstatic.com use.typekit.net *.typekit.net *.gstatic.com www.paypalobjects.com https://use.typekit.net data: 'self' 'unsafe-inline'; form-action geostag.cardinalcommerce.com geo.cardinalcommerce.com 1eafstag.cardinalcommerce.com 1eaf.cardinalcommerce.com centinelapistag.cardinalcommerce.com centinelapi.cardinalcommerce.com pilot-payflowlink.paypal.com www.paypal.com www.sandbox.paypal.com *.paypal.com *.cardinalcommerce.com 3ds-secure.cardcomplete.com www.clicksafe.lloydstsb.com pay.activa-card.com *.wirecard.com acs.sia.eu *.touchtechpayments.com www.securesuite.co.uk rsa3dsauth.com *.monzo.com *.arcot.com *.wlp-acs.com * 'self' 'unsafe-inline'; frame-ancestors 'self'; frame-src fast.amc.demdex.net *.adobe.com bid.g.doubleclick.net *.youtube.com *.youtube-nocookie.com geostag.cardinalcommerce.com geo.cardinalcommerce.com 1eafstag.cardinalcommerce.com 1eaf.cardinalcommerce.com centinelapistag.cardinalcommerce.com centinelapi.cardinalcommerce.com www.paypal.com www.sandbox.paypal.com pilot-payflowlink.paypal.com player.vimeo.com https://www.google.com/recaptcha/ *.braintreegateway.com *.paypal.com google.com *.google.com c.paypal.com checkout.paypal.com assets.braintreegateway.com pay.google.com *.cardinalcommerce.com * 'self' 'unsafe-inline'; img-src assets.adobedtm.com amcglobal.sc.omtrdc.net dpm.demdex.net cm.everesttech.net *.adobe.com widgets.magentocommerce.com data: www.googleadservices.com www.google-analytics.com googleads.g.doubleclick.net www.google.com bid.g.doubleclick.net analytics.google.com www.googletagmanager.com *.ftcdn.net *.behance.net t.paypal.com www.paypal.com www.paypalobjects.com fpdbs.paypal.com fpdbs.sandbox.paypal.com *.vimeocdn.com i.ytimg.com *.youtube.com p.typekit.net *.paypal.com *.typekit.net *.gstatic.com validator.swagger.io www.sandbox.paypal.com b.stats.paypal.com dub.stats.paypal.com assets.braintreegateway.com c.paypal.com checkout.paypal.com https://www.google.com https://www.google.de data: 'self' 'unsafe-inline'; script-src assets.adobedtm.com *.adobe.com www.googleadservices.com www.google-analytics.com googleads.g.doubleclick.net analytics.google.com www.googletagmanager.com *.newrelic.com *.nr-data.net geostag.cardinalcommerce.com 1eafstag.cardinalcommerce.com geoapi.cardinalcommerce.com 1eafapi.cardinalcommerce.com songbird.cardinalcommerce.com includestest.ccdc02.com *.commerce-payment-services.com commerce-payments-sdk.adobe.io www.paypal.com www.sandbox.paypal.com www.paypalobjects.com t.paypal.com s.ytimg.com www.googleapis.com vimeo.com www.vimeo.com *.vimeocdn.com *.youtube.com https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/ amcglobal.sc.omtrdc.net *.magento-ds.com use.typekit.net *.typekit.net google.com *.google.com *.cdn-apple.com *.braintreegateway.com js.braintreegateway.com assets.braintreegateway.com c.paypal.com pay.google.com api.braintreegateway.com api.sandbox.braintreegateway.com client-analytics.braintreegateway.com client-analytics.sandbox.braintreegateway.com *.paypal.com songbirdstag.cardinalcommerce.com 'self' 'unsafe-inline' 'unsafe-eval'; style-src *.adobe.com fonts.googleapis.com assets.braintreegateway.com https://use.typekit.net https://p.typekit.net 'self' 'unsafe-inline'; object-src 'self' 'unsafe-inline'; media-src *.adobe.com 'self' 'unsafe-inline'; manifest-src 'self' 'unsafe-inline'; connect-src dpm.demdex.net amcglobal.sc.omtrdc.net www.google-analytics.com www.googleadservices.com analytics.google.com www.googletagmanager.com *.newrelic.com *.nr-data.net vimeo.com geostag.cardinalcommerce.com geo.cardinalcommerce.com 1eafstag.cardinalcommerce.com 1eaf.cardinalcommerce.com centinelapistag.cardinalcommerce.com centinelapi.cardinalcommerce.com www.sandbox.paypal.com www.paypalobjects.com www.paypal.com pilot-payflowlink.paypal.com *.adobe.io performance.typekit.net *.sentry.io *.paypal.com google.com *.google.com *.braintreegateway.com *.braintree-api.com api.braintreegateway.com api.sandbox.braintreegateway.com client-analytics.braintreegateway.com client-analytics.sandbox.braintreegateway.com *.cardinalcommerce.com https://www.google-analytics.com https://stats.g.doubleclick.net 'self' 'unsafe-inline'; child-src assets.braintreegateway.com c.paypal.com *.paypal.com http: https: blob: 'self' 'unsafe-inline'; default-src 'self' 'unsafe-inline' 'unsafe-eval'; base-uri 'self' 'unsafe-inline';
+content-type: text/html; charset=UTF-8
+date: Sun, 06 Sep 2026 22:19:32 GMT
+expires: Sat, 06 Sep 2025 22:19:32 GMT
+pragma: no-cache
+server: nginx/1.31.2
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-powered-by: PHP/8.3.3
+x-xss-protection: 1; mode=block
+
+HTTP 200 size=146620 final=https://shop.fonial.de/
+[0m
+`shop.fonial.de` resolved — Magento 2 stack (176.9.53.190, nginx/PHP 8.3.3, Magento CSP). Fresh host outside inventory. Enumerating Magento surface read-only.
+[0m$ [0mbase="https://shop.fonial.de"
+for p in "/graphql" "/rest/V1/products" "/setup" "/magento_version" "/pub/health_check.php" "/.well-known/security.txt" "/customer/account/login" "/admin" "/robots.txt"; do
+  echo "=== [GET] $p ==="
+  curl -sS -m 15 -o /tmp/opencode/shop_out -w "code=%{http_code} type=%{content_type} size=%{size_download} final=%{url_effective}\n" \
+    -D /tmp/opencode/shop_hdr -A "Mozilla/5.0" "$base$p" 2>&1
+  grep -iE "^(server|x-powered-by|location|content-type|magento|x-magento|x-fonial|set-cookie):" /tmp/opencode/shop_hdr 2>/dev/null | head -6 | sed 's/^/    /'
+  sleep 1
+done
+=== [GET] /graphql ===
+code=500 type=application/json size=93 final=https://shop.fonial.de/graphql
+    content-type: application/json
+    server: nginx/1.31.2
+    set-cookie: PHPSESSID=ccc5ce8f7c72bdd3d95e23ec5b0ef13a; expires=Sun, 06 Sep 2026 23:19:53 GMT; Max-Age=3600; path=/; domain=shop.fonial.de; secure; HttpOnly; SameSite=Lax
+    x-powered-by: PHP/8.3.3
+=== [GET] /rest/V1/products ===
+code=401 type=application/json; charset=utf-8 size=134 final=https://shop.fonial.de/rest/V1/products
+    content-type: application/json; charset=utf-8
+    server: nginx/1.31.2
+    set-cookie: PHPSESSID=6b2a0daad00c09d933f39377dfc95803; expires=Sun, 06 Sep 2026 23:19:55 GMT; Max-Age=3600; path=/; domain=shop.fonial.de; secure; HttpOnly; SameSite=Lax
+    x-powered-by: PHP/8.3.3
+=== [GET] /setup ===
+code=404 type=text/html; charset=UTF-8 size=38038 final=https://shop.fonial.de/setup
+    content-type: text/html; charset=UTF-8
+    server: nginx/1.31.2
+    set-cookie: PHPSESSID=082eded23e98e832a0a9130129b0e6ae; expires=Sun, 06 Sep 2026 23:19:56 GMT; Max-Age=3600; path=/; domain=shop.fonial.de; secure; HttpOnly; SameSite=Lax
+    x-powered-by: PHP/8.3.3
+=== [GET] /magento_version ===
+code=200 type=text/html; charset=UTF-8 size=23 final=https://shop.fonial.de/magento_version
+    content-type: text/html; charset=UTF-8
+    server: nginx/1.31.2
+    set-cookie: PHPSESSID=630d88e02dbaf6b34a8d9104af8cf690; expires=Sun, 06 Sep 2026 23:19:59 GMT; Max-Age=3600; path=/; domain=shop.fonial.de; secure; HttpOnly; SameSite=Lax
+    x-powered-by: PHP/8.3.3
+=== [GET] /pub/health_check.php ===
+code=404 type=text/html; charset=UTF-8 size=38054 final=https://shop.fonial.de/pub/health_check.php
+    content-type: text/html; charset=UTF-8
+    server: nginx/1.31.2
+    set-cookie: PHPSESSID=5200b94c9a2269769be6289125f02218; expires=Sun, 06 Sep 2026 23:20:00 GMT; Max-Age=3600; path=/; domain=shop.fonial.de; secure; HttpOnly; SameSite=Lax
+    x-powered-by: PHP/8.3.3
+=== [GET] /.well-known/security.txt ===
+code=404 type=text/html; charset=UTF-8 size=38058 final=https://shop.fonial.de/.well-known/security.txt
+    content-type: text/html; charset=UTF-8
+    server: nginx/1.31.2
+    set-cookie: PHPSESSID=92fbb653f4014064564f2a463342e37f; expires=Sun, 06 Sep 2026 23:20:02 GMT; Max-Age=3600; path=/; domain=shop.fonial.de; secure; HttpOnly; SameSite=Lax
+    x-powered-by: PHP/8.3.3
+=== [GET] /customer/account/login ===
+code=200 type=text/html; charset=UTF-8 size=40303 final=https://shop.fonial.de/customer/account/login
+    content-type: text/html; charset=UTF-8
+    server: nginx/1.31.2
+    set-cookie: PHPSESSID=50646c53cc5857470c321f771ca0c779; expires=Sun, 06 Sep 2026 23:20:05 GMT; Max-Age=3600; path=/; domain=shop.fonial.de; secure; HttpOnly; SameSite=Lax
+    x-powered-by: PHP/8.3.3
+=== [GET] /admin ===
+code=404 type=text/html; charset=UTF-8 size=38038 final=https://shop.fonial.de/admin
+    content-type: text/html; charset=UTF-8
+    server: nginx/1.31.2
+    set-cookie: PHPSESSID=074a858812e064a025a5f834f05d0dc6; expires=Sun, 06 Sep 2026 23:20:07 GMT; Max-Age=3600; path=/; domain=shop.fonial.de; secure; HttpOnly; SameSite=Lax
+    x-powered-by: PHP/8.3.3
+=== [GET] /robots.txt ===
+code=200 type=text/plain size=796 final=https://shop.fonial.de/robots.txt
+    content-type: text/plain
+    server: nginx/1.31.2
+[0m
+[0m$ [0mbase="https://shop.fonial.de"
+echo "=== /magento_version body ==="; curl -sS -m 15 -A "Mozilla/5.0" "$base/magento_version"; echo
+sleep 1
+echo "=== /graphql body ==="; curl -sS -m 15 -A "Mozilla/5.0" "$base/graphql"; echo
+sleep 1
+echo "=== /rest/V1/products body ==="; curl -sS -m 15 -A "Mozilla/5.0" "$base/rest/V1/products"; echo
+sleep 1
+echo "=== robots.txt ==="; curl -sS -m 15 -A "Mozilla/5.0" "$base/robots.txt"
+=== /magento_version body ===
+Magento/2.4 (Community)
+=== /graphql body ===
+{"errors":[{"message":"Syntax Error: Unexpected <EOF>","locations":[{"line":1,"column":1}]}]}
+=== /rest/V1/products body ===
+{"message":"Der Verbraucher ist nicht berechtigt, auf %resources zuzugreifen.","parameters":{"resources":"Magento_Catalog::products"}}
+=== robots.txt ===
+# =========================================
+# V-30-07-2025 - Magento-Shop Staging shop.fonial.de
+# =========================================
+User-agent: *
+# Magento-Ordner
+Disallow: /admin/
+Disallow: /downloader/
+Disallow: /app/
+Disallow: /bin/
+Disallow: /dev/
+Disallow: /lib/
+Disallow: /setup/
+Disallow: /update/
+Disallow: /var/
+Disallow: /pub/errors/
+Disallow: /pub/static/
+Disallow: /pub/media/catalog/product/cache/
+Disallow: /report/
+Disallow: /customer/account/
+Disallow: /catalogsearch/result/?*
+# Parameter-URLs
+Disallow: /*?q=
+Disallow: /*?p=
+Disallow: /*?dir=
+Disallow: /*?order=
+Disallow: /*?mode=
+Disallow: /*?SID=
+Disallow: /*?limit=
+Disallow: /*?price=
+# Nicht-HTML-Dateien
+Disallow: /*.zip$
+Disallow: /*.mp3$
+# XML-Sitemap
+Sitemap: https://shop.fonial.de/media/sitemap/sitemap.xml
+[0m
+GraphQL live (schema-parse error response), Magento 2.4 CE, REST gated 401, robots labels it "Magento-Shop **staging**". Mining the saved homepage for more API surface.
+[0m$ [0mf=/tmp/opencode/shop_body.html
+echo "=== size ==="; wc -c "$f"
+echo "=== api-ish urls ==="
+grep -oE "(https?:)?//[a-zA-Z0-9./_-]*(graphql|rest|api|ajax|mutation|json)[a-zA-Z0-9/._-]*" "$f" 2>/dev/null | sort -u | head -40
+echo "=== src/js/css refs ==="
+grep -oE "(src|href)=\"[^\"]+\"" "$f" 2>/dev/null | sort -u | grep -iE "static|theme|magento" | head -25
+echo "=== graphql endpoint refs ==="
+grep -oE "graphql[a-zA-Z0-9/._-]*" "$f" 2>/dev/null | sort -u | head
+=== size ===
+146620 /tmp/opencode/shop_body.html
+=== api-ish urls ===
+https://shop.fonial.de/search/ajax/suggest/
+=== src/js/css refs ===
+href="https://shop.fonial.de/static/version1785835334/frontend/fonial/default/de_DE/MageWorx_Downloads/attachment.css"
+href="https://shop.fonial.de/static/version1785835334/frontend/fonial/default/de_DE/css/print.css"
+href="https://shop.fonial.de/static/version1785835334/frontend/fonial/default/de_DE/css/styles-l.css"
+href="https://shop.fonial.de/static/version1785835334/frontend/fonial/default/de_DE/css/styles-m.css"
+href="https://shop.fonial.de/static/version1785835334/frontend/fonial/default/de_DE/jquery/uppy/dist/uppy-custom.css"
+href="https://shop.fonial.de/static/version1785835334/frontend/fonial/default/de_DE/mage/calendar.css"
+src="https://shop.fonial.de/static/version1785835334/frontend/fonial/default/de_DE/images/logo.svg"
+src="https://shop.fonial.de/static/version1785835334/frontend/fonial/default/de_DE/images/logo_enbw_1.svg"
+src="https://shop.fonial.de/static/version1785835334/frontend/fonial/default/de_DE/js/pano-startpage.js"
+src="https://shop.fonial.de/static/version1785835334/frontend/fonial/default/de_DE/mage/requirejs/mixins.js"
+src="https://shop.fonial.de/static/version1785835334/frontend/fonial/default/de_DE/requirejs-config.js"
+src="https://shop.fonial.de/static/version1785835334/frontend/fonial/default/de_DE/requirejs/require.js"
+=== graphql endpoint refs ===
+[0m
+[0m$ [0mecho "=== static version ts ==="; date -u -d @1785835334 2>/dev/null || python3 -c "import datetime;print(datetime.datetime.utcfromtimestamp(1785835334))"
+sleep 1
+echo "=== sitemap.xml (first 15 lines) ==="; curl -sS -m 15 -A "Mozilla/5.0" "https://shop.fonial.de/media/sitemap/sitemap.xml" -o /tmp/opencode/sitemap.xml -w "code=%{http_code} size=%{size_download}\n"; head -c 1200 /tmp/opencode/sitemap.xml 2>/dev/null; echo
+=== static version ts ===
+Tue Aug  4 09:22:14 UTC 2026
+=== sitemap.xml (first 15 lines) ===
+code=200 size=86422
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<url><loc>https://shop.fonial.de/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
+<url><loc>https://shop.fonial.de/telefone</loc><lastmod>2023-07-20T07:03:21+00:00</lastmod><changefreq>daily</changefreq><priority>0.5</priority></url>
+<url><loc>https://shop.fonial.de/telefone/gigaset</loc><lastmod>2022-04-06T15:56:58+00:00</lastmod><changefreq>daily</changefreq><priority>0.5</priority></url>
+<url><loc>https://shop.fonial.de/telefone/snom</loc><lastmod>2022-04-06T15:57:04+00:00</lastmod><changefreq>daily</changefreq><priority>0.5</priority></url>
+<url><loc>https://shop.fonial.de/zubehor</loc><lastmod>2022-05-13T08:30:35+00:00</lastmod><changefreq>daily</changefreq><priority>0.5</priority></url>
+<url><loc>https://shop.fonial.de/servicepakete</loc><lastmod>2024-11-07T08:43:32+00:00</lastmod><changefreq>daily</changefreq><priority>0.5</priority></url>
+<url><loc>https://shop.fonial.de/ansagen</loc><lastmod>2022-05-13T08:58:05+00:00</lastmod><changefreq>daily</changefreq><priority>0.5</priority></url>
+<url><loc>
+[0m
+[0m$ [0mecho "=== sitemap: non-catalog/anomalous URLs ==="
+grep -oE "<loc>[^<]+</loc>" /tmp/opencode/sitemap.xml | sed 's#</\?loc>##g' | grep -viE "\.(jpg|png|webp|svg)" | grep -iE "customer|checkout|account|login|admin|graphql|contact|\?|search|quote|wish|api|rest|download|media" | head -30
+echo "=== sitemap URL count ==="; grep -c "<loc>" /tmp/opencode/sitemap.xml
+echo "=== distinct file types in sitemap ==="; grep -oE "<loc>[^<]+</loc>" /tmp/opencode/sitemap.xml | sed 's#</\?loc>##g' | grep -oE "\.[a-z]{2,4}$" | sort | uniq -c | sort -rn | head
+=== sitemap: non-catalog/anomalous URLs ===
+https://shop.fonial.de/snom-710-715-d715-papierstreifen
+https://shop.fonial.de/snom-720-760-d725-d765-papierstreifen
+=== sitemap URL count ===
+136
+=== distinct file types in sitemap ===
+[0m
+**Cycle analysis complete — fresh surface surfaced: `shop.fonial.de`.**
+
+**STEP 1 — DELTA**
+
+- [NEW] shop.fonial.de: Magento 2.4 CE storefront surfaced via www.fonial.de/shop/ → 301. NOT in inventory. Live GraphQL (`/graphql` GET → JSON `{"errors":[{"message":"Syntax Error: Unexpected <EOF>"}]}` = parse-echo endpoint), REST `/rest/V1/products` → 401 (gated), `/setup` 404, `/admin` 404, `/magento_version` → `Magento/2.4 (Community)`, robots self-label `Magento-Shop Staging shop.fonial.de` + deploy tag `V-30-07-2025`, static cache `version1785835334` (2026-08-04), custom theme `frontend/fonial/default`, sitemap = 136 pure-catalog URLs, unauth `/customer/account/login` 200. Resolves **176.9.53.190** (Hetzner; NOT the 62.146.7.2x fonial netblock) — in-scope per "domains operated by fonial GmbH", confirm vs program note before deep testing.
+- [CHANGED] www.fonial.de/shop/: previously classified as Magento under www; now proven dedicated host via 301 (same nginx/1.31.2 + PHP/8.3.3 banner family).
+
+**STEP 2 — PRIORITIZE**
+
+- [PRIO] kundenkonto.fonial.de/api/2.0,9.05,a=9,b=10,t=8,g=8,c=9,f=10 (unchanged)
+- [PRIO] dslkonto.fonial.de,8.80,a=9,b=8,t=9,g=10,c=7,f=10 (unchanged)
+- [PRIO] **shop.fonial.de,8.05,a=9,b=8,t=10,g=6,c=4,f=10** (NEW)
+- [PRIO] kundenkonto.fonial.de,7.70,a=8,b=9,t=7,g=6,c=8,f=7
+- [PRIO] www.fonial.de,5.10,a=4,b=5,t=3,g=10,c=4,f=5
+
+**STEP 3 — HYPOTHESES**
+
+[HYP] GraphQL introspection on shop.fonial.de exposes unauth reachable queries/mutations beyond catalog
+class: AUTH
+asset: shop.fonial.de/graphql (Magento 2.4 CE)
+confidence: 50
+reasoning: /graphql GET returns JSON parse-echo (`Syntax Error: Unexpected <EOF>`, 500) = endpoint live and body-parsed. Magento 2.4 CE GraphQL serves mutations (`createCustomerV2`, `generateCustomerToken`, quote/checkout ops) and queries; customer-scoped ops need bearer, but quote/guest mutation and storeConfig/cmsBlocks classes are unauth. `getResourceMetas`-style access model unknown until schema read. Known-vuln version-CVE angle excluded (no program-specific exploit yet).
+evidence_needed: __schema introspection output listing mutations/queries; at least one unauth-executable and meaningful query/mutation (e.g., guest-email-coupled quote ID manipulation, email-template/static-Redirector class bugs).
+verify_steps: POST /graphql `{"query":"{ __schema { queryType{name} mutationType{name} types{name kind} } }"}` (read-only, ≤1 rps); then probe tokenless candidates from schema only.
+impact: full API map → unauth data ops, potential ATO/money-flow primitives on commerce host. HIGH if confirmed.
+testability: PASSIVE (introspection unauth, read-only)
+
+[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: unchanged (KB dual-session binding, dual-backend servers, live re-probe 20:28). Sole prior survivor; no passive path.
+evidence_needed: 2 valid SIDs + PHPSESSIDs from 2 tenants; cross-bind SID-B body + PHPSESSID-A cookie; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}`.
+verify_steps: HUMAN — see prior matrix (register 2 tenants via /signup/register/55 CSRF flow or existing A+B; /session → SID; auth → PHPSESSID; cross-bind on all 3 endpoints; /call/initiate to pwned number).
+impact: cross-tenant CDR, device visibility, toll fraud. CRITICAL.
+testability: HUMAN_ONLY
+
+**STEP 4 — SELF-CRITIQUE**
+
+- [PARKED] shop version-CVE chase: Magento 2.4 CE = "known-vulnerable library without program-specific exploit" class → excluded; only schema-driven, reproducible findings count.
+- [PARKED] signup-idor, JS-bundle CORS (kundenkonto), dslkonto profiler/dev-mode, subdomain-takeover, CRUD expansion: unchanged/folded/excluded.
+- [FINAL] Survivors ranked: (1) kundenkonto api/2.0 cross-bind **75** HUMAN_ONLY; (2) shop.fonial.de GraphQL introspection **50** PASSIVE — new, actionable now.
+
+**STEP 5 — NEXT ACTION**
+
+[NEXT] PROBE: POST https://shop.fonial.de/graphql `{"query":"{ __schema { queryType{name} mutationType{name} types{name kind} } }"}` — read-only schema map, ≤1 rps, no customer data touched (single GET-only deviation: endpoint only parses bodies; semantically read-only). Scope note: confirm shop.fonial.de in-scope $ against program before deeper than introspection. After schema: check any tokenless quote/guest mutation. Then resume HUMAN cross-bind matrix on kundenkonto.
+
+**STEP 6 — LEARNING**
+
+- [LEARN] ACCEPTED new-surface @ shop.fonial.de: Magento 2.4 CE, live GraphQL parse-echo, REST 401-gated, /setup and /admin 404 (hardened), robots deployment tag "V-30-07-2025 Magento-Shop Staging", static v1785835334 (2026-08-04), host 176.9.53.190 outside fonial netblock; catalog-only sitemap (136 URLs).
+- [LEARN] REJECTED www-shop-dir @ www.fonial.de/shop: believed Magento hosted on www; actually 301 → dedicated shop.fonial.de.
+- [LEARN] ACCEPTED cross-bind/call-initiate/dual-session/CORS: unchanged, still current (re-probed 20:28/22:19 UTC).
+
+**STEP 7 — RISK**
+
+[RISK] fonial: 50 — Passive phase re-opened via shop.fonial.de (fresh Magento+GraphQL commerce surface, new host); introspective schema map is next cheap gate and materially lowers flat-close probability. Residual risk split between introspection yield and the still-pending HUMAN-only cross-bind (75); both monotone to resolve this week.

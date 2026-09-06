@@ -1,8 +1,8 @@
-## 2026-09-06 20:31:11 UTC [target] (model nemotron3)
+## 2026-09-06 22:20:19 UTC [target] (model nemotron3)
 [PRIO] kundenkonto.fonial.de/api/2.0,9.05,attack_surface=9,business_value=10,tech_exposure=8,gate_ease=8,cloud_surface=9,freshness=10  
-[PRIO] dslkonto.fonial.de,8.95,attack_surface=9,business_value=9,tech_exposure=10,gate_ease=10,cloud_surface=7,freshness=10  
 [PRIO] kundenkonto.fonial.de,7.95,attack_surface=8,business_value=9,tech_exposure=8,gate_ease=6,cloud_surface=8,freshness=8  
-[PRIO] www.fonial.de,5.10,attack_surface=4,business_value=5,tech_exposure=3,gate_ease=10,cloud_surface=4,freshness=5
+[PRIO] dslkonto.fonial.de,6.80,attack_surface=7,business_value=8,tech_exposure=9,gate_ease=10,cloud_surface=5,freshness=8  
+[PRIO] www.fonial.de,5.10,attack_surface=4,business_value=5,tech_exposure=3,gate_ease=10,cloud_surface=4,freshness=5  
 [HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
 class: AUTH
 asset: kundenkonto.fonial.de/api/2.0
@@ -30,7 +30,7 @@ evidence_needed: Any /_profiler/{token} returns 200 with profiler UI showing rou
 verify_steps: 1) GET https://dslkonto.fonial.de/app_dev.php/_profiler/031fa8 (latest observed token) → check for 200 + profiler HTML; 2) If 404, collect next X-Debug-Token from any app_dev.php request and retry; 3) If profiler accessible, enumerate /_profiler/router, /_profiler/phpinfo, /_profiler/config for secrets
 impact: Full route map, internal service URLs, database credentials, API keys, session tokens, PII in logs — CRITICAL
 testability: PASSIVE
-[PARKED] Symfony dev-mode profiler token rotation enables route/config enumeration on dslkonto: All 8 observed tokens return 404; scope.yml explicitly excludes "Descriptive error messages or headers (e.g. Stack Traces)" — profiler class falls under this exclusion even if accessible; no evidence of token reuse or prediction vector
+[PARKED] Symfony dev-mode profiler token rotation enables route/config enumeration on dslkonto: All 8 observed tokens return 404; scope.yml explicitly excludes "Descriptive error messages or headers (e.g. Stack Traces)" — profiler class falls under this exclusion even if accessible; no evidence of token reuse or prediction vector.
 [FINAL] 1. Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints (75)
 [FINAL] 2. Authenticated landing page inherits wildcard CORS without Vary: Origin (70)
 [NEXT] PROBE: POST https://kundenkonto.fonial.de/api/2.0/session → get SID1; POST https://kundenkonto.fonial.de/api/2.0/session/authenticate with valid test credentials → get authenticated SID1; POST https://kundenkonto.fonial.de/api/2.0/devices/get with SID1 → capture PHPSESSID1; repeat for Account B to get SID2, PHPSESSID2; POST https://kundenkonto.fonial.de/api/2.0/evn/get with body {"sid": "SID2"} + Cookie: PHPSESSID=PHPSESSID1 to test cross-bind
