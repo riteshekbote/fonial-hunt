@@ -1129,3 +1129,22 @@ impact: order-level PII (name/address/items/history) of shop customers. HIGH if 
 testability: HUMAN_ONLY
 [NEXT] HUMAN: kundenkonto 2-tenant cross-bind matrix (register/get 2 program-sanctioned tenants; /api/2.0/session→SID per tenant; authenticate→PHPSESSID per tenant; then POST {"sid":"SID-B"}+Cookie PHPSESSID=A to /devices/get, /evn/get, /call/initiate; any non-`session invalid` response = CRITICAL cross-tenant; /call/initiate to pwned number = toll fraud). Secondary: 1 sanctioned sandbox guest order on shop.fonial.de → guestOrder/guestOrderByToken binding tests. Passive on both hosts is now closed.
 [RISK] fonial: 55 — shop.fonial.de surface formally opened and enumerated (schema, magic quote/cart, guest order, payment-orchestration nodes) but every unauth primitive tested so far is gated or by-design; introspection re-opened breadth but added no reportable passive finding. Flat-close probability re-weighted back up (≈55); all remaining upside contingent on the HUMAN cross-bind matrix (75) + optional sanctioned shop guest-order test (45). No DoS/rate/credential-stuffing performed; no writes or customer data touched this cycle.
+## 2026-09-07 04:50:50 UTC [target] (model bigpickle)
+[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: Data endpoints authorize by body SID only (unauth→`session unauthenticated`, unknown→`session invalid`); PHPSESSID set decoratively on a separate backend; /session mints cleartext UUID v4 and deletes unknown PHPSESSIDs. Dual servers have different response headers. SID↔credential binding is the single unanswered question.
+evidence_needed: 2 valid SIDs + PHPSESSIDs from 2 tenants; cross-bind SID-B body + Cookie PHPSESSID-A on each of the 3 endpoints; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}`.
+verify_steps: HUMAN — 1) Tenant A: POST /api/2.0/session → SID-A; authenticate (/session/authenticate or Symfony /login_check) → PHPSESSID-A. 2) Tenant B (existing A+B, or via LIVE /signup/register/55 with CSRF `fonial_user_registration[_token]` + email/account + trunkTariff 19/21/22) → SID-B, PHPSESSID-B. 3) POST {"sid":"SID-B"} + Cookie: PHPSESSID=<A> to /devices/get, /evn/get, /call/initiate. 4) /call/initiate to attacker-pwned number = toll-fraud proof. Also capture authenticated GET / CORS/Vary headers (folded inheritance check).
+impact: cross-tenant CDR/SIP credential/device visibility, number enumeration, outbound call control (toll fraud). CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Magento guest-order object enumeration via guestOrder/guestOrderByToken on misbound email/number/token
+class: IDOR
+asset: shop.fonial.de/graphql (guestOrder, guestOrderByToken)
+confidence: 45
+reasoning: Introspection shows both queries take NON_NULL input objects (OrderInformationInput, OrderTokenInput). Standard Magento binds email+order_number / email+order_token; any weakness (token omitted, order_number brutabable, email parsed-but-unchecked) leaks order PII at scale.
+evidence_needed: 1 program-test guest order; iterate variant inputs (missing/empty order_token, bare order_number guess) and compare error vs data.
+verify_steps: HUMAN — create sanctioned sandbox guest checkout (false name/address), capture real order_number+token, then tokenless/underspecified query variants against guestOrder/guestOrderByToken; any data on `order_token:""` or guessed number = finding.
+impact: order-level PII (name/address/items/history). HIGH if binding weak; likely MED at info-only.
+testability: HUMAN_ONLY
