@@ -208,3 +208,7 @@ https://shop.fonial.de/graphql -> HTTP 500
 
 ## 2026-09-07 19:39:03 UTC
 
+
+## 2026-09-07 22:19:55 UTC
+https://kundenkonto.fonial.de/api/2.0/call/initiate -> 200 len=?
+https://shop.fonial.de/graphql -> HTTP 500

@@ -126,3 +126,7 @@
 - 2026-09-07 ACCEPTED GraphQL mutation surface @ shop.fonial.de: 68 mutations enumerated fully; no SSRF-URL fields; REST uniform ACL 401.
 - 2026-09-07 REJECTED shop admin-token direct-unauth @ shop.fonial.de/graphql: docs require admin token + customer opt-in → side-channel-lowered (40).
 - 2026-09-07 ACCEPTED x-debug-token decorative @ kundenkonto: no profiler/wdt access, excluded class.
+- 2026-09-07 ACCEPTED GraphQL mutation surface @ shop.fonial.de: 68 mutations enumerated fully (prior); full REST map now complementary — 45 paths via `/rest/all/schema`; only non-stock = MageWorx Downloads; REST passive discovery now closed (mirrors GraphQL closure).
+- 2026-09-07 REJECTED MageWorx guest-downloads IDOR @ shop.fonial.de/rest: endpoint live but `[]` across all 110 product IDs — no data to access; `/V1/mw-downloads-attachments/{id}` 401-gated; class parked.
+- 2026-09-07 ACCEPTED asymmetric admin-auth @ shop.fonial.de: REST `/V1/integration/admin/token` → 404 (route removed) but GraphQL `generateCustomerTokenAsAdmin` introspectable → non-uniform admin-auth surface; supports (does not prove) admin-token hypothesis.
+- 2026-09-07 REJECTED REST-schema exposure @ shop.fonial.de/rest/all/schema: stock Magento OpenAPI, no secrets, surface already known via GraphQL introspection — informational only, not reportable.

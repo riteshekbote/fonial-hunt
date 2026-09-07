@@ -1267,3 +1267,50 @@ evidence_needed: order state transition without valid payment gateway callback.
 verify_steps: none passive — requires live order + gateway interaction.
 impact: Database order states / revenue tampering. HIGH if exploitable.
 testability: HUMAN_ONLY (insufficient evidence — parking)
+## 2026-09-07 22:18:13 UTC [target] (model bigpickle)
+[NEW] shop.fonial.de REST surface fully mapped: `/rest/all/schema` returns full OpenAPI unauthenticated → 45 paths; only non-stock route = MageWorx `mw-downloads-attachments`.
+[NEW] `/V1/mw-downloads-attachments/guest/product/{id}` live unauth but returns `[]` on all 110 product IDs; `/V1/mw-downloads-attachments/{id}` → 401 (auth-gated sibling exists).
+[NEW] REST `/V1/integration/admin/token` + `customer/token` → 404 route-removed (REST admin-auth closed) while GraphQL `GenerateCustomerTokenAsAdminInput` remains introspectable → asymmetric admin-auth surface.
+[NEW] `/V1/search` live unauth (400 missing `searchCriteria`); `/V1/applepay/auth`, `/V1/payment-order/completeOrder` present stock payment routes.
+[PRIO] kundenkonto.fonial.de/api/2.0, 6.1, (6,10,7,3,3,3)
+[PRIO] shop.fonial.de/graphql, 7.25, (7,8,9,7,3,8)
+[PRIO] shop.fonial.de/rest, 6.55, (6,8,7,6,3,8)
+[PRIO] www.fonial.de, 4.95, (5,4,5,9,3,3)
+[HYP] Dual-backend SID/PHPSESSID cross-binding → cross-tenant access on 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: Session backend issues cleartext UUID SID in body, no PHPSESSID; data backend authorizes by body SID only and sets PHPSESSID decoratively. Independent session stores → SID-to-credential binding never verified. call/initiate is live WRITE with identical `session invalid` pattern.
+evidence_needed: SID from tenant A + PHPSESSID from tenant B returns data, or unauthenticated SID + foreign PHPSESSID returns data.
+verify_steps: POST /api/2.0/session each tenant → authenticate → capture PHPSESSID per tenant from data POST → cross-bind `{"sid":"SID_B"}` + `Cookie: PHPSESSID=A` on /devices/get, /evn/get, /call/initiate → non-`session invalid` = CRITICAL.
+impact: Cross-tenant CDR, numbers, SIP creds, device lists, outbound initiation/toll fraud. CRITICAL.
+testability: HUMAN_ONLY
+[HYP] generateCustomerTokenAsAdmin callable without admin bearer (version-specific authz flaw)
+class: AUTH
+asset: shop.fonial.de/graphql (generateCustomerTokenAsAdmin)
+confidence: 40
+reasoning: Mutation present unauth-introspectable while REST `/V1/integration/admin/token` route is REMOVED (404) → asymmetric admin-auth surface implies non-stock config. Input = single `customer_email`. Official docs require admin Bearer + remote_shopping_assistance opt-in; residual = inverted/missing user-type check in this 2.4 CE build.
+evidence_needed: POST without Authorization → error is authz-based (by-design) vs `customer not found`/token issuance (bypass).
+verify_steps: SANCTIONED POST /graphql `mutation{ generateCustomerTokenAsAdmin(input:{customer_email:"authz-probe-<ts>@example.invalid"}){ customer_token } }` — fabricated email = zero customer-data exposure; observe error semantics.
+impact: Customer ATO of opted-in shop accounts (orders, addresses, pay vault) → payment/PII exposure. CRITICAL if bypass.
+testability: PASSIVE (blocked in this mode — needs sanctioned POST)
+[HYP] MageWorx Downloads authenticated attachment access → file-level IDOR
+class: IDOR
+asset: shop.fonial.de/rest /V1/mw-downloads-attachments
+confidence: 35
+reasoning: Non-stock extension (MageWorx Downloads 2.x) exposes guest product-attachment metadata endpoint (live, `[]` today) and an auth-gated `/V1/mw-downloads-attachments/{id}` (401). Fonial sells "Telefonansage" audio products — downloadable-attachment schema present. Known MageWorx flaws = attachment link tokens/short IDs.
+evidence_needed: authenticated user A enumerates attachment IDs / link tokens of user B or an un-purchased product file; guest endpoint returning non-empty for a purchasable product.
+verify_steps: needs auth context → real customer account; passive-only: re-GET all 110 product IDs after new products drop; check `/rest/all/schema` refresh for added attachment endpoints.
+impact: Unauthorized file/PII download of gated product attachments. MED-HIGH.
+testability: HUMAN_ONLY (no attachments currently exposed; needs purchasable downloadable product + auth)
+[PARKED] MageWorx Downloads IDOR (35): below floor; guest endpoint provably empty across all products; the 401 sibling needs an authenticated session none of us have; no live data to pivot on.
+[PARKED] Guest-cart coupon abuse (30): dropped prior cycle — by-design guest checkout, stock coupon validation, live placeOrder is a financial write.
+[PARKED] Payment-callback desync (32): requires live order + gateway interaction; no passive vector.
+[FINAL] kundenkonto cross-bind (75): survives — sole high-impact hypothesis, but HUMAN_ONLY (2 sanctioned tenants). Not resolvable passively.
+[FINAL] shop admin-token (40): survives — REST route removed while GraphQL mutation present is a real anomaly, but official-doc authz gate keeps it low; only resolvable via one sanctioned POST.
+[NEXT] PROBE: POST https://shop.fonial.de/graphql `{"query":"mutation{ generateCustomerTokenAsAdmin(input:{customer_email:\"authz-probe-<unix-ts>@example.invalid\"}){ customer_token } }"}` — fabricated email, zero real-data exposure; observe `errors` (by-design admin-authz) vs `customer not found`/token (bypass). Requires sanctioned mutating-test switch; blocked in current passive mode.
+[LEARN] ACCEPTED GraphQL mutation surface @ shop.fonial.de: 68 mutations enumerated fully (prior); full REST map now complementary — 45 paths via `/rest/all/schema`; only non-stock = MageWorx Downloads; REST passive discovery now closed (mirrors GraphQL closure).
+[LEARN] REJECTED MageWorx guest-downloads IDOR @ shop.fonial.de/rest: endpoint live but `[]` across all 110 product IDs — no data to access; `/V1/mw-downloads-attachments/{id}` 401-gated; class parked.
+[LEARN] ACCEPTED asymmetric admin-auth @ shop.fonial.de: REST `/V1/integration/admin/token` → 404 (route removed) but GraphQL `generateCustomerTokenAsAdmin` introspectable → non-uniform admin-auth surface; supports (does not prove) admin-token hypothesis.
+[LEARN] REJECTED REST-schema exposure @ shop.fonial.de/rest/all/schema: stock Magento OpenAPI, no secrets, surface already known via GraphQL introspection — informational only, not reportable.
+[RISK] fonial: 56 — both surviving leads gated: cross-bind (75, HUMAN_ONLY, 2 tenants) and admin-token (40, one sanctioned POST). REST+GraphQL surface now fully mapped both sides → REST admin-token route-removal is the only meaningful new asymmetry, no impact. MageWorx dead (empty data). Flat-close probability ~55%: high-value resolution requires sanctioned interactivity this mode cannot take. No writes, no customer data, ≤1 rps.

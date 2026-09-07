@@ -249,3 +249,19 @@ www.fonial.de
 - CHANGED kundenkonto x-debug-token: _profiler{/{tok}}, _wdt{/{tok}} all HTML-404 → token decorative-only; profiler class closed here (same as dslkonto).
 - CHANGED shop admin-token hypothesis 55→40: Adobe/Magento official docs confirm generateCustomerTokenAsAdmin requires admin Authorization Bearer + customer `remote_shopping_assistance` opt-in → direct unauth u
 - CHANGED shop password-reset hypothesis 45→DROPPED: password/account-recovery policy is OUT-OF-SCOPE per program.
+
+## 2026-09-07 22:19:51 UTC
+- NEW shop.fonial.de REST surface fully mapped: `/rest/all/schema` returns full OpenAPI unauthenticated → 45 paths; only non-stock route = MageWorx `mw-downloads-attachments`.
+- NEW `/V1/mw-downloads-attachments/guest/product/{id}` live unauth but returns `[]` on all 110 product IDs; `/V1/mw-downloads-attachments/{id}` → 401 (auth-gated sibling exists).
+- NEW REST `/V1/integration/admin/token` + `customer/token` → 404 route-removed (REST admin-auth closed) while GraphQL `GenerateCustomerTokenAsAdminInput` remains introspectable → asymmetric admin-auth surf
+- NEW `/V1/search` live unauth (400 missing `searchCriteria`); `/V1/applepay/auth`, `/V1/payment-order/completeOrder` present stock payment routes.
+- NEW shop.fonial.de/graphql: Full unauth GraphQL introspection (300+ types, 68 mutations) confirmed 2026-09-07; Magento 2.4 CE, no CORS, CSP report-only unsafe-inline/eval
+- NEW shop.fonial.de REST: /rest/V1/guest-carts returns valid cart ID unauthenticated; all other V1 endpoints uniform 401 German ACL
+- NEW kundenkonto.fonial.de/signup: Live unauthenticated registration flow at /signup/register/55 (sets PHPSESSID, CSRF _token, trunkTariff 19/21/22)
+- NEW kundenkonto.fonial.de: x-debug-token header on all 404 responses (unique per request, e.g. 15dc7a, 11cdcc); _profiler/_wdt return HTML-404 → decorative only
+- NEW kundenkonto.fonial.de: X-Fonial-Version bumped v2026.09.01-1 → v2026.09.03-1
+- NEW kundenkonto.fonial.de: Alternate API versions (2.1, 3.0, v1, v2, internal, beta) all 404 — no hidden surface
+- NEW kundenkonto.fonial.de: No OpenAPI/Swagger/health/debug/config endpoints — tight surface
+- CHANGED shop.fonial.de GenerateCustomerTokenAsAdminInput: confidence dropped 55→40; Adobe docs confirm requires admin Bearer + customer remote_shopping_assistance opt-in
+- CHANGED kundenkonto.fonial.de/api/2.0: Passive discovery CLOSED — exactly 5 endpoints confirmed, ~50 guessed names HTML-404
+- CHANGED dslkonto.fonial.dev-mode: Reclassified OUT-OF-SCOPE (scope.yml excludes descriptive errors/stack traces); profiler token-gated 404 on all tokens
