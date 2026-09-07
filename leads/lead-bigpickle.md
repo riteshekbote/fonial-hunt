@@ -1177,3 +1177,55 @@ testability: HUMAN_ONLY
 [LEARN] ACCEPTED GraphQL-introspection @ shop.fonial.de/graphql: full unauth schema dump (32Q/65M), Magento 2.4 CE; every unauth op by-design-guest or bound; no reportable passive finding; CORS absent here.
 [LEARN] REJECTED shop.fonial.de CORS: no ACAO on any response (differs from kundenkonto) — class closed on this host.
 [RISK] fonial: 55 — shop.fonial.de fully passive-mapped but added no reportable finding (all guest ops by-design/bound; the two shop hypotheses are sub-40 or need sanctioned HUMAN). All remaining upside is the kundenkonto cross-bind (75, HUMAN-only). Flat-close probability remains elevated (~55) pending that HUMAN run. No writes, no customer data, no auth-bypass, ≤1 rps this cycle.
+## 2026-09-07 15:30:02 UTC [target] (model bigpickle)
+[NEW] shop.fonial.de: GraphQL introspection fully open (300+ types), REST guest cart creation unauthenticated, CSP report-only with `'unsafe-inline' 'unsafe-eval'`, `GenerateCustomerTokenAsAdminInput` exposed in schema
+[NEW] shop.fonial.de: Magento 2.4 CE on 176.9.53.190 (Hetzner), nginx/1.31.2, PHP/8.3.3, no CORS policy, no HSTS
+[NEW] shop.fonial.de: REST API `/rest/V1/guest-carts` returns valid cart ID unauthenticated; `/rest/V1/orders/mine` returns German ACL error (Magento ACL working)
+[CHANGED] kundenkonto.fonial.de: X-Fonial-Version bumped from `v2026.09.01-1` → `v2026.09.03-1`
+[CHANGED] kundenkonto.fonial.de: `/session/authenticate` with empty body returns `"username missing"` (confirms username is required field, not just email)
+[CHANGED] kundenkonto.fonial.de: OPTIONS preflight returns JSON body (not empty 200) — same as POST, no proper CORS preflight handling
+[NEW] kundenkonto.fonial.de: `x-debug-token` header leaked on all 404 responses (unique per request, e.g. 15dc7a, 11cdcc)
+[PRIO] shop.fonial.de/graphql,8.2, attack_surface=9 tech_exposure=9 (GraphQL+REST+introspection+admin-token-type) business_value=7 (e-commerce/PayPal/Braintree) gate_ease=8 (guest ops fully unauth) cloud=3 (Hetzner, no cloud CNAME) freshness=7 → score=8.2
+[PRIO] kundenkonto.fonial.de/api/2.0,7.7, attack_surface=5 tech_exposure=6 business_value=9 gate_ease=3 cloud=4 (Cloudflare) freshness=7 → score=7.7
+[PRIO] shop.fonial.de/graphql (guest cart REST),6.5, attack_surface=4 tech_exposure=5 business_value=5 gate_ease=7 cloud=2 freshness=6 → score=6.5
+[HYP] Magento admin token generation via GraphQL GenerateCustomerTokenAsAdminInput
+class: AUTH
+asset: shop.fonial.de/graphql (generateCustomerTokenAsAdmin mutation or similar)
+confidence: 55
+reasoning: Introspection exposes `GenerateCustomerTokenAsAdminInput` type with NON_NULL fields. Standard Magento 2.4 CE allows admin token generation via GraphQL `generateAdminToken` mutation, but this is typically gated by ACL. The type's presence in the unauth introspection schema is by-design, but the mutation's actual authorization is untested. If the mutation is accessible without admin credentials (misconfigured ACL, guest-accessible path), it grants full admin API access.
+evidence_needed: 1) Query `__schema { mutationType { fields { name } } }` to confirm mutation name. 2) Attempt `generateAdminToken` or `generateCustomerTokenAsAdmin` mutation with empty/wrong credentials. 3) If error is ACL/permission-based → by-design; if error is different or returns token → CRITICAL.
+verify_steps: PASSIVE — POST /graphql `{"query":"{ __schema { mutationType { fields { name args { name type { name } } } } }"}` to list all mutation names and their argument types. No write/test against live customers.
+impact: Full admin access to Magento backend (all customer data, orders, payment methods, store config). CRITICAL if mutation callable unauth.
+testability: PASSIVE
+[HYP] Magento customer password reset / account takeover via GraphQL mutations
+class: AUTH
+asset: shop.fonial.de/graphql (requestPasswordResetEmail, resetPassword, etc.)
+confidence: 45
+reasoning: Standard Magento 2.4 CE exposes `requestPasswordResetEmail` and `resetPassword` mutations. These are by-design for customer self-service. However, if rate-limiting is absent or the reset token is predictable/long-lived, this could enable account takeover. The introspection schema likely contains these mutations. Checking their presence and argument shapes is passive.
+evidence_needed: 1) List all mutation names from introspection. 2) Identify password-related mutations and their input types. 3) Check if `requestPasswordResetEmail` accepts arbitrary email without CAPTCHA/rate-limit.
+verify_steps: PASSIVE — POST /graphql `{"query":"{ __schema { mutationType { fields { name } } }"}` to confirm password reset mutations exist. Then inspect input types.
+impact: Account takeover of shop customers if reset flow is weak. MED-HIGH if exploitable.
+testability: PASSIVE
+[HYP] Guest cart coupon application / price manipulation on shop.fonial.de
+class: BUSLOGIC
+asset: shop.fonial.de/graphql (applyCouponToCart, setBillingAddressOnCart, etc.)
+confidence: 30
+reasoning: Full guest cart mutation chain confirmed live (createGuestCart, addProductsToCart, applyCouponToCart, setBillingAddressOnCart, placeOrder). Standard Magento validates coupon codes against active promotions. Coupon abuse is by-design if codes are public. Testing placeOrder is a live financial write.
+evidence_needed: 1) Create guest cart, add product, attempt applyCouponToCart with invalid/expired code. 2) Check if error reveals discount amounts or internal promotion data.
+verify_steps: AUTH_HELPED — createGuestCart → addProductsToCart → applyCouponToCart with test code. Read-only until placeOrder.
+impact: Discount abuse or price manipulation. MED if coupon validation weak.
+testability: AUTH_HELPED
+[FINAL] Magento admin token (55): survives — mutation name listing is PASSIVE, high impact if exploitable, needs introspection field list to confirm mutation exists
+[FINAL] Password reset mutations (45): survives — mutation listing is PASSIVE, lower impact than admin token but still valuable
+[PARKED] Guest cart coupon (30): below confidence floor — by-design guest checkout, placeOrder is live write, coupon validation is standard Magento — **DROPPED**
+[PARKED] kundenkonto cross-bind (75): remains highest-confidence hypothesis but HUMAN_ONLY — cannot advance passively
+[NEXT] PROBE: POST https://shop.fonial.de/graphql `{"query":"{ __schema { mutationType { fields { name args { name type { name kind ofType { name } } } } } }"}` — list ALL mutation names and argument shapes to confirm admin token, password reset, and any non-standard mutations.
+[LEARN] ACCEPTED GraphQL-introspection @ shop.fonial.de/graphql: Full unauth schema dump (300+ types), Magento 2.4 CE; `GenerateCustomerTokenAsAdminInput` exposed; no CORS; CSP report-only with unsafe-inline/unsafe-eval
+[LEARN] REJECTED shop.fonial.de CORS: No ACAO on any response (OPTIONS returns 500 JSON, no CORS headers) — class closed on this host
+[LEARN] ACCEPTED REST guest cart @ shop.fonial.de: `/rest/V1/guest-carts` returns valid cart ID unauthenticated — by-design Magento guest checkout
+[LEARN] REJECTED kundenkonto versioned APIs: All alternate versions (2.1, 3.0, v1, v2, internal, beta) return 404 — no hidden surface
+[LEARN] REJECTED kundenkonto Swagger/docs: No OpenAPI, Swagger, health, debug, or config endpoints — tight surface
+[LEARN] ACCEPTED /signup live @ kundenkonto: `/signup` redirects to `/signup/register/55`, not auth-gated, sets PHPSESSID; `/register` → `/signup` 301
+[LEARN] ACCEPTED x-debug-token leak @ kundenkonto: Unique debug token on every 404 response (e.g. 15dc7a, 11cdcc) — diagnostic only, no direct exploit without session context
+[LEARN] ACCEPTED version bump @ kundenkonto: X-Fonial-Version updated to v2026.09.03-1 (from v2026.09.01-1)
+[RISK] fonial: 60 — shop.fonial.de surface formally expanded (GraphQL+REST+introspection+admin-token-type), new passive hypotheses at 55/45; kundenkonto cross-bind (75) remains highest-impact but HUMAN-only; all remaining upside contingent on (a) admin token mutation accessibility [PASSIVE, next probe] and (b) cross-bind matrix [HUMAN]. Flat-close probability ~55 if neither yields. No writes, no customer data, no auth-bypass, ≤1 rps this cycle.

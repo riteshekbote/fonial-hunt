@@ -115,3 +115,11 @@
 - 2026-09-07 REJECTED profiler-access @ dslkonto.fonial.de/app_dev.php/_profiler/{token}: 404 on all rotating tokens incl. 031fa8; class excluded by scope.yml regardless.
 - 2026-09-07 ACCEPTED GraphQL-introspection @ shop.fonial.de/graphql: full unauth schema dump (32Q/65M), Magento 2.4 CE; every unauth op by-design-guest or bound; no reportable passive finding; CORS absent here.
 - 2026-09-07 REJECTED shop.fonial.de CORS: no ACAO on any response (differs from kundenkonto) — class closed on this host.
+- 2026-09-07 ACCEPTED GraphQL-introspection @ shop.fonial.de/graphql: Full unauth schema dump (300+ types), Magento 2.4 CE; `GenerateCustomerTokenAsAdminInput` exposed; no CORS; CSP report-only with unsafe-inline/unsafe-eval
+- 2026-09-07 REJECTED shop.fonial.de CORS: No ACAO on any response (OPTIONS returns 500 JSON, no CORS headers) — class closed on this host
+- 2026-09-07 ACCEPTED REST guest cart @ shop.fonial.de: `/rest/V1/guest-carts` returns valid cart ID unauthenticated — by-design Magento guest checkout
+- 2026-09-07 REJECTED kundenkonto versioned APIs: All alternate versions (2.1, 3.0, v1, v2, internal, beta) return 404 — no hidden surface
+- 2026-09-07 REJECTED kundenkonto Swagger/docs: No OpenAPI, Swagger, health, debug, or config endpoints — tight surface
+- 2026-09-07 ACCEPTED /signup live @ kundenkonto: `/signup` redirects to `/signup/register/55`, not auth-gated, sets PHPSESSID; `/register` → `/signup` 301
+- 2026-09-07 ACCEPTED x-debug-token leak @ kundenkonto: Unique debug token on every 404 response (e.g. 15dc7a, 11cdcc) — diagnostic only, no direct exploit without session context
+- 2026-09-07 ACCEPTED version bump @ kundenkonto: X-Fonial-Version updated to v2026.09.03-1 (from v2026.09.01-1)

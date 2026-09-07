@@ -232,3 +232,12 @@ www.fonial.de
 ## 2026-09-07 04:51:00 UTC
 
 ## 2026-09-07 10:02:18 UTC
+
+## 2026-09-07 15:34:53 UTC
+- NEW shop.fonial.de: GraphQL introspection fully open (300+ types), REST guest cart creation unauthenticated, CSP report-only with `'unsafe-inline' 'unsafe-eval'`, `GenerateCustomerTokenAsAdminInput` expos
+- NEW shop.fonial.de: Magento 2.4 CE on 176.9.53.190 (Hetzner), nginx/1.31.2, PHP/8.3.3, no CORS policy, no HSTS
+- NEW shop.fonial.de: REST API `/rest/V1/guest-carts` returns valid cart ID unauthenticated; `/rest/V1/orders/mine` returns German ACL error (Magento ACL working)
+- CHANGED kundenkonto.fonial.de: X-Fonial-Version bumped from `v2026.09.01-1` → `v2026.09.03-1`
+- CHANGED kundenkonto.fonial.de: `/session/authenticate` with empty body returns `"username missing"` (confirms username is required field, not just email)
+- CHANGED kundenkonto.fonial.de: OPTIONS preflight returns JSON body (not empty 200) — same as POST, no proper CORS preflight handling
+- NEW kundenkonto.fonial.de: `x-debug-token` header leaked on all 404 responses (unique per request, e.g. 15dc7a, 11cdcc)
