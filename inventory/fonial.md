@@ -226,3 +226,5 @@ www.fonial.de
 - NEW Live re-probe 2026-09-06 20:28 UTC confirms surface unchanged: /api/2.0/session returns cleartext UUID sid + ACAO:*; /api/2.0/call/initiate sets decorative PHPSESSID and returns `{"sid":null,"status":
 
 ## 2026-09-06 22:22:42 UTC
+
+## 2026-09-07 00:06:42 UTC

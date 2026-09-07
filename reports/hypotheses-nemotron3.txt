@@ -1,4 +1,4 @@
-## 2026-09-06 22:20:19 UTC [target] (model nemotron3)
+## 2026-09-07 00:04:39 UTC [target] (model nemotron3)
 [PRIO] kundenkonto.fonial.de/api/2.0,9.05,attack_surface=9,business_value=10,tech_exposure=8,gate_ease=8,cloud_surface=9,freshness=10  
 [PRIO] kundenkonto.fonial.de,7.95,attack_surface=8,business_value=9,tech_exposure=8,gate_ease=6,cloud_surface=8,freshness=8  
 [PRIO] dslkonto.fonial.de,6.80,attack_surface=7,business_value=8,tech_exposure=9,gate_ease=10,cloud_surface=5,freshness=8  

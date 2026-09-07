@@ -1659,3 +1659,55 @@ testability: PASSIVE
 [LEARN] ACCEPTED legacy-box @ go.fonial.de: Composer platform check (requires PHP >7.2.5) aborts all routing → HTTP 500 on every path; /app_dev.php→301. Non-bootable; only out-of-scope classes exposed.
 [LEARN] REJECTED profiler-access @ dslkonto.fonial.de/app_dev.php/_profiler/{token}: 404 on all rotating tokens incl. 031fa8; class excluded by scope.yml regardless.
 [RISK] fonial: 78 — Customer portals (kundenkonto + dslkonto) have high business value (PII, CDR, SIP creds, billing, call control). Confirmed dual-backend architecture creating session confusion surface on kundenkonto API. Symfony dev-mode exposed on dslkonto with profiler token leakage (critical misconfig but scope-excluded). CORS wildcard on auth domain confirmed. Main API not publicly documented but live with 5 endpoints including WRITE. Risk elevated due to enterprise telephony data sensitivity and architectural anomalies across two portals.
+## 2026-09-07 00:04:39 UTC [target] (model nemotron3)
+[PRIO] kundenkonto.fonial.de/api/2.0,9.05,attack_surface=9,business_value=10,tech_exposure=8,gate_ease=8,cloud_surface=9,freshness=10  
+[PRIO] kundenkonto.fonial.de,7.95,attack_surface=8,business_value=9,tech_exposure=8,gate_ease=6,cloud_surface=8,freshness=8  
+[PRIO] dslkonto.fonial.de,6.80,attack_surface=7,business_value=8,tech_exposure=9,gate_ease=10,cloud_surface=5,freshness=8  
+[PRIO] www.fonial.de,5.10,attack_surface=4,business_value=5,tech_exposure=3,gate_ease=10,cloud_surface=4,freshness=5  
+[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 75
+reasoning: Session endpoints (text/json, no PHPSESSID) issue cleartext UUID v4 SID in body via POST. Data endpoints (text/json;charset=UTF-8) set PHPSESSID cookie but authorize solely by body SID. Independent session stores suggest SID-to-PHPSESSID binding not enforced on data layer. /call/initiate is LIVE WRITE endpoint with identical error pattern.
+evidence_needed: Data endpoint accepts valid SID from Account A with PHPSESSID from Account B, or unauthenticated SID + valid PHPSESSID returns data
+verify_steps: 1) POST /api/2.0/session → get SID1; 2) POST /api/2.0/session/authenticate with valid creds → SID1 authenticated; 3) POST /api/2.0/devices/get with SID1 → capture PHPSESSID1; 4) Repeat for Account B → get SID2, PHPSESSID2; 5) POST /api/2.0/evn/get with body {"sid": "SID2"} + Cookie: PHPSESSID=PHPSESSID1 (cross-bind); 6) Observe if data returns
+impact: Cross-tenant CDR (call records), phone numbers, SIP credentials, device lists, outbound call initiation — CRITICAL
+testability: AUTH_HELPED
+[HYP] Authenticated landing page inherits wildcard CORS without Vary: Origin
+class: MISCONFIG
+asset: kundenkonto.fonial.de
+confidence: 70
+reasoning: Unauthenticated landing page returns ACAO: * + PHPSESSID. Authenticated landing page likely shares middleware. If any JSON API endpoints called by frontend JS also return ACAO: * without Vary: Origin, cross-origin read of CDR/SIP/billing data is possible.
+evidence_needed: Authenticated GET / returns ACAO: * without Vary: Origin; JS source references JSON API endpoints that reflect user data
+verify_steps: 1) GET https://kundenkonto.fonial.de/ with valid PHPSESSID from 2FA login flow → check response headers for ACAO and Vary; 2) View page source → grep for /api/2.0/ or fetch/XHR patterns; 3) If JSON endpoints found, test them directly with Origin header
+impact: Malicious site exfiltrates call records, SIP credentials, phone numbers, billing data — HIGH
+testability: HUMAN_ONLY
+[HYP] Symfony dev-mode profiler token rotation enables route/config enumeration on dslkonto
+class: MISCONFIG
+asset: dslkonto.fonial.de
+confidence: 85
+reasoning: app_dev.php returns 200 on /forgot/request, 302 on root, 500 on /register with full exception page. _profiler/* endpoints return 404 but emit X-Debug-Token header that rotates per request (0951e9→f2142c→a9d22c→d3687f→031fa8→9b9a21→342ae7→78335a). Token suggests profiler accessible via /_profiler/{token}. Dev mode typically exposes route map, service container, config, DB credentials, session data via profiler UI when token is valid.
+evidence_needed: Any /_profiler/{token} returns 200 with profiler UI showing routes/config/db/session data
+verify_steps: 1) GET https://dslkonto.fonial.de/app_dev.php/_profiler/031fa8 (latest observed token) → check for 200 + profiler HTML; 2) If 404, collect next X-Debug-Token from any app_dev.php request and retry; 3) If profiler accessible, enumerate /_profiler/router, /_profiler/phpinfo, /_profiler/config for secrets
+impact: Full route map, internal service URLs, database credentials, API keys, session tokens, PII in logs — CRITICAL
+testability: PASSIVE
+[PARKED] Symfony dev-mode profiler token rotation enables route/config enumeration on dslkonto: All 8 observed tokens return 404; scope.yml explicitly excludes "Descriptive error messages or headers (e.g. Stack Traces)" — profiler class falls under this exclusion even if accessible; no evidence of token reuse or prediction vector.
+[FINAL] 1. Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints (75)
+[FINAL] 2. Authenticated landing page inherits wildcard CORS without Vary: Origin (70)
+[NEXT] PROBE: POST https://kundenkonto.fonial.de/api/2.0/session → get SID1; POST https://kundenkonto.fonial.de/api/2.0/session/authenticate with valid test credentials → get authenticated SID1; POST https://kundenkonto.fonial.de/api/2.0/devices/get with SID1 → capture PHPSESSID1; repeat for Account B to get SID2, PHPSESSID2; POST https://kundenkonto.fonial.de/api/2.0/evn/get with body {"sid": "SID2"} + Cookie: PHPSESSID=PHPSESSID1 to test cross-bind
+[LEARN] ACCEPTED narrow API surface @ kundenkonto.fonial.de/api/2.0: Only 5 endpoints exist (session, session/authenticate, devices/get, evn/get, call/initiate); ~50 guessed names all HTML-404
+[LEARN] ACCEPTED call/initiate @ kundenkonto.fonial.de/api/2.0: Live WRITE endpoint; returns same session-invalid JSON pattern as read endpoints; same SID-only authz suspected
+[LEARN] ACCEPTED dual-session binding @ kundenkonto.fonial.de/api/2.0: Data endpoints authorize by body SID only; PHPSESSID decorative; /session issues cleartext UUID sid
+[LEARN] ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers
+[LEARN] ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+[LEARN] REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
+[LEARN] REJECTED brute-force/credential-stuffing: Out of scope (rate-limit/lockout policy)
+[LEARN] REJECTED CRUD expansion ~30 siblings: PROVEN WRONG — API uses non-standard naming; guessed {resource}/{action} pattern yields 0 new hits
+[LEARN] REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
+[LEARN] REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+[LEARN] REJECTED dev-mode-exposure @ dslkonto.fonial.de/app_dev.php: leaked content = stack traces + fs paths only; scope.yml excludes "Descriptive error messages or headers". Not reportable standalone.
+[LEARN] REJECTED dslkonto buslogic: no attacker-controllable params; registration broken on prod/dev. Dead.
+[LEARN] ACCEPTED subdomain-takeover @ fonial.de dead hosts: app/admin/staging all resolve to fonial's own 62.146.7.2x netblock with no cloud CNAMEs → takeover class closed
+[LEARN] ACCEPTED legacy-box @ go.fonial.de: Composer platform check (requires PHP >7.2.5) aborts all routing → HTTP 500 on every path; /app_dev.php→301. Non-bootable; only out-of-scope classes exposed.
+[LEARN] REJECTED profiler-access @ dslkonto.fonial.de/app_dev.php/_profiler/{token}: 404 on all rotating tokens incl. 031fa8; class excluded by scope.yml regardless.
+[RISK] fonial: 78 — Customer portals (kundenkonto + dslkonto) have high business value (PII, CDR, SIP creds, billing, call control). Confirmed dual-backend architecture creating session confusion surface on kundenkonto API. Symfony dev-mode exposed on dslkonto with profiler token leakage (critical misconfig but scope-excluded). CORS wildcard on auth domain confirmed. Main API not publicly documented but live with 5 endpoints including WRITE. Risk elevated due to enterprise telephony data sensitivity and architectural anomalies across two portals.

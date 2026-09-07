@@ -1108,3 +1108,24 @@ impact: cross-tenant CDR, device visibility, toll fraud. CRITICAL.
 testability: HUMAN_ONLY
 [NEXT] PROBE: POST https://shop.fonial.de/graphql `{"query":"{ __schema { queryType{name} mutationType{name} types{name kind} } }"}` — read-only schema map, ≤1 rps, no customer data touched (single GET-only deviation: endpoint only parses bodies; semantically read-only). Scope note: confirm shop.fonial.de in-scope $ against program before deeper than introspection. After schema: check any tokenless quote/guest mutation. Then resume HUMAN cross-bind matrix on kundenkonto.
 [RISK] fonial: 50 — Passive phase re-opened via shop.fonial.de (fresh Magento+GraphQL commerce surface, new host); introspective schema map is next cheap gate and materially lowers flat-close probability. Residual risk split between introspection yield and the still-pending HUMAN-only cross-bind (75); both monotone to resolve this week.
+## 2026-09-07 00:06:33 UTC [target] (model bigpickle)
+[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: Data endpoints authorize by body SID only; PHPSESSID decorative on second backend; /session mints cleartext UUID. Facts unchanged; sole survivor; no passive path.
+evidence_needed: 2 valid SIDs + PHPSESSIDs from 2 tenants; cross-bind SID-B body + PHPSESSID-A cookie on all 3 endpoints; any response ≠ `{"sid":null,"status":"error","reason":"session invalid"}`.
+verify_steps: HUMAN — 2 program-sanctioned tenants (LIVE /signup/register/55 CSRF or existing A+B); /session→SID; authenticate→PHPSESSID; cross-bind; /call/initiate to pwned number for toll-fraud proof.
+impact: cross-tenant CDR, device/PII visibility, outbound call control. CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Magento guest-order object enumeration via guestOrder/guestOrderByToken on misbound email/token
+class: IDOR
+asset: shop.fonial.de/graphql (guestOrder, guestOrderByToken)
+confidence: 45
+reasoning: Both queries take NON_NULL input objects (OrderInformationInput, OrderTokenInput); standard Magento validates email+order_number / email+order_token pairing — any binding weakness (token not required, order_number brutabable, email only parsed not checked) leaks order PII at scale.
+evidence_needed: create a test guest order under program-test name; iterate variant inputs (missing/empty order_token, bare orderNumber guess) read responses.
+verify_steps: HUMAN (needs 1 test guest checkout on shop + real order number/token from that sandbox order; compare error vs data leakage on underspecified input)
+impact: order-level PII (name/address/items/history) of shop customers. HIGH if binding is weak; likely MED at info only.
+testability: HUMAN_ONLY
+[NEXT] HUMAN: kundenkonto 2-tenant cross-bind matrix (register/get 2 program-sanctioned tenants; /api/2.0/session→SID per tenant; authenticate→PHPSESSID per tenant; then POST {"sid":"SID-B"}+Cookie PHPSESSID=A to /devices/get, /evn/get, /call/initiate; any non-`session invalid` response = CRITICAL cross-tenant; /call/initiate to pwned number = toll fraud). Secondary: 1 sanctioned sandbox guest order on shop.fonial.de → guestOrder/guestOrderByToken binding tests. Passive on both hosts is now closed.
+[RISK] fonial: 55 — shop.fonial.de surface formally opened and enumerated (schema, magic quote/cart, guest order, payment-orchestration nodes) but every unauth primitive tested so far is gated or by-design; introspection re-opened breadth but added no reportable passive finding. Flat-close probability re-weighted back up (≈55); all remaining upside contingent on the HUMAN cross-bind matrix (75) + optional sanctioned shop guest-order test (45). No DoS/rate/credential-stuffing performed; no writes or customer data touched this cycle.
