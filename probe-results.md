@@ -195,3 +195,9 @@ https://kundenkonto.fonial.de/api/2.0/session -> 200 len=?
 https://kundenkonto.fonial.de/api/2.0/session/authenticate -> 200 len=?
 https://kundenkonto.fonial.de/api/2.0/devices/get -> 200 len=?
 https://kundenkonto.fonial.de/api/2.0/evn/get -> 200 len=?
+
+## 2026-09-07 10:02:25 UTC
+https://kundenkonto.fonial.de/api/2.0/session -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/session/authenticate -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/devices/get -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/evn/get -> 200 len=?

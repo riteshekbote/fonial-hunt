@@ -1148,3 +1148,32 @@ evidence_needed: 1 program-test guest order; iterate variant inputs (missing/emp
 verify_steps: HUMAN — create sanctioned sandbox guest checkout (false name/address), capture real order_number+token, then tokenless/underspecified query variants against guestOrder/guestOrderByToken; any data on `order_token:""` or guessed number = finding.
 impact: order-level PII (name/address/items/history). HIGH if binding weak; likely MED at info-only.
 testability: HUMAN_ONLY
+## 2026-09-07 09:56:37 UTC [target] (model bigpickle)
+[PRIO] shop.fonial.de/graphql,7.3,a/t (high tech exposure, moderate business value, gated almost everything; fresh host)
+[PRIO] kundenkonto.fonial.de/api/2.0,7.7, cross-bind 75 HUMAN
+[PRIO] shop.fonial.de/graphql, 7.3, attack_surface 7 / tech_exposure 9 / freshness 8 / business_value 6 / gate_ease 5 / cloud 2 → p=6.35
+[HYP] Magento guest-checkout self-ordering / coupon-policy money-flow via unauth guest cart chain
+class: BUSLOGIC
+asset: shop.fonial.de/graphql (createGuestCart→addProductsToCart→applyCouponToCart→setGuestEmailOnCart→setBilling/Shipping→estimateTotals→placeOrder)
+confidence: 35
+reasoning: full unauth guest cart mutation chain confirmed live; placeOrder/coupon logic is the only mutable money path not gated; but by-design guest checkout, and testing placeOrder is a live financial write.
+evidence_needed: demonstrate a guest cart reaches placeOrder with an unowned/applied-by-attacker coupon or price-invariant qty; non-mutating evidence preferred.
+verify_steps: createGuestCart→addProductsToCart (unauth)→estimateTotals read (no write); compare coupon-applied total vs catalog price; only inspect, no placeOrder.
+impact: arbitrary-coupon/discount abuse or checkout manipulation on commerce; MED-HIGH if coupon unbound. 
+testability: AUTH_HELPED (read-only totals; placeOrder = HUMAN sanctioned)
+[HYP] Magento guest-order object enumeration via guestOrder/guestOrderByToken on misbound email/number/postcode or token
+class: IDOR
+asset: shop.fonial.de/graphql (guestOrder, guestOrderByToken)
+confidence: 40
+reasoning: fields all NON_NULL and properly constructed (no-such-entity on bad combo); token-only path untestable without a real order token; no missing-field weakness in input shape.
+evidence_needed: 1 sanctioned sandbox guest order; test tokenless/underspecified query variants and guessed order numbers.
+verify_steps: HUMAN — create 1 test guest order, capture real number+email+postcode+token; then iterate (number-only with wrong email, empty token on guestOrderByToken) and compare error vs data.
+impact: order-level PII (name/address/items) at scale if binding weak; likely MED at info-only.
+testability: HUMAN_ONLY
+[PARKED] coupon/placeOrder money-flow (35): below confidence floor; placeOrder is a live financial write violating no-mutate rule; only valid with sanctioned checkout. 
+[PARKED] guestOrder binding (40): below 40-floor margin; needs HUMAN sanctioned order; token-only path not optionable.
+[FINAL] cross-bind matrix kundenkonto (75) sole reportable-qualifying survivor.
+[NEXT] HUMAN: kundenkonto 2-tenant cross-bind matrix (register/get 2 program-sanctioned tenants; /api/2.0/session→SID per tenant; authenticate→PHPSESSID per tenant; POST {"sid":"SID-B"}+Cookie PHPSESSID=A to /devices/get, /evn/get, /call/initiate; any non-`session invalid` = CRITICAL cross-tenant; /call/initiate to pwned number = toll fraud). Passive on both hosts now closed.
+[LEARN] ACCEPTED GraphQL-introspection @ shop.fonial.de/graphql: full unauth schema dump (32Q/65M), Magento 2.4 CE; every unauth op by-design-guest or bound; no reportable passive finding; CORS absent here.
+[LEARN] REJECTED shop.fonial.de CORS: no ACAO on any response (differs from kundenkonto) — class closed on this host.
+[RISK] fonial: 55 — shop.fonial.de fully passive-mapped but added no reportable finding (all guest ops by-design/bound; the two shop hypotheses are sub-40 or need sanctioned HUMAN). All remaining upside is the kundenkonto cross-bind (75, HUMAN-only). Flat-close probability remains elevated (~55) pending that HUMAN run. No writes, no customer data, no auth-bypass, ≤1 rps this cycle.
