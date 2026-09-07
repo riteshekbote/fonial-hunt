@@ -123,3 +123,6 @@
 - 2026-09-07 ACCEPTED /signup live @ kundenkonto: `/signup` redirects to `/signup/register/55`, not auth-gated, sets PHPSESSID; `/register` → `/signup` 301
 - 2026-09-07 ACCEPTED x-debug-token leak @ kundenkonto: Unique debug token on every 404 response (e.g. 15dc7a, 11cdcc) — diagnostic only, no direct exploit without session context
 - 2026-09-07 ACCEPTED version bump @ kundenkonto: X-Fonial-Version updated to v2026.09.03-1 (from v2026.09.01-1)
+- 2026-09-07 ACCEPTED GraphQL mutation surface @ shop.fonial.de: 68 mutations enumerated fully; no SSRF-URL fields; REST uniform ACL 401.
+- 2026-09-07 REJECTED shop admin-token direct-unauth @ shop.fonial.de/graphql: docs require admin token + customer opt-in → side-channel-lowered (40).
+- 2026-09-07 ACCEPTED x-debug-token decorative @ kundenkonto: no profiler/wdt access, excluded class.

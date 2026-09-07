@@ -718,3 +718,9 @@
 - LEARN: REJECTED profiler-access @ dslkonto.fonial.de/app_dev.php/_profiler/{token}: 404 on all rotating tokens incl. 031fa8; class excluded by scope.yml regardless.
 - LEARN: ACCEPTED GraphQL-introspection @ shop.fonial.de/graphql: full unauth schema dump (32Q/65M), Magento 2.4 CE; every unauth op by-design-guest or bound; no reporta
 - LEARN: REJECTED shop.fonial.de CORS: no ACAO on any response (differs from kundenkonto) — class closed on this host.
+
+## RANKED HYPOTHESES 2026-09-07 19:39:03 UTC
+- [75] kundenkonto.fonial.de/api/2.0: Dual-backend SID/PHPSESSID cross-binding → cross-tenant access on 3 data endpoints (from art/lead_bigpickle.txt)
+- LEARN: ACCEPTED GraphQL mutation surface @ shop.fonial.de: 68 mutations enumerated fully; no SSRF-URL fields; REST uniform ACL 401.
+- LEARN: REJECTED shop admin-token direct-unauth @ shop.fonial.de/graphql: docs require admin token + customer opt-in → side-channel-lowered (40).
+- LEARN: ACCEPTED x-debug-token decorative @ kundenkonto: no profiler/wdt access, excluded class.

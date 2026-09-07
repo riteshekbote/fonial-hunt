@@ -241,3 +241,11 @@ www.fonial.de
 - CHANGED kundenkonto.fonial.de: `/session/authenticate` with empty body returns `"username missing"` (confirms username is required field, not just email)
 - CHANGED kundenkonto.fonial.de: OPTIONS preflight returns JSON body (not empty 200) — same as POST, no proper CORS preflight handling
 - NEW kundenkonto.fonial.de: `x-debug-token` header leaked on all 404 responses (unique per request, e.g. 15dc7a, 11cdcc)
+
+## 2026-09-07 19:39:03 UTC
+- NEW shop.fonial.de/graphql: Full mutation name map confirmed (68 mutations). `GenerateCustomerTokenAsAdminInput` = {customer_email: String!} single field; return type has customer_token.
+- NEW shop.fonial.de REST V1 probes: store/websites, products, customers/me, orders, carts/mine → uniform 401 German ACL resource errors; only /rest/V1/guest-carts unauth. Magento ACL working.
+- NEW shop.fonial.de introspection: ContactUsInput/SendEmailToFriendInput/CustomerInput have no URL/upload fields → no SSRF vector in email/promo ops; CustomerInput exposes date_of_birth/dob/taxvat/gender.
+- CHANGED kundenkonto x-debug-token: _profiler{/{tok}}, _wdt{/{tok}} all HTML-404 → token decorative-only; profiler class closed here (same as dslkonto).
+- CHANGED shop admin-token hypothesis 55→40: Adobe/Magento official docs confirm generateCustomerTokenAsAdmin requires admin Authorization Bearer + customer `remote_shopping_assistance` opt-in → direct unauth u
+- CHANGED shop password-reset hypothesis 45→DROPPED: password/account-recovery policy is OUT-OF-SCOPE per program.

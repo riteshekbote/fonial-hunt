@@ -1863,3 +1863,4 @@ testability: PASSIVE
 [LEARN] ACCEPTED GraphQL-introspection @ shop.fonial.de/graphql: full unauth schema dump (32Q/65M), Magento 2.4 CE; every unauth op by-design-guest or bound; no reportable passive finding; CORS absent here.
 [LEARN] REJECTED shop.fonial.de CORS: no ACAO on any response (differs from kundenkonto) — class closed on this host.
 [RISK] fonial: 78 — Customer portals (kundenkonto + dslkonto) have high business value (PII, CDR, SIP creds, billing, call control). Confirmed dual-backend architecture creating session confusion surface on kundenkonto API. Symfony dev-mode exposed on dslkonto with profiler token leakage (critical misconfig but scope-excluded). CORS wildcard on auth domain confirmed. Main API not publicly documented but live with 5 endpoints including WRITE. Risk elevated due to enterprise telephony data sensitivity and architectural anomalies across two portals.
+## 2026-09-07 19:38:54 UTC [target] (model nemotron3)

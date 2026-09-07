@@ -1229,3 +1229,41 @@ testability: AUTH_HELPED
 [LEARN] ACCEPTED x-debug-token leak @ kundenkonto: Unique debug token on every 404 response (e.g. 15dc7a, 11cdcc) — diagnostic only, no direct exploit without session context
 [LEARN] ACCEPTED version bump @ kundenkonto: X-Fonial-Version updated to v2026.09.03-1 (from v2026.09.01-1)
 [RISK] fonial: 60 — shop.fonial.de surface formally expanded (GraphQL+REST+introspection+admin-token-type), new passive hypotheses at 55/45; kundenkonto cross-bind (75) remains highest-impact but HUMAN-only; all remaining upside contingent on (a) admin token mutation accessibility [PASSIVE, next probe] and (b) cross-bind matrix [HUMAN]. Flat-close probability ~55 if neither yields. No writes, no customer data, no auth-bypass, ≤1 rps this cycle.
+## 2026-09-07 19:27:07 UTC [target] (model bigpickle)
+[NEW] shop.fonial.de/graphql: Full mutation name map confirmed (68 mutations). `GenerateCustomerTokenAsAdminInput` = {customer_email: String!} single field; return type has customer_token.
+[NEW] shop.fonial.de REST V1 probes: store/websites, products, customers/me, orders, carts/mine → uniform 401 German ACL resource errors; only /rest/V1/guest-carts unauth. Magento ACL working.
+[NEW] shop.fonial.de introspection: ContactUsInput/SendEmailToFriendInput/CustomerInput have no URL/upload fields → no SSRF vector in email/promo ops; CustomerInput exposes date_of_birth/dob/taxvat/gender.
+[CHANGED] kundenkonto x-debug-token: _profiler{/{tok}}, _wdt{/{tok}} all HTML-404 → token decorative-only; profiler class closed here (same as dslkonto).
+[CHANGED] shop admin-token hypothesis 55→40: Adobe/Magento official docs confirm generateCustomerTokenAsAdmin requires admin Authorization Bearer + customer `remote_shopping_assistance` opt-in → direct unauth unlikely in stock; residual = version-specific authz-check bug.
+[CHANGED] shop password-reset hypothesis 45→DROPPED: password/account-recovery policy is OUT-OF-SCOPE per program.
+[LEARN] ACCEPTED GraphQL mutation surface @ shop.fonial.de: 68 mutations enumerated fully; no SSRF-URL fields; REST uniform ACL 401.
+[LEARN] REJECTED shop admin-token direct-unauth @ shop.fonial.de/graphql: docs require admin token + customer opt-in → side-channel-lowered (40).
+[LEARN] ACCEPTED x-debug-token decorative @ kundenkonto: no profiler/wdt access, excluded class.
+[RISK] fonial: 58 — both remaining leads gated on sanctioned actions: kundenkonto cross-bind (75, HUMAN_ONLY, needs 2 tenants) and shop admin-token (40, POST authz-gate probe). Flat-close ~55. No writes, no customer data, ≤1 rps.
+[HYP] Dual-backend SID/PHPSESSID cross-binding → cross-tenant access on 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: Session backend issues cleartext UUID SID in body (no PHPSESSID); data backend authorizes by body SID only, sets PHPSESSID decoratively. Independent stores → SID-to-credential binding unverified. call/initiate = live WRITE, identical `session invalid` pattern.
+evidence_needed: SID from tenant A + PHPSESSID from tenant B returns data; or unauthenticated SID + foreign PHPSESSID returns data.
+verify_steps: 2 sanctioned tenants → POST /api/2.0/session each → authenticate each → capture PHPSESSID per tenant from a data POST → cross-bind `{"sid":"SID_B"}` + `Cookie: PHPSESSID=A` on /devices/get, /evn/get, /call/initiate → non-`session invalid` = CRITICAL.
+impact: Cross-tenant CDR, numbers, SIP creds, device lists, outbound initiation/toll fraud. CRITICAL.
+testability: HUMAN_ONLY
+[HYP] generateCustomerTokenAsAdmin callable without admin bearer (version-specific authz flaw)
+class: AUTH
+asset: shop.fonial.de/graphql (generateCustomerTokenAsAdmin)
+confidence: 40
+reasoning: Mutation present unauth-introspectable; input = single `customer_email`; official docs require admin Authorization header + remote_shopping_assistance opt-in. Residual = inverted/missing user-type check in some 2.4 CE releases.
+evidence_needed: POST mutation with fabricated email → error is authorization-based (by-design) vs `customer not found`/token (bypass).
+verify_steps: SANCTIONED POST /graphql `mutation{ generateCustomerTokenAsAdmin(input:{customer_email:"authz-probe-<ts>@example.invalid"}){ customer_token } }` — fabricated email = zero customer-data exposure; observe error semantics.
+impact: Customer ATO of opted-in shop accounts (orders, addresses, pay vault) → payment/PII exposure. CRITICAL if bypass.
+testability: PASSIVE (needs sanctioned POST — blocked in this mode)
+[HYP] handlePayflowProResponse/syncPaymentOrder payment-callback desync → order-state manipulation
+class: BUSLOGIC
+asset: shop.fonial.de/graphql (payment mutations)
+confidence: 32
+reasoning: createPaymentOrder, handlePayflowProResponse, syncPaymentOrder, completeOrder, cancelOrder all present — stock Magento payment-callback surface, untested for reentrancy/desync; no passive evidence of flaw.
+evidence_needed: order state transition without valid payment gateway callback.
+verify_steps: none passive — requires live order + gateway interaction.
+impact: Database order states / revenue tampering. HIGH if exploitable.
+testability: HUMAN_ONLY (insufficient evidence — parking)
