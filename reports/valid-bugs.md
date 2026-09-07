@@ -10,3 +10,8 @@
   - | Q7 Reasonable triager | No — same blocker as Lead 1: needs valid test account to prove authz bypass. Endpoint existence alone is not a vulnerability |
   - **Verdict: HOLD** — Live write endpoint confirmed but exploitation unproven. Report only after demonstrating unauthorized outbound call with valid credentials.
   - | 4 | call/initiate write endpoint | **HOLD** | Need valid account for PoC |
+
+- 3 lead(s) marked VALID at 2026-09-07 15:35:13 UTC
+  - **Verdict: HOLD** — Misconfig is real and confirmed. Park until: (1) authenticated landing page is tested with valid PHPSESSID to confirm ACAO: * persists post-auth, and (2) JS bundle grep finds an AP
+  - | Q2 Attacker reachable? | **PARTIALLY** — API is public/unauth; SID mintable via GET. But cross-tenant test requires 2 valid accounts (2FA-gated) |
+  - **Verdict: HOLD** — High-confidence hypothesis with CRITICAL impact if proven, but completely unverified. Requires 2 valid test accounts for the cross-bind matrix (SID-B body + PHPSESSID-A cookie on /
