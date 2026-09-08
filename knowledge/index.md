@@ -130,3 +130,29 @@
 - 2026-09-07 REJECTED MageWorx guest-downloads IDOR @ shop.fonial.de/rest: endpoint live but `[]` across all 110 product IDs — no data to access; `/V1/mw-downloads-attachments/{id}` 401-gated; class parked.
 - 2026-09-07 ACCEPTED asymmetric admin-auth @ shop.fonial.de: REST `/V1/integration/admin/token` → 404 (route removed) but GraphQL `generateCustomerTokenAsAdmin` introspectable → non-uniform admin-auth surface; supports (does not prove) admin-token hypothesis.
 - 2026-09-07 REJECTED REST-schema exposure @ shop.fonial.de/rest/all/schema: stock Magento OpenAPI, no secrets, surface already known via GraphQL introspection — informational only, not reportable.
+- 2026-09-08 ACCEPTED narrow API surface @ kundenkonto.fonial.de/api/2.0: Only 5 endpoints exist (session, session/authenticate, devices/get, evn/get, call/initiate); ~50 guessed names all HTML-404
+- 2026-09-08 ACCEPTED call/initiate @ kundenkonto.fonial.de/api/2.0: Live WRITE endpoint; returns same session-invalid JSON pattern as read endpoints; same SID-only authz suspected
+- 2026-09-08 ACCEPTED dual-session binding @ kundenkonto.fonial.de/api/2.0: Data endpoints authorize by body SID only; PHPSESSID decorative; /session issues cleartext UUID sid
+- 2026-09-08 ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers
+- 2026-09-08 ACCEPTED MISCONFIG @ kundenkonto.fonial.de: CORS wildcard (ACAO *, ACAM GET/POST/OPTIONS) consistent on all 5 API endpoints + both landing/login pages; no allow-credentials anywhere → no cookie cross-origin exfil channel; SID-in-body required
+- 2026-09-08 REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no allow-credentials, browser won't send cookies cross-origin → low direct impact without SID leak chain
+- 2026-09-08 REJECTED brute-force/credential-stuffing: Out of scope (rate-limit/lockout policy)
+- 2026-09-08 REJECTED CRUD expansion ~30 siblings: PROVEN WRONG — API uses non-standard naming; guessed {resource}/{action} pattern yields 0 new hits
+- 2026-09-08 REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
+- 2026-09-08 REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+- 2026-09-08 REJECTED dev-mode-exposure @ dslkonto.fonial.de/app_dev.php: leaked content = stack traces + fs paths only; scope.yml excludes "Descriptive error messages or headers". Not reportable standalone.
+- 2026-09-08 REJECTED dslkonto buslogic: no attacker-controllable params; registration broken on prod/dev. Dead.
+- 2026-09-08 ACCEPTED subdomain-takeover @ fonial.de dead hosts: app/admin/staging all resolve to fonial's own 62.146.7.2x netblock with no cloud CNAMEs → takeover class closed
+- 2026-09-08 ACCEPTED legacy-box @ go.fonial.de: Composer platform check (requires PHP >7.2.5) aborts all routing → HTTP 500 on every path; /app_dev.php→301. Non-bootable; only out-of-scope classes exposed.
+- 2026-09-08 REJECTED profiler-access @ dslkonto.fonial.de/app_dev.php/_profiler/{token}: 404 on all rotating tokens incl. 031fa8; class excluded by scope.yml regardless.
+- 2026-09-08 ACCEPTED GraphQL-introspection @ shop.fonial.de/graphql: full unauth schema dump (32Q/65M), Magento 2.4 CE; every unauth op by-design-guest or bound; no reportable passive finding; CORS absent here.
+- 2026-09-08 REJECTED shop.fonial.de CORS: no ACAO on any response (differs from kundenkonto) — class closed on this host.
+- 2026-09-08 ACCEPTED REST guest cart @ shop.fonial.de: `/rest/V1/guest-carts` returns valid cart ID unauthenticated — by-design Magento guest checkout
+- 2026-09-08 REJECTED kundenkonto versioned APIs: All alternate versions (2.1, 3.0, v1, v2, internal, beta) return 404 — no hidden surface
+- 2026-09-08 REJECTED kundenkonto Swagger/docs: No OpenAPI, Swagger, health, debug, or config endpoints — tight surface
+- 2026-09-08 ACCEPTED /signup live @ kundenkonto: `/signup` redirects to `/signup/register/55`, not auth-gated, sets PHPSESSID; `/register` → `/signup` 301
+- 2026-09-08 ACCEPTED x-debug-token leak @ kundenkonto: Unique debug token on every 404 response (e.g. 15dc7a, 11cdcc) — diagnostic only, no direct exploit without session context
+- 2026-09-08 ACCEPTED version bump @ kundenkonto: X-Fonial-Version updated to v2026.09.03-1 (from v2026.09.01-1)
+- 2026-09-08 ACCEPTED GraphQL mutation surface @ shop.fonial.de: 68 mutations enumerated fully; no SSRF-URL fields; REST uniform ACL 401.
+- 2026-09-08 REJECTED shop admin-token direct-unauth @ shop.fonial.de/graphql: docs require admin token + customer opt-in → side-channel-lowered (40).
+- 2026-09-08 ACCEPTED x-debug-token decorative @ kundenkonto: no profiler/wdt access, excluded class.

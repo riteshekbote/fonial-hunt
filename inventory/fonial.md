@@ -265,3 +265,5 @@ www.fonial.de
 - CHANGED shop.fonial.de GenerateCustomerTokenAsAdminInput: confidence dropped 55→40; Adobe docs confirm requires admin Bearer + customer remote_shopping_assistance opt-in
 - CHANGED kundenkonto.fonial.de/api/2.0: Passive discovery CLOSED — exactly 5 endpoints confirmed, ~50 guessed names HTML-404
 - CHANGED dslkonto.fonial.dev-mode: Reclassified OUT-OF-SCOPE (scope.yml excludes descriptive errors/stack traces); profiler token-gated 404 on all tokens
+
+## 2026-09-08 00:32:56 UTC

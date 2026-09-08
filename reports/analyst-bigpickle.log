@@ -10602,3 +10602,171 @@ testability: HUMAN_ONLY (no attachments currently exposed; needs purchasable dow
 
 === STEP 7 — RISK ===
 [RISK] fonial: 56 — both surviving leads gated: cross-bind (75, HUMAN_ONLY, 2 tenants) and admin-token (40, one sanctioned POST). REST+GraphQL surface now fully mapped both sides → REST admin-token route-removal is the only meaningful new asymmetry, no impact. MageWorx dead (empty data). Flat-close probability ~55%: high-value resolution requires sanctioned interactivity this mode cannot take. No writes, no customer data, ≤1 rps.
+===== ANALYST bigpickle 2026-09-08 00:32:56 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mprobe() { m=$1; url=$2; echo "== $m $url"; curl -s -m 20 -X "$m" -o /dev/null -D - "$url" 2>/dev/null | grep -Ei '^(HTTP|server|x-fonial-version|access-control-allow-origin|content-type|x-debug-token|set-cookie)' ; echo; sleep 1.2; }
+probe HEAD https://kundenkonto.fonial.de/
+probe HEAD https://shop.fonial.de/
+probe GET "https://shop.fonial.de/graphql?query=%7BstoreConfig%7Bstore_code%7D%7D"
+probe GET "https://shop.fonial.de/rest/V1/search?searchCriteria%5BpageSize%5D=1&searchCriteria%5BcurrentPage%5D=1"
+probe GET "https://www.fonial.de/"
+== HEAD https://kundenkonto.fonial.de/
+HTTP/2 302 
+content-type: text/html; charset=utf-8
+server: cloudflare
+set-cookie: PHPSESSID=q8t10vlpgcr1etukvif8g9atfk; path=/; secure; httponly; samesite=lax
+x-fonial-version: v2026.09.03-1
+access-control-allow-origin: *
+
+== HEAD https://shop.fonial.de/
+HTTP/2 200 
+content-type: text/html; charset=UTF-8
+server: nginx/1.31.2
+
+== GET https://shop.fonial.de/graphql?query=%7BstoreConfig%7Bstore_code%7D%7D
+HTTP/2 200 
+content-type: application/json
+server: nginx/1.31.2
+
+== GET https://shop.fonial.de/rest/V1/search?searchCriteria%5BpageSize%5D=1&searchCriteria%5BcurrentPage%5D=1
+HTTP/2 500 
+content-type: application/json; charset=utf-8
+server: nginx/1.31.2
+set-cookie: PHPSESSID=b8ef19f93ed9d8f1c3346d7ed93a67fa; expires=Tue, 08 Sep 2026 01:28:22 GMT; Max-Age=3600; path=/; domain=shop.fonial.de; secure; HttpOnly; SameSite=Lax
+
+== GET https://www.fonial.de/
+HTTP/2 200 
+content-type: text/html; charset=utf-8
+server: nginx/1.31.2
+[0m
+[0m$ [0mecho "== search 500 body"; curl -s -m 20 "https://shop.fonial.de/rest/V1/search?searchCriteria%5BpageSize%5D=1&searchCriteria%5BcurrentPage%5D=1"; echo; sleep 1.2
+echo "== search with filterGroups"; curl -s -m 20 -o /dev/null -w "%{http_code}\n" "https://shop.fonial.de/rest/V1/search?searchCriteria%5BfilterGroups%5D%5B0%5D%5Bfilters%5D%5B0%5D%5Bfield%5D=sku&searchCriteria%5BfilterGroups%5D%5B0%5D%5Bfilters%5D%5B0%5D%5Bvalue%5D=%25&searchCriteria%5BfilterGroups%5D%5B0%5D%5Bfilters%5D%5B0%5D%5BconditionType%5D=like&searchCriteria%5BpageSize%5D=2"; sleep 1.2
+echo "== mageworx guest a few ids"; for id in 1 50 110 111; do curl -s -m 20 -o /dev/null -w "$id %{http_code} " "https://shop.fonial.de/rest/V1/mw-downloads-attachments/guest/product/$id"; sleep 1.2; done; echo
+== search 500 body
+{"message":"Internal Error. Details are available in Magento log file. Report ID: webapi-6a9f56b1857f4"}
+== search with filterGroups
+500
+== mageworx guest a few ids
+1 200 50 200 110 200 111 200
+[0m
+[0m$ [0mecho "== mageworx product/1 body"; curl -s -m 20 "https://shop.fonial.de/rest/V1/mw-downloads-attachments/guest/product/1"; echo; sleep 1.2
+echo "== search real catalog criteria"; curl -s -m 20 -o /dev/null -w "%{http_code}\n" "https://shop.fonial.de/rest/V1/search?searchCriteria%5BfilterGroups%5D%5B0%5D%5Bfilters%5D%5B0%5D%5Bfield%5D=category_id&searchCriteria%5BfilterGroups%5D%5B0%5D%5Bfilters%5D%5B0%5D%5Bvalue%5D=3&searchCriteria%5BfilterGroups%5D%5B0%5D%5Bfilters%5D%5B0%5D%5BconditionType%5D=eq&searchCriteria%5BpageSize%5D=2&searchCriteria%5BcurrentPage%5D=1&searchCriteria%5BsortOrders%5D%5B0%5D%5Bfield%5D=entity_id"; sleep 1.2
+echo "== graphql guest read: categories"; curl -s -m 20 "https://shop.fonial.de/graphql?query=%7Bcategories%28filters%3A%7Bname%3A%7Bmatch%3A%22%22%7D%7D%2CpageSize%3A3%29%7Bitems%7Bentity_id%2Cname%2Cproduct_count%7D%7D%7D"; echo
+== mageworx product/1 body
+[]
+== search real catalog criteria
+500
+== graphql guest read: categories
+{"errors":[{"message":"Cannot query field \"entity_id\" on type \"CategoryTree\".","locations":[{"line":1,"column":57}]}]}
+[0m
+[0m$ [0mfor h in voip sip pbx fritz my portal api crm partner fax faxkonto mail webmail cloud wiki gitlab dev test intranet jobs karriere blog news presse help hilfe smb myfonial call aera arp modem router; do ip=$(timeout 2 getent ahosts "$h.fonial.de" 2>/dev/null | awk 'NR==1{print $1}'); [ -n "$ip" ] && echo "$h.fonial.de -> $ip"; done; echo done
+sip.fonial.de -> 92.197.178.225
+wiki.fonial.de -> 77.91.236.242
+news.fonial.de -> 104.26.13.183
+hilfe.fonial.de -> 92.51.165.250
+done
+[0m
+[0m$ [0mprobe() { m=$1; url=$2; echo "== $m $url"; curl -s -m 15 -X "$m" -o /dev/null -D - "$url" 2>/dev/null | grep -Ei '^(HTTP|server|location|x-powered|www-authenticate|content-type|set-cookie|link|age|cache-control)'; echo; sleep 1.2; }
+probe HEAD https://sip.fonial.de/
+probe GET https://sip.fonial.de/robots.txt
+probe HEAD https://wiki.fonial.de/
+probe HEAD https://news.fonial.de/
+probe HEAD https://hilfe.fonial.de/
+== HEAD https://sip.fonial.de/
+
+== GET https://sip.fonial.de/robots.txt
+
+== HEAD https://wiki.fonial.de/
+
+== HEAD https://news.fonial.de/
+HTTP/2 526 
+content-type: text/plain; charset=UTF-8
+cache-control: private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+server: cloudflare
+
+== HEAD https://hilfe.fonial.de/
+HTTP/2 403 
+server: nginx-rc
+content-type: text/html
+[0m
+[0m$ [0mecho "== wiki -k HEAD"; curl -sk -m 15 -o /dev/null -D - https://wiki.fonial.de/ | grep -Ei '^(HTTP|server|location|x-powered|content-type|set-cookie)'; echo; sleep 1.2
+echo "== hilfe GET / UA"; curl -s -m 15 -A "Mozilla/5.0" -o /dev/null -D - https://hilfe.fonial.de/ | grep -Ei '^(HTTP|server|location|content-type|set-cookie)'; sleep 1.2
+echo "== hilfe robots"; curl -s -m 15 -A "Mozilla/5.0" https://hilfe.fonial.de/robots.txt | head -c 300; echo; sleep 1.2
+echo "== sip http HEAD"; curl -s -m 15 -o /dev/null -D - http://sip.fonial.de/ | grep -Ei '^(HTTP|server|location|www-authenticate)' ; sleep 1.2
+echo "== sip OPTIONS (udp/5060)"; python3 - <<'EOF'
+import socket
+msg = "OPTIONS sip:example.com SIP/2.0\r\nVia: SIP/2.0/UDP 192.0.2.1:12345;branch=z9hG4bK-probe1\r\nFrom: <sip:probe@example.com>;tag=probe1\r\nTo: <sip:probe@example.com>\r\nCall-ID: probe20260908\r\nCSeq: 1 OPTIONS\r\nContact: <sip:probe@example.com>\r\nMax-Forwards: 70\r\nContent-Length: 0\r\n\r\n"
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM); s.settimeout(4)
+try:
+    s.sendto(msg.encode(), ("92.197.178.225", 5060)); data,_ = s.recvfrom(2048); print(data.decode(errors="replace")[:500])
+except Exception as e:
+    print("ERR", e)
+EOF
+== wiki -k HEAD
+
+== hilfe GET / UA
+HTTP/2 403 
+server: nginx-rc
+content-type: text/html
+== hilfe robots
+User-agent: *
+Disallow: /typo3/
+Disallow: /typo3_src/
+Allow: /typo3/sysext/frontend/Resources/Public/*
+
+== sip http HEAD
+== sip OPTIONS (udp/5060)
+ERR timed out
+[0m
+[0m$ [0mfor p in "/index.php" "/typo3/" "/sitemap.xml"; do echo "== hilfe GET $p"; curl -s -m 12 -A "Mozilla/5.0" -H "Accept-Language: de-DE" -o /dev/null -w "%{http_code}\n" "https://hilfe.fonial.de$p"; sleep 1.2; done
+echo "== hilfe http/80 root"; curl -s -m 12 -A "Mozilla/5.0" -o /dev/null -w "%{http_code}\n" "http://hilfe.fonial.de/"; sleep 1.2
+echo "== sip 443 tls check"; curl -sk -m 10 -o /dev/null -w "%{http_code}\n" "https://sip.fonial.de/"; sleep 1.2
+echo "== wiki tcp 80/443"; for po in 80 443; do timeout 4 bash -c "</dev/tcp/wiki.fonial.de/$po" 2>/dev/null && echo "$po OPEN" || echo "$po CLOSED"; sleep 1.2; done
+== hilfe GET /index.php
+403
+== hilfe GET /typo3/
+200
+== hilfe GET /sitemap.xml
+403
+== hilfe http/80 root
+301
+== sip 443 tls check
+000
+== wiki tcp 80/443
+80 CLOSED
+443 CLOSED
+[0m
+[0m$ [0mecho "== hilfe /typo3/ login page"; curl -s -m 15 -A "Mozilla/5.0" -H "Accept-Language: de-DE" "https://hilfe.fonial.de/typo3/" -o /tmp/hilfe_typo3.html -w "%{http_code} %{size_download}\n"; sleep 1.2
+echo "== version markers"; grep -Eio "TYPO3 [0-9]+(\.[0-9]+){1,2}|VERSION_MANAGER|<title>[^<]*</title>|form.login|v[0-9]{1,2}\.[0-9]{1,2}" /tmp/hilfe_typo3.html | sort -u | head; echo; sleep 1.2
+echo "== install.php"; curl -s -m 12 -A "Mozilla/5.0" -o /dev/null -w "%{http_code}\n" "https://hilfe.fonial.de/typo3/install.php"; sleep 1.2
+echo "== login css/asset paths (for version)"; grep -Eo "typo3/sysext/[a-z_]+/Resources/Public" /tmp/hilfe_typo3.html | sort -u | head
+== hilfe /typo3/ login page
+200 10303
+== version markers
+<title>TYPO3 CMS Login: fonial Hilfebereich</title>
+
+== install.php
+200
+== login css/asset paths (for version)
+typo3/sysext/backend/Resources/Public
+[0m
+[0m$ [0mecho "== install.php body"; curl -s -m 15 -A "Mozilla/5.0" "https://hilfe.fonial.de/typo3/install.php" -o /tmp/hilfe_inst.html -w "%{http_code} %{size_download}\n"; grep -Eio "<title>[^<]*</title>|TYPO3 [0-9]+(\.[0-9]+){1,2}|Install Tool[a-z ]*|System environment|extensionManagement|The Install Tool is" /tmp/hilfe_inst.html | sort -u | head; echo; sleep 1.2
+echo "== /typo3/install/"; curl -s -m 12 -A "Mozilla/5.0" -o /dev/null -w "%{http_code}\n" "https://hilfe.fonial.de/typo3/install/"; sleep 1.2
+echo "== login page meta"; grep -Eio '<meta name="generator"[^>]*>|TYPO3/TYPO3 [^"]*|new RequireJS|version[":= ][ "]?[0-9]\.[0-9]+' /tmp/hilfe_typo3.html | sort -u | head; echo; sleep 1.2
+grep -Eio "V12|V13|V14|v12|v13|11\.[0-9]|12\.[0-9]|13\.[0-9]" /tmp/hilfe_inst.html /tmp/hilfe_typo3.html | sort -u | head
+== install.php body
+200 1512
+<title>Install tool on site fonial Hilfebereich</title>
+
+== /typo3/install/
+307
+== login page meta
+<meta name="generator" content="TYPO3 CMS, https://typo3.org/, &amp;#169; Kasper Sk&amp;#229;rh&amp;#248;j 1998-2026, extensions are copyright of their respective owners." />
+[0m
+[93m[1m! [0mpermission requested: external_directory (/tmp/*); auto-rejecting
+[0m✗ [0mecho "== install.php raw"; cat /tmp/hilfe_inst.html; echo; sleep 1.2
+echo "== /typo3/install/ -L follow"; curl -s -m 15 -A "Mozilla/5.0" -L -o /dev/null -w "final:%{http_code} url:%{url_effective}\n" "https://hilfe.fonial.de/typo3/install/"; sleep 1.2
+echo "== legacy install steps"; for p in /typo3/install/setup /typo3/install/password /typo3/install/session /typo3/install/js/; do curl -s -m 10 -A "Mozilla/5.0" -o /dev/null -w "$p %{http_code}\n" "https://hilfe.fonial.de$p"; sleep 1.1; done failed
+[91m[1mError: [0mThe user rejected permission to use this specific tool call.
