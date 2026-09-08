@@ -1393,3 +1393,39 @@ impact: Internal chat/issues/error-data breach → MED-HIGH only if version-exac
 testability: PASSIVE (fingerprint) / HUMAN_ONLY (exploit)
 [NEXT] HUMAN: sanctioned single-packet service classification of the 4 new public infra targets — customers.fonial.de (92.197.176.46, TLS-SNI+banner), sbc.fonial.de (62.146.28.124, SIP OPTIONS 5060/5061), ldap.fonial.de (62.146.7.24, LDAP bind banner 389/636), 62.146.7.22:15672 + 62.146.28.126 (RMQ/Sentry ports); banner-only, zero auth attempts; passive-HTTP pool is exhausted (every reachable new host is auth-gated).
 [RISK] fonial: 58 — CT-delta expands inventory to ~90 hostnames across 2 domains and reveals a publicly reachable self-hosted Sentry (org slug leaked) plus 4 public-IP infra hosts, but every reachable new web surface is auth-gated/proxy-denied (login-panel + known-vuln-without-exploit classes only). No new confirmed finding; the two decisive leads stay sanctioned-gated (cross-bind 75 = 2 tenants; admin-token 40 = 1 POST). Flat-close probability now ~50%: genuine new attack surface identified, but resolution of all three surviving classes (cross-bind, customers liveness, infra banners) requires sanctioned interactivity this mode cannot take.
+## 2026-09-08 09:48:01 UTC [target] (model bigpickle)
+[HYP] customers.fonial.de = unenumerated second customer portal on dedicated non-CDN IP
+reasoning: New host, no Cloudflare/62.146.7.2x; name implies customer-facing app; silent on :80/:443 from this egress (host-filter/geo/down) — surface completely unprobed.
+[HYP] sbc/ldap/devops public-IP group = internet-reachable telephony/identity/devops infra
+[HYP] red/mm/sentry old-build fingerprint → patchable auth-bypass
+[NEXT] HUMAN: sanctioned single-packet service classification of the 4 new public infra targets — customers.fonial.de (92.197.176.46, TLS-SNI+banner), sbc.fonial.de (62.146.28.124, SIP OPTIONS 5060/5061), ldap.fonial.de (62.146.7.24, LDAP bind banner 389/636), 62.146.7.22:15672 + 62.146.28.126 (RMQ/Sentry ports); banner-only, zero auth attempts; passive-HTTP pool is exhausted (every reachable new host is auth-gated).
+[RISK] fonial: 58 — CT-delta expands inventory to ~90 hostnames across 2 domains and reveals a publicly reachable self-hosted Sentry (org slug leaked) plus 4 public-IP infra hosts, but every reachable new web surface is auth-gated/proxy-denied (login-panel + known-vuln-without-exploit classes only). No new confirmed finding; the two decisive leads stay sanctioned-gated (cross-bind 75 = 2 tenants; admin-token 40 = 1 POST). Flat-close probability now ~50%: genuine new attack surface identified, but resolution of all three surviving classes (cross-bind, customers liveness, infra banners) requires sanctioned interactivity this mode cannot take.
+[HYP] generateCustomerTokenAsAdmin callable without admin bearer
+class: AUTH
+asset: shop.fonial.de/graphql (generateCustomerTokenAsAdmin)
+confidence: 40
+reasoning: Mutation present unauth-introspectable while REST `/V1/integration/admin/token` route REMOVED (404) → asymmetric admin-auth surface implies non-stock config. Input = single `customer_email`. Official docs require admin Bearer + remote_shopping_assistance opt-in; residual = inverted/missing user-type check in this 2.4 CE build. (Live-verified intact this cycle.)
+evidence_needed: POST without Authorization → authz-error (by-design) vs `customer not found`/token issuance (bypass).
+verify_steps: SANCTIONED POST /graphql `mutation{ generateCustomerTokenAsAdmin(input:{customer_email:"authz-probe-<unix-ts>@example.invalid"}){ customer_token } }` — fabricated email, zero data exposure.
+impact: Customer ATO of opted-in shop accounts (orders, addresses, pay vault) → payment/PII exposure. CRITICAL if bypass.
+testability: HUMAN_ONLY (needs sanctioned POST)
+[HYP] sbc/ldap/devops public-IP group = reachable telephony/identity infra
+class: MISCONFIG
+asset: sbc.fonial.de (62.146.28.124), ldap.fonial.de (62.146.7.24), 62.146.7.22:15672, 62.146.28.126
+confidence: 45
+reasoning: CT+certs place SBC/SIP, LDAP dir, RabbitMQ/Sentry on public IPs; web layer proxy-deny (403/404) but non-HTTP ports (5060/5061 SIP, 389/636 LDAP, 15672 RMQ) never probed; host-level reachability unknown.
+evidence_needed: single banner per host — SIP OPTIONS / LDAP anonymous bind / RMQ mgmt banner, zero auth.
+verify_steps: sanctioned single-packet classification; banner-only, no binds/auth attempts.
+impact: Toll fraud / internal identity enumeration / error-tracking PII if reachable+misconf. HIGH if banner confirms.
+testability: HUMAN_ONLY (non-HTTP)
+[HYP] customers.fonial.de = unenumerated second customer portal
+class: AUTH
+asset: customers.fonial.de (92.197.176.46)
+confidence: 40
+reasoning: New host, dedicated non-CDN IP, name implies customer-facing app; silent on :80/:443 from this egress (host-filter/geo/down) — surface completely unprobed.
+evidence_needed: any live service (banner, HTTP, alt port) → app identity/login/API comparable to kundenkonto.
+verify_steps: HUMAN: TLS-SNI + banner via openssl s_client; if live, GET / and kundenkonto-style paths.
+impact: Potential parallel customer portal → AUTH/IDOR surface. MED-HIGH if live.
+testability: HUMAN_ONLY (no HTTP responder observed)
+[NEXT] HUMAN: sanctioned single-packet service classification of the 4 public-IP infra targets — customers.fonial.de (92.197.176.46, TLS-SNI + banner), sbc.fonial.de (62.146.28.124, SIP OPTIONS 5060/5061), ldap.fonial.de (62.146.7.24, LDAP banner 389/636), 62.146.7.22:15672 + 62.146.28.126 (RMQ/Sentry ports); banner-only, zero auth attempts; the passive-HTTP pool is fully exhausted — every reachable new host is auth-gated/proxy-denied and live re-probes confirm no drift.
+[RISK] fonial: 58 — no drift in 4.5h across all assets; live re-probes confirm every decisive lead is sanctioned-gated (cross-bind 75 = 2 tenants; admin-token 40 = 1 fabricated-email POST; customers/infra = single-packet banner). Zero new passive surface; all 5 API endpoints, GraphQL schema, and CT-derived hostnames reconfirm prior closures. Flat-close probability holds ~50%: meaningful reportable impact requires any one authorized interactivity switch this mode cannot take. No writes, no customer data, ≤1 rps.

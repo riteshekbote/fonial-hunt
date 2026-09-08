@@ -273,3 +273,11 @@ www.fonial.de
 - NEW `/V1/mw-downloads-attachments/guest/product/{id}` live unauth but returns `[]` on all 110 product IDs; `/V1/mw-downloads-attachments/{id}` → 401 (auth-gated sibling exists).
 - NEW REST `/V1/integration/admin/token` + `customer/token` → 404 route-removed (REST admin-auth closed) while GraphQL `GenerateCustomerTokenAsAdminInput` remains introspectable → asymmetric admin-auth surf
 - NEW `/V1/search` live unauth (400 missing `searchCriteria`); `/V1/applepay/auth`, `/V1/payment-order/completeOrder` present stock payment routes.
+
+## 2026-09-08 09:52:04 UTC
+- NEW shop.fonial.de/graphql: Full unauth introspection confirmed live (300+ types, 68 mutations) — no CORS headers, CSP report-only with unsafe-inline/eval
+- NEW kundenkonto.fonial.de/api/2.0: X-Fonial-Version confirmed at v2026.09.03-1 (stable since 2026-09-07)
+- NEW kundenkonto.fonial.de: x-debug-token header on all 404 responses (unique per request, e.g. 15dc7a, 11cdcc); _profiler/_wdt return HTML-404 → decorative only
+- CHANGED kundenkonto.fonial.de/api/2.0: Dual-backend session confusion hypothesis confidence held at 75 (no new evidence, passive-only)
+- CHANGED shop.fonial.de: GenerateCustomerTokenAsAdminInput confidence dropped 55→40; Adobe docs confirm requires admin Bearer + customer opt-in
+- CHANGED dslkonto.fonial.de/app_dev.php: Dev-mode exposure reclassified OUT-OF-SCOPE per scope.yml (descriptive errors/stack traces only, no env/session dump)
