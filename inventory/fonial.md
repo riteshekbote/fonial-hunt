@@ -290,3 +290,5 @@ www.fonial.de
 - CHANGED kundenkonto.fonial.de: X-Fonial-Version stable at v2026.09.03-1 since 2026-09-07; x-debug-token header on all 404 responses (unique per request); _profiler/_wdt return HTML-404 → decorative only
 - CHANGED dslkonto.fonial.de/app_dev.php: Dev-mode exposure reclassified OUT-OF-SCOPE per scope.yml (descriptive errors/stack traces only, no env/session dump); profiler token-gated 404 on all tokens
 - CHANGED kundenkonto.fonial.de/signup: Unauthenticated registration flow at /signup/register/55 confirmed live (sets PHPSESSID, CSRF _token, trunkTariff 19/21/22) — previously atomized by prior agents
+
+## 2026-09-08 18:07:22 UTC

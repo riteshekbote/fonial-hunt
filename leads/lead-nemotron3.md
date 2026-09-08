@@ -2207,3 +2207,66 @@ testability: PASSIVE
 [LEARN] ACCEPTED asymmetric admin-auth @ shop.fonial.de: REST `/V1/integration/admin/token` → 404 (route removed) but GraphQL `generateCustomerTokenAsAdmin` introspectable → non-uniform admin-auth surface; supports (does not prove) admin-token hypothesis.
 [LEARN] REJECTED REST-schema exposure @ shop.fonial.de/rest/all/schema: stock Magento OpenAPI, no secrets, surface already known via GraphQL introspection — informational only, not reportable.
 [RISK] fonial: 78 — Customer portals (kundenkonto + dslkonto) have high business value (PII, CDR, SIP creds, billing, call control). Confirmed dual-backend architecture creating session confusion surface on kundenkonto API. Symfony dev-mode exposed on dslkonto with profiler token leakage (critical misconfig but scope-excluded). CORS wildcard on auth domain confirmed. Main API not publicly documented but live with 5 endpoints including WRITE. Risk elevated due to enterprise telephony data sensitivity and architectural anomalies across two portals.
+## 2026-09-08 18:07:13 UTC [target] (model nemotron3)
+[HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 75
+reasoning: Session endpoints (text/json, no PHPSESSID) issue cleartext UUID v4 SID in body via POST. Data endpoints (text/json;charset=UTF-8) set PHPSESSID cookie but authorize solely by body SID. Independent session stores suggest SID-to-PHPSESSID binding not enforced on data layer. /call/initiate is LIVE WRITE endpoint with identical error pattern.
+evidence_needed: Data endpoint accepts valid SID from Account A with PHPSESSID from Account B → cross-tenant call initiation or device/EVN data access
+verify_steps: 1) Obtain authenticated SID + PHPSESSID for test Account A; 2) POST /api/2.0/call/initiate with valid SID + minimal call params (destination, caller_id) → observe response; 3) Test cross-bind: SID from Account B + PHPSESSID from Account A; 4) Test unauthenticated SID + valid PHPSESSID
+impact: Unauthorized outbound calls, toll fraud, caller ID spoofing, SIP credential abuse — CRITICAL
+testability: AUTH_HELPED
+[HYP] Unauthenticated signup flow at /signup/register/55 leaks account enumeration via trunkTariff selection and CSRF token behavior
+class: BUSLOGIC
+asset: kundenkonto.fonial.de
+confidence: 55
+reasoning: /signup redirects to /signup/register/55 (not auth-gated), sets PHPSESSID, exposes CSRF _token and trunkTariff options (19/21/22). Multi-step registration with AccountAddress/AccountContact/email fields. No rate-limit observed on initial GET. Tariff selection may correlate to existing customer segments.
+evidence_needed: Repeated POST to /signup/register/55 with existing vs non-existing emails reveals enumeration via differential responses (validation errors, redirect targets, token reuse)
+verify_steps: 1) GET /signup/register/55 → capture PHPSESSID + _token; 2) POST with valid _token + existing customer email → observe response; 3) POST with non-existing email → observe response; 4) Compare status codes, error messages, redirect locations, token rotation
+impact: Customer email enumeration, potential account takeover via password reset flow chaining, tariff/customer segment intelligence — MEDIUM
+testability: PASSIVE
+[HYP] Magento GraphQL guest-checkout chain enables unauthorized order placement via coupon/price manipulation
+class: BUSLOGIC
+asset: shop.fonial.de/graphql
+confidence: 40
+reasoning: Full unauth schema dump (300+ types, 68 mutations) on Magento 2.4 CE. Guest cart operations (createGuestCart, addProductsToCart, setGuestEmailOnCart, placeOrder) available by design. No CORS headers present. Business logic flaws in guest checkout flow (coupon stacking, price manipulation via custom options, order placement without valid payment) are common in Magento but untested. GenerateCustomerTokenAsAdminInput requires admin Bearer + customer opt-in (confidence 40).
+evidence_needed: Guest cart creation → product addition with manipulated price/quantity via custom options → coupon application → placeOrder with minimal/zero payment input → order confirmation without payment validation
+verify_steps: 1) POST /graphql with createGuestCart mutation; 2) addProductsToCart with test product + crafted custom_options containing negative price or quantity; 3) setGuestEmailOnCart; 4) applyCouponToCart with stacked codes; 5) placeOrder with payment_method=checkmo (zero-auth) or empty payment; 6) Observe if order completes without payment validation
+impact: Fraudulent orders, revenue loss, inventory manipulation, PII via order confirmation — HIGH
+testability: PASSIVE
+[PARKED] Magento GraphQL guest-checkout chain enables unauthorized order placement via coupon/price manipulation: confidence 40 at threshold; no CORS on shop.fonial.de prevents cross-origin exploitation; guest cart flow is by-design Magento behavior; no evidence of price manipulation or payment bypass in schema introspection; requires direct API abuse not browser-exploitable.
+[FINAL] 1. Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints (75)
+[FINAL] 2. Unauthenticated signup flow at /signup/register/55 leaks account enumeration via trunkTariff selection and CSRF token behavior (55)
+[NEXT] PROBE: POST https://kundenkonto.fonial.de/api/2.0/call/initiate with body {"sid":"<valid_sid>","destination":"<test_number>","caller_id":"<test_number>"} + Cookie: PHPSESSID=<valid_phpsessid> — first live test of WRITE endpoint with authenticated session to capture actual parameter schema and authz behavior
+[LEARN] ACCEPTED narrow API surface @ kundenkonto.fonial.de/api/2.0: Only 5 endpoints exist (session, session/authenticate, devices/get, evn/get, call/initiate); ~50 guessed names all HTML-404
+[LEARN] ACCEPTED call/initiate @ kundenkonto.fonial.de/api/2.0: Live WRITE endpoint; returns same session-invalid JSON pattern as read endpoints; same SID-only authz suspected
+[LEARN] ACCEPTED dual-session binding @ kundenkonto.fonial.de/api/2.0: Data endpoints authorize by body SID only; PHPSESSID decorative; /session issues cleartext UUID sid
+[LEARN] ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers
+[LEARN] ACCEPTED MISCONFIG @ kundenkonto.fonial.de: CORS wildcard (ACAO *, ACAM GET/POST/OPTIONS) consistent on all 5 API endpoints + both landing/login pages; no allow-credentials anywhere → no cookie cross-origin exfil channel; SID-in-body required
+[LEARN] REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no allow-credentials, browser won't send cookies cross-origin → low direct impact without SID leak chain
+[LEARN] REJECTED brute-force/credential-stuffing: Out of scope (rate-limit/lockout policy)
+[LEARN] REJECTED CRUD expansion ~30 siblings: PROVEN WRONG — API uses non-standard naming; guessed {resource}/{action} pattern yields 0 new hits
+[LEARN] REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
+[LEARN] REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+[LEARN] REJECTED dev-mode-exposure @ dslkonto.fonial.de/app_dev.php: leaked content = stack traces + fs paths only; scope.yml excludes "Descriptive error messages or headers". Not reportable standalone.
+[LEARN] REJECTED dslkonto buslogic: no attacker-controllable params; registration broken on prod/dev. Dead.
+[LEARN] ACCEPTED subdomain-takeover @ fonial.de dead hosts: app/admin/staging all resolve to fonial's own 62.146.7.2x netblock with no cloud CNAMEs → takeover class closed
+[LEARN] ACCEPTED legacy-box @ go.fonial.de: Composer platform check (requires PHP >7.2.5) aborts all routing → HTTP 500 on every path; /app_dev.php→301. Non-bootable; only out-of-scope classes exposed.
+[LEARN] REJECTED profiler-access @ dslkonto.fonial.de/app_dev.php/_profiler/{token}: 404 on all rotating tokens incl. 031fa8; class excluded by scope.yml regardless.
+[LEARN] ACCEPTED GraphQL-introspection @ shop.fonial.de/graphql: full unauth schema dump (32Q/65M), Magento 2.4 CE; every unauth op by-design-guest or bound; no reportable passive finding; CORS absent here.
+[LEARN] REJECTED shop.fonial.de CORS: no ACAO on any response (differs from kundenkonto) — class closed on this host.
+[LEARN] ACCEPTED REST guest cart @ shop.fonial.de: `/rest/V1/guest-carts` returns valid cart ID unauthenticated — by-design Magento guest checkout
+[LEARN] REJECTED kundenkonto versioned APIs: All alternate versions (2.1, 3.0, v1, v2, internal, beta) return 404 — no hidden surface
+[LEARN] REJECTED kundenkonto Swagger/docs: No OpenAPI, Swagger, health, debug, or config endpoints — tight surface
+[LEARN] ACCEPTED /signup live @ kundenkonto: `/signup` redirects to `/signup/register/55`, not auth-gated, sets PHPSESSID; `/register` → `/signup` 301
+[LEARN] ACCEPTED x-debug-token leak @ kundenkonto: Unique debug token on every 404 response (e.g. 15dc7a, 11cdcc) — diagnostic only, no direct exploit without session context
+[LEARN] ACCEPTED version bump @ kundenkonto: X-Fonial-Version updated to v2026.09.03-1 (from v2026.09.01-1)
+[LEARN] ACCEPTED GraphQL mutation surface @ shop.fonial.de: 68 mutations enumerated fully; no SSRF-URL fields; REST uniform ACL 401.
+[LEARN] REJECTED shop admin-token direct-unauth @ shop.fonial.de/graphql: docs require admin token + customer opt-in → side-channel-lowered (40).
+[LEARN] ACCEPTED x-debug-token decorative @ kundenkonto: no profiler/wdt access, excluded class.
+[LEARN] ACCEPTED GraphQL mutation surface @ shop.fonial.de: 68 mutations enumerated fully (prior); full REST map now complementary — 45 paths via `/rest/all/schema`; only non-stock = MageWorx Downloads; REST passive discovery now closed (mirrors GraphQL closure).
+[LEARN] REJECTED MageWorx guest-downloads IDOR @ shop.fonial.de/rest: endpoint live but `[]` across all 110 product IDs — no data to access; `/V1/mw-downloads-attachments/{id}` 401-gated; class parked.
+[LEARN] ACCEPTED asymmetric admin-auth @ shop.fonial.de: REST `/V1/integration/admin/token` → 404 (route removed) but GraphQL `generateCustomerTokenAsAdmin` introspectable → non-uniform admin-auth surface; supports (does not prove) admin-token hypothesis.
+[LEARN] REJECTED REST-schema exposure @ shop.fonial.de/rest/all/schema: stock Magento OpenAPI, no secrets, surface already known via GraphQL introspection — informational only, not reportable.
+[RISK] fonial: 78 — Customer portals (kundenkonto + dslkonto) have high business value (PII, CDR, SIP creds, billing, call control). Confirmed dual-backend architecture creating session confusion surface on kundenkonto API. Symfony dev-mode exposed on dslkonto with profiler token leakage (critical misconfig but scope-excluded). CORS wildcard on auth domain confirmed. Main API not publicly documented but live with 5 endpoints including WRITE. Risk elevated due to enterprise telephony data sensitivity and architectural anomalies across two portals.
