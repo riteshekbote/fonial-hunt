@@ -1429,3 +1429,33 @@ impact: Potential parallel customer portal → AUTH/IDOR surface. MED-HIGH if li
 testability: HUMAN_ONLY (no HTTP responder observed)
 [NEXT] HUMAN: sanctioned single-packet service classification of the 4 public-IP infra targets — customers.fonial.de (92.197.176.46, TLS-SNI + banner), sbc.fonial.de (62.146.28.124, SIP OPTIONS 5060/5061), ldap.fonial.de (62.146.7.24, LDAP banner 389/636), 62.146.7.22:15672 + 62.146.28.126 (RMQ/Sentry ports); banner-only, zero auth attempts; the passive-HTTP pool is fully exhausted — every reachable new host is auth-gated/proxy-denied and live re-probes confirm no drift.
 [RISK] fonial: 58 — no drift in 4.5h across all assets; live re-probes confirm every decisive lead is sanctioned-gated (cross-bind 75 = 2 tenants; admin-token 40 = 1 fabricated-email POST; customers/infra = single-packet banner). Zero new passive surface; all 5 API endpoints, GraphQL schema, and CT-derived hostnames reconfirm prior closures. Flat-close probability holds ~50%: meaningful reportable impact requires any one authorized interactivity switch this mode cannot take. No writes, no customer data, ≤1 rps.
+## 2026-09-08 14:08:14 UTC [target] (model bigpickle)
+[HYP] Data-layer SID authz not credential-bound → cross-tenant access on all 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: Data endpoints authorize by body SID only, PHPSESSID decorative/parallel; /session issues cleartext UUID sid; every unauth probe returns identical `session invalid`/`session unauthenticated` JSON. The sole open question is whether authenticated sid→account binding is enforced. Frontend uses separate Symfony /login_check; API credential path independent → double session store.
+evidence_needed: two valid accounts; confirm SID_B + PHPSESSID_A accepted (rejected = credential-bound) on /evn/get; or unauthenticated SID + valid PHPSESSID returns data.
+verify_steps: (HUMAN, sanctioned, 2 test tenants) 1) /session→SID_A; 2) /session/authenticate A; 3) /devices/get SID_A→PHPSESSID_A; 4) /session→SID_B; 5) /evn/get {sid:SID_B} + Cookie PHPSESSID_A; observe data vs error.
+impact: cross-tenant CDR, phone/SIP creds, device lists, unauthorized outbound call initiation (call/initiate). CRITICAL.
+testability: HUMAN_ONLY
+[HYP] generateCustomerTokenAsAdmin callable without admin bearer
+class: AUTH
+asset: shop.fonial.de/graphql
+confidence: 40
+reasoning: Mutation unauth-introspectable; REST `/V1/integration/admin/token` route REMOVED (404) → asymmetric admin-auth implies non-stock config; input = single customer_email; stock docs require admin Bearer + customer remote_shopping_assistance opt-in.
+evidence_needed: POST without Authorization → authz-error (by-design) vs token issuance (bypass).
+verify_steps: SANCTIONED POST /graphql `mutation{ generateCustomerTokenAsAdmin(input:{customer_email:"authz-probe-<unix-ts>@example.invalid"}){ customer_token } }` — fabricated email, zero data exposure.
+impact: customer ATO of opted-in accounts (orders, addresses, pay vault). CRITICAL if bypass.
+testability: HUMAN_ONLY
+[HYP] customers/sbc/ldap/devops public-IP group = reachable telephony/identity/devops infra
+class: MISCONFIG
+asset: customers.fonial.de (92.197.176.46), sbc.fonial.de (62.146.28.124:5060/5061), ldap.fonial.de (62.146.7.24:389/636), 62.146.7.22:15672, 62.146.28.126
+confidence: 45
+reasoning: CT+certs place SBC/SIP, LDAP dir, RMQ/Sentry on public IPs; web layer proxy-deny (403/404) but non-HTTP ports never probed; host-level reachability unknown.
+evidence_needed: single service banner per host (SIP OPTIONS / LDAP bind banner / RMQ mgmt port) — banner only, zero auth.
+verify_steps: sanctioned single-packet classification, no binds/auth.
+impact: toll fraud / internal identity enumeration / error-tracking PII. HIGH if reachable+misconf by banner.
+testability: HUMAN_ONLY
+[NEXT] HUMAN: sanctioned single-packet service classification of 4 public infra targets — customers.fonial.de (92.197.176.46, TLS-SNI+banner via openssl s_client), sbc.fonial.de (62.146.28.124, SIP OPTIONS 5060/5061), ldap.fonial.de (62.146.7.24, LDAP banner 389/636), 62.146.7.22:15672 + 62.146.28.126 (RMQ/Sentry ports); banner-only, zero auth; passive-HTTP pool remains fully exhausted (live re-probes confirm no drift).
+[RISK] fonial: 58 — Live re-probes (14:05 UTC) confirm zero drift on all assets; every decisive lead (cross-bind 75=2 tenants, admin-token 40=1 fabricated-email POST, customers/sbc/ldap=single-packet banner) is sanctioned-gated, none passively resolvable. Genuine high-value surface (double session store, asymmetric admin-auth, public telephony/identity infra) confirmed via CT+certs, but resolution requires authorized interactivity this mode cannot take. Flat-close ~50%. Zero writes, no real customer data, ≤1 rps.

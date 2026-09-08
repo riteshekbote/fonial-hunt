@@ -1,14 +1,16 @@
-## 2026-09-08 09:51:53 UTC [target] (model nemotron3)
-[NEW] shop.fonial.de/graphql: Full unauth introspection confirmed live (300+ types, 68 mutations) — no CORS headers, CSP report-only with unsafe-inline/eval
-[NEW] kundenkonto.fonial.de/api/2.0: X-Fonial-Version confirmed at v2026.09.03-1 (stable since 2026-09-07)
-[NEW] kundenkonto.fonial.de: x-debug-token header on all 404 responses (unique per request, e.g. 15dc7a, 11cdcc); _profiler/_wdt return HTML-404 → decorative only
-[CHANGED] kundenkonto.fonial.de/api/2.0: Dual-backend session confusion hypothesis confidence held at 75 (no new evidence, passive-only)
-[CHANGED] shop.fonial.de: GenerateCustomerTokenAsAdminInput confidence dropped 55→40; Adobe docs confirm requires admin Bearer + customer opt-in
-[CHANGED] dslkonto.fonial.de/app_dev.php: Dev-mode exposure reclassified OUT-OF-SCOPE per scope.yml (descriptive errors/stack traces only, no env/session dump)
-[PRIO] kundenkonto.fonial.de/api/2.0,8.80,attack_surface=9,business_value=9,tech_exposure=9,gate_ease=10,cloud_surface=7,freshness=7
-[PRIO] shop.fonial.de/graphql,7.90,attack_surface=9,business_value=8,tech_exposure=9,gate_ease=10,cloud_surface=5,freshness=8
-[PRIO] kundenkonto.fonial.de,6.25,attack_surface=6,business_value=7,tech_exposure=6,gate_ease=10,cloud_surface=5,freshness=6
-[PRIO] www.fonial.de,5.10,attack_surface=4,business_value=5,tech_exposure=3,gate_ease=10,cloud_surface=4,freshness=5
+## 2026-09-08 14:11:56 UTC [target] (model nemotron3)
+[NEW] shop.fonial.de: GraphQL introspection fully open (300+ types, 68 mutations) confirmed live 2026-09-07/08; Magento 2.4 CE on dedicated IP 176.9.53.190 (Hetzner), no CORS, CSP report-only with unsafe-inline/eval
+[NEW] shop.fonial.de: REST surface fully mapped via /rest/all/schema (45 paths); only non-stock = MageWorx Downloads; guest cart creation unauthenticated; all other V1 endpoints uniform 401 German ACL
+[NEW] shop.fonial.de: Asymmetric admin-auth surface — REST /V1/integration/admin/token → 404 (route removed) but GraphQL GenerateCustomerTokenAsAdminInput introspectable (requires admin Bearer + customer opt-in per Adobe docs)
+[CHANGED] kundenkonto.fonial.de/api/2.0: Dual-backend session confusion hypothesis confidence held at 75 (no new evidence since 2026-09-06, passive-only)
+[CHANGED] kundenkonto.fonial.de: X-Fonial-Version stable at v2026.09.03-1 since 2026-09-07; x-debug-token header on all 404 responses (unique per request); _profiler/_wdt return HTML-404 → decorative only
+[CHANGED] dslkonto.fonial.de/app_dev.php: Dev-mode exposure reclassified OUT-OF-SCOPE per scope.yml (descriptive errors/stack traces only, no env/session dump); profiler token-gated 404 on all tokens
+[CHANGED] kundenkonto.fonial.de/signup: Unauthenticated registration flow at /signup/register/55 confirmed live (sets PHPSESSID, CSRF _token, trunkTariff 19/21/22) — previously atomized by prior agents
+[PRIO] kundenkonto.fonial.de/api/2.0,8.6,attack_surface=9,business_value=10,tech_exposure=8,gate_ease=6,cloud_surface=7,freshness=10
+[PRIO] shop.fonial.de/graphql,7.4,attack_surface=8,business_value=8,tech_exposure=9,gate_ease=10,cloud_surface=5,freshness=5
+[PRIO] kundenkonto.fonial.de,6.8,attack_surface=7,business_value=9,tech_exposure=6,gate_ease=5,cloud_surface=7,freshness=7
+[PRIO] shop.fonial.de/rest,6.1,attack_surface=7,business_value=7,tech_exposure=8,gate_ease=10,cloud_surface=4,freshness=3
+[PRIO] dslkonto.fonial.de,3.2,attack_surface=4,business_value=6,tech_exposure=5,gate_ease=8,cloud_surface=3,freshness=1
 [HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints
 class: AUTH
 asset: kundenkonto.fonial.de/api/2.0

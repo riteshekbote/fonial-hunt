@@ -281,3 +281,12 @@ www.fonial.de
 - CHANGED kundenkonto.fonial.de/api/2.0: Dual-backend session confusion hypothesis confidence held at 75 (no new evidence, passive-only)
 - CHANGED shop.fonial.de: GenerateCustomerTokenAsAdminInput confidence dropped 55→40; Adobe docs confirm requires admin Bearer + customer opt-in
 - CHANGED dslkonto.fonial.de/app_dev.php: Dev-mode exposure reclassified OUT-OF-SCOPE per scope.yml (descriptive errors/stack traces only, no env/session dump)
+
+## 2026-09-08 14:12:07 UTC
+- NEW shop.fonial.de: GraphQL introspection fully open (300+ types, 68 mutations) confirmed live 2026-09-07/08; Magento 2.4 CE on dedicated IP 176.9.53.190 (Hetzner), no CORS, CSP report-only with unsafe-in
+- NEW shop.fonial.de: REST surface fully mapped via /rest/all/schema (45 paths); only non-stock = MageWorx Downloads; guest cart creation unauthenticated; all other V1 endpoints uniform 401 German ACL
+- NEW shop.fonial.de: Asymmetric admin-auth surface — REST /V1/integration/admin/token → 404 (route removed) but GraphQL GenerateCustomerTokenAsAdminInput introspectable (requires admin Bearer + customer op
+- CHANGED kundenkonto.fonial.de/api/2.0: Dual-backend session confusion hypothesis confidence held at 75 (no new evidence since 2026-09-06, passive-only)
+- CHANGED kundenkonto.fonial.de: X-Fonial-Version stable at v2026.09.03-1 since 2026-09-07; x-debug-token header on all 404 responses (unique per request); _profiler/_wdt return HTML-404 → decorative only
+- CHANGED dslkonto.fonial.de/app_dev.php: Dev-mode exposure reclassified OUT-OF-SCOPE per scope.yml (descriptive errors/stack traces only, no env/session dump); profiler token-gated 404 on all tokens
+- CHANGED kundenkonto.fonial.de/signup: Unauthenticated registration flow at /signup/register/55 confirmed live (sets PHPSESSID, CSRF _token, trunkTariff 19/21/22) — previously atomized by prior agents
