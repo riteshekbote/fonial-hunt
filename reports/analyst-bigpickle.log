@@ -12589,3 +12589,90 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 - [RISK] fonial: 58 — Re-probe confirms no drift; every decisive lead (cross-bind 75 = 2 sanctioned tenants; infra = zero-credential single-packet banners; admin-token 40 = 1 fabricated-email POST) is HUMAN_ONLY-gated, none passively resolvable. Genuine high-value surface (double session store, asymmetric admin-auth, public telephony/identity infra) confirmed but flat-close probability ~50% without authorized interactivity. Zero writes, no customer data, ≤1 rps.
+===== ANALYST bigpickle 2026-09-08 20:50:05 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m✱ [0mGlob "**/*"[90m 84 matches[0m
+[0m
+[0m$ [0mcurl -sS -m 20 -D - "https://kundenkonto.fonial.de/api/2.0/session" -o /tmp/opencode/sess_body.txt
+HTTP/2 200 
+date: Tue, 08 Sep 2026 20:47:20 GMT
+content-type: text/json; charset=UTF-8
+server: cloudflare
+cache-control: max-age=0, must-revalidate, private
+expires: Tue, 08 Sep 2026 20:47:20 GMT
+x-fonial-version: v2026.09.03-1
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+cf-cache-status: DYNAMIC
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=EU3EbgNlgtdDMT1BARbI7KlR5JpH1%2B13b68oEIWa86qUCDaATd7CaDNcdKXSjuexti6CIlvmm8Bf9ckrviFZMb594tbAgpvJcnQStPjJTGnHihrJLTOIHEHmPxO4EE4B2ec8%2FZjJ6g%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cf-ray: a380cec3aa47753a-SEA
+[0m
+[0m→ [0mRead /tmp/opencode/sess_body.txt
+[0m→ [0mRead scope.yml
+[0m→ [0mRead triage/run-2026-09-08-17-57.md
+[0m→ [0mRead knowledge/index.md[90m [offset=1, limit=40][0m
+[0m→ [0mRead leads/lead-bigpickle.md[90m [offset=1, limit=30][0m
+Drift probe @ 20:47 UTC: `GET /api/2.0/session` → 200, `{"status":"ok","sid":"<uuid4>"}`, no PHPSESSID set, `X-Fonial-Version: v2026.09.03-1`, `ACAO:*`, `ACAM:GET,POST,OPTIONS` — byte-identical to prior baselines. Single read-only GET, no cookies/auth, ≤1rps.
+
+STEP 1 — DELTA
+- [PROBE] 20:47 UTC GET /api/2.0/session: cleartext UUID sid in body, no PHPSESSID, `text/json;charset=UTF-8`, version header + CORS wildcard unchanged → session-store dynamics zero-drift vs 17:59/18:07 UTC baselines.
+- [NEW] none — no visible surface change anywhere; all 5 API endpoints, GraphQL/REST map, dslkonto dev-mode/profiler, legacy-box, takeover class reconfirm prior closures.
+- [CHANGED] triage 17:57 UTC consumed an empty leads section (workflow artifact, not security).
+- NO_DELTA otherwise.
+
+STEP 2 — PRIORITIZE
+- [PRIO] kundenkonto.fonial.de/api/2.0, 7.1, a=9 b=9 t=8 g=6 c=3 f=2
+- [PRIO] shop.fonial.de/graphql, 7.25, a=8 b=8 t=9 g=8 c=4 f=3
+- [PRIO] sbc/ldap/RMQ/Sentry|customers infra group, 7.1, a=6 b=8 t=7 g=9 c=5 f=7
+
+STEP 3 — HYPOTHESES
+[HYP] Data-layer SID authz not credential-bound → cross-tenant access on all 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: Data endpoints authorize by body SID only; PHPSESSID parallel/decorative; /session issues cleartext UUID sid; /session/authenticate is an independent credential path; every unauth probe returns identical `session invalid`/`session unauthenticated` JSON. 20:47 probe reconfirms store unchanged. Sole open question: is authenticated sid→account binding enforced?
+evidence_needed: SID_B body + PHPSESSID_A cookie accepted on /evn/get (rejected = credential-bound); or unauthenticated SID + valid PHPSESSID returns data.
+verify_steps: (HUMAN, program-approved tenants T_A/T_B — account_creation restricted, do NOT self-create live accounts) 1) GET /api/2.0/session→SID_A; 2) POST /session/authenticate{...T_A}→authenticated; 3) POST /devices/get{sid:SID_A} capture PHPSESSID_A; 4) GET /api/2.0/session (fresh jar)→SID_B; 5) POST /evn/get{sid:SID_B}+Cookie:PHPSESSID_A → data vs error. 1 request, ≤1rps.
+impact: cross-tenant CDR, phone/SIP creds, device lists, unauthorized outbound calls (write endpoint). CRITICAL.
+testability: HUMAN_ONLY
+
+[HYP] generateCustomerTokenAsAdmin callable without admin bearer
+class: AUTH
+asset: shop.fonial.de/graphql
+confidence: 40
+reasoning: Mutation unauth-introspectable; REST `/V1/integration/admin/token` → 404 (route removed) → asymmetric admin-auth; input = single `customer_email`; stock docs require admin Bearer + `remote_shopping_assistance` opt-in. Residual = inverted/missing user-type check in this 2.4 CE build. No new evidence since 55→40 downgrade / prior REJECTED.
+evidence_needed: POST without Authorization → authz-error (by-design) vs token issuance (bypass).
+verify_steps: SANCTIONED single POST /graphql `mutation{ generateCustomerTokenAsAdmin(input:{customer_email:"authz-probe-<ts>@example.invalid"}){ customer_token } }` — fabricated email, zero data exposure.
+impact: ATO of opted-in shop accounts (orders, addresses, pay vault). CRITICAL if bypass.
+testability: HUMAN_ONLY
+
+[HYP] sbc/ldap/RMQ/Sentry public-IP group = reachable telephony/identity/devops infra
+class: MISCONFIG
+asset: sbc.fonial.de (62.146.28.124:5060/5061), ldap.fonial.de (62.146.7.24:389/636), 62.146.7.22:15672, 62.146.28.126, customers.fonial.de (92.197.176.46)
+confidence: 45
+reasoning: CT+certs place SBC/SIP, LDAP, RabbitMQ/Sentry on public IPs; HTTP layer proxy-deny; non-HTTP ports never probed; host-level reachability unknown.
+evidence_needed: single banner per host — banner-only, zero auth.
+verify_steps: sanctioned single-packet classification (SIP OPTIONS / LDAP banner / RMQ mgmt port reachability).
+impact: toll fraud / identity enumeration / error-tracking PII exposure. HIGH if reachable+misconf.
+testability: HUMAN_ONLY
+
+STEP 4 — SELF-CRITIQUE
+- [PARKED] infra group: verify evidence is a service banner → scope.yml OOS "Descriptive error messages or headers (e.g. … banner grabbing)"; reachability-without-function is non-reportable; passive class dead.
+- [PARKED] admin-token: prior REJECTED at 40 (Adobe/Magento docs require admin Bearer + customer opt-in); no new evidence; re-open only via the single sanctioned mutation above, at triage's discretion.
+- [FINAL] cross-bind (75): sole survivor. Gate: requires TWO program-approved tenants — live self-registration collides with scope.yml `account_creation: restricted` → still HUMAN+gated.
+
+STEP 5 — NEXT ACTION
+[NEXT] HUMAN: obtain program-approved test tenants T_A/T_B, then run the 5-request cross-bind sequence (s3): `POST /evn/get {"sid":SID_B}` + `Cookie: PHPSESSID_A` on kundenkonto.fonial.de/api/2.0 — data ⇒ BOLA confirmed (CRITICAL); error ⇒ sid credential-bound, hypothesis closed, flat-close.
+
+STEP 6 — LEARNING
+- [LEARN] ACCEPTED drift-stability @ kundenkonto: 20:47 UTC probe byte-identical (uuid4 sid, no PHPSESSID, v2026.09.03-1, ACAO*) → cross-bind store dynamics unchanged; drift re-probe cadence adds no information.
+- [LEARN] REJECTED infra-banner classification @ sbc/ldap/RMQ/Sentry/customers: banner-only evidence falls under scope.yml OOS "banner grabbing"; reachability without demonstrated misconfiguration is not reportable.
+- [LEARN] REJECTED admin-token re-open @ shop: reaffirms prior 40-REJECTED; no new evidence; only sanctioned fabricated-email mutation could re-open.
+
+STEP 7 — RISK
+[RISK] fonial: 58 — 20:47 probe confirms zero drift across all assets; passive pool exhausted; sole [FINAL] survivor (75) needs program-approved tenants, admin-token and infra suppressed by REJECTED/OOS rulings → reportable-outcome probability remains ~50% flat-close. Zero writes, no customer data touched, ≤1rps.

@@ -1487,3 +1487,33 @@ evidence_needed: single banner per host (SIP OPTIONS / LDAP bind banner / RMQ mg
 verify_steps: sanctioned single-packet classification per host; no binds/auth attempts.
 impact: toll fraud / internal identity enumeration / error-tracking PII. HIGH if reachable+misconf by banner.
 testability: HUMAN_ONLY
+## 2026-09-08 20:48:40 UTC [target] (model bigpickle)
+[HYP] Data-layer SID authz not credential-bound → cross-tenant access on all 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: Data endpoints authorize by body SID only; PHPSESSID parallel/decorative; /session issues cleartext UUID sid; /session/authenticate is an independent credential path; every unauth probe returns identical `session invalid`/`session unauthenticated` JSON. 20:47 probe reconfirms store unchanged. Sole open question: is authenticated sid→account binding enforced?
+evidence_needed: SID_B body + PHPSESSID_A cookie accepted on /evn/get (rejected = credential-bound); or unauthenticated SID + valid PHPSESSID returns data.
+verify_steps: (HUMAN, program-approved tenants T_A/T_B — account_creation restricted, do NOT self-create live accounts) 1) GET /api/2.0/session→SID_A; 2) POST /session/authenticate{...T_A}→authenticated; 3) POST /devices/get{sid:SID_A} capture PHPSESSID_A; 4) GET /api/2.0/session (fresh jar)→SID_B; 5) POST /evn/get{sid:SID_B}+Cookie:PHPSESSID_A → data vs error. 1 request, ≤1rps.
+impact: cross-tenant CDR, phone/SIP creds, device lists, unauthorized outbound calls (write endpoint). CRITICAL.
+testability: HUMAN_ONLY
+[HYP] generateCustomerTokenAsAdmin callable without admin bearer
+class: AUTH
+asset: shop.fonial.de/graphql
+confidence: 40
+reasoning: Mutation unauth-introspectable; REST `/V1/integration/admin/token` → 404 (route removed) → asymmetric admin-auth; input = single `customer_email`; stock docs require admin Bearer + `remote_shopping_assistance` opt-in. Residual = inverted/missing user-type check in this 2.4 CE build. No new evidence since 55→40 downgrade / prior REJECTED.
+evidence_needed: POST without Authorization → authz-error (by-design) vs token issuance (bypass).
+verify_steps: SANCTIONED single POST /graphql `mutation{ generateCustomerTokenAsAdmin(input:{customer_email:"authz-probe-<ts>@example.invalid"}){ customer_token } }` — fabricated email, zero data exposure.
+impact: ATO of opted-in shop accounts (orders, addresses, pay vault). CRITICAL if bypass.
+testability: HUMAN_ONLY
+[HYP] sbc/ldap/RMQ/Sentry public-IP group = reachable telephony/identity/devops infra
+class: MISCONFIG
+asset: sbc.fonial.de (62.146.28.124:5060/5061), ldap.fonial.de (62.146.7.24:389/636), 62.146.7.22:15672, 62.146.28.126, customers.fonial.de (92.197.176.46)
+confidence: 45
+reasoning: CT+certs place SBC/SIP, LDAP, RabbitMQ/Sentry on public IPs; HTTP layer proxy-deny; non-HTTP ports never probed; host-level reachability unknown.
+evidence_needed: single banner per host — banner-only, zero auth.
+verify_steps: sanctioned single-packet classification (SIP OPTIONS / LDAP banner / RMQ mgmt port reachability).
+impact: toll fraud / identity enumeration / error-tracking PII exposure. HIGH if reachable+misconf.
+testability: HUMAN_ONLY
+[NEXT] HUMAN: obtain program-approved test tenants T_A/T_B, then run the 5-request cross-bind sequence (s3): `POST /evn/get {"sid":SID_B}` + `Cookie: PHPSESSID_A` on kundenkonto.fonial.de/api/2.0 — data ⇒ BOLA confirmed (CRITICAL); error ⇒ sid credential-bound, hypothesis closed, flat-close.
+[RISK] fonial: 58 — 20:47 probe confirms zero drift across all assets; passive pool exhausted; sole [FINAL] survivor (75) needs program-approved tenants, admin-token and infra suppressed by REJECTED/OOS rulings → reportable-outcome probability remains ~50% flat-close. Zero writes, no customer data touched, ≤1rps.

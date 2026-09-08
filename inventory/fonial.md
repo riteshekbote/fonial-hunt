@@ -292,3 +292,11 @@ www.fonial.de
 - CHANGED kundenkonto.fonial.de/signup: Unauthenticated registration flow at /signup/register/55 confirmed live (sets PHPSESSID, CSRF _token, trunkTariff 19/21/22) — previously atomized by prior agents
 
 ## 2026-09-08 18:07:22 UTC
+
+## 2026-09-08 20:50:05 UTC
+- NEW kundenkonto.fonial.de/api/2.0: X-Fonial-Version stable at v2026.09.03-1 since 2026-09-07; x-debug-token header on all 404 responses confirmed decorative (profiler/wdt return HTML-404)
+- NEW shop.fonial.de: Asymmetric admin-auth surface confirmed — REST `/V1/integration/admin/token` → 404 (route removed) but GraphQL `GenerateCustomerTokenAsAdminInput` introspectable (requires admin Bearer
+- NEW kundenkonto.fonial.de/signup: Unauthenticated registration flow at `/signup/register/55` confirmed live (sets PHPSESSID, CSRF _token, trunkTariff 19/21/22) — previously atomized by prior agents
+- CHANGED kundenkonto.fonial.de/api/2.0: Dual-backend session confusion hypothesis confidence held at 75 (no new evidence since 2026-09-06, passive-only)
+- CHANGED shop.fonial.de: GenerateCustomerTokenAsAdminInput confidence dropped 55→40; Adobe docs confirm requires admin Bearer + customer opt-in
+- CHANGED dslkonto.fonial.de/app_dev.php: Dev-mode exposure reclassified OUT-OF-SCOPE per scope.yml (descriptive errors/stack traces only, no env/session dump); profiler token-gated 404 on all tokens
