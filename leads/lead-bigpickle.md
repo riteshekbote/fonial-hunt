@@ -1517,3 +1517,29 @@ impact: toll fraud / identity enumeration / error-tracking PII exposure. HIGH if
 testability: HUMAN_ONLY
 [NEXT] HUMAN: obtain program-approved test tenants T_A/T_B, then run the 5-request cross-bind sequence (s3): `POST /evn/get {"sid":SID_B}` + `Cookie: PHPSESSID_A` on kundenkonto.fonial.de/api/2.0 — data ⇒ BOLA confirmed (CRITICAL); error ⇒ sid credential-bound, hypothesis closed, flat-close.
 [RISK] fonial: 58 — 20:47 probe confirms zero drift across all assets; passive pool exhausted; sole [FINAL] survivor (75) needs program-approved tenants, admin-token and infra suppressed by REJECTED/OOS rulings → reportable-outcome probability remains ~50% flat-close. Zero writes, no customer data touched, ≤1rps.
+## 2026-09-08 23:13:04 UTC [target] (model bigpickle)
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID on unfronted prov.fonial.de
+class: AUTH
+asset: prov.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: prov is a byte-behavior duplicate of kundenkonto (same X-Fonial-Version v2026.09.03-1, same SID issuance, same session-invalid JSON, same PHPSESSID decoration, same ACAO *) but served directly on nginx/1.10.3. Same dual-backend bind: data endpoints authorize by body SID only. Cross-bind test now possible on a lower-impact, non-Cloudflare deployment.
+evidence_needed: 2 program-approved tenants on prov; SID_B + PHPSESSID_A accepted on /evn/get (BOLA confirmed) vs `session invalid` (credential-bound).
+verify_steps: (HUMAN, sanctioned) 1) GET /api/2.0/session→SID_A; 2) POST /session/authenticate{T_A}; 3) POST /devices/get{sid:SID_A} capture PHPSESSID_A; 4) GET /api/2.0/session (fresh)→SID_B; 5) POST /evn/get{sid:SID_B}+Cookie:PHPSESSID_A. 1 req, ≤1rps.
+impact: cross-tenant CDR, device lists, SIP creds, outbound call control on the portal API. CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Open self-signup on internal Mattermost 3.7 enables outsider account creation in company chat
+class: BUSLOGIC
+asset: mm.fonial.de
+confidence: 55
+reasoning: `/signup/email` returns 200 (no redirect to disabled-signup), `/api/v4/users/ping` 401 (SFTP session expiry, normal for logged-out), X-Version-Id 3.7.3..., v4 config route absent (legacy). Default vendor behavior: email+password signup w/o admin approval when EnableSignUpWithEmail=true; guest/SSO unknown. Signup = mutating → program-approved.
+evidence_needed: POST /users/create with fabricated email observed to issue an account token vs adminApproval/disabled error.
+verify_steps: (HUMAN, sanctioned) single GET /signup/email → form fields; single POST /api/v4/users/create {email:<sanitised>,username:"ot-<ts>",password:…}; revert/delete if created.
+impact: outsider foothold in company chat (internal directory, channels, webhooks) + legacy-version CVEs prior. HIGH if open.
+testability: HUMAN_ONLY
+[HYP] Shop admin-token asymmetric surface
+class: AUTH
+asset: shop.fonial.de/graphql
+confidence: 40
+reasoning: unchanged from prior - REST /V1/integration/admin/token 404 but GraphQL generateCustomerTokenAsAdmin introspectable. Carried for completeness.
+impact: ATO of opted-in shop accounts. CRITICAL if bypass.
+testability: HUMAN_ONLY

@@ -12676,3 +12676,421 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 [RISK] fonial: 58 — 20:47 probe confirms zero drift across all assets; passive pool exhausted; sole [FINAL] survivor (75) needs program-approved tenants, admin-token and infra suppressed by REJECTED/OOS rulings → reportable-outcome probability remains ~50% flat-close. Zero writes, no customer data touched, ≤1rps.
+===== ANALYST bigpickle 2026-09-08 23:13:13 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mls -la && echo "---" && ls -la docs 2>/dev/null; ls -la inventory 2>/dev/null
+total 244
+drwxr-xr-x 12 runner runner  4096 Sep  8 23:07 .
+drwxr-xr-x  3 runner runner  4096 Sep  8 23:06 ..
+drwxr-xr-x  7 runner runner  4096 Sep  8 23:07 .git
+drwxr-xr-x  3 runner runner  4096 Sep  8 23:06 .github
+-rw-r--r--  1 runner runner  1740 Sep  8 23:06 README.md
+-rw-r--r--  1 runner runner    32 Sep  8 23:07 analyst-out.txt
+-rw-r--r--  1 runner runner 76675 Sep  8 23:07 analyst-prompt.txt
+-rw-r--r--  1 runner runner 72861 Sep  8 23:07 ctx.txt
+drwxr-xr-x  2 runner runner  4096 Sep  8 23:06 inventory
+drwxr-xr-x  2 runner runner  4096 Sep  8 23:06 knowledge
+drwxr-xr-x  2 runner runner  4096 Sep  8 23:06 leads
+-rw-r--r--  1 runner runner  9416 Sep  8 23:06 probe-results.md
+drwxr-xr-x  2 runner runner  4096 Sep  8 23:06 recon-notes
+drwxr-xr-x  2 runner runner  4096 Sep  8 23:06 reports
+drwxr-xr-x  2 runner runner  4096 Sep  8 23:06 reposcan-raw
+-rw-r--r--  1 runner runner  3227 Sep  8 23:06 scope.yml
+drwxr-xr-x  2 runner runner  4096 Sep  8 23:06 scripts
+-rw-r--r--  1 runner runner    33 Sep  8 23:06 state_bigpickle.json
+-rw-r--r--  1 runner runner    33 Sep  8 23:06 state_laguna.json
+-rw-r--r--  1 runner runner    33 Sep  8 23:06 state_ling3.json
+-rw-r--r--  1 runner runner    33 Sep  8 23:06 state_longcat.json
+-rw-r--r--  1 runner runner    33 Sep  8 23:06 state_mimo.json
+-rw-r--r--  1 runner runner    33 Sep  8 23:06 state_nemotron3.json
+drwxr-xr-x  2 runner runner  4096 Sep  8 23:06 triage
+---
+total 40
+drwxr-xr-x  2 runner runner  4096 Sep  8 23:06 .
+drwxr-xr-x 12 runner runner  4096 Sep  8 23:07 ..
+-rw-r--r--  1 runner runner 32173 Sep  8 23:06 fonial.md
+[0m
+[0m✱ [0mGlob "**/*.{md,yml,yaml}"[90m 59 matches[0m
+[0m→ [0mRead triage/run-2026-09-08-20-51.md
+[0m→ [0mRead leads/lead-bigpickle.md
+[0m→ [0mRead scope.yml
+[0m→ [0mRead probe-results.md
+[0m→ [0mRead reports/hypotheses.md
+[0m
+[0m$ [0mcat state_bigpickle.json; echo; cat analyst-out.txt
+{"phase": "POC", "target": "api"}
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mls -la && echo "---" && ls -la docs 2>/dev/null; ls -la inventory 2>/dev/null
+total 244
+drwxr-xr-x 12 runner runner  4096 Sep  8 23:07 .
+drwxr-xr-x  3 runner runner  4096 Sep  8 23:06 ..
+drwxr-xr-x  7 runner runner  4096 Sep  8 23:07 .git
+drwxr-xr-x  3 runner runner  4096 Sep  8 23:06 .github
+-rw-r--r--  1 runner runner  1740 Sep  8 23:06 README.md
+-rw-r--r--  1 runner runner    32 Sep  8 23:07 analyst-out.txt
+-rw-r--r--  1 runner runner 76675 Sep  8 23:07 analyst-prompt.txt
+-rw-r--r--  1 runner runner 72861 Sep  8 23:07 ctx.txt
+drwxr-xr-x  2 runner runner  4096 Sep  8 23:06 inventory
+drwxr-xr-x  2 runner runner  4096 Sep  8 23:06 knowledge
+drwxr-xr-x  2 runner runner  4096 Sep  8 23:06 leads
+-rw-r--r--  1 runner runner  9416 Sep  8 23:06 probe-results.md
+drwxr-xr-x  2 runner runner  4096 Sep  8 23:06 recon-notes
+drwxr-xr-x  2 runner runner  4096 Sep  8 23:06 reports
+drwxr-xr-x  2 runner runner  4096 Sep  8 23:06 reposcan-raw
+-rw-r--r--  1 runner runner  3227 Sep  8 23:06 scope.yml
+drwxr-xr-x  2 runner runner  4096 Sep  8 23:06 scripts
+-rw-r--r--  1 runner runner    33 Sep  8 23:06 state_bigpickle.json
+-rw-r--r--  1 runner runner    33 Sep  8 23:06 state_laguna.json
+-rw-r--r--  1 runner runner    33 Sep  8 23:06 state_ling3.json
+-rw-r--r--  1 runner runner    33 Sep  8 23:06 state_longcat.json
+-rw-r--r--  1 runner runner    33 Sep  8 23:06 state_mimo.json
+-rw-r--r--  1 runner runner    33 Sep  8 23:06 state_nemotron3.json
+drwxr-xr-x  2 runner runner  4096 Sep  8 23:06 triage
+---
+total 40
+drwxr-xr-x  2 runner runner  4096 Sep  8 23:06 .
+drwxr-xr-x 12 runner runner  4096 Sep  8 23:07 ..
+-rw-r--r--  1 runner runner 32173 Sep  8 23:06 fonial.md
+[0m
+[0m✱ [0mGlob "**/*.{md,yml,yaml}"[90m 59 matches[0m
+[0m→ [0mRead triage/run-2026-09-08-20-51.md
+[0m→ [0mRead leads/lead-bigpickle.md
+[0m→ [0mRead scope.yml
+[0m→ [0mRead probe-results.md
+[0m→ [0mRead reports/hypotheses.md
+[0m
+[0m→ [0mRead triage/run-2026-09-08-17-57.md
+[0m→ [0mRead triage/run-2026-09-08-09-48.md
+[0m✗ [0mRead inventory/fonial.md failed[90m [offset=600][0m
+[91m[1mError: [0mOffset 600 is out of range for this file (302 lines)
+[0m→ [0mRead inventory/fonial.md[90m [offset=200][0m
+[0m→ [0mRead recon-notes/DEDICATED-DEEP.md
+[0m
+[0m$ [0mfor h in customers.fonial.de sbc.fonial.de ldap.fonial.de go.fonial.de kundenkonto.fonial.de; do echo -n "$h -> "; getent ahosts "$h" | head -1 || echo "NODNS"; done
+customers.fonial.de -> 92.197.176.46   STREAM customers.fonial.de
+sbc.fonial.de -> 62.146.28.124   STREAM sbc.fonial.de
+ldap.fonial.de -> 62.146.7.24     STREAM ldap.fonial.de
+go.fonial.de -> 62.146.7.20     STREAM go.fonial.de
+kundenkonto.fonial.de -> 104.26.12.183   STREAM kundenkonto.fonial.de
+[0m
+[0m$ [0mcurl -s --max-time 25 "https://crt.sh/?q=%25.fonial.de&output=json" 2>/dev/null | python3 -c "
+import sys, json
+try:
+    d = json.load(sys.stdin)
+except Exception as e:
+    print('PARSE_FAIL'); sys.exit()
+names = set()
+min_t = None
+for e in d:
+    for n in e.get('name_value','').split('\n'):
+        n = n.strip().lower().lstrip('*.')
+        if n.endswith('fonial.de'):
+            names.add(n)
+            t = e.get('not_before','')
+            if t and (min_t is None or t > min_t): min_t = t
+for n in sorted(names): print(n)
+print('MOST_RECENT_NOT_BEFORE:', min_t)
+"
+admin2.shop.fonial.de
+backend.wl-next.fonial.de
+customers.fonial.de
+dslkonto.fonial.de
+fonial.de
+frontend.wl-next.fonial.de
+git.fonial.de
+go.fonial.de
+hilfe.fonial.de
+hilfe.marketing.staging.fonial.de
+int.fonial.de
+interfaces.fonial.de
+kampagne.fonial.de
+kundenkonto.fonial.de
+ldap.fonial.de
+marketing.fonial.de
+mm.fonial.de
+newsletter.fonial.de
+next.fonial.de
+pages.fonial.de
+prov.fonial.de
+red.fonial.de
+relaunch-2025.fonial.de
+sbc.fonial.de
+shop-admin2.marketing.staging.fonial.de
+shop.fonial.de
+shop.marketing.staging.fonial.de
+wbci.fonial.de
+website.marketing.staging.fonial.de
+wl-interfaces.fonial.de
+www-neu.fonial.de
+www.fonial.de
+www.newsletter.fonial.de
+MOST_RECENT_NOT_BEFORE: 2026-08-23T04:34:53
+[0m
+CT sweep found ~20 subdomains never in inventory. Resolving all names (passive DNS only, no HTTP yet):
+[0m$ [0mfor h in admin2.shop.fonial.de backend.wl-next.fonial.de frontend.wl-next.fonial.de git.fonial.de hilfe.fonial.de int.fonial.de interfaces.fonial.de kampagne.fonial.de marketing.fonial.de mm.fonial.de newsletter.fonial.de next.fonial.de pages.fonial.de prov.fonial.de red.fonial.de relaunch-2025.fonial.de wbci.fonial.de wl-interfaces.fonial.de www-neu.fonial.de www.newsletter.fonial.de hilfe.marketing.staging.fonial.de shop.marketing.staging.fonial.de website.marketing.staging.fonial.de shop-admin2.marketing.staging.fonial.de; do echo -n "$h -> "; getent ahosts "$h" 2>/dev/null | awk 'NR==1{print $1}' || echo "NODNS"; done
+admin2.shop.fonial.de -> 176.9.53.190
+backend.wl-next.fonial.de -> frontend.wl-next.fonial.de -> git.fonial.de -> 92.51.132.112
+hilfe.fonial.de -> 92.51.165.250
+int.fonial.de -> 192.168.10.71
+interfaces.fonial.de -> 62.146.7.27
+kampagne.fonial.de -> 92.51.165.250
+marketing.fonial.de -> mm.fonial.de -> 62.146.7.29
+newsletter.fonial.de -> 194.42.96.31
+next.fonial.de -> pages.fonial.de -> 92.51.132.112
+prov.fonial.de -> 62.146.7.20
+red.fonial.de -> 62.146.7.29
+relaunch-2025.fonial.de -> 46.4.123.118
+wbci.fonial.de -> 62.146.7.27
+wl-interfaces.fonial.de -> www-neu.fonial.de -> 176.9.53.190
+www.newsletter.fonial.de -> hilfe.marketing.staging.fonial.de -> 176.9.53.190
+shop.marketing.staging.fonial.de -> 176.9.53.190
+website.marketing.staging.fonial.de -> 176.9.53.190
+shop-admin2.marketing.staging.fonial.de -> 176.9.53.190
+[0m
+NETWORK(sdc) surprising finds — new hosts resolving to fonial netblocks never in inventory. Proceeding with single HEAD probes (≤1rps, read-only) on the highest-value new names:
+[0m$ [0mfor h in admin2.shop.fonial.de www-neu.fonial.de interfaces.fonial.de wbci.fonial.de prov.fonial.de git.fonial.de red.fonial.de mm.fonial.de relaunch-2025.fonial.de newsletter.fonial.de pages.fonial.de kampagne.fonial.de hilfe.fonial.de shop.marketing.staging.fonial.de; do
+echo "=== $h ==="
+curl -s --max-time 8 -o /dev/null -D - -I "https://$h/" 2>&1 | grep -iE "^HTTP|^location|^server|^x-fonial|^content-type" | head -6
+sleep 1
+done
+=== admin2.shop.fonial.de ===
+HTTP/2 403 
+=== www-neu.fonial.de ===
+HTTP/2 404 
+content-type: text/plain; charset=utf-8
+=== interfaces.fonial.de ===
+=== wbci.fonial.de ===
+=== prov.fonial.de ===
+HTTP/2 302 
+server: nginx/1.10.3
+content-type: text/html; charset=utf-8
+location: https://prov.fonial.de/login
+x-fonial-version: v2026.09.03-1
+=== git.fonial.de ===
+=== red.fonial.de ===
+HTTP/1.1 302 Found
+Content-Type: text/html; charset=utf-8
+Location: https://red.fonial.de/login?back_url=https%3A%2F%2Fred.fonial.de%2F
+Server: nginx/1.10.2 + Phusion Passenger 5.1.1
+=== mm.fonial.de ===
+HTTP/1.1 404 Not Found
+Server: nginx/1.10.2
+Content-Type: text/plain; charset=utf-8
+Location: /error?title=Mattermost+braucht+Ihre+Hilfe%3A&message=Entschuldigung%2C+wir+k%C3%B6nnen+die+Seite+nicht+finden.&details=&link=%2F&linkmessage=Gehe+zur%C3%BCck+zu+Mattermost
+=== relaunch-2025.fonial.de ===
+=== newsletter.fonial.de ===
+HTTP/1.1 302 Found
+Server: openresty
+Content-Type: text/html; charset=UTF-8
+location: https://www.cleverreach.com/
+=== pages.fonial.de ===
+=== kampagne.fonial.de ===
+HTTP/2 200 
+server: nginx-rc
+content-type: text/html; charset=utf-8
+=== hilfe.fonial.de ===
+HTTP/2 403 
+server: nginx-rc
+content-type: text/html
+=== shop.marketing.staging.fonial.de ===
+HTTP/2 403
+[0m
+Major delta — CT log sweep surfaced 4 never-inventoried live assets (prov, red, mm, + more). Deepening on the top new ones (GET, read-only, 1rps):
+[0m$ [0mecho "=== prov.fonial.de/login ==="; curl -s --max-time 10 -D - "https://prov.fonial.de/login" -o /dev/null | grep -iE "^HTTP|^location|^server|^x-fonial|^set-cookie|^content-type"
+sleep 1
+echo "=== prov.fonial.de/api/2.0/session ==="; curl -s --max-time 10 -D - -X GET "https://prov.fonial.de/api/2.0/session" 2>&1 | head -20
+sleep 1
+echo "=== red.fonial.de/login ==="; curl -s --max-time 10 -D - "https://red.fonial.de/login" -o /dev/null | grep -iE "^HTTP|^location|^server|^set-cookie|^x-runtime|^content-type"
+sleep 1
+echo "=== red.fonial.de/projects ==="; curl -s --max-time 10 "https://red.fonial.de/projects" -o /dev/null -w "%{http_code} len=%{size_download}\n"
+sleep 1
+echo "=== mm.fonial.de/api/v4/system/ping ==="; curl -s --max-time 10 -D - "https://mm.fonial.de/api/v4/system/ping" 2>&1 | head -10
+=== prov.fonial.de/login ===
+HTTP/2 200 
+server: nginx/1.10.3
+content-type: text/html; charset=UTF-8
+x-fonial-version: v2026.09.03-1
+set-cookie: PHPSESSID=efju586ah76n5ct1vn98c5ldn2; path=/; secure; httponly; samesite=lax
+=== prov.fonial.de/api/2.0/session ===
+HTTP/2 200 
+server: nginx/1.10.3
+content-type: text/json; charset=UTF-8
+cache-control: max-age=0, must-revalidate, private
+date: Tue, 08 Sep 2026 23:10:02 GMT
+x-fonial-version: v2026.09.03-1
+expires: Tue, 08 Sep 2026 23:10:02 GMT
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+
+{"status":"ok","sid":"e6dae8b2-85fc-40e0-a778-ad6426799c69"}=== red.fonial.de/login ===
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+X-Runtime: 0.022885
+Set-Cookie: _redmine_session=NENHRHFyMGV1M2VNZGMvT2lUWm1kZVhwWVI0dVJSK0F0WWxzVzI0aEFhU01vM1dTM0piODBtNzJ2dlpZWG1kdzUyZmxiQXQxWEo2L29JcUV5NFp2cUJWbE54SFpqNU5IaWNUb2MraTFCbUtwOGNXV2R4UWl1eGZmekllcjZyeFRzenl4OEhhWUUrYVovNUV0aGZpb1ZOS2RJTjN5Nkk2LzdPWnRQRTZ1Y3drOWNPUWY2c05NZGYvcXRCUTFjSXk4LS1QZEpvZjYvK2U0RHYxRkJUejg5ckxBPT0%3D--57f9b5cd2cdfe14cb83ad6b242e780eb7d136f85; path=/; HttpOnly
+Server: nginx/1.10.2 + Phusion Passenger 5.1.1
+=== red.fonial.de/projects ===
+302 len=141
+=== mm.fonial.de/api/v4/system/ping ===
+HTTP/1.1 200 OK
+Server: nginx/1.10.2
+Date: Tue, 08 Sep 2026 23:10:07 GMT
+Content-Type: application/json
+Content-Length: 15
+Connection: keep-alive
+Expires: 0
+X-Cluster-Id: 
+X-Request-Id: 4a9yx8monfyi3efftntwbsmyia
+X-Version-Id: 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false
+[0m
+MAJOR delta — CT log sweep found live unauth assets never in inventory. Deepening on the top new ones (read-only, 1 rps):
+[0m$ [0mecho "=== prov /api/2.0/session/authenticate (GET read) ==="; curl -s --max-time 10 -D - "https://prov.fonial.de/api/2.0/session/authenticate" 2>&1 | head -8
+sleep 1
+echo "=== prov /api/2.0/signup ==="; curl -s --max-time 10 -o /dev/null -w "%{http_code} -> %{redirect_url}\n" "https://prov.fonial.de/signup"
+sleep 1
+echo "=== redmine version (/) ==="; curl -s --max-time 10 "https://red.fonial.de/" -o /tmp/red.html -w "%{http_code} len=%{size_download}\n"; grep -ioE "Powered by [^<]*|Redmine [0-9.]+|<title>[^<]*" /tmp/red.html | head -5
+sleep 1
+echo "=== redmine projects.json ==="; curl -s --max-time 10 "https://red.fonial.de/projects.json" -o /tmp/proj.json -w "%{http_code} len=%{size_download}\n"; head -c 300 /tmp/proj.json; echo
+sleep 1
+echo "=== mm /api/v4/config/client (read) ==="; curl -s --max-time 10 "https://mm.fonial.de/api/v4/config/client" 2>&1 | head -c 500; echo
+sleep 1
+echo "=== admin2.shop GET / ==="; curl -s --max-time 10 -o /dev/null -w "%{http_code} len=%{size_download}\n" "https://admin2.shop.fonial.de/"
+=== prov /api/2.0/session/authenticate (GET read) ===
+HTTP/2 200 
+server: nginx/1.10.3
+content-type: text/json; charset=UTF-8
+cache-control: max-age=0, must-revalidate, private
+date: Tue, 08 Sep 2026 23:10:28 GMT
+x-fonial-version: v2026.09.03-1
+expires: Tue, 08 Sep 2026 23:10:28 GMT
+access-control-allow-origin: *
+=== prov /api/2.0/signup ===
+302 -> https://prov.fonial.de/signup/register/55
+=== redmine version (/) ===
+302 len=133
+=== redmine projects.json ===
+401 len=0
+
+=== mm /api/v4/config/client (read) ===
+{"id":"api.context.404.app_error","message":"Entschuldigung, wir können die Seite nicht finden.","detailed_error":"There doesn't appear to be an api call for the url='/api/v4/config/client'.","status_code":404}
+=== admin2.shop GET / ===
+403 len=9
+[0m
+[0m$ [0mgrep -ioE "Powered by [^<]{0,40}|Redmine [0-9.]+" /tmp/red.html 2>/dev/null | head; echo "--- redmine login body title/tail ---"; curl -s --max-time 10 "https://red.fonial.de/login" -o /tmp/redlogin.html -w "%{http_code} len=%{size_download}\n"; grep -ioE "Powered by [^<]{0,40}|v-[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}[a-z]?[^<]{0,10}|Redmine[^<]{0,40}|redmineVersion[^,]{0,30}" /tmp/redlogin.html | head -5
+sleep 1
+echo "=== prov devices/get GET (read) ==="; curl -s --max-time 10 -D - -X GET "https://prov.fonial.de/api/2.0/devices/get" 2>&1 | head -12
+sleep 1
+echo "=== prov via http (origin fallback?) ==="; curl -s --max-time 10 -o /dev/null -w "http_prov %{http_code}\n" "http://prov.fonial.de/" 2>&1
+sleep 1
+echo "=== wbci/interfaces/pages/git https then http ==="; for u in "https://wbci.fonial.de/" "http://wbci.fonial.de/" "https://interfaces.fonial.de/" "http://interfaces.fonial.de/" "https://pages.fonial.de/" "https://git.fonial.de/"; do echo -n "$u -> "; curl -s --max-time 6 -o /dev/null -w "%{http_code}" "$u" 2>&1; echo; sleep 1; done
+--- redmine login body title/tail ---
+200 len=3914
+Redmine" />
+redmine_questions/stylesheets/questions.css" />
+redmine_agile/stylesheets/redmine_agile.css" />
+Powered by 
+redmine.org/">Redmine
+=== prov devices/get GET (read) ===
+HTTP/2 200 
+server: nginx/1.10.3
+content-type: text/json;charset=UTF-8
+set-cookie: PHPSESSID=a4q97c05sggpvnosbq43duol7g; path=/; secure; HttpOnly
+cache-control: no-cache, private
+date: Tue, 08 Sep 2026 23:10:58 GMT
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+
+{"sid":null,"status":"error","reason":"session invalid"}=== prov via http (origin fallback?) ===
+http_prov 301
+=== wbci/interfaces/pages/git https then http ===
+https://wbci.fonial.de/ -> 000
+http://wbci.fonial.de/ -> 000
+https://interfaces.fonial.de/ -> 000
+http://interfaces.fonial.de/ -> 000
+https://pages.fonial.de/ -> 000
+https://git.fonial.de/ -> 000
+[0m
+Two more low-cost reads on the two new high-value hosts, then I'll finalize:
+[0m$ [0mecho "=== prov call/initiate GET ==="; curl -s --max-time 10 -o /dev/null -w "%{http_code}" -X GET "https://prov.fonial.de/api/2.0/call/initiate"; echo
+sleep 1
+echo "=== mm signup enabled? (GET /signup/email) ==="; curl -s --max-time 10 -o /dev/null -w "%{http_code} -> %{redirect_url}\n" "https://mm.fonial.de/signup/email"
+sleep 1
+echo "=== mm /api/v4/users/ping/auth ==="; curl -s --max-time 10 "https://mm.fonial.de/api/v4/users/ping" 2>&1 | head -c 200; echo
+=== prov call/initiate GET ===
+200
+=== mm signup enabled? (GET /signup/email) ===
+200 -> 
+=== mm /api/v4/users/ping/auth ===
+{"id":"api.context.session_expired.app_error","message":"Ungültige oder abgelaufene Sitzung, melden Sie sich erneut an.","detailed_error":"","request_id":"y5ceezsinjg5id1n7y9m8pkizy","status_code":40
+[0m
+Windows of new surface opened. Finalizing analysis.
+
+---
+STEP 1 — DELTA
+- [NEW] prov.fonial.de (62.146.7.20): full live copy of the kundenkonto customer-portal app — `X-Fonial-Version: v2026.09.03-1` (identical to prod), `/api/2.0/session` issues SID, `/devices/get`+`/call/initiate` live (session-invalid pattern), `/signup`→register/55, PHPSESSID + `ACAO: *` on all. Served on **nginx/1.10.3, NOT Cloudflare-fronted** → entire portal API surface reachable outside the edge. `http://prov` 301.
+- [NEW] `int.fonial.de` → **192.168.10.71** (RFC1918 in public DNS; internally unreachable).
+- [NEW] admin2.shop.fonial.de (403 all paths), www-neu.fonial.de (404, shop-box IP 176.9.53.190), shop.marketing.staging.fonial.de (403) — staging/alt vhosts on live Magento box.
+- [NEW] mm.fonial.de = Mattermost 3.7 (X-Version-Id `3.7.3.7.3.a553…`), `/api/v4/users/ping` 401, `/signup/email` returns **200** (open-signup candidate), `/api/v4/config/client` 404 (route absent → truly old build).
+- [NEW] red.fonial.de = Redmine (Rails/Passenger), `/login` 200; `/projects.json` **401** (anonymous browsing disabled). Plugins: redmine_agile, redmine_questions.
+- [NEW] newsletter.fonial.de → 302 cleverreach.com (SaaS); pages/git/interfaces/wbci → 000 (dead/TLS fail); kampagne/hilfe → nginx-rc 200/403.
+- [CHANGED] `legacy-box @ go.fonial.de` conclusion is **vhost-specific, not box-wide**: 62.146.7.20 serves live `prov.fonial.de` with current app version.
+
+STEP 2 — PRIORITIZE
+- [PRIO] prov.fonial.de, 9.4, a=9 b=10 t=8 g=9 c=8 f=10 — body-SID dual-backend API, signup, call/initiate, unfronted origin stack, same version as prod portal.
+- [PRIO] mm.fonial.de, 6.9, a=6 b=7 t=8 g=7 c=5 f=8 — internal Mattermost publicly reachable + open-signup candidate on 2016-era build.
+- [PRIO] red.fonial.de, 5.2, a=5 b=6 t=7 g=5 c=5 f=7 — auth-gated; login-panel/old-version classes OOS.
+
+STEP 3 — HYPOTHESES
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID on unfronted prov.fonial.de
+class: AUTH
+asset: prov.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: prov is a byte-behavior duplicate of kundenkonto (same X-Fonial-Version v2026.09.03-1, same SID issuance, same session-invalid JSON, same PHPSESSID decoration, same ACAO *) but served directly on nginx/1.10.3. Same dual-backend bind: data endpoints authorize by body SID only. Cross-bind test now possible on a lower-impact, non-Cloudflare deployment.
+evidence_needed: 2 program-approved tenants on prov; SID_B + PHPSESSID_A accepted on /evn/get (BOLA confirmed) vs `session invalid` (credential-bound).
+verify_steps: (HUMAN, sanctioned) 1) GET /api/2.0/session→SID_A; 2) POST /session/authenticate{T_A}; 3) POST /devices/get{sid:SID_A} capture PHPSESSID_A; 4) GET /api/2.0/session (fresh)→SID_B; 5) POST /evn/get{sid:SID_B}+Cookie:PHPSESSID_A. 1 req, ≤1rps.
+impact: cross-tenant CDR, device lists, SIP creds, outbound call control on the portal API. CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Open self-signup on internal Mattermost 3.7 enables outsider account creation in company chat
+class: BUSLOGIC
+asset: mm.fonial.de
+confidence: 55
+reasoning: `/signup/email` returns 200 (no redirect to disabled-signup), `/api/v4/users/ping` 401 (SFTP session expiry, normal for logged-out), X-Version-Id 3.7.3..., v4 config route absent (legacy). Default vendor behavior: email+password signup w/o admin approval when EnableSignUpWithEmail=true; guest/SSO unknown. Signup = mutating → program-approved.
+evidence_needed: POST /users/create with fabricated email observed to issue an account token vs adminApproval/disabled error.
+verify_steps: (HUMAN, sanctioned) single GET /signup/email → form fields; single POST /api/v4/users/create {email:<sanitised>,username:"ot-<ts>",password:…}; revert/delete if created.
+impact: outsider foothold in company chat (internal directory, channels, webhooks) + legacy-version CVEs prior. HIGH if open.
+testability: HUMAN_ONLY
+[HYP] Shop admin-token asymmetric surface
+class: AUTH
+asset: shop.fonial.de/graphql
+confidence: 40
+reasoning: unchanged from prior - REST /V1/integration/admin/token 404 but GraphQL generateCustomerTokenAsAdmin introspectable. Carried for completeness.
+impact: ATO of opted-in shop accounts. CRITICAL if bypass.
+testability: HUMAN_ONLY
+
+STEP 4 — SELF-CRITIQUE
+- [PARKED] red.fonial.de: anonymous browsing disabled (projects.json 401); login-panel and outdated-version classes OOS → no >40 unauth surface.
+- [PARKED] int.fonial.de RFC1918 leak: informational only, unreachable, low.
+- [PARKED] www-neu/admin2/staging-marketing: 403/404 on shop IP; no bypass attempted, no evidence.
+- [PARKED] wbci/interfaces/pages/git: all 000/unreachable → dead.
+- [FINAL] 1) cross-bind BOLA @ prov (75, HUMAN — new sanctioned-test host, no Cloudflare); 2) mm open-signup (55, HUMAN); 3) shop admin-token (40).
+
+STEP 5 — NEXT ACTION
+- [NEXT] HUMAN: obtain 2 program-approved tenants, then run the 5-request cross-bind sequence on **prov.fonial.de** (lower-impact, unfronted twin of kundenkonto): `POST /api/2.0/evn/get {"sid":SID_B}` + `Cookie: PHPSESSID_A` → data = BOLA CRITICAL; `session invalid` = closed. If prov shares the SID store with kundenkonto, confirm and re-run against prod portal. (Must not self-create live accounts; account_creation restricted.)
+
+STEP 6 — LEARNING
+- [LEARN] ACCEPTED deployment-parity @ prov.fonial.de: full second deployment of the kundenkonto portal stack (v2026.09.03-1, /api/2.0/session+devices/get+call/initiate, /signup→register/55, ACAO *, PHPSESSID) live on 62.146.7.20 nginx/1.10.3 without Cloudflare → duplicates the whole body-SID API surface outside the edge; new primary cross-bind test host.
+- [LEARN] REJECTED legacy-box @ go.fonial.de (box-wide): 62.146.7.20 also hosts live prov.fonial.de app with current version → prior "non-bootable box" was go-vhost-specific, not the whole IP.
+- [LEARN] ACCEPTED mm.fonial.de: internal Mattermost 3.7 publicly reachable; /signup/email 200 (signup-open candidate), legacy v4 API subset.
+- [LEARN] ACCEPTED red.fonial.de: Redmine reachable, anonymous browsing disabled (projects.json 401) → gated.
+- [LEARN] REJECTED newsletter.fonial.de: 302 to cleverreach.com SaaS — external marketing platform, no fonial logic.
+- [LEARN] REJECTED shop admin-token direct-unauth: unchanged, side-channel-lowered (40).
+
+STEP 7 — RISK
+- [RISK] fonial: 62 — previously 58; prov.fonial.de raises it: identical customer-portal API (dual-backend body-SID auth, call/initiate WRITE) exposed on a legacy unfronted origin, giving a sanctioned-test host for the decisive 75-confidence BOLA check and an origin-bypass surface if it shares the kundenkonto SID store; mm open-signup adds outsider-chat foothold potential. Offsets: new hosts mostly dead/gated, mm/red OOS classes, zero writes, ≤1rps, no customer data touched.

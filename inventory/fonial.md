@@ -300,3 +300,5 @@ www.fonial.de
 - CHANGED kundenkonto.fonial.de/api/2.0: Dual-backend session confusion hypothesis confidence held at 75 (no new evidence since 2026-09-06, passive-only)
 - CHANGED shop.fonial.de: GenerateCustomerTokenAsAdminInput confidence dropped 55→40; Adobe docs confirm requires admin Bearer + customer opt-in
 - CHANGED dslkonto.fonial.de/app_dev.php: Dev-mode exposure reclassified OUT-OF-SCOPE per scope.yml (descriptive errors/stack traces only, no env/session dump); profiler token-gated 404 on all tokens
+
+## 2026-09-08 23:13:13 UTC
