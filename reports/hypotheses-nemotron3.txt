@@ -1,7 +1,6 @@
-## 2026-09-08 00:29:50 UTC [target] (model nemotron3)
-[PRIO] kundenkonto.fonial.de/api/2.0,9.05,attack_surface=9,business_value=10,tech_exposure=8,gate_ease=8,cloud_surface=9,freshness=10
-[PRIO] kundenkonto.fonial.de,7.95,attack_surface=8,business_value=9,tech_exposure=8,gate_ease=6,cloud_surface=8,freshness=8
-[PRIO] dslkonto.fonial.de,6.80,attack_surface=7,business_value=8,tech_exposure=9,gate_ease=10,cloud_surface=5,freshness=8
+## 2026-09-08 05:13:35 UTC [target] (model nemotron3)
+[PRIO] kundenkonto.fonial.de/api/2.0,9.05,attack_surface=9,business_value=10,tech_exposure=9,gate_ease=10,cloud_surface=7,freshness=8
+[PRIO] kundenkonto.fonial.de,7.70,attack_surface=7,business_value=9,tech_exposure=6,gate_ease=10,cloud_surface=6,freshness=7
 [PRIO] shop.fonial.de/graphql,6.40,attack_surface=7,business_value=8,tech_exposure=9,gate_ease=10,cloud_surface=5,freshness=8
 [PRIO] www.fonial.de,5.10,attack_surface=4,business_value=5,tech_exposure=3,gate_ease=10,cloud_surface=4,freshness=5
 [HYP] Dual-backend SID/PHPSESSID cross-binding enables cross-tenant access on all 3 data endpoints

@@ -267,3 +267,9 @@ www.fonial.de
 - CHANGED dslkonto.fonial.dev-mode: Reclassified OUT-OF-SCOPE (scope.yml excludes descriptive errors/stack traces); profiler token-gated 404 on all tokens
 
 ## 2026-09-08 00:32:56 UTC
+
+## 2026-09-08 05:24:16 UTC
+- NEW shop.fonial.de REST surface fully mapped: `/rest/all/schema` returns full OpenAPI unauthenticated → 45 paths; only non-stock route = MageWorx `mw-downloads-attachments`.
+- NEW `/V1/mw-downloads-attachments/guest/product/{id}` live unauth but returns `[]` on all 110 product IDs; `/V1/mw-downloads-attachments/{id}` → 401 (auth-gated sibling exists).
+- NEW REST `/V1/integration/admin/token` + `customer/token` → 404 route-removed (REST admin-auth closed) while GraphQL `GenerateCustomerTokenAsAdminInput` remains introspectable → asymmetric admin-auth surf
+- NEW `/V1/search` live unauth (400 missing `searchCriteria`); `/V1/applepay/auth`, `/V1/payment-order/completeOrder` present stock payment routes.

@@ -10770,3 +10770,953 @@ grep -Eio "V12|V13|V14|v12|v13|11\.[0-9]|12\.[0-9]|13\.[0-9]" /tmp/hilfe_inst.ht
 echo "== /typo3/install/ -L follow"; curl -s -m 15 -A "Mozilla/5.0" -L -o /dev/null -w "final:%{http_code} url:%{url_effective}\n" "https://hilfe.fonial.de/typo3/install/"; sleep 1.2
 echo "== legacy install steps"; for p in /typo3/install/setup /typo3/install/password /typo3/install/session /typo3/install/js/; do curl -s -m 10 -A "Mozilla/5.0" -o /dev/null -w "$p %{http_code}\n" "https://hilfe.fonial.de$p"; sleep 1.1; done failed
 [91m[1mError: [0mThe user rejected permission to use this specific tool call.
+===== ANALYST bigpickle 2026-09-08 05:24:16 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m• [0mExplore repo structure[90m Explore Agent[0m
+[0m• [0mRead latest artifacts[90m Explore Agent[0m
+[0m✓ [0mExplore repo structure[90m Explore Agent[0m
+[0m✓ [0mRead latest artifacts[90m Explore Agent[0m
+I have a comprehensive understanding of the current state. Let me run some targeted read-only probes on the highest-priority surface to look for any delta that could break the flat-close plateau. The top hypothesis (dual-backend cross-bind, 75, HUMAN_ONLY) needs two sanctioned tenants I don't have — but let me check the other surviving lead (shop admin-token, 40) and look for any fresh passive surface.
+
+Let me re-probe the shop.sql Magento surface and check for any new passive anomalies, staying within passive read-only bounds.
+[0m
+[0m$ [0mcat /home/runner/work/fonial-hunt/fonial-hunt/leads/lead-bigpickle.md | tail -50
+impact: Database order states / revenue tampering. HIGH if exploitable.
+testability: HUMAN_ONLY (insufficient evidence — parking)
+## 2026-09-07 22:18:13 UTC [target] (model bigpickle)
+[NEW] shop.fonial.de REST surface fully mapped: `/rest/all/schema` returns full OpenAPI unauthenticated → 45 paths; only non-stock route = MageWorx `mw-downloads-attachments`.
+[NEW] `/V1/mw-downloads-attachments/guest/product/{id}` live unauth but returns `[]` on all 110 product IDs; `/V1/mw-downloads-attachments/{id}` → 401 (auth-gated sibling exists).
+[NEW] REST `/V1/integration/admin/token` + `customer/token` → 404 route-removed (REST admin-auth closed) while GraphQL `GenerateCustomerTokenAsAdminInput` remains introspectable → asymmetric admin-auth surface.
+[NEW] `/V1/search` live unauth (400 missing `searchCriteria`); `/V1/applepay/auth`, `/V1/payment-order/completeOrder` present stock payment routes.
+[PRIO] kundenkonto.fonial.de/api/2.0, 6.1, (6,10,7,3,3,3)
+[PRIO] shop.fonial.de/graphql, 7.25, (7,8,9,7,3,8)
+[PRIO] shop.fonial.de/rest, 6.55, (6,8,7,6,3,8)
+[PRIO] www.fonial.de, 4.95, (5,4,5,9,3,3)
+[HYP] Dual-backend SID/PHPSESSID cross-binding → cross-tenant access on 3 data endpoints
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: Session backend issues cleartext UUID SID in body, no PHPSESSID; data backend authorizes by body SID only and sets PHPSESSID decoratively. Independent session stores → SID-to-credential binding never verified. call/initiate is live WRITE with identical `session invalid` pattern.
+evidence_needed: SID from tenant A + PHPSESSID from tenant B returns data, or unauthenticated SID + foreign PHPSESSID returns data.
+verify_steps: POST /api/2.0/session each tenant → authenticate → capture PHPSESSID per tenant from data POST → cross-bind `{"sid":"SID_B"}` + `Cookie: PHPSESSID=A` on /devices/get, /evn/get, /call/initiate → non-`session invalid` = CRITICAL.
+impact: Cross-tenant CDR, numbers, SIP creds, device lists, outbound initiation/toll fraud. CRITICAL.
+testability: HUMAN_ONLY
+[HYP] generateCustomerTokenAsAdmin callable without admin bearer (version-specific authz flaw)
+class: AUTH
+asset: shop.fonial.de/graphql (generateCustomerTokenAsAdmin)
+confidence: 40
+reasoning: Mutation present unauth-introspectable while REST `/V1/integration/admin/token` route is REMOVED (404) → asymmetric admin-auth surface implies non-stock config. Input = single `customer_email`. Official docs require admin Bearer + remote_shopping_assistance opt-in; residual = inverted/missing user-type check in this 2.4 CE build.
+evidence_needed: POST without Authorization → error is authz-based (by-design) vs `customer not found`/token issuance (bypass).
+verify_steps: SANCTIONED POST /graphql `mutation{ generateCustomerTokenAsAdmin(input:{customer_email:"authz-probe-<ts>@example.invalid"}){ customer_token } }` — fabricated email = zero customer-data exposure; observe error semantics.
+impact: Customer ATO of opted-in shop accounts (orders, addresses, pay vault) → payment/PII exposure. CRITICAL if bypass.
+testability: PASSIVE (blocked in this mode — needs sanctioned POST)
+[HYP] MageWorx Downloads authenticated attachment access → file-level IDOR
+class: IDOR
+asset: shop.fonial.de/rest /V1/mw-downloads-attachments
+confidence: 35
+reasoning: Non-stock extension (MageWorx Downloads 2.x) exposes guest product-attachment metadata endpoint (live, `[]` today) and an auth-gated `/V1/mw-downloads-attachments/{id}` (401). Fonial sells "Telefonansage" audio products — downloadable-attachment schema present. Known MageWorx flaws = attachment link tokens/short IDs.
+evidence_needed: authenticated user A enumerates attachment IDs / link tokens of user B or an un-purchased product file; guest endpoint returning non-empty for a purchasable product.
+verify_steps: needs auth context → real customer account; passive-only: re-GET all 110 product IDs after new products drop; check `/rest/all/schema` refresh for added attachment endpoints.
+impact: Unauthorized file/PII download of gated product attachments. MED-HIGH.
+testability: HUMAN_ONLY (no attachments currently exposed; needs purchasable downloadable product + auth)
+[PARKED] MageWorx Downloads IDOR (35): below floor; guest endpoint provably empty across all products; the 401 sibling needs an authenticated session none of us have; no live data to pivot on.
+[PARKED] Guest-cart coupon abuse (30): dropped prior cycle — by-design guest checkout, stock coupon validation, live placeOrder is a financial write.
+[PARKED] Payment-callback desync (32): requires live order + gateway interaction; no passive vector.
+[FINAL] kundenkonto cross-bind (75): survives — sole high-impact hypothesis, but HUMAN_ONLY (2 sanctioned tenants). Not resolvable passively.
+[FINAL] shop admin-token (40): survives — REST route removed while GraphQL mutation present is a real anomaly, but official-doc authz gate keeps it low; only resolvable via one sanctioned POST.
+[NEXT] PROBE: POST https://shop.fonial.de/graphql `{"query":"mutation{ generateCustomerTokenAsAdmin(input:{customer_email:\"authz-probe-<unix-ts>@example.invalid\"}){ customer_token } }"}` — fabricated email, zero real-data exposure; observe `errors` (by-design admin-authz) vs `customer not found`/token (bypass). Requires sanctioned mutating-test switch; blocked in current passive mode.
+[LEARN] ACCEPTED GraphQL mutation surface @ shop.fonial.de: 68 mutations enumerated fully (prior); full REST map now complementary — 45 paths via `/rest/all/schema`; only non-stock = MageWorx Downloads; REST passive discovery now closed (mirrors GraphQL closure).
+[LEARN] REJECTED MageWorx guest-downloads IDOR @ shop.fonial.de/rest: endpoint live but `[]` across all 110 product IDs — no data to access; `/V1/mw-downloads-attachments/{id}` 401-gated; class parked.
+[LEARN] ACCEPTED asymmetric admin-auth @ shop.fonial.de: REST `/V1/integration/admin/token` → 404 (route removed) but GraphQL `generateCustomerTokenAsAdmin` introspectable → non-uniform admin-auth surface; supports (does not prove) admin-token hypothesis.
+[LEARN] REJECTED REST-schema exposure @ shop.fonial.de/rest/all/schema: stock Magento OpenAPI, no secrets, surface already known via GraphQL introspection — informational only, not reportable.
+[RISK] fonial: 56 — both surviving leads gated: cross-bind (75, HUMAN_ONLY, 2 tenants) and admin-token (40, one sanctioned POST). REST+GraphQL surface now fully mapped both sides → REST admin-token route-removal is the only meaningful new asymmetry, no impact. MageWorx dead (empty data). Flat-close probability ~55%: high-value resolution requires sanctioned interactivity this mode cannot take. No writes, no customer data, ≤1 rps.
+## 2026-09-08 00:32:46 UTC [target] (model bigpickle)
+[0m
+All context confirmed. Running a passive CT-log freshness sweep to check for any newly-rotated or previously-unmapped firmware/subdomains since discovery closed on 09-08 — this is the one breadth axis not yet exhausted.
+[0m$ [0mcurl -s --max-time 20 "https://crt.sh/?q=%25.fonial.de&output=json" | python3 -c "
+import sys, json
+try:
+    data = json.load(sys.stdin)
+except Exception as e:
+    print('PARSE_ERR', e); sys.exit(0)
+names = set()
+for c in data:
+    for n in c.get('name_value','').split('\n'):
+        n = n.strip().lower()
+        if n: names.add(n)
+notbefore = {}
+for c in data:
+    nb = c.get('not_before','')[:10]
+    for n in c.get('name_value','').split('\n'):
+        n = n.strip().lower()
+        if n: notbefore.setdefault(n, nb)
+for n in sorted(names):
+    print(notbefore.get(n,'?'), n)
+print('TOTAL', len(names))
+"
+PARSE_ERR Expecting ',' delimiter: line 1 column 98054 (char 98053)
+[0m
+[0m$ [0mcurl -s --max-time 30 "https://crt.sh/?q=%25.fonial.de&output=json" -o /tmp/opencode/crt.json; ls -la /tmp/opencode/crt.json; python3 -c "
+import json
+raw = open('/tmp/opencode/crt.json','rb').read().decode('utf-8','replace')
+# crt.sh sometimes returns concatenated json; try to salvage by splitting at known boundaries
+try:
+    data = json.loads(raw)
+    print('OK full parse')
+except Exception as e:
+    print('first parse fail:', e)
+    # try raw textual extraction of common_name/name_value
+    import re
+    names = set(re.findall(r'\"(?:name_value|common_name)\":\s*\"([\w.\-*]+\.fonial\.de)\"', raw))
+    print('REGEX names:', len(names))
+    for n in sorted(names): print(n)
+"
+-rw-r--r-- 1 runner runner 423896 Sep  8 05:12 /tmp/opencode/crt.json
+OK full parse
+[0m
+[0m$ [0mpython3 -c "
+import json
+data = json.load(open('/tmp/opencode/crt.json'))
+names = {}
+for c in data:
+    nb = c.get('not_before','')[:10]
+    for n in c.get('name_value','').split('\n'):
+        n = n.strip().lower()
+        if n:
+            names.setdefault(n, nb)
+for n in sorted(names):
+    print(names[n], n)
+print('TOTAL', len(names))
+"
+2025-04-14 *.backend.wl-next.fonial.de
+2024-11-13 *.customers.fonial.de
+2026-07-25 *.fonial.de
+2025-04-14 *.frontend.wl-next.fonial.de
+2026-07-17 *.int.fonial.de
+2026-08-11 *.marketing.fonial.de
+2026-08-03 *.next.fonial.de
+2023-05-12 *.pages.fonial.de
+2022-12-08 *.wl-interfaces.fonial.de
+2026-08-03 admin2.shop.fonial.de
+2024-11-13 customers.fonial.de
+2026-08-12 dslkonto.fonial.de
+2026-07-27 fonial.de
+2023-04-24 git.fonial.de
+2026-08-22 go.fonial.de
+2026-08-23 hilfe.fonial.de
+2026-08-18 hilfe.marketing.staging.fonial.de
+2026-03-19 int.fonial.de
+2026-07-06 interfaces.fonial.de
+2026-08-21 kampagne.fonial.de
+2025-11-10 kundenkonto.fonial.de
+2026-07-09 ldap.fonial.de
+2026-07-18 mm.fonial.de
+2026-01-22 newsletter.fonial.de
+2026-08-03 next.fonial.de
+2026-05-12 prov.fonial.de
+2026-07-18 red.fonial.de
+2026-05-30 relaunch-2025.fonial.de
+2023-05-12 sbc.fonial.de
+2026-08-14 shop-admin2.marketing.staging.fonial.de
+2026-08-03 shop.fonial.de
+2026-08-02 shop.marketing.staging.fonial.de
+2017-06-12 wbci.fonial.de
+2026-07-21 website.marketing.staging.fonial.de
+2021-06-14 wl-interfaces.fonial.de
+2026-07-21 www-neu.fonial.de
+2026-07-27 www.fonial.de
+2026-01-22 www.newsletter.fonial.de
+TOTAL 38
+[0m
+38 names unlocked, several **never in inventory** (subdomain-takeover closure only covered app/admin/staging/go). New discovery candidates: `admin2.shop`, `next`, `int`, `customers`, `prov` (provisioning), `kampagne`, `red`, `www-neu`, `sbc` (SIP Session Border Controller), `git`, `ldap`, `mm`. Passive DNS resolution only:
+[0m$ [0mfor h in admin2.shop next int customers prov kampagne red www-neu sbc git ldap mm interfaces wl-interfaces backend.wl-next frontend.wl-next pages go dslkonto; do
+  ip=$(getent ahosts "$h.fonial.de" 2>/dev/null | awk 'NR==1{print $1}')
+  if [ -z "$ip" ]; then
+    ip=$(python3 -c "import socket;print(socket.gethostbyname('$h.fonial.de'))" 2>/dev/null)
+  fi
+  echo "$h.fonial.de -> ${ip:-NXDOMAIN/RESOLVE_FAIL}"
+done
+admin2.shop.fonial.de -> 176.9.53.190
+next.fonial.de -> NXDOMAIN/RESOLVE_FAIL
+int.fonial.de -> 192.168.10.71
+customers.fonial.de -> 92.197.176.46
+prov.fonial.de -> 62.146.7.20
+kampagne.fonial.de -> 92.51.165.250
+red.fonial.de -> 62.146.7.29
+www-neu.fonial.de -> 176.9.53.190
+sbc.fonial.de -> 62.146.28.124
+git.fonial.de -> 92.51.132.112
+ldap.fonial.de -> 62.146.7.24
+mm.fonial.de -> 62.146.7.29
+interfaces.fonial.de -> 62.146.7.27
+wl-interfaces.fonial.de -> NXDOMAIN/RESOLVE_FAIL
+backend.wl-next.fonial.de -> NXDOMAIN/RESOLVE_FAIL
+frontend.wl-next.fonial.de -> NXDOMAIN/RESOLVE_FAIL
+pages.fonial.de -> 92.51.132.112
+go.fonial.de -> 62.146.7.20
+dslkonto.fonial.de -> 62.146.7.50
+[0m
+Large delta. `customers`, `sbc` (SIP), `git`, `kampagne`, `red`/`mm`, `www-neu`, `admin2.shop`, `pages`, `interfaces`, `ldap` are **all new externally-reachable hosts never in inventory**. `int.fonial.de`→192.168.10.71 is an RFC1918 leak. Probing the live web hosts at ≤1 rps (HEAD→GET only):
+[0m$ [0mfor h in customers admin2.shop www-neu kampagne red mm git pages interfaces sbc ldap; do
+  echo "=== $h.fonial.de ==="
+  curl -s -o /dev/null --max-time 12 -k -D - "https://$h.fonial.de/" -X HEAD 2>/dev/null | grep -iE "^(HTTP|content-type:|server:|location:|x-powered|set-cookie:|x-gen|via:|cf-ray)" | head -8
+  sleep 1.2
+done
+=== customers.fonial.de ===
+=== admin2.shop.fonial.de ===
+HTTP/2 403 
+=== www-neu.fonial.de ===
+HTTP/2 404 
+content-type: text/plain; charset=utf-8
+=== kampagne.fonial.de ===
+HTTP/2 200 
+server: nginx-rc
+content-type: text/html; charset=utf-8
+=== red.fonial.de ===
+HTTP/1.1 302 Found
+Content-Type: text/html; charset=utf-8
+Location: https://red.fonial.de/login?back_url=https%3A%2F%2Fred.fonial.de%2F
+X-Powered-By: Phusion Passenger 5.1.1
+Server: nginx/1.10.2 + Phusion Passenger 5.1.1
+=== mm.fonial.de ===
+HTTP/1.1 404 Not Found
+Server: nginx/1.10.2
+Content-Type: text/plain; charset=utf-8
+Location: /error?title=Mattermost+braucht+Ihre+Hilfe%3A&message=Entschuldigung%2C+wir+k%C3%B6nnen+die+Seite+nicht+finden.&details=&link=%2F&linkmessage=Gehe+zur%C3%BCck+zu+Mattermost
+=== git.fonial.de ===
+=== pages.fonial.de ===
+=== interfaces.fonial.de ===
+=== sbc.fonial.de ===
+=== ldap.fonial.de ===
+[0m
+Two major new live apps: **`mm.fonial.de` = Mattermost**, **`red.fonial.de` = Phusion Passenger app with `/login?back_url=` (Redmine-class)**. Deeper read-only probing:
+[0m$ [0mecho "=== red root ==="; curl -s --max-time 12 -k -D - "https://red.fonial.de/login" -o /tmp/opencode/red_login.html | grep -iE "^(HTTP|location:|content-type:|server:)" | head; echo; grep -ioE "redmine|title>[^<]*<|<meta name=\"csrf[^>]*" /tmp/opencode/red_login.html | head -5; sleep 1.2
+echo "=== red follow ==="; curl -s -L --max-time 15 -k "https://red.fonial.de/" -o /tmp/opencode/red_root.html -w "FINAL:%{url_effective} CODE:%{http_code}\n"; grep -ioE "redmine[^\"<]{0,20}|<title>[^<]*<" /tmp/opencode/red_root.html | head -5; sleep 1.2
+echo "=== mm ping ==="; curl -s --max-time 12 -k "https://mm.fonial.de/api/v4/system/ping" -w "\nHTTP:%{http_code}\n"; sleep 1.2
+echo "=== mm root ==="; curl -s --max-time 12 -k -D - "https://mm.fonial.de/" -o /tmp/opencode/mm_root.html | grep -iE "^(HTTP|location:|content-type:|server:)" | head; sleep 1.2
+echo "=== mm signup/teams ==="; curl -s --max-time 12 -k "https://mm.fonial.de/api/v4/teams" -w "\nHTTP:%{http_code}\n" | head -c 400
+=== red root ===
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+Server: nginx/1.10.2 + Phusion Passenger 5.1.1
+
+title>fonial<
+Redmine
+<meta name="csrf-param" content="authenticity_token" /
+<meta name="csrf-token" content="bzivgF33QneaspzCBqGZVF/IVAyADBOm0YgesTiHbHJJpIzlDq9R4rgFPuvCL9sS0jKH0HY3Wb9okYk6T06bGg==" /
+redmine
+=== red follow ===
+FINAL:https://red.fonial.de/login?back_url=https%3A%2F%2Fred.fonial.de%2F CODE:200
+<title>fonial<
+Redmine
+redmine_questions/styleshee
+redmine_agile/stylesheets/r
+redmine.org/
+=== mm ping ===
+{"status":"OK"}
+HTTP:200
+=== mm root ===
+HTTP/1.1 200 OK
+Server: nginx/1.10.2
+Content-Type: text/html; charset=utf-8
+=== mm signup/teams ===
+{"id":"api.context.session_expired.app_error","message":"Ungültige oder abgelaufene Sitzung, melden Sie sich erneut an.","detailed_error":"","request_id":"3oqo7zxgnprbjjkr3moyswmrdo","status_code":401}
+HTTP:401
+[0m
+`red.fonial.de` = **Redmine** (Agile+Questions plugins), `mm.fonial.de` = **Mattermost** (system/ping OK). Both live, both on legacy nginx/1.10.2. Probing public data exposure (read-only):
+[0m$ [0mecho "=== red /projects.json ==="; curl -s --max-time 12 -k "https://red.fonial.de/projects.json" -w "\nHTTP:%{http_code}\n" | head -c 600; echo; sleep 1.2
+echo "=== red /issues.json ==="; curl -s --max-time 12 -k "https://red.fonial.de/issues.json?limit=5" -w "\nHTTP:%{http_code}\n" | head -c 500; echo; sleep 1.2
+echo "=== red /admin ==="; curl -s --max-time 12 -k -o /dev/null -D - "https://red.fonial.de/admin" | grep -iE "^(HTTP|location:)"; sleep 1.2
+echo "=== mm client config ==="; curl -s --max-time 12 -k "https://mm.fonial.de/api/v4/config/client?format=old" -w "\nHTTP:%{http_code}\n" | head -c 900; echo; sleep 1.2
+echo "=== mm signup ==="; curl -s --max-time 12 -k -o /dev/null -D - "https://mm.fonial.de/signup_email" | grep -iE "^(HTTP|location:)"; sleep 1.2
+echo "=== mm base site ==="; curl -s --max-time 12 -k -o /dev/null -D - "https://mm.fonial.de/login" | grep -iE "^(HTTP|location:)"
+=== red /projects.json ===
+
+HTTP:401
+
+=== red /issues.json ===
+
+HTTP:401
+
+=== red /admin ===
+HTTP/1.1 302 Found
+Location: https://red.fonial.de/login?back_url=https%3A%2F%2Fred.fonial.de%2Fadmin
+=== mm client config ===
+{"id":"api.context.404.app_error","message":"Entschuldigung, wir können die Seite nicht finden.","detailed_error":"There doesn't appear to be an api call for the url='/api/v4/config/client'.","status_code":404}
+HTTP:404
+
+=== mm signup ===
+HTTP/1.1 200 OK
+=== mm base site ===
+HTTP/1.1 200 OK
+[0m
+[0m$ [0mecho "=== red ver ==="; grep -ioE "Powered by <a[^>]*>Redmine[^<]*|Redmine [0-9]+\.[0-9]+\.[0-9]+|redmine[^<]{0,40}</a>" /tmp/opencode/red_login.html | head -3; grep -ioE "ruby [0-9.]+|Rails [0-9.]+|Passenger|Redmine [a-zA-Z0-9.]+" /tmp/opencode/red_login.html | sort -u | head; echo; sleep 1.2
+echo "=== mm ver ==="; grep -ioE "mattermost[^<>\"]{0,40}|version[^,}]{0,40}" /tmp/opencode/mm_root.html | head -5; sleep 1.2
+echo "=== mm config/client nofmt ==="; curl -s --max-time 12 -k "https://mm.fonial.de/api/v4/config/client" -w "\nHTTP:%{http_code}\n" | head -c 300; echo; sleep 1.2
+echo "=== mm sys/version ==="; curl -s --max-time 12 -k "https://mm.fonial.de/api/v4/system/version" -w "\nHTTP:%{http_code}\n" | head -c 200; echo; sleep 1.2
+echo "=== customers:80 ==="; curl -s --max-time 12 -D - -o /dev/null "http://customers.fonial.de/" | grep -iE "^(HTTP|server:|location:|content-type:)" | head; echo; sleep 1.2
+echo "=== git:80 ==="; curl -s --max-time 12 -D - -o /dev/null "http://git.fonial.de/" | grep -iE "^(HTTP|server:|location:|content-type:)" | head; echo; sleep 1.2
+echo "=== pages:80 ==="; curl -s --max-time 12 -D - -o /dev/null "http://pages.fonial.de/" | grep -iE "^(HTTP|server:|location:|content-type:)" | head
+=== red ver ===
+Powered by <a href="https://www.redmine.org/">Redmine
+
+=== mm ver ===
+Mattermost
+Mattermost
+Mattermost
+Mattermost
+Mattermost. If refreshing this page (Ctrl+R or Com
+=== mm config/client nofmt ===
+{"id":"api.context.404.app_error","message":"Entschuldigung, wir können die Seite nicht finden.","detailed_error":"There doesn't appear to be an api call for the url='/api/v4/config/client'.","status_code":404}
+HTTP:404
+
+=== mm sys/version ===
+{"id":"api.context.404.app_error","message":"Entschuldigung, wir können die Seite nicht finden.","detailed_error":"There doesn't appear to be an api call for the url='/api/v4/system/version'.","statu
+=== customers:80 ===
+
+=== git:80 ===
+
+=== pages:80 ===
+[0m
+[0m$ [0mecho "=== red ver grep ==="; grep -oE "Redmine [0-9]+\.[0-9]+\.[0-9]+" /tmp/opencode/red_login.html /tmp/opencode/red_root.html | head -2; grep -oE "<title>[^<]+</title>" /tmp/opencode/red_root.html | head -1; sleep 1.2
+echo "=== mm v3 ping ==="; curl -s --max-time 12 -k "https://mm.fonial.de/api/v3/system/ping" -w "\nHTTP:%{http_code}\n" | head -c 200; echo; sleep 1.2
+echo "=== mm login html markers ==="; curl -s --max-time 12 -k "https://mm.fonial.de/login" -o /tmp/opencode/mm_login.html; grep -ioE "disableEmailSignup|enableSignUpWithEmail|signup_email|sso|ldap|saml" /tmp/opencode/mm_login.html | sort | uniq -c | head; echo; sleep 1.2
+echo "=== mm signup form ==="; curl -s --max-time 12 -k "https://mm.fonial.de/signup_user_complete" -o /tmp/opencode/mm_signup.html; grep -ioE "disableEmailSignup|signup|email'|Create account|new-team" /tmp/opencode/mm_signup.html | sort | uniq -c | head; echo; sleep 1.2
+echo "=== red /attachments ==="; curl -s --max-time 12 -k -o /dev/null -D - "https://red.fonial.de/attachments" | grep -iE "^(HTTP|location:)"; sleep 1.2
+echo "=== red /search ==="; curl -s --max-time 12 -k -o /dev/null -D - "https://red.fonial.de/search?q=test" | grep -iE "^(HTTP|location:)"
+=== red ver grep ===
+<title>fonial</title>
+=== mm v3 ping ===
+{"id":"api.context.404.app_error","message":"Entschuldigung, wir können die Seite nicht finden.","detailed_error":"There doesn't appear to be an api call for the url='/api/v3/system/ping'.  Typo? are
+=== mm login html markers ===
+
+=== mm signup form ===
+
+=== red /attachments ===
+HTTP/1.1 404 Not Found
+=== red /search ===
+HTTP/1.1 302 Found
+Location: https://red.fonial.de/login?back_url=https%3A%2F%2Fred.fonial.de%2Fsearch%3Fq%3Dtest
+[0m
+One targeted passive DNS pass to re-scope the "subdomain-takeover closed" claim against the newly-discovered hosts (CNAME/TXT classify on-prem vs cloud-hosted):
+[0m$ [0mfor h in customers red mm git pages kampagne sbc ldap interfaces prov www-neu admin2.shop int mm www; do
+  cname=$(python3 -c "import dns.resolver,sys
+try:
+    a=dns.resolver.resolve('${h}.fonial.de','CNAME'); print(a[0].to_text())
+except Exception: print('-')" 2>/dev/null || echo 'dns-py-na')
+  echo "$h.fonial.de CNAME=$cname"
+done
+customers.fonial.de CNAME=dns-py-na
+red.fonial.de CNAME=dns-py-na
+mm.fonial.de CNAME=dns-py-na
+git.fonial.de CNAME=dns-py-na
+pages.fonial.de CNAME=dns-py-na
+kampagne.fonial.de CNAME=dns-py-na
+sbc.fonial.de CNAME=dns-py-na
+ldap.fonial.de CNAME=dns-py-na
+interfaces.fonial.de CNAME=dns-py-na
+prov.fonial.de CNAME=dns-py-na
+www-neu.fonial.de CNAME=dns-py-na
+admin2.shop.fonial.de CNAME=dns-py-na
+int.fonial.de CNAME=dns-py-na
+mm.fonial.de CNAME=dns-py-na
+www.fonial.de CNAME=dns-py-na
+[0m
+[0m$ [0mwhich dig host nslookup 2>/dev/null; echo ---
+for h in customers red mm git pages kampagne sbc ldap interfaces prov; do
+  if command -v dig >/dev/null; then out=$(dig +short CNAME "$h.fonial.de" 2>/dev/null); echo "$h CNAME=${out:--}";
+  elif command -v host >/dev/null; then out=$(host -t CNAME "$h.fonial.de" 2>/dev/null); echo "$h $out";
+  fi
+  sleep 0.5
+done
+/usr/bin/dig
+/usr/bin/host
+/usr/bin/nslookup
+---
+customers CNAME=-
+red CNAME=-
+mm CNAME=-
+git CNAME=git.fonial.dev.
+pages CNAME=-
+kampagne CNAME=-
+sbc CNAME=-
+ldap CNAME=-
+interfaces CNAME=-
+prov CNAME=-
+[0m
+`git.fonial.de` → **CNAME `git.fonial.dev`** — reveals a second company domain `fonial.dev`. Checking whether that target is company-held or a dangling alias:
+[0m$ [0mecho "== git.fonial.dev =="; dig +short A git.fonial.dev 2>/dev/null; dig +short CNAME git.fonial.dev 2>/dev/null
+echo "== fonial.dev ns/soa =="; dig +short NS fonial.dev 2>/dev/null; dig +short SOA fonial.dev 2>/dev/null
+echo "== cert search fonial.dev =="; curl -s --max-time 25 "https://crt.sh/?q=%25.fonial.dev&output=json" -o /tmp/opencode/crtdev.json; python3 -c "
+import json
+try:
+    data=json.load(open('/tmp/opencode/crtdev.json'))
+    names={}
+    for c in data:
+        nb=c.get('not_before','')[:10]
+        for n in c.get('name_value','').split('\n'):
+            n=n.strip().lower()
+            if n: names.setdefault(n,nb)
+    for n in sorted(names): print(names[n], n)
+    print('TOTAL', len(names))
+except Exception as e: print('ERR', e)
+"
+== git.fonial.dev ==
+92.51.132.112
+== fonial.dev ns/soa ==
+maria.ns.cloudflare.com.
+corey.ns.cloudflare.com.
+corey.ns.cloudflare.com. dns.cloudflare.com. 2414247091 10000 2400 604800 1800
+== cert search fonial.dev ==
+ERR [Errno 2] No such file or directory: '/tmp/opencode/crtdev.json'
+[0m
+[0m$ [0mcurl -s --max-time 45 "https://crt.sh/?q=%25.fonial.dev&output=json" -o /tmp/opencode/crtdev.json -w "curl_http:%{http_code}\n"; ls -la /tmp/opencode/crtdev.json 2>/dev/null; python3 -c "
+import json,os
+try:
+    data=json.load(open('/tmp/opencode/crtdev.json'))
+    names={}
+    for c in data:
+        nb=c.get('not_before','')[:10]
+        for n in c.get('name_value','').split('\n'):
+            n=n.strip().lower()
+            if n: names.setdefault(n,nb)
+    for n in sorted(names): print(names[n], n)
+    print('TOTAL', len(names))
+except Exception as e: print('ERR', e)
+"
+curl_http:200
+-rw-r--r-- 1 runner runner 1677146 Sep  8 05:20 /tmp/opencode/crtdev.json
+2026-02-18 *.fonial.dev
+2026-01-09 *.pages.fonial.dev
+2026-01-08 admin-1464.devops.fonial.dev
+2026-01-08 admin-1483.devops.fonial.dev
+2026-01-04 admin-1485.devops.fonial.dev
+2026-01-09 admin-1492.devops.fonial.dev
+2026-01-13 admin-1567.devops.fonial.dev
+2026-01-13 admin-1569.devops.fonial.dev
+2026-02-11 admin-1579.devops.fonial.dev
+2026-01-20 admin-1726.devops.fonial.dev
+2026-01-26 admin-1743.devops.fonial.dev
+2026-02-04 admin-1758.devops.fonial.dev
+2026-02-10 admin-1785.devops.fonial.dev
+2026-02-11 admin-1790.devops.fonial.dev
+2026-02-18 admin-1797.devops.fonial.dev
+2026-02-19 admin-1798.devops.fonial.dev
+2026-02-21 admin-1802.devops.fonial.dev
+2026-02-23 admin-1804.devops.fonial.dev
+2026-01-02 admin-1822.devops.fonial.dev
+2026-01-09 admin-1834.devops.fonial.dev
+2026-01-09 admin-1835.devops.fonial.dev
+2026-01-10 admin-1837.devops.fonial.dev
+2026-01-10 admin-1838.devops.fonial.dev
+2026-01-10 admin-1839.devops.fonial.dev
+2026-01-16 admin-1853.devops.fonial.dev
+2026-02-14 admin-1872.devops.fonial.dev
+2026-02-08 admin-1874.devops.fonial.dev
+2026-02-13 admin-1875.devops.fonial.dev
+2026-02-21 admin-1883.devops.fonial.dev
+2026-02-25 admin-1890.devops.fonial.dev
+2026-01-06 admin-1926.devops.fonial.dev
+2026-01-08 admin-1927.devops.fonial.dev
+2026-01-13 admin-1937.devops.fonial.dev
+2026-02-04 admin-1967.devops.fonial.dev
+2026-02-04 admin-1969.devops.fonial.dev
+2026-02-08 admin-1975.devops.fonial.dev
+2026-02-09 admin-1978.devops.fonial.dev
+2026-02-11 admin-1981.devops.fonial.dev
+2026-02-22 admin-1986.devops.fonial.dev
+2026-02-18 admin-1992.devops.fonial.dev
+2026-02-24 admin-2003.devops.fonial.dev
+2026-02-24 admin-2006.devops.fonial.dev
+2025-12-31 admin-2013.devops.fonial.dev
+2026-01-08 admin-2015.devops.fonial.dev
+2026-01-06 admin-2016.devops.fonial.dev
+2026-01-11 admin-2023.devops.fonial.dev
+2026-01-20 admin-2028.devops.fonial.dev
+2026-01-18 admin-2033.devops.fonial.dev
+2026-01-22 admin-2035.devops.fonial.dev
+2026-01-23 admin-2040.devops.fonial.dev
+2026-02-04 admin-2066.devops.fonial.dev
+2026-02-06 admin-2067.devops.fonial.dev
+2026-02-06 admin-2068.devops.fonial.dev
+2026-02-16 admin-2076.devops.fonial.dev
+2026-02-08 admin-2077.devops.fonial.dev
+2026-02-15 admin-2108.devops.fonial.dev
+2026-02-22 admin-2113.devops.fonial.dev
+2025-12-27 admin-2115.devops.fonial.dev
+2026-02-25 admin-2116.devops.fonial.dev
+2025-12-29 admin-2123.devops.fonial.dev
+2025-12-29 admin-2124.devops.fonial.dev
+2025-12-30 admin-2130.devops.fonial.dev
+2025-12-30 admin-2134.devops.fonial.dev
+2026-02-11 admin-2138.devops.fonial.dev
+2026-01-24 admin-2157.devops.fonial.dev
+2026-02-01 admin-2169.devops.fonial.dev
+2026-02-09 admin-2182.devops.fonial.dev
+2026-02-14 admin-2183.devops.fonial.dev
+2026-02-15 admin-2194.devops.fonial.dev
+2026-02-15 admin-2195.devops.fonial.dev
+2026-01-12 admin-2238.devops.fonial.dev
+2026-01-12 admin-2240.devops.fonial.dev
+2026-01-19 admin-2249.devops.fonial.dev
+2026-01-20 admin-2257.devops.fonial.dev
+2026-01-21 admin-2259.devops.fonial.dev
+2026-01-04 admin-2284.devops.fonial.dev
+2026-02-02 admin-2301.devops.fonial.dev
+2026-02-19 admin-2325.devops.fonial.dev
+2026-02-12 admin-2345.devops.fonial.dev
+2026-02-18 admin-2353.devops.fonial.dev
+2026-02-24 admin-2361.devops.fonial.dev
+2026-02-06 admin-build-fon-626-default-promts.devops.fonial.dev
+2026-01-14 admin-build-fon-627-core-product-data.devops.fonial.dev
+2026-01-02 admin-build-infra-89-system-check-route.devops.fonial.dev
+2026-02-02 admin-build-switched-docker-logging.devops.fonial.dev
+2026-01-26 admin-ci-add-fonts-and-fix-mail-access.devops.fonial.dev
+2026-01-21 admin-ci-fon-149-test-environment-deployment.devops.fonial.dev
+2026-02-14 admin-ci-fon-182-e2e-pipeline-trigger.devops.fonial.dev
+2026-01-29 admin-ci-fon-189-staging-metal-deployment.devops.fonial.dev
+2026-01-20 admin-ci-move-e2e-tests-to-repository.devops.fonial.dev
+2026-01-27 admin-feat-fon-254-api-anbindung-binect.devops.fonial.dev
+2026-02-14 admin-feat-fon-310.devops.fonial.dev
+2026-02-24 admin-feat-fon-331-commit-hash-as-parameter.devops.fonial.dev
+2026-01-18 admin-feat-fon-516.devops.fonial.dev
+2026-01-04 admin-feat-fon-730-dark-mode-fuer-den-admin.devops.fonial.dev
+2026-02-23 admin-feature-fon-145.devops.fonial.dev
+2026-02-08 admin-feature-fon-167-ee-dsl-signup.devops.fonial.dev
+2026-01-17 admin-feature-fon-170-symfony-upgrade-clean.devops.fonial.dev
+2026-01-07 admin-feature-fon-232-snom-short-keys-template.devops.fonial.dev
+2026-01-28 admin-fix-fon-53.devops.fonial.dev
+2026-02-23 admin-fix-fon-629-fix-mitarbeiter-fallback-logo-creation.devops.fonial.dev
+2026-01-21 admin-fix-fon-630-profiler-fehlt-in-nicht-production-umgebungen.devops.fonial.dev
+2026-02-08 admin-fon-106-fix.devops.fonial.dev
+2026-01-31 admin-fon-106.devops.fonial.dev
+2025-12-29 admin-fon-128.devops.fonial.dev
+2025-12-31 admin-fon-141.devops.fonial.dev
+2026-01-29 admin-fon-144.devops.fonial.dev
+2026-02-16 admin-fon-211.devops.fonial.dev
+2025-12-28 admin-fon-212.devops.fonial.dev
+2025-12-29 admin-fon-239-fix-2fr-sepa-redirect-loop.devops.fonial.dev
+2026-01-12 admin-fon-244.devops.fonial.dev
+2025-12-31 admin-fon-247.devops.fonial.dev
+2026-02-07 admin-fon-257.devops.fonial.dev
+2026-01-28 admin-fon-298.devops.fonial.dev
+2026-02-23 admin-fon-410.devops.fonial.dev
+2026-01-26 admin-fon1-text-updates-stage.devops.fonial.dev
+2025-12-31 admin-infra-63.devops.fonial.dev
+2026-02-15 admin-infra-enable-https-for-fcgi.devops.fonial.dev
+2026-02-03 admin-rm-toc2fr.devops.fonial.dev
+2026-02-05 admin-staging.devops.fonial.dev
+2026-02-17 api.waiting-queue.app-tech.fonial.dev
+2026-02-02 api.waiting-queue.fonial.dev
+2026-01-08 app-1464.devops.fonial.dev
+2026-01-08 app-1483.devops.fonial.dev
+2026-01-04 app-1485.devops.fonial.dev
+2026-01-09 app-1492.devops.fonial.dev
+2026-01-13 app-1567.devops.fonial.dev
+2026-01-13 app-1569.devops.fonial.dev
+2026-02-11 app-1579.devops.fonial.dev
+2026-01-20 app-1726.devops.fonial.dev
+2026-01-26 app-1743.devops.fonial.dev
+2026-02-04 app-1758.devops.fonial.dev
+2026-02-10 app-1785.devops.fonial.dev
+2026-02-11 app-1790.devops.fonial.dev
+2026-02-18 app-1797.devops.fonial.dev
+2026-02-19 app-1798.devops.fonial.dev
+2026-02-21 app-1802.devops.fonial.dev
+2026-02-23 app-1804.devops.fonial.dev
+2026-01-02 app-1822.devops.fonial.dev
+2026-01-09 app-1834.devops.fonial.dev
+2026-01-09 app-1835.devops.fonial.dev
+2026-01-10 app-1837.devops.fonial.dev
+2026-01-10 app-1838.devops.fonial.dev
+2026-01-10 app-1839.devops.fonial.dev
+2026-01-16 app-1853.devops.fonial.dev
+2026-02-13 app-1872.devops.fonial.dev
+2026-02-08 app-1874.devops.fonial.dev
+2026-02-13 app-1875.devops.fonial.dev
+2026-02-21 app-1883.devops.fonial.dev
+2026-02-25 app-1890.devops.fonial.dev
+2026-01-06 app-1926.devops.fonial.dev
+2026-01-08 app-1927.devops.fonial.dev
+2026-01-13 app-1937.devops.fonial.dev
+2026-02-04 app-1967.devops.fonial.dev
+2026-02-04 app-1969.devops.fonial.dev
+2026-02-08 app-1975.devops.fonial.dev
+2026-02-09 app-1978.devops.fonial.dev
+2026-02-11 app-1981.devops.fonial.dev
+2026-02-22 app-1986.devops.fonial.dev
+2026-02-18 app-1992.devops.fonial.dev
+2026-02-24 app-2003.devops.fonial.dev
+2026-02-24 app-2006.devops.fonial.dev
+2025-12-31 app-2013.devops.fonial.dev
+2026-01-08 app-2015.devops.fonial.dev
+2026-01-06 app-2016.devops.fonial.dev
+2026-01-11 app-2023.devops.fonial.dev
+2026-01-20 app-2028.devops.fonial.dev
+2026-01-18 app-2033.devops.fonial.dev
+2026-01-22 app-2035.devops.fonial.dev
+2026-01-23 app-2040.devops.fonial.dev
+2026-02-04 app-2066.devops.fonial.dev
+2026-02-06 app-2067.devops.fonial.dev
+2026-02-06 app-2068.devops.fonial.dev
+2026-02-16 app-2076.devops.fonial.dev
+2026-02-08 app-2077.devops.fonial.dev
+2026-02-15 app-2108.devops.fonial.dev
+2026-02-22 app-2113.devops.fonial.dev
+2025-12-27 app-2115.devops.fonial.dev
+2026-02-25 app-2116.devops.fonial.dev
+2025-12-29 app-2123.devops.fonial.dev
+2025-12-29 app-2124.devops.fonial.dev
+2025-12-30 app-2130.devops.fonial.dev
+2025-12-30 app-2134.devops.fonial.dev
+2026-02-11 app-2138.devops.fonial.dev
+2026-01-24 app-2157.devops.fonial.dev
+2026-02-01 app-2169.devops.fonial.dev
+2026-02-09 app-2182.devops.fonial.dev
+2026-02-14 app-2183.devops.fonial.dev
+2026-02-15 app-2194.devops.fonial.dev
+2026-02-15 app-2195.devops.fonial.dev
+2026-01-12 app-2238.devops.fonial.dev
+2026-01-12 app-2240.devops.fonial.dev
+2026-01-19 app-2249.devops.fonial.dev
+2026-01-20 app-2257.devops.fonial.dev
+2026-01-21 app-2259.devops.fonial.dev
+2026-01-04 app-2284.devops.fonial.dev
+2026-02-02 app-2301.devops.fonial.dev
+2026-02-19 app-2325.devops.fonial.dev
+2026-02-12 app-2345.devops.fonial.dev
+2026-02-18 app-2353.devops.fonial.dev
+2026-02-24 app-2361.devops.fonial.dev
+2026-02-06 app-build-fon-626-default-promts.devops.fonial.dev
+2026-01-14 app-build-fon-627-core-product-data.devops.fonial.dev
+2026-01-02 app-build-infra-89-system-check-route.devops.fonial.dev
+2026-02-02 app-build-switched-docker-logging.devops.fonial.dev
+2026-02-11 app-chore-slack-exclude-stages-instead-of-envs.devops.fonial.dev
+2026-01-26 app-ci-add-fonts-and-fix-mail-access.devops.fonial.dev
+2026-01-29 app-ci-fix-staging-deployment-database-update.devops.fonial.dev
+2026-01-21 app-ci-fon-149-test-environment-deployment.devops.fonial.dev
+2026-02-14 app-ci-fon-182-e2e-pipeline-trigger.devops.fonial.dev
+2026-01-29 app-ci-fon-189-staging-metal-deployment.devops.fonial.dev
+2026-01-20 app-ci-move-e2e-tests-to-repository.devops.fonial.dev
+2026-01-27 app-feat-fon-254-api-anbindung-binect.devops.fonial.dev
+2026-02-14 app-feat-fon-310.devops.fonial.dev
+2026-02-24 app-feat-fon-331-commit-hash-as-parameter.devops.fonial.dev
+2026-01-18 app-feat-fon-516.devops.fonial.dev
+2026-01-04 app-feat-fon-730-dark-mode-fuer-den-admin.devops.fonial.dev
+2026-02-23 app-feature-fon-145.devops.fonial.dev
+2026-02-08 app-feature-fon-167-ee-dsl-signup.devops.fonial.dev
+2026-01-17 app-feature-fon-170-symfony-upgrade-clean.devops.fonial.dev
+2026-01-07 app-feature-fon-232-snom-short-keys-template.devops.fonial.dev
+2026-01-28 app-fix-fon-53.devops.fonial.dev
+2026-02-23 app-fix-fon-629-fix-mitarbeiter-fallback-logo-creation.devops.fonial.dev
+2026-01-21 app-fix-fon-630-profiler-fehlt-in-nicht-production-umgebungen.devops.fonial.dev
+2026-02-08 app-fon-106-fix.devops.fonial.dev
+2026-01-31 app-fon-106.devops.fonial.dev
+2025-12-29 app-fon-128.devops.fonial.dev
+2025-12-31 app-fon-141.devops.fonial.dev
+2026-01-29 app-fon-144.devops.fonial.dev
+2026-02-16 app-fon-211.devops.fonial.dev
+2025-12-28 app-fon-212.devops.fonial.dev
+2025-12-29 app-fon-239-fix-2fr-sepa-redirect-loop.devops.fonial.dev
+2026-01-12 app-fon-244.devops.fonial.dev
+2025-12-31 app-fon-247.devops.fonial.dev
+2026-02-07 app-fon-257.devops.fonial.dev
+2026-01-28 app-fon-298.devops.fonial.dev
+2026-02-23 app-fon-410.devops.fonial.dev
+2026-01-26 app-fon1-text-updates-stage.devops.fonial.dev
+2026-01-13 app-hotfix-245743-2fa-phone-validation-sipgate.devops.fonial.dev
+2025-12-31 app-infra-63.devops.fonial.dev
+2026-02-15 app-infra-enable-https-for-fcgi.devops.fonial.dev
+2026-01-04 app-refactor-fon-658-update-der-symfony-version-von-2-8-auf-3-0.devops.fonial.dev
+2026-02-03 app-rm-toc2fr.devops.fonial.dev
+2026-02-05 app-staging.devops.fonial.dev
+2026-02-15 argocd.app-tech.fonial.dev
+2026-02-02 argocd.waiting-queue.fonial.dev
+2025-08-18 elastic.app-tech.fonial.dev
+2025-08-26 fleet.app-tech.fonial.dev
+2026-02-18 fonial.dev
+2026-02-03 graylog.app-tech.fonial.dev
+2024-05-20 graylog.fonial.dev
+2025-10-07 hr.app-tech.fonial.dev
+2026-02-04 hr.fonial.dev
+2025-08-18 kibana.app-tech.fonial.dev
+2025-02-20 ldap.local.fonial.dev
+2026-01-08 mail-1464.devops.fonial.dev
+2026-01-08 mail-1483.devops.fonial.dev
+2026-01-04 mail-1485.devops.fonial.dev
+2026-01-09 mail-1492.devops.fonial.dev
+2026-01-13 mail-1567.devops.fonial.dev
+2026-01-13 mail-1569.devops.fonial.dev
+2026-02-11 mail-1579.devops.fonial.dev
+2026-01-20 mail-1726.devops.fonial.dev
+2026-01-26 mail-1743.devops.fonial.dev
+2026-02-04 mail-1758.devops.fonial.dev
+2026-02-10 mail-1785.devops.fonial.dev
+2026-02-11 mail-1790.devops.fonial.dev
+2026-02-18 mail-1797.devops.fonial.dev
+2026-02-19 mail-1798.devops.fonial.dev
+2026-02-21 mail-1802.devops.fonial.dev
+2026-02-23 mail-1804.devops.fonial.dev
+2026-01-02 mail-1822.devops.fonial.dev
+2026-01-09 mail-1834.devops.fonial.dev
+2026-01-09 mail-1835.devops.fonial.dev
+2026-01-10 mail-1837.devops.fonial.dev
+2026-01-10 mail-1838.devops.fonial.dev
+2026-01-10 mail-1839.devops.fonial.dev
+2026-01-16 mail-1853.devops.fonial.dev
+2026-02-13 mail-1872.devops.fonial.dev
+2026-02-08 mail-1874.devops.fonial.dev
+2026-02-14 mail-1875.devops.fonial.dev
+2026-02-21 mail-1883.devops.fonial.dev
+2025-12-27 mail-1890.devops.fonial.dev
+2026-01-06 mail-1926.devops.fonial.dev
+2026-01-08 mail-1927.devops.fonial.dev
+2026-01-13 mail-1937.devops.fonial.dev
+2026-02-04 mail-1967.devops.fonial.dev
+2026-02-04 mail-1969.devops.fonial.dev
+2026-02-08 mail-1975.devops.fonial.dev
+2026-02-09 mail-1978.devops.fonial.dev
+2026-02-11 mail-1981.devops.fonial.dev
+2026-02-22 mail-1986.devops.fonial.dev
+2026-02-18 mail-1992.devops.fonial.dev
+2026-02-24 mail-2003.devops.fonial.dev
+2026-02-24 mail-2006.devops.fonial.dev
+2025-12-31 mail-2013.devops.fonial.dev
+2026-01-08 mail-2015.devops.fonial.dev
+2026-01-06 mail-2016.devops.fonial.dev
+2026-01-11 mail-2023.devops.fonial.dev
+2026-01-20 mail-2028.devops.fonial.dev
+2026-01-18 mail-2033.devops.fonial.dev
+2026-01-22 mail-2035.devops.fonial.dev
+2026-01-23 mail-2040.devops.fonial.dev
+2026-02-04 mail-2066.devops.fonial.dev
+2026-02-06 mail-2067.devops.fonial.dev
+2026-02-06 mail-2068.devops.fonial.dev
+2026-02-16 mail-2076.devops.fonial.dev
+2026-02-08 mail-2077.devops.fonial.dev
+2026-02-15 mail-2108.devops.fonial.dev
+2026-02-22 mail-2113.devops.fonial.dev
+2026-02-25 mail-2115.devops.fonial.dev
+2026-02-25 mail-2116.devops.fonial.dev
+2025-12-29 mail-2123.devops.fonial.dev
+2025-12-29 mail-2124.devops.fonial.dev
+2025-12-30 mail-2130.devops.fonial.dev
+2025-12-30 mail-2134.devops.fonial.dev
+2026-02-11 mail-2138.devops.fonial.dev
+2026-01-24 mail-2157.devops.fonial.dev
+2026-02-01 mail-2169.devops.fonial.dev
+2026-02-09 mail-2182.devops.fonial.dev
+2026-02-14 mail-2183.devops.fonial.dev
+2026-02-15 mail-2194.devops.fonial.dev
+2026-02-15 mail-2195.devops.fonial.dev
+2026-01-12 mail-2238.devops.fonial.dev
+2026-01-12 mail-2240.devops.fonial.dev
+2026-01-19 mail-2249.devops.fonial.dev
+2026-01-20 mail-2257.devops.fonial.dev
+2026-01-21 mail-2259.devops.fonial.dev
+2026-01-04 mail-2284.devops.fonial.dev
+2026-02-02 mail-2301.devops.fonial.dev
+2026-02-19 mail-2325.devops.fonial.dev
+2026-02-12 mail-2345.devops.fonial.dev
+2026-02-18 mail-2353.devops.fonial.dev
+2026-02-24 mail-2361.devops.fonial.dev
+2026-02-06 mail-build-fon-626-default-promts.devops.fonial.dev
+2026-01-14 mail-build-fon-627-core-product-data.devops.fonial.dev
+2026-01-02 mail-build-infra-89-system-check-route.devops.fonial.dev
+2026-02-02 mail-build-switched-docker-logging.devops.fonial.dev
+2026-01-26 mail-ci-add-fonts-and-fix-mail-access.devops.fonial.dev
+2026-01-29 mail-ci-fix-staging-deployment-database-update.devops.fonial.dev
+2026-01-21 mail-ci-fon-149-test-environment-deployment.devops.fonial.dev
+2026-02-14 mail-ci-fon-182-e2e-pipeline-trigger.devops.fonial.dev
+2026-01-29 mail-ci-fon-189-staging-metal-deployment.devops.fonial.dev
+2026-01-20 mail-ci-move-e2e-tests-to-repository.devops.fonial.dev
+2026-01-27 mail-feat-fon-254-api-anbindung-binect.devops.fonial.dev
+2026-02-14 mail-feat-fon-310.devops.fonial.dev
+2026-02-24 mail-feat-fon-331-commit-hash-as-parameter.devops.fonial.dev
+2026-01-18 mail-feat-fon-516.devops.fonial.dev
+2026-01-04 mail-feat-fon-730-dark-mode-fuer-den-admin.devops.fonial.dev
+2026-02-23 mail-feature-fon-145.devops.fonial.dev
+2026-02-08 mail-feature-fon-167-ee-dsl-signup.devops.fonial.dev
+2026-01-17 mail-feature-fon-170-symfony-upgrade-clean.devops.fonial.dev
+2026-01-07 mail-feature-fon-232-snom-short-keys-template.devops.fonial.dev
+2026-01-28 mail-fix-fon-53.devops.fonial.dev
+2026-02-23 mail-fix-fon-629-fix-mitarbeiter-fallback-logo-creation.devops.fonial.dev
+2026-01-21 mail-fix-fon-630-profiler-fehlt-in-nicht-production-umgebungen.devops.fonial.dev
+2026-02-08 mail-fon-106-fix.devops.fonial.dev
+2026-01-31 mail-fon-106.devops.fonial.dev
+2025-12-29 mail-fon-128.devops.fonial.dev
+2025-12-31 mail-fon-141.devops.fonial.dev
+2026-01-29 mail-fon-144.devops.fonial.dev
+2026-02-16 mail-fon-211.devops.fonial.dev
+2025-12-28 mail-fon-212.devops.fonial.dev
+2025-12-29 mail-fon-239-fix-2fr-sepa-redirect-loop.devops.fonial.dev
+2026-01-12 mail-fon-244.devops.fonial.dev
+2025-12-31 mail-fon-247.devops.fonial.dev
+2026-02-07 mail-fon-257.devops.fonial.dev
+2026-01-28 mail-fon-298.devops.fonial.dev
+2026-02-23 mail-fon-410.devops.fonial.dev
+2026-01-27 mail-fon1-text-updates-stage.devops.fonial.dev
+2025-12-31 mail-infra-63.devops.fonial.dev
+2026-02-15 mail-infra-enable-https-for-fcgi.devops.fonial.dev
+2026-02-03 mail-rm-toc2fr.devops.fonial.dev
+2026-01-16 mail-staging.devops.fonial.dev
+2026-02-03 metabase.app-tech.fonial.dev
+2026-01-17 monitoring.app-tech.fonial.dev
+2026-02-17 n8n.app-tech.fonial.dev
+2026-01-28 penpot.app-tech.fonial.dev
+2025-06-02 penpot.devops.fonial.dev
+2026-01-19 rabbitmq.devops.fonial.dev
+2026-01-20 semaphore.app-tech.fonial.dev
+2026-01-12 sentry.fonial.dev
+2026-01-17 shopabgleich.app-tech.fonial.dev
+2026-01-15 waiting-queue.devops.fonial.dev
+TOTAL 384
+[0m
+`fonial.dev` = a second company domain with **384 cert SANs** exposing a full devops tool stack: **argocd, kibana, elastic, fleet, graylog, metabase, monitoring, n8n, penpot, rabbitmq, semaphore, sentry, hr, waiting-queue api**. Testing which of these are publicly reachable (passive DNS):
+[0m$ [0mfor h in argocd.app-tech elastic.app-tech kibana.app-tech fleet.app-tech graylog.app-tech graylog metabase.app-tech monitoring.app-tech n8n.app-tech penpot.app-tech penpot.devops rabbitmq.devops semaphore.app-tech sentry hr hr.app-tech shopabgleich.app-tech api.waiting-queue waiting-queue.devops argocd.waiting-queue ldap.local pages.fonial.dev; do
+  ip=$(python3 -c "import socket
+try: print(socket.gethostbyname('$h.fonial.dev'))
+except Exception: print('NX')" 2>/dev/null)
+  echo "$h.fonial.dev -> $ip"
+done
+argocd.app-tech.fonial.dev -> 192.168.10.100
+elastic.app-tech.fonial.dev -> 192.168.10.100
+kibana.app-tech.fonial.dev -> 192.168.10.100
+fleet.app-tech.fonial.dev -> 192.168.10.100
+graylog.app-tech.fonial.dev -> 192.168.10.100
+graylog.fonial.dev -> 192.168.10.17
+metabase.app-tech.fonial.dev -> 192.168.10.100
+monitoring.app-tech.fonial.dev -> 192.168.10.100
+n8n.app-tech.fonial.dev -> 192.168.10.100
+penpot.app-tech.fonial.dev -> 192.168.10.100
+penpot.devops.fonial.dev -> 62.146.7.22
+rabbitmq.devops.fonial.dev -> 62.146.7.22
+semaphore.app-tech.fonial.dev -> 192.168.10.100
+sentry.fonial.dev -> 62.146.28.126
+hr.fonial.dev -> NX
+hr.app-tech.fonial.dev -> 192.168.10.100
+shopabgleich.app-tech.fonial.dev -> 192.168.10.100
+api.waiting-queue.fonial.dev -> 192.168.10.51
+waiting-queue.devops.fonial.dev -> 62.146.7.22
+argocd.waiting-queue.fonial.dev -> 192.168.10.51
+ldap.local.fonial.dev -> 192.168.10.31
+pages.fonial.dev.fonial.dev -> NX
+[0m
+`fonial.dev` app-tech stack is all RFC1918 (192.168.10.x, split-horizon) — but **4 hosts hit public IPs**: `rabbitmq.devops`/`penpot.devops`/`waiting-queue.devops` → 62.146.7.22, and `sentry.fonial.dev` → 62.146.28.126. Probing those (read-only HTTP):
+[0m$ [0mecho "=== rabbitmq.devops ==="; curl -s --max-time 12 -k -D - "https://rabbitmq.devops.fonial.dev/" -o /tmp/opencode/rmq.html | grep -iE "^(HTTP|server:|location:|content-type:|x-powered)" | head -6; grep -ioE "rabbitmq|management|login" /tmp/opencode/rmq.html | sort | uniq -c | head -4; sleep 1.2
+echo "=== sentry ==="; curl -s --max-time 12 -k -D - "https://sentry.fonial.dev/" -o /tmp/opencode/sentry.html | grep -iE "^(HTTP|server:|location:|content-type:|set-cookie:|x-powered)" | head -6; grep -ioE "sentry|/auth/login|organization" /tmp/opencode/sentry.html | sort | uniq -c | head -4; sleep 1.2
+echo "=== penpot.devops ==="; curl -s --max-time 12 -k -D - "https://penpot.devops.fonial.dev/" -o /tmp/opencode/penpot.html | grep -iE "^(HTTP|server:|location:|content-type:)" | head -6; grep -ioE "penpot" /tmp/opencode/penpot.html | head -2; sleep 1.2
+echo "=== waiting-queue.devops ==="; curl -s --max-time 12 -k -D - "https://waiting-queue.devops.fonial.dev/" -o /tmp/opencode/wq.html | grep -iE "^(HTTP|server:|location:|content-type:|set-cookie:)" | head -6; grep -ioE "waiting|queue|login|[a-z]+" /tmp/opencode/wq.html | sort|uniq -c | sort -rn | head -6
+=== rabbitmq.devops ===
+HTTP/2 403 
+content-type: text/plain; charset=utf-8
+=== sentry ===
+HTTP/2 302 
+content-type: text/html; charset=utf-8
+location: /auth/login/
+server: nginx
+set-cookie: sentrysid=eyJfbmV4dCI6Ii8ifQ:1x3oGQ:cxOykU2SKzzkikgPTJjJLc4VoJbg_LD5mDr1NQmf-oU; expires=Tue, 22 Sep 2026 05:20:58 GMT; HttpOnly; Max-Age=1209600; Path=/
+=== penpot.devops ===
+HTTP/2 404 
+content-type: text/plain; charset=utf-8
+=== waiting-queue.devops ===
+HTTP/2 404 
+content-type: text/plain; charset=utf-8
+      1 page
+      1 not
+      1 found
+[0m
+Sentry is live (`sentrysid` cookie + `/auth/login/`). Checking registration posture and health endpoint, then closing this discovery pass:
+[0m$ [0mcurl -s --max-time 12 -k "https://sentry.fonial.dev/auth/login/" -o /tmp/opencode/sentry_login.html -w "HTTP:%{http_code}\n"; grep -ioE "register|ssso?|single.?sign.?on|organization|sentry[^<>\"]{0,30}|version [0-9.]+|release" /tmp/opencode/sentry_login.html | sort | uniq -c | sort -rn | head -10; echo "---health---"; curl -s --max-time 12 -k "https://sentry.fonial.dev/_health/" -w "\nHTTP:%{http_code}\n" | head -c 200; echo; echo "---api0---"; curl -s --max-time 12 -k -D - "https://sentry.fonial.dev/api/0/" -o /dev/null | grep -iE "^(HTTP|location:|content-type:|allow:)"
+HTTP:302
+---health---
+ok
+HTTP:200
+
+---api0---
+HTTP/2 200 
+allow: GET, HEAD, OPTIONS
+content-type: application/json
+[0m
+[0m$ [0mcurl -s --max-time 12 -k "https://sentry.fonial.dev/api/0/" | head -c 400; echo; echo "---login redirect---"; curl -s --max-time 12 -k -o /dev/null -D - "https://sentry.fonial.dev/auth/login/" | grep -iE "^(HTTP|location:)"; echo "---auth login real---"; curl -s --max-time 12 -k -L "https://sentry.fonial.dev/auth/login/" -o /tmp/opencode/sentry_login2.html -w "FINAL:%{url_effective} CODE:%{http_code}\n"; grep -ioE "register|Create a new account|sign up|sso|SAML|sentry-key|email" /tmp/opencode/sentry_login2.html | sort | uniq -c | sort -rn | head -8
+{"version":"0","auth":null,"user":null}
+---login redirect---
+HTTP/2 302 
+location: /auth/login/fonial-de/
+---auth login real---
+FINAL:https://sentry.fonial.dev/auth/login/fonial-de/ CODE:200
+      3 sso
+      1 Email
+[0m
+## STEP 1 — DELTA
+- [NEW] CT-log sweep 09-08: second company domain **`fonial.dev`** (384 SANs) + ~15 unlisted `fonial.de` hosts; inventory was materially incomplete pre-09-08.
+- [NEW] `fonial.dev` maps full devops stack — argoCD, elastic, kibana, fleet, graylog, metabase, monitoring, n8n, rabbitmq, semaphore, sentry, penpot, hr, shopabgleich, waiting-queue, ldap.local — nearly all split-horizon **RFC1918 192.168.10.x**; 4 public-IP exceptions: `rabbitmq/penpot/waiting-queue.devops` → 62.146.7.22, `sentry` → 62.146.28.126.
+- [NEW] `red.fonial.de` = **Redmine** (Agile+Questions plugins, nginx/1.10.2+Passenger 5.1.1): /projects.json, /issues.json, /search, /admin all 401/302 → auth-gated.
+- [NEW] `mm.fonial.de` = **Mattermost** old build (v4 API: /api/v4/system/ping OK; version/config endpoints 404; /teams 401) → auth-gated.
+- [NEW] `sentry.fonial.dev` live: `/api/0/` → `{"version":"0","auth":null}`, `/_health/` ok, /auth/login → 302 → `/auth/login/fonial-de/` (**org slug leaked**), SSO+Email, no register link → auth-gated login panel.
+- [NEW] probe map: kampagne 200 (nginx-rc), www-neu 404 (shop IP), admin2.shop 403 (shop IP), customers/git/pages/sbc/ldap no HTTP, `int.fonial.de` → 192.168.10.71 (RFC1918 in public DNS), `git.fonial.de` CNAME→`git.fonial.dev`→92.51.132.112 (self-owned).
+- [CHANGED] Prior "all hosts on 62.146.7.2x / subdomain-takeover closed" was WRONG-scoped: misses 92.51.132.112, 92.197.176.46, 92.51.165.250, 176.9.53.190, 62.146.28.124/126. Takeover still closed (all self-owned), inventory was not.
+
+## STEP 2 — PRIORITIZE
+- [PRIO] customers.fonial.de, 7.85, (7,9,8,7,6,10)
+- [PRIO] sbc.fonial.de, 7.75, (6,9,7,7,9,10)
+- [PRIO] sentry.fonial.dev, 7.55, (6,9,8,6,7,10)
+- [PRIO] devops group 62.146.7.22, 7.45, (7,8,7,7,6,10)
+- [PRIO] mm.fonial.de, 7.35, (7,8,8,6,5,10)
+- [PRIO] red.fonial.de, 6.95, (6,8,7,6,5,10)
+
+## STEP 3 — HYPOTHESES
+[HYP] customers.fonial.de = unenumerated second customer portal on dedicated non-CDN IP
+class: AUTH
+asset: customers.fonial.de (92.197.176.46)
+confidence: 40
+reasoning: New host, no Cloudflare/62.146.7.2x; name implies customer-facing app; silent on :80/:443 from this egress (host-filter/geo/down) — surface completely unprobed.
+evidence_needed: any live service (TLS SNI banner, HTTP, alt port) → app identity/login/API to compare with kundenkonto patterns.
+verify_steps: passive: TLS-SNI + port banner via openssl s_client (exceeds pure-HTTP bounds → sanctioned); if live, GET / and kundenkonto-style paths.
+impact: Potential parallel customer portal → AUTH/IDOR surface. MED-HIGH if live.
+testability: HUMAN_ONLY (no HTTP responder observed)
+
+[HYP] sbc/ldap/devops public-IP group = internet-reachable telephony/identity/devops infra
+class: MISCONFIG
+asset: sbc.fonial.de (62.146.28.124), ldap.fonial.de (62.146.7.24), 62.146.7.22, 62.146.28.126
+confidence: 45
+reasoning: CT+certs put an SBC (SIP), an LDAP dir, RabbitMQ/Sentry app servers on public IPs; web layer on 62.146.7.22 returns 403/404 proxy-deny (rabbitmq/penpot/waiting-queue) while sentry serves a live org login — non-HTTP ports (5060/5061 SIP, 389/636 LDAP, 15672 RMQ) never probed, host-level reachability unknown.
+evidence_needed: single service banner per host (SIP OPTIONS / LDAP anonymous bind / RMQ mgmt port) — banner only, zero auth attempts.
+verify_steps: sanctioned single-packet service classification on sbc:5060/5061, ldap:389/636, 62.146.7.22:15672, 62.146.28.126:9000.
+impact: Toll fraud / internal identity enumeration / error-tracking PII if exposed. HIGH if reachable+misconf by banner.
+testability: HUMAN_ONLY (non-HTTP; exceeds passive bounds)
+
+[HYP] red/mm/sentry old-build fingerprint → patchable auth-bypass
+class: AUTH
+asset: red.fonial.de (Redmine), mm.fonial.de (Mattermost), sentry.fonial.dev
+confidence: 45
+reasoning: red=Redmine +Agile/Questions on Passenger 5.1.1/nginx 1.10.2 (pre-2020 era), mm=old Mattermost (v4-only API), sentry=self-hosted (`version:"0"` reply) with org slug `fonial-de`. All three are internal-collaboration tools exposed on public DNS+certs; historical auth-by-CVE sets exist for each in these build eras. Version not extractable passively (login-only surfaces).
+evidence_needed: exact build → version-exact CVE matching deployed code path (program-specific exploit, not just version listing).
+verify_steps: passive: pull webroot JS bundles on red/mm for version strings; monitor deploy cabtimestamps; no live exploit without exact-build match.
+impact: Internal chat/issues/error-data breach → MED-HIGH only if version-exact bypass confirmed; login-panel+known-vuln classes otherwise.
+testability: PASSIVE (fingerprint) / HUMAN_ONLY (exploit)
+
+## STEP 4 — SELF-CRITIQUE
+- [PARKED] red/mm/sentry old-build bypass (45): all three auth-gated; version unextractable; "public login panels" + "known-vulnerable library w/o program-specific exploit" both OUT-OF-SCOPE → not reportable standalone.
+- [PARKED] devops 62.146.7.22 web exposure: 403/404 proxy-deny at app layer → no web finding; non-HTTP ports need sanction → folded into misconfig hypothesis at host level.
+- [PARKED] int.rfc1918/infonet DNS: RFC1918-in-public-DNS = recon/misconfig only, not a standalone finding.
+- [FINAL] kundenkonto SID/PHPSESSID cross-bind (75, HUMAN_ONLY, 2 sanctioned tenants) — unchanged, sole high-impact lead.
+- [FINAL] shop generateCustomerTokenAsAdmin (40, 1 sanctioned POST) — unchanged.
+- [FINAL] customers.fonial.de unknown-liveness (40) — highest-unknown new target; resolutions binary (live app vs dead host).
+- [FINAL] public-IP infra service classification (45) — new, cheap to resolve with single sanctioned packets.
+
+## STEP 5 — NEXT ACTION
+[NEXT] HUMAN: sanctioned single-packet service classification of the 4 new public infra targets — customers.fonial.de (92.197.176.46, TLS-SNI+banner), sbc.fonial.de (62.146.28.124, SIP OPTIONS 5060/5061), ldap.fonial.de (62.146.7.24, LDAP bind banner 389/636), 62.146.7.22:15672 + 62.146.28.126 (RMQ/Sentry ports); banner-only, zero auth attempts; passive-HTTP pool is exhausted (every reachable new host is auth-gated).
+
+## STEP 6 — LEARNING
+- [LEARN] ACCEPTED CT-delta @ fonial: 09-08 CT sweep surfaces ~90 unlisted hostnames across 2 domains (fonial.de + fonial.dev); prior inventory + takeover-closure covered only 5 hostnames → inventory class now re-scoped; second domain `fonial.dev` in candidate company-owned scope.
+- [LEARN] ACCEPTED devops-infra-publicity @ fonial.dev: 384 SANs enumerate argoCD/kibana/elastic/graylog/metabase/n8n/rabbitmq/semaphore/sentry/penpot/hr/shopabgleich/waiting-queue/ldap.local; ~all split-horizon 192.168.10.x (not internet-licensed); 4 public-IP exceptions (62.146.7.22 ×3, 62.146.28.126).
+- [LEARN] ACCEPTED sentry-live @ sentry.fonial.dev: /api/0/ `{"version":"0","auth":null}`, /_health/ ok, /auth/login→/auth/login/fonial-de/ (org slug `fonial-de`), SSO+Email, no register → auth-gated; standalone = public-login-panel class (out of scope).
+- [LEARN] ACCEPTED red/mm-auth-gated @ red.fonial.de/mm.fonial.de: Redmine (Passenger 5.1.1, nginx/1.10.2, Agile+Questions) + Mattermost old v4 build; all data endpoints 401/302; no anonymous data.
+- [LEARN] REJECTED devops-web-exposure @ rabbitmq/penpot/waiting-queue.devops.fonial.de: public IP 62.146.7.22 but 403/404 proxy-deny at web layer → no app-level exposure observed.
+- [LEARN] REJECTED rfc1918-in-dns @ int.fonial.de + *.fonial.dev: split-horizon 192.168.10.x in public DNS = recon/misconfig only, not standalone-reportable.
+
+## STEP 7 — RISK
+[RISK] fonial: 58 — CT-delta expands inventory to ~90 hostnames across 2 domains and reveals a publicly reachable self-hosted Sentry (org slug leaked) plus 4 public-IP infra hosts, but every reachable new web surface is auth-gated/proxy-denied (login-panel + known-vuln-without-exploit classes only). No new confirmed finding; the two decisive leads stay sanctioned-gated (cross-bind 75 = 2 tenants; admin-token 40 = 1 POST). Flat-close probability now ~50%: genuine new attack surface identified, but resolution of all three surviving classes (cross-bind, customers liveness, infra banners) requires sanctioned interactivity this mode cannot take.
