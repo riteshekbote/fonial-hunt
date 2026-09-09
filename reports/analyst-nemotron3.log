@@ -10350,3 +10350,8 @@ testability: HUMAN_ONLY
 
 [RISK] fonial: 78 — Customer portals (kundenkonto + dslkonto) have high business value (PII, CDR, SIP creds, billing, call control). Confirmed dual-backend architecture creating session confusion surface on kundenkonto API. prov.fonial.de provides unfronted duplicate for safe cross-bind testing. Symfony dev-mode exposed on dslkonto with profiler token leakage (critical misconfig but scope-excluded). CORS wildcard on auth domain confirmed. Main API not publicly documented but live with 5 endpoints including WRITE. Risk elevated due to enterprise telephony data sensitivity and architectural anomalies across two portals.
 **Analysis complete.** All 7 steps executed. The primary finding remains the dual-backend session confusion enabling cross-tenant BOLA, now with an unfronted test target (prov.fonial.de) that lowers the gate for verification. The critical WRITE endpoint `/call/initiate` makes this a toll-fraud / SIP-abuse vector if cross-bind succeeds.
+===== ANALYST nemotron3 2026-09-09 15:23:51 UTC =====
+[0m
+> build · nemotron-3-ultra-free
+[0m
+[91m[1mError: [0m{"message":"Streaming response failed: [502] Upstream error from Nvidia: Service temporarily overloaded","type":"server_error"}

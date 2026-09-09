@@ -254,3 +254,6 @@ https://kundenkonto.fonial.de/api/2.0/devices/get -> 200 len=?
 https://kundenkonto.fonial.de/api/2.0/call/initiate -> 200 len=?
 https://shop.fonial.de/graphql -> HTTP 500
 https://mm.fonial.de/api/v4/users/create` -> HTTP 404
+
+## 2026-09-09 15:23:53 UTC
+https://mm.fonial.de/api/v4/users/create` -> HTTP 404
