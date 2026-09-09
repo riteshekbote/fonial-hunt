@@ -314,3 +314,5 @@ www.fonial.de
 - CHANGED shop.fonial.de: GenerateCustomerTokenAsAdminInput confidence dropped 55→40; Adobe docs confirm requires admin Bearer + customer opt-in
 - CHANGED dslkonto.fonial.de/app_dev.php: Dev-mode exposure reclassified OUT-OF-SCOPE per scope.yml (descriptive errors/stack traces only, no env/session dump); profiler token-gated 404 on all tokens
 - CHANGED Priority scores recalculated: kundenkonto.fonial.de/api/2.0 (9.05), kundenkonto.fonial.de (7.70), shop.fonial.de/graphql (6.80), dslkonto.fonial.de (3.20), www.fonial.de (2.10)
+
+## 2026-09-09 06:18:35 UTC

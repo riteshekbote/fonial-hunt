@@ -1,17 +1,14 @@
-## 2026-09-09 01:18:20 UTC [target] (model bigpickle)
-[NEW] prov.fonial.de/api/2.0 — byte-behavior duplicate of kundenkonto (X-Fonial-Version v2026.09.03-1, cleartext UUID SID, PHPSESSID decoration, ACAO *) served directly on nginx/1.10.3 without Cloudflare → cross-bind testable on lower-impact unfronted deployment.
-[NEW] mm.fonial.de — internal Mattermost 3.7.x; `/signup/email` 200, `/api/v4/users/ping` 401, v4 config absent → default vendor self-signup untested.
-[CHANGED] kundenkonto + shop surfaces unchanged (probe 2026-09-08 23:13:15: call/initiate 200, graphql 500); no drift in X-Fonial-Version v2026.09.03-1.
-[PRIO] prov.fonial.de/api/2.0, 8.7, a=8 b=10 t=7 g=9 c=8 f=10 (unfronted → highest gate_ease of the three portal API deployments)
-[PRIO] kundenkonto.fonial.de/api/2.0, 7.8, a=8 b=10 t=7 g=6 c=8 f=5
-[PRIO] mm.fonial.de, 5.7, a=5 b=6 t=6 g=5 c=4 f=9
-[PRIO] shop.fonial.de/graphql, 6.7, a=7 b=8 t=8 g=5 c=6 f=4
+## 2026-09-09 06:03:15 UTC [target] (model bigpickle)
+[PRIO] prov.fonial.de/api/2.0,8.7
+[PRIO] mm.fonial.de,5.7
+[PRIO] kundenkonto.fonial.de/api/2.0,7.8
+[PRIO] shop.fonial.de/graphql,6.7
 [HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID on unfronted prov.fonial.de
 class: AUTH
 asset: prov.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
 confidence: 75
-reasoning: prov is a byte-behavior duplicate of kundenkonto (X-Fonial-Version v2026.09.03-1, SID issuance, session-invalid JSON, PHPSESSID decoration, ACAO *) on direct nginx/1.10.3, no Cloudflare. Data endpoints authorize by body SID only; session endpoint issues cleartext UUID sid; every unauth probe returns identical session-invalid JSON. Cross-binding sid↔account is the sole open question and now testable on a lower-impact deployment.
-evidence_needed: program-approved tenants T_A/T_B on prov; `POST /evn/get {"sid":SID_B}` + `Cookie: PHPSESSID_A` → data (BOLA) vs `session invalid` (credential-bound).
+reasoning: prov is byte-behavior duplicate of kundenkonto (same version, session semantics, PHPSESSID decoration, ACAO *) on direct nginx/1.10.3 without Cloudflare. Data endpoints authorize by body SID only; session endpoint issues cleartext UUID sid; every unauth probe returns identical session-invalid JSON. Cross-binding sid↔account is the sole open question and testable on lower-impact unfronted deployment.
+evidence_needed: program-approved tenants T_A/T_B on prov; POST /evn/get {"sid":SID_B} + Cookie: PHPSESSID_A → data (BOLA) vs session invalid (credential-bound).
 verify_steps: (HUMAN, sanctioned) 1) GET /api/2.0/session→SID_A; 2) POST /session/authenticate{T_A}; 3) POST /devices/get{sid:SID_A} capture PHPSESSID_A; 4) GET /api/2.0/session (fresh jar)→SID_B; 5) POST /evn/get{sid:SID_B}+Cookie:PHPSESSID_A. 1 request each, ≤1rps, zero writes.
 impact: cross-tenant CDR, device/SIP creds, unauthorized outbound call control on portal API. CRITICAL.
 testability: HUMAN_ONLY
@@ -19,7 +16,7 @@ testability: HUMAN_ONLY
 class: BUSLOGIC
 asset: mm.fonial.de
 confidence: 55
-reasoning: `/signup/email` returns 200 with no disabled-signup redirect; `/api/v4/users/ping` 401 (normal logged-out); X-Version-Id 3.7.3...; v4 config route absent (legacy build). Vendor default: email+password self-signup active when EnableSignUpWithEmail=true; real signup path never POSTed. Signup is mutating → program-approved only.
+reasoning: /signup/email returns 200 with no disabled-signup redirect; /api/v4/users/ping 401 (normal logged-out); X-Version-Id 3.7.3...; v4 config route absent (legacy build). Vendor default: email+password self-signup active when EnableSignUpWithEmail=true; real signup path never POSTed. Signup is mutating → program-approved only.
 evidence_needed: POST /api/v4/users/create with fabricated email issues account token vs adminApproval/disabled error.
 verify_steps: (HUMAN, sanctioned) single POST /api/v4/users/create {email:ot-<ts>@example.invalid, username:ot-<ts>, password:<random>}; on success immediately delete/disable account; single GET /signup/email to confirm form fields first. ≤1rps.
 impact: outsider foothold in company chat (internal directory, channels, webhooks) plus legacy-3.7 CVE surface. HIGH if open.
@@ -28,17 +25,17 @@ testability: HUMAN_ONLY
 class: AUTH
 asset: shop.fonial.de/graphql
 confidence: 40
-reasoning: REST `/V1/integration/admin/token` → 404 (route removed) while GraphQL `generateCustomerTokenAsAdmin` is unauth-introspectable (input = single `customer_email`); Adobe docs require admin Bearer + `remote_shopping_assistance` opt-in. Residual = inverted/missing user-type check in this 2.4 CE build. No new evidence since downgrade.
-evidence_needed: POST /graphql `mutation{generateCustomerTokenAsAdmin(input:{customer_email:"authz-probe-<ts>@example.invalid"}){customer_token}}` without Authorization → authz-error vs token issuance.
+reasoning: REST /V1/integration/admin/token → 404 (route removed) while GraphQL generateCustomerTokenAsAdmin is unauth-introspectable (input = single customer_email); Adobe docs require admin Bearer + customer opt-in. Residual = inverted/missing user-type check in this 2.4 CE build. No new evidence since downgrade.
+evidence_needed: POST /graphql mutation{generateCustomerTokenAsAdmin(input:{customer_email:"authz-probe-<ts>@example.invalid"}){customer_token}} without Authorization → authz-error vs token issuance.
 verify_steps: (HUMAN, sanctioned) single POST, fabricated email, zero data exposure.
 impact: ATO of opted-in shop accounts (orders, addresses, pay vault). CRITICAL if bypass.
 testability: HUMAN_ONLY
-[PARKED] shop admin-token (40): no new evidence since 55→40; relegate to chain-only, not primary.
-[PARKED] prov v1/v2 version-diff probe: alternate API versions already 404 on kundenkonto; no evidence prov differs — needs a read-only drift check before crediting any divergence.
-[PARKED] sbc/LDAP/RMQ/Sentry public-IP banner group (45): single-packet classification is HUMAN-only; no HTTP reachability evidence; unchanged.
+[PARKED] shop admin-token standalone (40): below report threshold as independent finding; retain only as chain component if BOLA/sidleak found.
+[PARKED] prov v1/v2 version-diff: alternate API versions already 404 on kundenkonto; no evidence prov differs — speculative.
+[PARKED] sbc/LDAP/RMQ/Sentry public-IP banner group (45): single-packet classification HUMAN-only; no HTTP reachability evidence.
 [FINAL] prov.fonial.de cross-tenant BOLA (75) — top survivor, gated on TWO approved tenants.
 [FINAL] mm.fonial.de open self-signup (55) — gated on ONE approved mutating POST, no tenant prerequisite.
-[NEXT] HUMAN: request program approval for ONE sanctioned mutating POST, then run `POST https://mm.fonial.de/api/v4/users/create` {email:ot-<ts>@example.invalid, username:ot-<ts>, password:<random>} after `GET /signup/email` to confirm form fields; capture token-issuance vs adminApproval/disabled error, delete account immediately if created. This is the only active hypothesis whose blocker is a single approval rather than two real test tenants; the 75 BOLA cross-bind remains queued behind T_A/T_B provisioning.
+[NEXT] HUMAN: request program approval for ONE sanctioned mutating POST, then run `POST https://mm.fonial.de/api/v4/users/create` {email:ot-<ts>@example.invalid, username:ot-<ts>, password:<random>} after confirming form fields via GET /signup/email. Capture token-issuance vs adminApproval/disabled error; delete account immediately if created. This is the only hypothesis whose blocker is a single approval rather than two real test tenants; the 75 BOLA cross-bind remains queued behind T_A/T_B provisioning.
 [LEARN] ACCEPTED prov.fonial.de duplicate @ prov.fonial.de/api/2.0: unfronted byte-behavior clone of kundenkonto API (same version, session semantics, PHPSESSID decoration, ACAO *) → lowest-gate deployment to test dual-backend cross-bind.
-[LEARN] REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; Drop as primary, retain only as chain component.
-[RISK] fonial: 58 — passive pool still exhausted; top survivor (75 BOLA) gated on two program-approved tenants, Mattermost (55) on one approved POST; no writes, no customer data touched since 23:13 probe reconfirms zero drift. Reportable-outcome probability remains ~50% flat-close if outside approvals stall.
+[LEARN] REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component.
+[RISK] fonial: 58 — passive pool exhausted; top survivor (75 BOLA) gated on two program-approved tenants, Mattermost (55) on one approved POST; no writes, no customer data touched since 23:13 probe reconfirms zero drift. Reportable-outcome probability ~50% flat-close if outside approvals stall.
