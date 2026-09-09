@@ -320,3 +320,8 @@ www.fonial.de
 ## 2026-09-09 11:47:32 UTC
 
 ## 2026-09-09 15:23:51 UTC
+
+## 2026-09-09 18:41:59 UTC
+- NEW prov.fonial.de/api/2.0 accepted as unfronted byte-behavior duplicate of kundenkonto (nginx/1.10.3 direct, no Cloudflare) — lowest-gate deployment to test cross-bind hypothesis
+- NEW mm.fonial.de Mattermost 3.7.x with /signup/email 200, /api/v4/users/ping 401 — open self-signup untested (mutating → program-approved only)
+- CHANGED shop admin-token standalone confidence dropped to 40 (at critique floor) — relegate to chain-only, not primary

@@ -257,3 +257,17 @@ https://mm.fonial.de/api/v4/users/create` -> HTTP 404
 
 ## 2026-09-09 15:23:53 UTC
 https://mm.fonial.de/api/v4/users/create` -> HTTP 404
+
+## 2026-09-09 18:42:20 UTC
+https://prov.fonial.de/api/2.0/session -> 200 len=?
+https://prov.fonial.de/api/2.0/session/authenticate -> 200 len=?
+https://prov.fonial.de/api/2.0/devices/get -> 200 len=?
+https://prov.fonial.de/api/2.0/call/initiate -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/session -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/session/authenticate -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/devices/get -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/call/initiate -> 200 len=?
+https://mm.fonial.de/signup/email -> HTTP 404
+https://mm.fonial.de/api/v4/users/create -> HTTP 404
+https://mm.fonial.de/api/v4/users/login -> HTTP 404
+https://mm.fonial.de/api/v4/users/me -> HTTP 404

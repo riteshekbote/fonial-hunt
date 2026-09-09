@@ -1,4 +1,7 @@
-## 2026-09-09 15:23:19 UTC [target] (model bigpickle)
+## 2026-09-09 18:41:05 UTC [target] (model bigpickle)
+[NEW] prov.fonial.de/api/2.0 accepted as unfronted byte-behavior duplicate of kundenkonto (nginx/1.10.3 direct, no Cloudflare) — lowest-gate deployment to test cross-bind hypothesis
+[NEW] mm.fonial.de Mattermost 3.7.x with /signup/email 200, /api/v4/users/ping 401 — open self-signup untested (mutating → program-approved only)
+[CHANGED] shop admin-token standalone confidence dropped to 40 (at critique floor) — relegate to chain-only, not primary
 [PRIO] prov.fonial.de/api/2.0, 8.7, a=9,b=10,t=8,g=9,c=9,f=10
 [PRIO] mm.fonial.de, 5.7, a=6,b=7,t=6,g=8,c=5,f=7
 [PRIO] kundenkonto.fonial.de/api/2.0, 7.8, a=5,b=10,t=6,g=3,c=8,f=5
@@ -35,7 +38,7 @@ testability: HUMAN_ONLY
 [PARKED] sbc/LDAP/RMQ/Sentry public-IP banner group (45): single-packet classification is HUMAN-only; no HTTP reachability evidence; unchanged.
 [FINAL] prov.fonial.de cross-tenant BOLA (75) — top survivor, gated on TWO approved tenants.
 [FINAL] mm.fonial.de open self-signup (55) — gated on ONE approved mutating POST, no tenant prerequisite.
-[NEXT] HUMAN: request program approval for ONE sanctioned mutating POST, then run `POST https://mm.fonial.de/api/v4/users/create` {email:ot-<ts>@example.invalid, username:ot-<ts>, password:<random>} after confirming form fields via GET /signup/email. Capture token-issuance vs adminApproval/disabled error; delete account immediately if created. This is the only hypothesis whose blocker is a single approval rather than two real test tenants; the 75 BOLA cross-bind remains queued behind T_A/T_B provisioning.
+[NEXT] HUMAN: request program approval for ONE sanctioned mutating POST, then run `POST https://mm.fonial.de/api/v4/users/create` {email:ot-<ts>@example.invalid, username:ot-<ts>, password:<random>} after `GET /signup/email` to confirm form fields; capture token-issuance vs adminApproval/disabled error, delete account immediately if created. This is the only active hypothesis whose blocker is a single approval rather than two real test tenants; the 75 BOLA cross-bind remains queued behind T_A/T_B provisioning.
 [LEARN] ACCEPTED prov.fonial.de duplicate @ prov.fonial.de/api/2.0: unfronted byte-behavior clone of kundenkonto API (same version, session semantics, PHPSESSID decoration, ACAO *) → lowest-gate deployment to test dual-backend cross-bind.
-[LEARN] REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component.
-[RISK] fonial: 58 — passive pool exhausted; top survivor (75 BOLA) gated on two program-approved tenants, Mattermost (55) on one approved POST; no writes, no customer data touched since 23:13 probe reconfirms zero drift. Reportable-outcome probability ~50% flat-close if outside approvals stall.
+[LEARN] REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; Drop as primary, retain only as chain component.
+[RISK] fonial: 58 — passive pool still exhausted; top survivor (75 BOLA) gated on two program-approved tenants, Mattermost (55) on one approved POST; no writes, no customer data touched since 23:13 probe reconfirms zero drift. Reportable-outcome probability remains ~50% flat-close if outside approvals stall.
