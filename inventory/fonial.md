@@ -302,3 +302,15 @@ www.fonial.de
 - CHANGED dslkonto.fonial.de/app_dev.php: Dev-mode exposure reclassified OUT-OF-SCOPE per scope.yml (descriptive errors/stack traces only, no env/session dump); profiler token-gated 404 on all tokens
 
 ## 2026-09-08 23:13:13 UTC
+
+## 2026-09-09 01:32:29 UTC
+- NEW prov.fonial.de/api/2.0 — byte-behavior duplicate of kundenkonto (X-Fonial-Version v2026.09.03-1, cleartext UUID SID, PHPSESSID decoration, ACAO *) served directly on nginx/1.10.3 without Cloudflare → 
+- NEW mm.fonial.de — internal Mattermost 3.7.x; `/signup/email` 200, `/api/v4/users/ping` 401, v4 config absent → default vendor self-signup untested.
+- CHANGED kundenkonto + shop surfaces unchanged (probe 2026-09-08 23:13:15: call/initiate 200, graphql 500); no drift in X-Fonial-Version v2026.09.03-1.
+- NEW shop.fonial.de asymmetric admin-auth confirmed: REST `/V1/integration/admin/token` → 404 (route removed) but GraphQL `GenerateCustomerTokenAsAdminInput` introspectable (requires admin Bearer + custome
+- NEW kundenkonto.fonial.de/api/2.0: X-Fonial-Version stable at v2026.09.03-1 since 2026-09-07; x-debug-token header on all 404 responses confirmed decorative (profiler/wdt return HTML-404)
+- NEW kundenkonto.fonial.de/signup: Unauthenticated registration flow at `/signup/register/55` confirmed live (sets PHPSESSID, CSRF `_token`, trunkTariff 19/21/22) — previously atomized by prior agents
+- CHANGED kundenkonto.fonial.de/api/2.0: Dual-backend session confusion hypothesis confidence held at 75 (no new evidence since 2026-09-06, passive-only)
+- CHANGED shop.fonial.de: GenerateCustomerTokenAsAdminInput confidence dropped 55→40; Adobe docs confirm requires admin Bearer + customer opt-in
+- CHANGED dslkonto.fonial.de/app_dev.php: Dev-mode exposure reclassified OUT-OF-SCOPE per scope.yml (descriptive errors/stack traces only, no env/session dump); profiler token-gated 404 on all tokens
+- CHANGED Priority scores recalculated: kundenkonto.fonial.de/api/2.0 (9.05), kundenkonto.fonial.de (7.70), shop.fonial.de/graphql (6.80), dslkonto.fonial.de (3.20), www.fonial.de (2.10)
