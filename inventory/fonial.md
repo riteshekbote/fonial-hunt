@@ -332,3 +332,5 @@ www.fonial.de
 - CHANGED shop.fonial.de admin-token standalone confidence dropped to 40 (critique floor) — relegate to chain-only
 - CHANGED kundenkonto.fonial.de/api/2.0 passive discovery CLOSED — exactly 5 endpoints, ~50 guessed names all HTML-404
 - CHANGED Dual-backend cross-bind hypothesis (75→80 on prov, 75 on kundenkonto) remains sole survivor; no new passive surface since 2026-09-06 09:11:58 UTC
+
+## 2026-09-09 23:32:50 UTC

@@ -1784,3 +1784,4 @@ impact: chain-enabler only (exfil of bearer SID if another flaw leaks it); stand
 testability: HUMAN_ONLY
 [NEXT] HUMAN: request program approval for ONE sanctioned mutating POST on mm.fonial.de (run `GET https://mm.fonial.de/signup/email` first, then `POST https://mm.fonial.de/api/v4/users/create` {email:ot-<ts>@example.invalid, username:ot-<ts>, password:<random>}); capture token-issuance vs adminApproval/disabled, delete account immediately if created. Lowest blocker among survivors (single approval, no tenant provisioning); the 75 BOLA stays queued behind T_A/T_B.
 [RISK] fonial: 58 — passive pool exhausted (reposcan + live drift confirm zero motion); top survivor (75 BOLA) gated on two program-approved tenants, Mattermost (55) on one approved POST; no writes and no customer data touched since 23:13 probe. Reportable-outcome probability ~50% flat-close if outside approvals stall.
+## 2026-09-09 23:31:26 UTC [target] (model bigpickle)
