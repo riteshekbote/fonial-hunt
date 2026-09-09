@@ -316,3 +316,5 @@ www.fonial.de
 - CHANGED Priority scores recalculated: kundenkonto.fonial.de/api/2.0 (9.05), kundenkonto.fonial.de (7.70), shop.fonial.de/graphql (6.80), dslkonto.fonial.de (3.20), www.fonial.de (2.10)
 
 ## 2026-09-09 06:18:35 UTC
+
+## 2026-09-09 11:47:32 UTC
