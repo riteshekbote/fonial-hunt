@@ -325,3 +325,10 @@ www.fonial.de
 - NEW prov.fonial.de/api/2.0 accepted as unfronted byte-behavior duplicate of kundenkonto (nginx/1.10.3 direct, no Cloudflare) — lowest-gate deployment to test cross-bind hypothesis
 - NEW mm.fonial.de Mattermost 3.7.x with /signup/email 200, /api/v4/users/ping 401 — open self-signup untested (mutating → program-approved only)
 - CHANGED shop admin-token standalone confidence dropped to 40 (at critique floor) — relegate to chain-only, not primary
+
+## 2026-09-09 21:31:43 UTC
+- NEW prov.fonial.de/api/2.0 confirmed as unfronted byte-behavior clone of kundenkonto API (nginx/1.10.3, no Cloudflare) — lowest-gate deployment for cross-bind testing
+- NEW mm.fonial.de Mattermost /signup/email now returns 404 (previously 200) — self-registration likely disabled or path changed
+- CHANGED shop.fonial.de admin-token standalone confidence dropped to 40 (critique floor) — relegate to chain-only
+- CHANGED kundenkonto.fonial.de/api/2.0 passive discovery CLOSED — exactly 5 endpoints, ~50 guessed names all HTML-404
+- CHANGED Dual-backend cross-bind hypothesis (75→80 on prov, 75 on kundenkonto) remains sole survivor; no new passive surface since 2026-09-06 09:11:58 UTC

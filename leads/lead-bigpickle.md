@@ -1754,3 +1754,33 @@ testability: HUMAN_ONLY
 [LEARN] ACCEPTED prov.fonial.de duplicate @ prov.fonial.de/api/2.0: unfronted byte-behavior clone of kundenkonto API (same version, session semantics, PHPSESSID decoration, ACAO *) → lowest-gate deployment to test dual-backend cross-bind.
 [LEARN] REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; Drop as primary, retain only as chain component.
 [RISK] fonial: 58 — passive pool still exhausted; top survivor (75 BOLA) gated on two program-approved tenants, Mattermost (55) on one approved POST; no writes, no customer data touched since 23:13 probe reconfirms zero drift. Reportable-outcome probability remains ~50% flat-close if outside approvals stall.
+## 2026-09-09 21:30:00 UTC [target] (model bigpickle)
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted prov.fonial.de
+class: AUTH
+asset: prov.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 75
+reasoning: Live drift (this run) re-confirms prov is a byte-behavior clone of kundenkonto: same X-Fonial-Version v2026.09.03-1, cleartext UUID SID from /session, ACAO *, nginx/1.10.3 unfronted. Data endpoints authorize by body SID only; PHPSESSID set decoratively in parallel; /call/initiate is a live WRITE with identical `session invalid` pattern. SID↔credential binding on the data layer is the sole unresolved question.
+evidence_needed: Data endpoint accepts valid SID_B in body + PHPSESSID_A cookie → cross-tenant data return vs `session invalid`.
+verify_steps: (HUMAN, sanctioned; two provisioned tenants T_A/T_B on prov) 1) GET /api/2.0/session → SID_A; 2) POST /session/authenticate{T_A}; 3) POST /devices/get{"sid":SID_A} capture Set-Cookie PHPSESSID_A; 4) GET /api/2.0/session (fresh jar) → SID_B; 5) POST /evn/get{"sid":SID_B} + Cookie:PHPSESSID_A. ≤1rps, zero writes beyond the two sanctioned auth steps.
+impact: cross-tenant CDR, device/SIP creds, unauthorized outbound call control and caller-ID spoof on portal API. CRITICAL if binding is absent.
+testability: HUMAN_ONLY
+[HYP] Open self-signup on internal Mattermost 3.7.x enables outsider account entry
+class: BUSLOGIC
+asset: mm.fonial.de
+confidence: 55
+reasoning: /signup/email returns 200 (this run) with no disabled-signup redirect; X-Version-Id `3.7.0.3.7.3.a553e134...` = Mattermost 3.7.3 legacy build; /api/v4/users/ping 401 (normal logged-out); v4 /config route absent. Vendor default: email+password self-signup active; mutating POST never performed (program-approved only).
+evidence_needed: POST /api/v4/users/create with fabricated email issues account token vs adminApproval/disabled error.
+verify_steps: (HUMAN, sanctioned) single GET /signup/email to confirm form fields, then single POST /api/v4/users/create {email:ot-<ts>@example.invalid, username:ot-<ts>, password:<random>}; on 201 immediately delete/disable account. ≤1rps.
+impact: outsider foothold in company chat (internal directory, channels, webhooks) plus legacy-3.7 CVE surface (e.g. message/path traversal in later 3.x). HIGH if open.
+testability: HUMAN_ONLY
+[HYP] CORS wildcard persists on authenticated API responses (post-auth ACAO *)
+class: MISCONFIG
+asset: kundenkonto.fonial.de/api/2.0 + /
+confidence: 50
+reasoning: ACAO * confirmed on all 5 unauth API endpoints and both landing/login pages (pre-auth). The authenticated path (valid PHPSESSID + authenticated SID) was never observed; no `allow-credentials` seen pre-auth, but persistence post-auth is unverified. Rejected standalone (`SID in body`), valid only as a chain enabler (e.g. alongside a SID/PHPSESSID leak) — not reportable alone under scope note.
+evidence_needed: a valid authenticated 2FA session response carrying ACAO * (and whether allow-credentials appears).
+verify_steps: (HUMAN, sanctioned — requires one valid test account) perform the normal login flow, then POST /devices/get{"sid":SID_x} and diff CORS headers vs unauthenticated baseline. One request with real session.
+impact: chain-enabler only (exfil of bearer SID if another flaw leaks it); standalone impact LOW, not reportable alone.
+testability: HUMAN_ONLY
+[NEXT] HUMAN: request program approval for ONE sanctioned mutating POST on mm.fonial.de (run `GET https://mm.fonial.de/signup/email` first, then `POST https://mm.fonial.de/api/v4/users/create` {email:ot-<ts>@example.invalid, username:ot-<ts>, password:<random>}); capture token-issuance vs adminApproval/disabled, delete account immediately if created. Lowest blocker among survivors (single approval, no tenant provisioning); the 75 BOLA stays queued behind T_A/T_B.
+[RISK] fonial: 58 — passive pool exhausted (reposcan + live drift confirm zero motion); top survivor (75 BOLA) gated on two program-approved tenants, Mattermost (55) on one approved POST; no writes and no customer data touched since 23:13 probe. Reportable-outcome probability ~50% flat-close if outside approvals stall.
