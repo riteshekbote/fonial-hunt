@@ -157,3 +157,5 @@ reasoning: The candidates file explicitly states "no org candidates" and scope.y
 impact: N/A
 verify_steps: Verify at bugs.olivermaicher.eu program page or re-scan GitHub org for public repos under fonial GmbH / olivermaicher.
 TARGET_ORG not configured for fonial; skipping public-org deep scan.
+## REPOSCAN 2026-09-10 11:50:42 UTC
+TARGET_ORG not configured for fonial; skipping public-org deep scan.
