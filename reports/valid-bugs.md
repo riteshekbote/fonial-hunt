@@ -18,3 +18,10 @@
 
 - 1 lead(s) marked VALID at 2026-09-10 11:50:18 UTC
   - | 1 | Dual-backend session confusion (SID-only authz, decorative PHPSESSID) | **HOLD** | Architectural anomaly real, but needs 2 valid test accounts to prove cross-tenant access. HUMAN_ONLY. |
+
+- 5 lead(s) marked VALID at 2026-09-10 18:57:58 UTC
+  - | Q4 Provable non-invasively? | **PARTIAL** — Unauthenticated wildcard confirmed via passive header inspection. Authenticated wildcard **not yet proven** (needs valid PHPSESSID from login redirect) |
+  - **Verdict: VALID**
+  - | 1 | CORS wildcard (kundenkonto) | **HOLD** | Needs 1 read-only step: authenticated GET with valid PHPSESSID → check CORS headers |
+  - | 2 | Dual-backend session confusion | **HOLD** | Needs 2 valid test accounts for cross-bind matrix |
+  - | **7** | **GraphQL introspection (shop)** | **VALID** | **Report-ready. CVSS 5.3. Proof: single introspection query.** |
