@@ -33,3 +33,8 @@
   - | 1 | CORS wildcard (kundenkonto) | **HOLD** | Needs 1 read-only step: authenticated GET with valid PHPSESSID |
   - | 2 | Dual-backend session confusion | **HOLD** | Needs 2 valid test accounts |
   - | 3 | **GraphQL introspection (shop)** | **VALID** | **Report-ready. CVSS 5.3.** |
+
+- 3 lead(s) marked VALID at 2026-09-10 23:24:02 UTC
+  - | 1 | CORS wildcard (kundenkonto) | **HOLD** | Needs 1 read-only step: authenticated GET with valid PHPSESSID |
+  - | 2 | Dual-backend session confusion | **HOLD** | Needs 2 valid test accounts |
+  - | 3 | **GraphQL introspection (shop)** | **VALID** | **Report-ready. CVSS 5.3.** |
