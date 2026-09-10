@@ -368,3 +368,8 @@ www.fonial.de
 - CHANGED shop.fonial.de/graphql: Asymmetric admin-token standalone confidence dropped to 40 (critique floor), relegated to chain-only component
 - CHANGED kundenkonto.fonial.de/api/2.0: Stable surface, X-Fonial-Version v2026.09.03-1 unchanged since 2026-09-07, 5 endpoints confirmed
 - CHANGED Dual-backend cross-bind hypothesis (80 on prov, 75 on kundenkonto) remains sole survivor; no new passive surface since 2026-09-06 09:11:58 UTC
+
+## 2026-09-10 21:22:08 UTC
+- NEW prov.fonial.de/api/2.0 confirmed stable unfronted byte-behavior clone (nginx/1.10.3, no Cloudflare, X-Fonial-Version v2026.09.03-1, ACAO*, zero drift across 4 probes since 2026-09-09)
+- CHANGED mm.fonial.de SPA shell degraded: /signup/email and /login now 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); GET /api/v4/users→401 `session_expired` confirms endpoint ex
+- CHANGED shop.fional.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component

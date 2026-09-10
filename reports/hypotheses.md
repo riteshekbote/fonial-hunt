@@ -1469,3 +1469,14 @@
 - LEARN: REJECTED MageWorx guest-downloads IDOR @ shop.fonial.de/rest: endpoint live but `[]` across all 110 product IDs — no data to access; `/V1/mw-downloads-attachmen
 - LEARN: ACCEPTED asymmetric admin-auth @ shop.fonial.de: REST `/V1/integration/admin/token` → 404 (route removed) but GraphQL `generateCustomerTokenAsAdmin` introspecta
 - LEARN: REJECTED REST-schema exposure @ shop.fonial.de/rest/all/schema: stock Magento OpenAPI, no secrets, surface already known via GraphQL introspection — information
+
+## RANKED HYPOTHESES 2026-09-10 21:22:08 UTC
+- [80] prov.fonial.de/api/2.0: Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted prov (from art/lead_bigpickle.txt)
+- NEXT(hypotheses-bigpickle.txt): HUMAN: Request program approval for a sanctioned two-tenant test on prov.fonial.de/api/2.0 (provision T_A/T_B; POST /session→SID_A; /session/authenticate{T_A}; 
+- NEXT(hypotheses-nemotron3.txt): PROBE: POST https://prov.fonial.de/api/2.0/call/initiate with body {"sid":"<valid_sid_from_account_A>","destination":"+49123456789","caller_id":"+49987654321"} 
+- LEARN: REJECTED further-passive-cycles @ fonial: 2026-09-10 re-confirms zero drift on prov/kundenkonto/mm/shop; extra GET/HEAD/OPTIONS passes add no discrimination val
+- LEARN: ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-cred
+- LEARN: ACCEPTED mm-alive @ mm.fonial.de: system/ping 200 `{"status":"OK"}`, X-Version-Id 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false, nginx/1.10.2; SPA /signup/
+- LEARN: REJECTED further-passive-probing @ fonial: all re-probes continue to return zero-drift evidence; additional GET/HEAD/OPTIONS passes add no discrimination value 
+- LEARN: ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe 2026-09-10 confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-cr
+- LEARN: REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component
