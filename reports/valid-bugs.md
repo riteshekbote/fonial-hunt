@@ -15,3 +15,6 @@
   - **Verdict: HOLD** — Misconfig is real and confirmed. Park until: (1) authenticated landing page is tested with valid PHPSESSID to confirm ACAO: * persists post-auth, and (2) JS bundle grep finds an AP
   - | Q2 Attacker reachable? | **PARTIALLY** — API is public/unauth; SID mintable via GET. But cross-tenant test requires 2 valid accounts (2FA-gated) |
   - **Verdict: HOLD** — High-confidence hypothesis with CRITICAL impact if proven, but completely unverified. Requires 2 valid test accounts for the cross-bind matrix (SID-B body + PHPSESSID-A cookie on /
+
+- 1 lead(s) marked VALID at 2026-09-10 11:50:18 UTC
+  - | 1 | Dual-backend session confusion (SID-only authz, decorative PHPSESSID) | **HOLD** | Architectural anomaly real, but needs 2 valid test accounts to prove cross-tenant access. HUMAN_ONLY. |
