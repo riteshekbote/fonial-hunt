@@ -233,3 +233,6 @@
 - 2026-09-10 CHANGED /api/v4/teams @ mm.fonial.de: HEAD→404 (was 401 in prior run); GET /api/v4/users→401 `session_expired` confirms endpoint exists and routes recognized.
 - 2026-09-10 ACCEPTED prov surface drift-free @ prov.fonial.de/api/2.0: Re-probed 06:37 UTC, 5 endpoints, same headers, zero drift since 01:26.
 - 2026-09-10 ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe 2026-09-10 confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate deployment to test dual-backend cross-bind
+- 2026-09-10 ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO\*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift across all probes since 2026-09-09.
+- 2026-09-10 ACCEPTED mm-alive @ mm.fonial.de: system/ping 200 `{"status":"OK"}`, X-Version-Id 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false, nginx/1.10.2; SPA /signup/email + /login 404 drift persisted since 06:37 — server restart/config change not reversed.
+- 2026-09-10 REJECTED further-passive-probing @ fonial: all re-probes continue to return zero-drift evidence; additional GET/HEAD/OPTIONS passes add no discrimination value on any remaining hypothesis — live momentum must go through the HUMAN approval gate.
