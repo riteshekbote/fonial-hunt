@@ -352,3 +352,11 @@ www.fonial.de
 - NEW prov.fonial.de/api/2.0: Re-probed 06:37 UTC, 5 endpoints, same headers, zero drift since 01:26
 - NEW prov.fonial.de/api/2.0: Confirmed unfronted byte-behavior clone (nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*, no allow-credentials, no Cloudflare)
 - CHANGED shop.fonial.de/graphql: Asymmetric admin-token standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+
+## 2026-09-10 15:50:34 UTC
+- NEW prov.fonial.de/api/2.0 re-probed 2026-09-10 06:37 UTC: 5 endpoints, nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, no Cloudflare — zero drift 
+- NEW mm.fonial.de: /signup/email and /login now return 404 (were byte-identical SPA shell in 01:31 run); server alive (system/ping 200)
+- NEW mm.fonial.de: /api/v4/teams HEAD→404 (was 401); GET /api/v4/users→401 `session_expired` confirms endpoint exists
+- CHANGED shop.fonial.de/graphql: Asymmetric admin-token standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+- CHANGED kundenkonto.fonial.de/api/2.0: Stable surface, X-Fonial-Version v2026.09.03-1 unchanged since 2026-09-07, 5 endpoints confirmed
+- CHANGED Dual-backend cross-bind hypothesis (80 on prov, 75 on kundenkonto) remains sole survivor; no new passive surface since 2026-09-06 09:11:58 UTC

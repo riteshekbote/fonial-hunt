@@ -1,4 +1,4 @@
-## 2026-09-10 11:48:03 UTC [target] (model bigpickle)
+## 2026-09-10 15:43:02 UTC [target] (model bigpickle)
 [PRIO] prov.fonial.de/api/2.0, 7.4, attack_surface=6,business_value=10,tech_exposure=8,gate_ease=4,cloud_surface=6,freshness=10
 [PRIO] kundenkonto.fonial.de/api/2.0, 6.7, attack_surface=5,business_value=10,tech_exposure=8,gate_ease=3,cloud_surface=8,freshness=5
 [PRIO] mm.fonial.de, 5.9 *(DOWN from 6.4 — SPA routes 404'd, reduced passive signal)*
@@ -34,5 +34,4 @@ testability: HUMAN_ONLY
 [LEARN] CHANGED SPA routes @ mm.fonial.de: /signup/email and /login now 404 (were byte-identical SPA shell in 01:31 run); server alive (system/ping 200); web client routing degraded or server restarted.
 [LEARN] CHANGED /api/v4/teams @ mm.fonial.de: HEAD→404 (was 401 in prior run); GET /api/v4/users→401 `session_expired` confirms endpoint exists and routes recognized.
 [LEARN] ACCEPTED prov surface drift-free @ prov.fonial.de/api/2.0: Re-probed 06:37 UTC, 5 endpoints, same headers, zero drift since 01:26.
-[LEARN] ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe 2026-09-10 confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate target for cross-bind BOLA test.
 [RISK] fonial: 58 — passive pool exhausted; zero writes since 2026-09-03; no customer data touched. Top survivor (80 BOLA) gated on two program-approved tenants on prov; MM open-signup (50) on one approved POST with corrected route; both HUMAN_ONLY. Reportable-outcome probability ~50% flat-close if outside approvals stall.
