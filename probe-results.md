@@ -308,3 +308,13 @@ https://kundenkonto.fonial.de/api/2.0/session -> 200 len=?
 https://kundenkonto.fonial.de/api/2.0/session/authenticate -> 200 len=?
 https://kundenkonto.fonial.de/api/2.0/devices/get -> 200 len=?
 https://kundenkonto.fonial.de/api/2.0/call/initiate -> 200 len=?
+
+## 2026-09-10 11:52:20 UTC
+https://prov.fonial.de/api/2.0/session -> 200 len=?
+https://prov.fonial.de/api/2.0/session/authenticate -> 200 len=?
+https://prov.fonial.de/api/2.0/devices/get -> 200 len=?
+https://prov.fonial.de/api/2.0/call/initiate -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/session -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/session/authenticate -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/devices/get -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/call/initiate -> 200 len=?
