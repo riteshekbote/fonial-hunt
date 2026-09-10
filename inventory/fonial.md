@@ -334,3 +334,11 @@ www.fonial.de
 - CHANGED Dual-backend cross-bind hypothesis (75→80 on prov, 75 on kundenkonto) remains sole survivor; no new passive surface since 2026-09-06 09:11:58 UTC
 
 ## 2026-09-09 23:32:50 UTC
+
+## 2026-09-10 01:31:32 UTC
+- NEW mm.fonial.de: `/signup/email` and `/login` return **byte-identical SPA shell** (sha1 match confirmed this run) — the earlier "signup 200" is client-side routing, NOT a server-rendered signup form; pas
+- NEW mm.fonial.de v4 API: `users/ping`→401, `system/ping`→200, `users`→401, `teams`→401, `config`→404, `users/create`→404, `websocket`/`plugins`/`config/client`/`brand`/`image`→404; all `/api/v3/*`→404 → v
+- NEW mm.fonial.de stack: nginx/1.10.2 direct (not Cloudflare), X-Version-Id `3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false` = Mattermost 3.7.3 legacy, unfronted.
+- NEW prov.fonial.de re-probe 2026-09-10 01:26 UTC: OPTIONS /api/2.0/session → 200, nginx/1.10.3 direct (no Cloudflare), `X-Fonial-Version: v2026.09.03-1`, `ACAO: *` + `ACAM: GET, POST, OPTIONS`, no allow-c
+- NEW kundenkonto.fonial.de re-probe 2026-09-10 01:26 UTC: OPTIONS /api/2.0/session → 200, Cloudflare, X-Fonial-Version v2026.09.03-1, ACAO:* — unchanged.
+- CHANGED reposcan credit retired: `reposcan-raw/summary.txt` says "TARGET_ORG not configured; skipping" — no public-org repo scan ever ran for fonial, so no reposcan-based LEARN is supportable.

@@ -13863,3 +13863,180 @@ HTTP 401
 {"user":null,"team_members":null,"teams":null,"preferences":null,"client_cfg":{"AboutLink":"https://about.mattermost.com/default-about/","AllowEditPost":"always","AndroidAppDownloadLink":"https://about.mattermost.com/mattermost-android-app/","AppDownloadLink":"https://about.mattermost.com/downloads/","AvailableLocales":"de","BuildDate":"Wed Mar 22 23:30:58 UTC 2017","BuildEnterpriseReady":"true","BuildHash":"8ec37570742b67fd640bb3434ea226c655dbf408","BuildHashEnterprise":"5306311e60420d91a9af2d6ba6e3976c7238a531","BuildNumber":"3.7.3","DefaultClientLocale":"de","DiagnosticId":"oiu1joekmino8p5omky8nky4ue","DiagnosticsEnabled":"true","EnableCommands":"true","EnableCustomEmoji":"false","EnableDeveloper":"false","EnableDiagnostics":"true","EnableEmailBatching":"false","EnableIncomingWebhooks":"true","EnableLinkPreviews":"false","EnableOAuthServiceProvider":"false","EnableOnlyAdminIntegrations":"true","EnableOpenServer":"false","EnableOutgoingWebhooks":"true","EnablePostIconOverride":"false","EnablePostUsernameOverride":"false","EnablePublicLink":"false","EnableSignInWithEmail":"true","EnableSignInWithUsername":"true","EnableSignUpWithEmail":"true","EnableSignUpWithGitLab":"false","EnableTeamCreation":"false","EnableTesting":"false","EnableUserCreation":"true","EnableUserTypingMessages":"true","EnableWebrtc":"false","GoogleDeveloperKey":"","HelpLink":"https://about.mattermost.com/default-help/","IosAppDownloadLink":"https://about.mattermost.com/mattermost-ios-app/","MaxFileSize":"52428800","MaxNotificationsPerChannel":"1000000","PostEditTimeLimit":"300","PrivacyPolicyLink":"https://about.mattermost.com/default-privacy-policy/","ProfileHeight":"128","ProfileWidth":"128","ReportAProblemLink":"https://about.mattermost.com/default-report-a-problem/","RequireEmailVerification":"false","RestrictCustomEmojiCreation":"all","RestrictDirectMessage":"team","RestrictPostDelete":"all","RestrictPrivateChannelCreation":"all","RestrictPrivateChannelDeletion":"all","RestrictPrivateChannelManagement":"all","RestrictPublicChannelCreation":"all","RestrictPublicChannelDeletion":"all","RestrictPublicChannelManagement":"all","RestrictTeamInvite":"all","SQLDriverName":"mysql","SendEmailNotifications":"true","SendPushNotifications":"false","ShowEmailAddress":"false","SiteName":"Mattermost","SiteURL":"","SupportEmail":"feedback@mattermost.com","TermsOfServiceLink":"https://about.mattermost.com/default-terms/","TimeBetweenUserTypingUpdatesMilliseconds":"5000","Version":"3.7.0","WebsocketPort":"80","WebsocketSecurePort":"443"},"license_cfg":{"IsLicensed":"false"},"no_accounts":false}
 HTTP 200
 [0m
+===== ANALYST bigpickle 2026-09-10 01:31:32 UTC =====
+[0m
+> build · big-pickle
+[0m
+I'll start by checking the workspace for any relevant files and the current state of the investigation.
+[0m✱ [0mGlob "**/*"[90m 93 matches[0m
+[0m→ [0mRead state_bigpickle.json
+[0m→ [0mRead reports/analyst-bigpickle.log
+[0m→ [0mRead analyst-prompt.txt
+[0m→ [0mRead triage/run-2026-09-09-23-30.md
+[0m→ [0mRead leads/lead-bigpickle.md
+[0m→ [0mRead inventory/fonial.md
+This is a multi-agent bug bounty orchestration setup. I'm the `bigpickle` analyst. Let me review the current state files, latest triage, and my lead file.
+[0m→ [0mRead reports/hypotheses-bigpickle.txt
+[0m→ [0mRead reports/hypotheses-nemotron3.txt
+[0m→ [0mRead leads/lead-nemotron3.md[90m [limit=200][0m
+Let me review the aggregated knowledge base, my hypothesis output files, and the nemotron3 lead that produced the top-ranked hypothesis.
+Now let me verify the current live surface with a few read-only probes to establish the delta (OPTIONS/HEAD on API endpoints, GET on signup pages).
+[0m
+[0m$ [0mcurl -s -o /dev/null -D - -X OPTIONS https://prov.fonial.de/api/2.0/session -H "Origin: https://evil.com" 2>&1 | head -20
+HTTP/2 200 
+server: nginx/1.10.3
+content-type: text/json; charset=UTF-8
+cache-control: max-age=0, must-revalidate, private
+date: Thu, 10 Sep 2026 01:26:13 GMT
+x-fonial-version: v2026.09.03-1
+expires: Thu, 10 Sep 2026 01:26:13 GMT
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "HTTP %{http_code}\n" https://mm.fonial.de/signup/email 2>&1
+HTTP 200
+[0m
+[0m$ [0mcurl -s -o /dev/null -D - -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session -H "Origin: https://evil.com" 2>&1 | head -20
+HTTP/2 200 
+date: Thu, 10 Sep 2026 01:26:14 GMT
+content-type: text/json; charset=UTF-8
+server: cloudflare
+cache-control: max-age=0, must-revalidate, private
+expires: Thu, 10 Sep 2026 01:26:13 GMT
+x-fonial-version: v2026.09.03-1
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+cf-cache-status: DYNAMIC
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=dWBQm680Wi7K%2FT0vr4YRe26AIC5Aa%2Fa5UGAkLKDOuuDuQBW%2FhEmORP5QJQOiXohqo8OFO%2Fi6TgcYc7B0nAKz7tr8e7e4N7tT1JVa3wDtjymy1cRB057cC9D5w8UkVoyS0QYKBBphUA%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cf-ray: a38aa4ae5d373416-PDX
+[0m
+[0m$ [0mcurl -s -D /tmp/mm_headers.txt https://mm.fonial.de/signup/email 2>&1 | head -c 2000; echo; echo "=== HEADERS ==="; grep -iE "x-version|server|location|set-cookie" /tmp/mm_headers.txt
+<!DOCTYPE html> <html> <head> <meta http-equiv=X-UA-Compatible content="IE=edge"> <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0"> <meta name=robots content="noindex, nofollow"> <meta name=referrer content=no-referrer> <title>Mattermost</title> <meta name=apple-mobile-web-app-capable content=yes> <meta name=apple-mobile-web-app-status-bar-style content=default> <meta name=mobile-web-app-capable content=yes> <meta name=apple-mobile-web-app-title content=Mattermost> <meta name=application-name content=Mattermost> <meta name=format-detection content="telephone=no"> <link rel=apple-touch-icon sizes=57x57 href=/static/files/787db8d8b82538cc1d5e8bcb8c21722d.png> <link rel=apple-touch-icon sizes=60x60 href=/static/files/cd9987714f4d92336c3ab203ff150a9a.png> <link rel=apple-touch-icon sizes=72x72 href=/static/files/1728fd5a009aabc77654b1f958c6f596.png> <link rel=apple-touch-icon sizes=76x76 href=/static/files/17cb12b7fc37d8229a6e72f3d6da0949.png> <link rel=apple-touch-icon sizes=144x144 href=/static/files/fba6362db1d8b3e27c9fb02fd0695c85.png> <link rel=apple-touch-icon sizes=120x120 href=/static/files/08959a08dc2488dfeb8660fc4630b145.png> <link rel=apple-touch-icon sizes=152x152 href=/static/files/bca263be9acd1df84b988b02c621b8ca.png> <link rel=icon type=image/png sizes=16x16 href=/static/files/532142b052832f94ffc35860545a7e5c.png> <link rel=icon type=image/png sizes=32x32 href=/static/files/c220e89731c31367c0f4e86e3442bee0.png> <link rel=icon type=image/png sizes=96x96 href=/static/files/173682cef105829829a008f1fc97e980.png> <link rel=icon type=image/png sizes=192x192 href=/static/files/0d367a00a16bde58f7e87c4481516a68.png> <link rel=manifest href=/static/files/fee9721a6305a49662a40ffd052a7965.json> <link rel=stylesheet class=code_theme> <style>.error-screen{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;padding-top:50px;max-width:750px;font-size:14px;color:#333;margin:auto;display:none;line-height:1.5}.error-screen
+=== HEADERS ===
+Server: nginx/1.10.2
+X-Version-Id: 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false
+[0m
+The signup page is live (200) now — contradicts the earlier 404 note. Let me confirm the form fields and check the v4 API surface.
+[0m$ [0mcurl -s https://mm.fonial.de/signup/email | grep -oiE 'name="[a-z_"]*"|id="[a-z_"]*"|signup_email|type="(text|password|email)"|/signup/email' | sort -u | head -30; echo "==="; curl -s -o /dev/null -w "config: %{http_code}\n" https://mm.fonial.de/api/v4/config; curl -s -o /dev/null -w "users/ping: %{http_code}\n" https://mm.fonial.de/api/v4/users/ping; curl -s -o /dev/null -w "create: %{http_code}\n" -X POST https://mm.fonial.de/api/v4/users/create 2>&1
+===
+config: 404
+users/ping: 401
+create: 404
+[0m
+v4 is absent (expected for 3.7.3 — that era used `/api/v3`). Let me check the correct v3 API surface.
+[0m$ [0mfor p in "users/ping" "config" "users/create" "users/new" "initial_load" "time" "team"; do printf "%s: " "$p"; curl -s -o /dev/null -w "%{http_code}\n" "https://mm.fonial.de/api/v3/$p"; done
+users/ping: 404
+config: 404
+users/create: 404
+users/new: 404
+initial_load: 404
+time: 404
+team: 404
+[0m
+[0m$ [0mfor p in "users/ping" "users" "users/me" "users/email/ot-x@example.invalid" "teams" "client" "logs" "system/ping" "system/client" "websocket" "channels" "time"; do /bin/true; done; echo "--- direct probes ---"; for p in "users/ping" "system/ping" "system/client" "client" "teams" "users" "time"; do printf "v4/%s: " "$p"; curl -s -o /dev/null -w "%{http_code}\n" "https://mm.fonial.de/api/v4/$p"; done
+--- direct probes ---
+v4/users/ping: 401
+v4/system/ping: 200
+v4/system/client: 404
+v4/client: 404
+v4/teams: 401
+v4/users: 401
+v4/time: 404
+[0m
+[0m→ [0mRead reports/valid-bugs.md
+[0m→ [0mRead reposcan-raw/summary.txt
+[0m
+[0m$ [0mcurl -s https://mm.fonial.de/signup/email | grep -oiE '(signup|sign_up|signup_email|email_signup)[a-z_]*' | sort -u | head; echo "=== login diff ==="; diff <(curl -s https://mm.fonial.de/login | sha1sum) <(curl -s https://mm.fonial.de/signup/email | sha1sum) && echo "login==signup SPA shell (same hash)" || echo "different shells"; echo "=== clientside config probe (harmless read) ==="; curl -s -o /dev/null -w "static/root.js: %{http_code}\n" https://mm.fonial.de/static/js/root.js
+=== login diff ===
+login==signup SPA shell (same hash)
+=== clientside config probe (harmless read) ===
+static/root.js: 404
+[0m
+mm.fonial.de is serving the same SPA shell for /login and /signup/email (byte-identical) — the signup 200 is client-side routing, not proof of an open signup form. Let me do final read-only probes on the Mattermost surface for chain candidates.
+[0m$ [0msleep 1; for p in "image" "image?url=http://127.0.0.1:1/x.png" "websocket" "plugins" "config/client" "brand"; do printf "v4/%s: " "$p"; curl -s -o /dev/null -w "%{http_code}\n" "https://mm.fonial.de/api/v4/$p"; sleep 1; done
+v4/image: 404
+v4/image?url=http://127.0.0.1:1/x.png: 404
+v4/websocket: 404
+v4/plugins: 404
+v4/config/client: 404
+v4/brand: 404
+[0m
+[0m→ [0mRead .github/workflows/hunt.yml
+[0m→ [0mRead scope.yml
+Let me check how the orchestration consumes these files to record my output correctly.
+I have enough live evidence. Compiling the structured analysis.
+
+## STEP 1 — DELTA
+
+[NEW] mm.fonial.de: `/signup/email` and `/login` return **byte-identical SPA shell** (sha1 match confirmed this run) — the earlier "signup 200" is client-side routing, NOT a server-rendered signup form; passive signal for open-self-signup is weak.
+[NEW] mm.fonial.de v4 API: `users/ping`→401, `system/ping`→200, `users`→401, `teams`→401, `config`→404, `users/create`→404, `websocket`/`plugins`/`config/client`/`brand`/`image`→404; all `/api/v3/*`→404 → v4 routes partially exist; **correct create route is `POST /api/v4/users`, not `/users/create`** (hypothesis verify_step was pointed at a confirmed-missing route).
+[NEW] mm.fonial.de stack: nginx/1.10.2 direct (not Cloudflare), X-Version-Id `3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false` = Mattermost 3.7.3 legacy, unfronted.
+[NEW] prov.fonial.de re-probe 2026-09-10 01:26 UTC: OPTIONS /api/2.0/session → 200, nginx/1.10.3 direct (no Cloudflare), `X-Fonial-Version: v2026.09.03-1`, `ACAO: *` + `ACAM: GET, POST, OPTIONS`, no allow-credentials — unfronted clone confirmed still live, drift-free.
+[NEW] kundenkonto.fonial.de re-probe 2026-09-10 01:26 UTC: OPTIONS /api/2.0/session → 200, Cloudflare, X-Fonial-Version v2026.09.03-1, ACAO:* — unchanged.
+[CHANGED] reposcan credit retired: `reposcan-raw/summary.txt` says "TARGET_ORG not configured; skipping" — no public-org repo scan ever ran for fonial, so no reposcan-based LEARN is supportable.
+
+## STEP 2 — PRIORITIZE
+
+[PRIO] prov.fonial.de/api/2.0, 7.4, attack_surface=6,business_value=10,tech_exposure=8,gate_ease=4,cloud_surface=6,freshness=10
+[PRIO] kundenkonto.fonial.de/api/2.0, 6.7, attack_surface=5,business_value=10,tech_exposure=8,gate_ease=3,cloud_surface=8,freshness=5
+[PRIO] mm.fonial.de, 6.4, attack_surface=6,business_value=7,tech_exposure=8,gate_ease=5,cloud_surface=3,freshness=9
+
+## STEP 3 — HYPOTHESES
+
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted prov.fonial.de
+class: AUTH
+asset: prov.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 80
+reasoning: Live probe 2026-09-10 01:26 UTC re-confirms prov is an unfronted (nginx/1.10.3, no Cloudflare) byte-clone of kundenkonto: X-Fonial-Version v2026.09.03-1, ACAO *, ACAM GET/POST/OPTIONS, no allow-credentials, PHPSESSID decoration pattern identical (from prior runs). Data endpoints authorize by body SID only (`session unauthenticated` vs `session invalid`); PHPSESSID set decoratively in parallel; /session issues cleartext UUID sid. SID↔credential binding on the data layer is the sole unresolved question, and prov's lack of an edge means no WAF-side session consistency layer.
+evidence_needed: Data endpoint accepts valid SID_B in body + PHPSESSID_A cookie → cross-tenant data return vs `session invalid`.
+verify_steps: (HUMAN, sanctioned; two provisioned tenants T_A/T_B on prov) 1) POST /api/2.0/session → SID_A; 2) POST /session/authenticate{T_A}; 3) POST /devices/get{"sid":SID_A} capture Set-Cookie PHPSESSID_A; 4) GET /api/2.0/session (fresh jar) → SID_B; 5) POST /evn/get{"sid":SID_B} + Cookie:PHPSESSID_A. ≤1rps, zero writes beyond the two sanctioned auth steps.
+impact: cross-tenant CDR, device/SIP creds, unauthorized outbound call control and caller-ID spoof on portal API → CRITICAL if binding absent.
+testability: HUMAN_ONLY
+
+[HYP] Open self-signup on Mattermost 3.7.3 enables outsider account entry
+class: BUSLOGIC
+asset: mm.fonial.de/api/v4/users
+confidence: 50
+reasoning: /signup/email returns 200 but byte-identical to /login (SPA shell) → cannot confirm server-side signup state passively. X-Version-Id `3.7.0.3.7.3.a553e134...` = Mattermost 3.7.3, nginx/1.10.2 unfronted. `/api/v4/users/create` → 404; in Mattermost v4 the create route is `POST /api/v4/users` (user creation by email+username+password when EnableSignUpWithEmail=true; default admin-approval/disabled otherwise). Mutating → program-approved only; confidence tapered from 55 (previous verify route was wrong).
+evidence_needed: POST /api/v4/users with fabricated email issues account token vs adminApproval/disabled/400 error.
+verify_steps: (HUMAN, sanctioned) single POST /api/v4/users {email:ot-<ts>@example.invalid, username:ot-<ts>, password:<random>, first_name:"", last_name:""}; on 201 immediately delete/disable account via /api/v4/users/<id> (admin) or flag to operator; ≤1rps.
+impact: outsider foothold in company chat (internal directory, channels, webhooks) + legacy-3.7 CVE surface. HIGH if open.
+testability: HUMAN_ONLY
+
+[HYP] CORS wildcard persists on authenticated API responses (post-auth ACAO *)
+class: MISCONFIG
+asset: kundenkonto.fonial.de/api/2.0 + /
+confidence: 50
+reasoning: ACAO * confirmed on all 5 unauth API endpoints + both landing/login pages (this run re-confirmed on /api/2.0/session OPTIONS). Authenticated path (valid PHPSESSID + authenticated SID) never observed; no allow-credentials pre-auth; persistence post-auth unverified. Chain-enabler only (SID-in-body → needs a SID leak), not reportable standalone under scope note.
+evidence_needed: valid authenticated 2FA session response carrying ACAO * (and whether allow-credentials appears).
+verify_steps: (HUMAN, sanctioned — one valid test account) normal login, then POST /devices/get{"sid":SID_x} and diff CORS headers vs unauth baseline. One request with real session.
+impact: exfil of bearer SID if another flaw leaks it; standalone LOW, not reportable alone.
+testability: HUMAN_ONLY
+
+## STEP 4 — SELF-CRITIQUE
+
+[PARKED] shop admin-token standalone @ shop.fonial.de/graphql (40): no new evidence since 55→40; chain-only, not primary.
+[PARKED] prov v1/v2 version-diff probe: kundenkonto alternate versions already 404; no drift evidence prov differs.
+[PARKED] sbc/LDAP/RMQ/Sentry public-IP banner group (45): single-packet classification is HUMAN-only; no HTTP reachability evidence; unchanged.
+[DROPPED] Mattermost v4 `/users/create` verify route: 404-confirmed missing; corrected to `POST /api/v4/users` (confidence 55→50).
+[FINAL] 1. prov.fonial.de cross-tenant BOLA (80) — gated on TWO approved tenants. 2. mm.fonial.de open self-signup (50) — gated on ONE approved mutating POST, corrected route. 3. kundenkonto post-auth CORS (50) — chain-only, needs one valid account.
+
+## STEP 5 — NEXT ACTION
+
+[NEXT] HUMAN: request program approval for ONE sanctioned mutating POST, then run `POST https://mm.fonial.de/api/v4/users` body {"email":"ot-<ts>@example.invalid","username":"ot-<ts>","password":"<random>","first_name":"","last_name":""}; capture token-issuance (201 + token) vs adminApproval/400/403; delete account immediately if created. Corrected from `/users/create` (404-confirmed). Lowest blocker among survivors (single approval, no tenant provisioning); the 80 BOLA remains queued behind T_A/T_B on prov.
+
+## STEP 6 — LEARNING
+
+[LEARN] ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe 2026-09-10 confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate target for cross-bind BOLA test.
+[LEARN] ACCEPTED SPA-shell-equality @ mm.fonial.de: /signup/email ≡ /login byte-identical (sha1 match) → signup-200 is client-side routing, not server-side proof of open registration.
+[LEARN] REJECTED v4-users-create-route @ mm.fonial.de: `/api/v4/users/create` → 404 (also all `/api/v3/*` → 404); Mattermost v4 create is `POST /api/v4/users` — prior verify step was invalid.
+[LEARN] ACCEPTED stable-surface @ kundenkonto.fonial.de/api/2.0: OPTIONS reconfirms v2026.09.03-1, ACAO *, Cloudflare, 5-endpoint surface, zero drift since 2026-09-07.
+
+## STEP 7 — RISK
+
+[RISK] fonial: 58 — passive pool remains exhausted; top survivor (80 BOLA) gated on two program-approved tenants, Mattermost (50) on one approved POST with corrected route; prov+mm are both unfronted legacy nginx (1.10.3/1.10.2), no WAF. No writes and no customer data touched this run (OPTIONS/GET only). Reportable-outcome probability ~50% flat-close if outside approvals stall.

@@ -1785,3 +1785,50 @@ testability: HUMAN_ONLY
 [NEXT] HUMAN: request program approval for ONE sanctioned mutating POST on mm.fonial.de (run `GET https://mm.fonial.de/signup/email` first, then `POST https://mm.fonial.de/api/v4/users/create` {email:ot-<ts>@example.invalid, username:ot-<ts>, password:<random>}); capture token-issuance vs adminApproval/disabled, delete account immediately if created. Lowest blocker among survivors (single approval, no tenant provisioning); the 75 BOLA stays queued behind T_A/T_B.
 [RISK] fonial: 58 — passive pool exhausted (reposcan + live drift confirm zero motion); top survivor (75 BOLA) gated on two program-approved tenants, Mattermost (55) on one approved POST; no writes and no customer data touched since 23:13 probe. Reportable-outcome probability ~50% flat-close if outside approvals stall.
 ## 2026-09-09 23:31:26 UTC [target] (model bigpickle)
+## 2026-09-10 01:31:12 UTC [target] (model bigpickle)
+[NEW] mm.fonial.de: `/signup/email` and `/login` return **byte-identical SPA shell** (sha1 match confirmed this run) — the earlier "signup 200" is client-side routing, NOT a server-rendered signup form; passive signal for open-self-signup is weak.
+[NEW] mm.fonial.de v4 API: `users/ping`→401, `system/ping`→200, `users`→401, `teams`→401, `config`→404, `users/create`→404, `websocket`/`plugins`/`config/client`/`brand`/`image`→404; all `/api/v3/*`→404 → v4 routes partially exist; **correct create route is `POST /api/v4/users`, not `/users/create`** (hypothesis verify_step was pointed at a confirmed-missing route).
+[NEW] mm.fonial.de stack: nginx/1.10.2 direct (not Cloudflare), X-Version-Id `3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false` = Mattermost 3.7.3 legacy, unfronted.
+[NEW] prov.fonial.de re-probe 2026-09-10 01:26 UTC: OPTIONS /api/2.0/session → 200, nginx/1.10.3 direct (no Cloudflare), `X-Fonial-Version: v2026.09.03-1`, `ACAO: *` + `ACAM: GET, POST, OPTIONS`, no allow-credentials — unfronted clone confirmed still live, drift-free.
+[NEW] kundenkonto.fonial.de re-probe 2026-09-10 01:26 UTC: OPTIONS /api/2.0/session → 200, Cloudflare, X-Fonial-Version v2026.09.03-1, ACAO:* — unchanged.
+[CHANGED] reposcan credit retired: `reposcan-raw/summary.txt` says "TARGET_ORG not configured; skipping" — no public-org repo scan ever ran for fonial, so no reposcan-based LEARN is supportable.
+[PRIO] prov.fonial.de/api/2.0, 7.4, attack_surface=6,business_value=10,tech_exposure=8,gate_ease=4,cloud_surface=6,freshness=10
+[PRIO] kundenkonto.fonial.de/api/2.0, 6.7, attack_surface=5,business_value=10,tech_exposure=8,gate_ease=3,cloud_surface=8,freshness=5
+[PRIO] mm.fonial.de, 6.4, attack_surface=6,business_value=7,tech_exposure=8,gate_ease=5,cloud_surface=3,freshness=9
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted prov.fonial.de
+class: AUTH
+asset: prov.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 80
+reasoning: Live probe 2026-09-10 01:26 UTC re-confirms prov is an unfronted (nginx/1.10.3, no Cloudflare) byte-clone of kundenkonto: X-Fonial-Version v2026.09.03-1, ACAO *, ACAM GET/POST/OPTIONS, no allow-credentials, PHPSESSID decoration pattern identical (from prior runs). Data endpoints authorize by body SID only (`session unauthenticated` vs `session invalid`); PHPSESSID set decoratively in parallel; /session issues cleartext UUID sid. SID↔credential binding on the data layer is the sole unresolved question, and prov's lack of an edge means no WAF-side session consistency layer.
+evidence_needed: Data endpoint accepts valid SID_B in body + PHPSESSID_A cookie → cross-tenant data return vs `session invalid`.
+verify_steps: (HUMAN, sanctioned; two provisioned tenants T_A/T_B on prov) 1) POST /api/2.0/session → SID_A; 2) POST /session/authenticate{T_A}; 3) POST /devices/get{"sid":SID_A} capture Set-Cookie PHPSESSID_A; 4) GET /api/2.0/session (fresh jar) → SID_B; 5) POST /evn/get{"sid":SID_B} + Cookie:PHPSESSID_A. ≤1rps, zero writes beyond the two sanctioned auth steps.
+impact: cross-tenant CDR, device/SIP creds, unauthorized outbound call control and caller-ID spoof on portal API → CRITICAL if binding absent.
+testability: HUMAN_ONLY
+[HYP] Open self-signup on Mattermost 3.7.3 enables outsider account entry
+class: BUSLOGIC
+asset: mm.fonial.de/api/v4/users
+confidence: 50
+reasoning: /signup/email returns 200 but byte-identical to /login (SPA shell) → cannot confirm server-side signup state passively. X-Version-Id `3.7.0.3.7.3.a553e134...` = Mattermost 3.7.3, nginx/1.10.2 unfronted. `/api/v4/users/create` → 404; in Mattermost v4 the create route is `POST /api/v4/users` (user creation by email+username+password when EnableSignUpWithEmail=true; default admin-approval/disabled otherwise). Mutating → program-approved only; confidence tapered from 55 (previous verify route was wrong).
+evidence_needed: POST /api/v4/users with fabricated email issues account token vs adminApproval/disabled/400 error.
+verify_steps: (HUMAN, sanctioned) single POST /api/v4/users {email:ot-<ts>@example.invalid, username:ot-<ts>, password:<random>, first_name:"", last_name:""}; on 201 immediately delete/disable account via /api/v4/users/<id> (admin) or flag to operator; ≤1rps.
+impact: outsider foothold in company chat (internal directory, channels, webhooks) + legacy-3.7 CVE surface. HIGH if open.
+testability: HUMAN_ONLY
+[HYP] CORS wildcard persists on authenticated API responses (post-auth ACAO *)
+class: MISCONFIG
+asset: kundenkonto.fonial.de/api/2.0 + /
+confidence: 50
+reasoning: ACAO * confirmed on all 5 unauth API endpoints + both landing/login pages (this run re-confirmed on /api/2.0/session OPTIONS). Authenticated path (valid PHPSESSID + authenticated SID) never observed; no allow-credentials pre-auth; persistence post-auth unverified. Chain-enabler only (SID-in-body → needs a SID leak), not reportable standalone under scope note.
+evidence_needed: valid authenticated 2FA session response carrying ACAO * (and whether allow-credentials appears).
+verify_steps: (HUMAN, sanctioned — one valid test account) normal login, then POST /devices/get{"sid":SID_x} and diff CORS headers vs unauth baseline. One request with real session.
+impact: exfil of bearer SID if another flaw leaks it; standalone LOW, not reportable alone.
+testability: HUMAN_ONLY
+[PARKED] shop admin-token standalone @ shop.fonial.de/graphql (40): no new evidence since 55→40; chain-only, not primary.
+[PARKED] prov v1/v2 version-diff probe: kundenkonto alternate versions already 404; no drift evidence prov differs.
+[PARKED] sbc/LDAP/RMQ/Sentry public-IP banner group (45): single-packet classification is HUMAN-only; no HTTP reachability evidence; unchanged.
+[FINAL] 1. prov.fonial.de cross-tenant BOLA (80) — gated on TWO approved tenants. 2. mm.fonial.de open self-signup (50) — gated on ONE approved mutating POST, corrected route. 3. kundenkonto post-auth CORS (50) — chain-only, needs one valid account.
+[NEXT] HUMAN: request program approval for ONE sanctioned mutating POST, then run `POST https://mm.fonial.de/api/v4/users` body {"email":"ot-<ts>@example.invalid","username":"ot-<ts>","password":"<random>","first_name":"","last_name":""}; capture token-issuance (201 + token) vs adminApproval/400/403; delete account immediately if created. Corrected from `/users/create` (404-confirmed). Lowest blocker among survivors (single approval, no tenant provisioning); the 80 BOLA remains queued behind T_A/T_B on prov.
+[LEARN] ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe 2026-09-10 confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate target for cross-bind BOLA test.
+[LEARN] ACCEPTED SPA-shell-equality @ mm.fonial.de: /signup/email ≡ /login byte-identical (sha1 match) → signup-200 is client-side routing, not server-side proof of open registration.
+[LEARN] REJECTED v4-users-create-route @ mm.fonial.de: `/api/v4/users/create` → 404 (also all `/api/v3/*` → 404); Mattermost v4 create is `POST /api/v4/users` — prior verify step was invalid.
+[LEARN] ACCEPTED stable-surface @ kundenkonto.fonial.de/api/2.0: OPTIONS reconfirms v2026.09.03-1, ACAO *, Cloudflare, 5-endpoint surface, zero drift since 2026-09-07.
+[RISK] fonial: 58 — passive pool remains exhausted; top survivor (80 BOLA) gated on two program-approved tenants, Mattermost (50) on one approved POST with corrected route; prov+mm are both unfronted legacy nginx (1.10.3/1.10.2), no WAF. No writes and no customer data touched this run (OPTIONS/GET only). Reportable-outcome probability ~50% flat-close if outside approvals stall.
