@@ -148,3 +148,12 @@ reasoning: Organization has no public repositories to audit.
 impact: N/A
 verify_steps: Confirm at https://api.github.com/orgs/fonial-de/repos — empty array returned.
 TARGET_ORG not configured for fonial; skipping public-org deep scan.
+## REPOSCAN 2026-09-10 06:39:47 UTC
+[HYP] No org candidates available
+class: OTHER
+asset: N/A (cands.txt = "no org candidates", scope.yml github_orgs = none-configured)
+confidence: 100
+reasoning: The candidates file explicitly states "no org candidates" and scope.yml has github_orgs set to "none-configured". No public GitHub repositories from fonial GmbH are in scope for source code auditing.
+impact: N/A
+verify_steps: Verify at bugs.olivermaicher.eu program page or re-scan GitHub org for public repos under fonial GmbH / olivermaicher.
+TARGET_ORG not configured for fonial; skipping public-org deep scan.
