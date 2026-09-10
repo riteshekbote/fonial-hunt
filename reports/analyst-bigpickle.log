@@ -14040,3 +14040,203 @@ testability: HUMAN_ONLY
 ## STEP 7 — RISK
 
 [RISK] fonial: 58 — passive pool remains exhausted; top survivor (80 BOLA) gated on two program-approved tenants, Mattermost (50) on one approved POST with corrected route; prov+mm are both unfronted legacy nginx (1.10.3/1.10.2), no WAF. No writes and no customer data touched this run (OPTIONS/GET only). Reportable-outcome probability ~50% flat-close if outside approvals stall.
+===== ANALYST bigpickle 2026-09-10 06:45:27 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mcurl -sI -X OPTIONS 'https://prov.fonial.de/api/2.0/session' 2>&1 | head -30
+HTTP/2 200 
+server: nginx/1.10.3
+content-type: text/json; charset=UTF-8
+cache-control: max-age=0, must-revalidate, private
+date: Thu, 10 Sep 2026 06:37:45 GMT
+x-fonial-version: v2026.09.03-1
+expires: Thu, 10 Sep 2026 06:37:45 GMT
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+[0m
+[0m$ [0mcurl -sI -X OPTIONS 'https://kundenkonto.fonial.de/api/2.0/session' 2>&1 | head -30
+HTTP/2 200 
+date: Thu, 10 Sep 2026 06:37:45 GMT
+content-type: text/json; charset=UTF-8
+server: cloudflare
+cache-control: max-age=0, must-revalidate, private
+expires: Thu, 10 Sep 2026 06:37:45 GMT
+x-fonial-version: v2026.09.03-1
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+cf-cache-status: DYNAMIC
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=VsPDmoZp%2FU83yZ6jotjqhwW7KNNjP%2BDl4aweDFAl4ziqi5Kq%2FyZyZO%2FGyuLIAdiovz4z2VGD%2BVURJGw1b4dKArscNlJy%2BlTod%2FxplgImQW6%2F1GFTYSzGLm1HyLJkMNrQIjnuCpoJFA%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cf-ray: a38c6d03dd94f81d-DFW
+[0m
+[0m$ [0mcurl -sI 'https://mm.fonial.de/api/v4/system/ping' 2>&1 | head -20
+HTTP/1.1 404 Not Found
+Server: nginx/1.10.2
+Date: Thu, 10 Sep 2026 06:37:45 GMT
+Content-Type: text/plain; charset=utf-8
+Content-Length: 209
+Connection: keep-alive
+[0m
+[0m$ [0mcurl -s 'https://mm.fonial.de/api/v4/system/ping' 2>&1
+{"status":"OK"}
+[0m
+[0m$ [0mfor ep in session/authenticate devices/get evn/get call/initiate signup register wizard settings; do echo -n "/api/2.0/$ep → "; curl -s -o /dev/null -w "%{http_code}" -X OPTIONS "https://prov.fonial.de/api/2.0/$ep" 2>&1; echo; done
+/api/2.0/session/authenticate → 200
+/api/2.0/devices/get → 200
+/api/2.0/evn/get → 200
+/api/2.0/call/initiate → 200
+/api/2.0/signup → 404
+/api/2.0/register → 404
+/api/2.0/wizard → 404
+/api/2.0/settings → 404
+[0m
+[0m$ [0mfor ep in health status ping debug info config admin docs swagger openapi; do echo -n "/api/2.0/$ep → "; curl -s -o /dev/null -w "%{http_code}" -X OPTIONS "https://prov.fonial.de/api/2.0/$ep" 2>&1; echo; done
+/api/2.0/health → 404
+/api/2.0/status → 404
+/api/2.0/ping → 404
+/api/2.0/debug → 404
+/api/2.0/info → 404
+/api/2.0/config → 404
+/api/2.0/admin → 404
+/api/2.0/docs → 404
+/api/2.0/swagger → 404
+/api/2.0/openapi → 404
+[0m
+[0m$ [0mfor ep in users/password 2fa saml oauth webhook callback devices/add devices/delete evn/add evn/update call/status call/history; do echo -n "/api/2.0/$ep → "; curl -s -o /dev/null -w "%{http_code}" -X OPTIONS "https://prov.fonial.de/api/2.0/$ep" 2>&1; echo; done
+/api/2.0/users/password → 404
+/api/2.0/2fa → 404
+/api/2.0/saml → 404
+/api/2.0/oauth → 404
+/api/2.0/webhook → 404
+/api/2.0/callback → 404
+/api/2.0/devices/add → 404
+/api/2.0/devices/delete → 404
+/api/2.0/evn/add → 404
+/api/2.0/evn/update → 404
+/api/2.0/call/status → 404
+/api/2.0/call/history → 404
+[0m
+[0m$ [0mcurl -sI 'https://mm.fonial.de/signup/email' 2>&1 | head -20
+HTTP/1.1 404 Not Found
+Server: nginx/1.10.2
+Date: Thu, 10 Sep 2026 06:38:31 GMT
+Content-Type: text/plain; charset=utf-8
+Connection: keep-alive
+Location: /error?title=Mattermost+braucht+Ihre+Hilfe%3A&message=Entschuldigung%2C+wir+k%C3%B6nnen+die+Seite+nicht+finden.&details=&link=%2F&linkmessage=Gehe+zur%C3%BCck+zu+Mattermost
+[0m
+[0m$ [0mcurl -sI 'https://mm.fonial.de/login' 2>&1 | head -20
+HTTP/1.1 404 Not Found
+Server: nginx/1.10.2
+Date: Thu, 10 Sep 2026 06:38:31 GMT
+Content-Type: text/plain; charset=utf-8
+Connection: keep-alive
+Location: /error?title=Mattermost+braucht+Ihre+Hilfe%3A&message=Entschuldigung%2C+wir+k%C3%B6nnen+die+Seite+nicht+finden.&details=&link=%2F&linkmessage=Gehe+zur%C3%BCck+zu+Mattermost
+[0m
+Now let me check a few more angles on mm.fonial.de and the dead hosts:
+[0m$ [0mcurl -s 'https://mm.fonial.de/api/v4/config/client' 2>&1 | head -100
+{"id":"api.context.404.app_error","message":"Entschuldigung, wir können die Seite nicht finden.","detailed_error":"There doesn't appear to be an api call for the url='/api/v4/config/client'.","status_code":404}
+[0m
+[0m$ [0mcurl -sI 'https://mm.fonial.de/api/v4/config' 2>&1 | head -20
+HTTP/1.1 404 Not Found
+Server: nginx/1.10.2
+Date: Thu, 10 Sep 2026 06:38:32 GMT
+Content-Type: text/plain; charset=utf-8
+Content-Length: 204
+Connection: keep-alive
+[0m
+[0m$ [0mcurl -s 'https://mm.fonial.de/error?title=Mattermost+braucht+Ihre+Hilfe' 2>&1 | head -50
+<!DOCTYPE html> <html> <head> <meta http-equiv=X-UA-Compatible content="IE=edge"> <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0"> <meta name=robots content="noindex, nofollow"> <meta name=referrer content=no-referrer> <title>Mattermost</title> <meta name=apple-mobile-web-app-capable content=yes> <meta name=apple-mobile-web-app-status-bar-style content=default> <meta name=mobile-web-app-capable content=yes> <meta name=apple-mobile-web-app-title content=Mattermost> <meta name=application-name content=Mattermost> <meta name=format-detection content="telephone=no"> <link rel=apple-touch-icon sizes=57x57 href=/static/files/787db8d8b82538cc1d5e8bcb8c21722d.png> <link rel=apple-touch-icon sizes=60x60 href=/static/files/cd9987714f4d92336c3ab203ff150a9a.png> <link rel=apple-touch-icon sizes=72x72 href=/static/files/1728fd5a009aabc77654b1f958c6f596.png> <link rel=apple-touch-icon sizes=76x76 href=/static/files/17cb12b7fc37d8229a6e72f3d6da0949.png> <link rel=apple-touch-icon sizes=144x144 href=/static/files/fba6362db1d8b3e27c9fb02fd0695c85.png> <link rel=apple-touch-icon sizes=120x120 href=/static/files/08959a08dc2488dfeb8660fc4630b145.png> <link rel=apple-touch-icon sizes=152x152 href=/static/files/bca263be9acd1df84b988b02c621b8ca.png> <link rel=icon type=image/png sizes=16x16 href=/static/files/532142b052832f94ffc35860545a7e5c.png> <link rel=icon type=image/png sizes=32x32 href=/static/files/c220e89731c31367c0f4e86e3442bee0.png> <link rel=icon type=image/png sizes=96x96 href=/static/files/173682cef105829829a008f1fc97e980.png> <link rel=icon type=image/png sizes=192x192 href=/static/files/0d367a00a16bde58f7e87c4481516a68.png> <link rel=manifest href=/static/files/fee9721a6305a49662a40ffd052a7965.json> <link rel=stylesheet class=code_theme> <style>.error-screen{font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;padding-top:50px;max-width:750px;font-size:14px;color:#333;margin:auto;display:none;line-height:1.5}.error-screen h2{font-size:30px;font-weight:400;line-height:1.2}.error-screen ul{padding-left:15px;line-height:1.7;margin-top:0;margin-bottom:10px}.error-screen hr{color:#ddd;margin-top:20px;margin-bottom:20px;border:0;border-top:1px solid #eee}.error-screen-visible{display:block}</style> <script type="text/javascript" src="/static/main.5f3caefd47087eebf4bc.js"></script></head> <body> <div id=root> <div class=error-screen> <h2>Cannot connect to Mattermost</h2> <hr/> <p>We’re having trouble connecting to Mattermost. If refreshing this page (Ctrl+R or Command+R) does not work, please verify that your computer is connected to the internet.</p> <br/> </div> <div class=loading-screen style=position:relative> <div class=loading__content> <div class="round round-1"></div> <div class="round round-2"></div> <div class="round round-3"></div> </div> </div> </div> <script>"function"!=typeof window.setup_root&&document.querySelector(".error-screen").classList.add("error-screen-visible"),window.setup_root()</script> <noscript> To use Mattermost, please enable JavaScript. </noscript> </body> </html>
+[0m
+[0m$ [0mcurl -sI 'https://mm.fonial.de/api/v4/users' 2>&1 | head -20
+HTTP/1.1 404 Not Found
+Server: nginx/1.10.2
+Date: Thu, 10 Sep 2026 06:39:08 GMT
+Content-Type: text/plain; charset=utf-8
+Content-Length: 203
+Connection: keep-alive
+[0m
+[0m$ [0mcurl -s 'https://mm.fonial.de/api/v4/users' 2>&1
+{"id":"api.context.session_expired.app_error","message":"Ungültige oder abgelaufene Sitzung, melden Sie sich erneut an.","detailed_error":"","request_id":"bmf814c367nx9bia3z7defzm1y","status_code":401}
+[0m
+[0m$ [0mcurl -sI 'https://mm.fonial.de/api/v4/teams' 2>&1 | head -20
+HTTP/1.1 404 Not Found
+Server: nginx/1.10.2
+Date: Thu, 10 Sep 2026 06:39:09 GMT
+Content-Type: text/plain; charset=utf-8
+Content-Length: 203
+Connection: keep-alive
+[0m
+## STEP 1 — DELTA
+
+[CHANGED] mm.fonial.de: /signup/email and /login now return **404** (were SPA shell in 2026-09-10 01:31 run); /api/v4/users GET→401 `session_expired` (endpoint exists); /api/v4/teams HEAD→404 (was 401 in prior run). Server alive (system/ping 200).
+[NO CHANGE] prov.fonial.de/api/2.0: 5 endpoints, nginx/1.10.3, X-Fonial-Version v2026.09.03-1, ACAO\*, no allow-credentials. Zero drift since 2026-09-10 01:26.
+[NO CHANGE] kundenkonto.fonial.de/api/2.0: Cloudflare, v2026.09.03-1, ACAO\*. Zero drift.
+
+## STEP 2 — PRIORITIZE
+
+[PRIO] prov.fonial.de/api/2.0, 7.4, attack_surface=6,business_value=10,tech_exposure=8,gate_ease=4,cloud_surface=6,freshness=10
+[PRIO] kundenkonto.fonial.de/api/2.0, 6.7, attack_surface=5,business_value=10,tech_exposure=8,gate_ease=3,cloud_surface=8,freshness=5
+[PRIO] mm.fonial.de, 5.9, attack_surface=6,business_value=7,tech_exposure=8,gate_ease=5,cloud_surface=3,freshness=8 *(DOWN from 6.4 — SPA routes 404'd, reduced passive signal)*
+
+## STEP 3 — HYPOTHESES
+
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted prov.fonial.de
+class: AUTH
+asset: prov.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 80
+reasoning: Re-probed 2026-09-10 06:37 UTC: nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO\*, ACAM GET/POST/OPTIONS, no allow-credentials, no Cloudflare. Same 5 endpoints as kundenkonto (confirmed by OPTIONS probe of all guessed names — 200 on 5, 404 on rest). Data endpoints authorize by body SID only; PHPSESSID decorative; /session issues cleartext UUID sid. Unfronted = no WAF-side session consistency layer.
+evidence_needed: Data endpoint accepts valid SID_B in body + PHPSESSID_A cookie → cross-tenant data return vs `session invalid`.
+verify_steps: (HUMAN, sanctioned; two provisioned tenants T_A/T_B on prov) 1) POST /api/2.0/session → SID_A; 2) POST /session/authenticate{T_A}; 3) POST /devices/get{"sid":SID_A} capture Set-Cookie PHPSESSID_A; 4) GET /api/2.0/session (fresh jar) → SID_B; 5) POST /evn/get{"sid":SID_B} + Cookie:PHPSESSID_A. ≤1rps, zero writes beyond the two sanctioned auth steps.
+impact: Cross-tenant CDR, device/SIP creds, unauthorized outbound call control and caller-ID spoof on portal API → CRITICAL if binding absent.
+testability: HUMAN_ONLY
+
+[HYP] Open self-signup on Mattermost 3.7.3 enables outsider account entry
+class: BUSLOGIC
+asset: mm.fonial.de/api/v4/users
+confidence: 50
+reasoning: /signup/email and /login now 404 (SPA shell no longer served; server may have been restarted or config changed between 01:31 and 06:37 UTC). Server alive: system/ping 200, GET /api/v4/users → 401 `session_expired` (endpoint exists and recognizes the route). /api/v4/teams HEAD→404 now (was 401 — possible route change). Mattermost 3.7.3, nginx/1.10.2 unfronted. POST /api/v4/users untested; open-self-signup when EnableSignUpWithEmail=true would allow outsider foothold. SPA shell degraded reduces passive signal but doesn't affect API test.
+evidence_needed: POST /api/v4/users with fabricated email issues account token vs adminApproval/disabled/400 error.
+verify_steps: (HUMAN, sanctioned) single POST /api/v4/users {email:"ot-<ts>@example.invalid", username:"ot-<ts>", password:"<random>", first_name:"", last_name:""}; on 201 immediately delete/disable account via admin.
+impact: Outsider foothold in company chat (internal directory, channels, webhooks) + legacy-3.7 CVE surface. HIGH if open.
+testability: HUMAN_ONLY
+
+[HYP] CORS wildcard persists on authenticated API responses (post-auth ACAO *)
+class: MISCONFIG
+asset: kundenkonto.fonial.de/api/2.0 + prov.fonial.de/api/2.0
+confidence: 50
+reasoning: ACAO \* confirmed on all unauth API endpoints on both hosts re-probed 2026-09-10 06:37. Authenticated path never observed; no allow-credentials pre-auth; persistence post-auth unverified. Chain-enabler only (needs SID leak from separate flaw).
+evidence_needed: Valid authenticated session response carrying ACAO \* (and whether allow-credentials appears).
+verify_steps: (HUMAN, sanctioned — one valid test account) normal login, then POST /devices/get{"sid":SID_x} and diff CORS headers vs unauth baseline.
+impact: Exfil of bearer SID if another flaw leaks it; standalone LOW, not reportable alone.
+testability: HUMAN_ONLY
+
+## STEP 4 — SELF-CRITIQUE
+
+[FINAL] 1. prov BOLA (80) — unchanged, gated on TWO approved tenants on prov. 2. MM open-signup (50) — SPA 404 drift noted but server alive, endpoint exists (GET 401); still needs ONE approved POST. 3. Post-auth CORS (50) — chain-only, survives but not primary.
+Nothing dropped. No new hypotheses promoted.
+
+## STEP 5 — NEXT ACTION
+
+[NEXT] HUMAN: Request program approval for ONE sanctioned mutating POST, then run:
+```
+POST https://mm.fonial.de/api/v4/users
+Content-Type: application/json
+
+{"email":"ot-20260910@example.invalid","username":"ot-20260910","password":"R4nd0mP@ss!2026","first_name":"","last_name":""}
+```
+Capture: 201 + token (open signup) vs `adminApproval`/403/400 (disabled) vs 404 (route removed). Delete account immediately if created. Corrected from `/users/create` (404-confirmed). Lowest blocker among survivors (single approval, no tenant provisioning). The 80 BOLA remains queued behind T_A/T_B on prov.
+
+## STEP 6 — LEARN
+
+[LEARN] CHANGED SPA routes @ mm.fonial.de: /signup/email and /login now 404 (were byte-identical SPA shell in 01:31 run); server alive (system/ping 200); web client routing degraded or server restarted.
+[LEARN] CHANGED /api/v4/teams @ mm.fonial.de: HEAD→404 (was 401 in prior run); GET /api/v4/users→401 `session_expired` confirms endpoint exists and routes recognized.
+[LEARN] ACCEPTED prov surface drift-free @ prov.fonial.de/api/2.0: Re-probed 06:37 UTC, 5 endpoints, same headers, zero drift since 01:26.
+
+## STEP 7 — RISK
+
+[RISK] fonial: 58 — passive pool exhausted; zero writes since 2026-09-03; no customer data touched. Top survivor (80 BOLA) gated on two program-approved tenants on prov; MM open-signup (50) on one approved POST with corrected route; both HUMAN_ONLY. Reportable-outcome probability ~50% flat-close if outside approvals stall.

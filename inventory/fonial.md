@@ -342,3 +342,6 @@ www.fonial.de
 - NEW prov.fonial.de re-probe 2026-09-10 01:26 UTC: OPTIONS /api/2.0/session → 200, nginx/1.10.3 direct (no Cloudflare), `X-Fonial-Version: v2026.09.03-1`, `ACAO: *` + `ACAM: GET, POST, OPTIONS`, no allow-c
 - NEW kundenkonto.fonial.de re-probe 2026-09-10 01:26 UTC: OPTIONS /api/2.0/session → 200, Cloudflare, X-Fonial-Version v2026.09.03-1, ACAO:* — unchanged.
 - CHANGED reposcan credit retired: `reposcan-raw/summary.txt` says "TARGET_ORG not configured; skipping" — no public-org repo scan ever ran for fonial, so no reposcan-based LEARN is supportable.
+
+## 2026-09-10 06:45:27 UTC
+- CHANGED mm.fonial.de: /signup/email and /login now return **404** (were SPA shell in 2026-09-10 01:31 run); /api/v4/users GET→401 `session_expired` (endpoint exists); /api/v4/teams HEAD→404 (was 401 in prior 

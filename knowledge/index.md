@@ -229,3 +229,7 @@
 - 2026-09-10 REJECTED MageWorx guest-downloads IDOR @ shop.fonial.de/rest: endpoint live but `[]` across all 110 product IDs — no data to access; `/V1/mw-downloads-attachments/{id}` 401-gated; class parked.
 - 2026-09-10 ACCEPTED asymmetric admin-auth @ shop.fonial.de: REST `/V1/integration/admin/token` → 404 (route removed) but GraphQL `generateCustomerTokenAsAdmin` introspectable → non-uniform admin-auth surface; supports (does not prove) admin-token hypothesis.
 - 2026-09-10 REJECTED REST-schema exposure @ shop.fonial.de/rest/all/schema: stock Magento OpenAPI, no secrets, surface already known via GraphQL introspection — informational only, not reportable.
+- 2026-09-10 CHANGED SPA routes @ mm.fonial.de: /signup/email and /login now 404 (were byte-identical SPA shell in 01:31 run); server alive (system/ping 200); web client routing degraded or server restarted.
+- 2026-09-10 CHANGED /api/v4/teams @ mm.fonial.de: HEAD→404 (was 401 in prior run); GET /api/v4/users→401 `session_expired` confirms endpoint exists and routes recognized.
+- 2026-09-10 ACCEPTED prov surface drift-free @ prov.fonial.de/api/2.0: Re-probed 06:37 UTC, 5 endpoints, same headers, zero drift since 01:26.
+- 2026-09-10 ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe 2026-09-10 confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate deployment to test dual-backend cross-bind
