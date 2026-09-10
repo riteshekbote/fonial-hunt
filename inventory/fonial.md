@@ -373,3 +373,9 @@ www.fonial.de
 - NEW prov.fonial.de/api/2.0 confirmed stable unfronted byte-behavior clone (nginx/1.10.3, no Cloudflare, X-Fonial-Version v2026.09.03-1, ACAO*, zero drift across 4 probes since 2026-09-09)
 - CHANGED mm.fonial.de SPA shell degraded: /signup/email and /login now 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); GET /api/v4/users→401 `session_expired` confirms endpoint ex
 - CHANGED shop.fional.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+
+## 2026-09-10 23:25:25 UTC
+- NEW prov.fonial.de/api/2.0 re-probed 2026-09-10 18:54 UTC: OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift across all pr
+- CHANGED mm.fonial.de SPA shell degraded: /signup/email and /login now 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); GET /api/v4/users→401 `session_expired` confirms endpoint ex
+- CHANGED shop.fonial.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+- NEW kundenkonto.fonial.de/api/2.0 stable: Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07

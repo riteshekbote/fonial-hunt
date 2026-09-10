@@ -11277,3 +11277,305 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 [RISK] fonial: 78 — Customer portals (kundenkonto + dslkonto) have high business value (PII, CDR, SIP creds, billing, call control). Confirmed dual-backend architecture creating session confusion surface on kundenkonto API. prov.fonial.de provides unfronted duplicate for safe cross-bind testing. Symfony dev-mode exposed on dslkonto with profiler token leakage (critical misconfig but scope-excluded). CORS wildcard on auth domain confirmed. Main API not publicly documented but live with 5 endpoints including WRITE. Risk elevated due to enterprise telephony data sensitivity and architectural anomalies across two portals.
+===== ANALYST nemotron3 2026-09-10 23:25:25 UTC =====
+[0m
+> build · nemotron-3-ultra-free
+[0m
+[0m$ [0mcurl -s -X POST https://prov.fonial.de/api/2.0/session -H "Content-Type: application/json" -d '{}' -i
+HTTP/2 200 
+server: nginx/1.10.3
+content-type: text/json; charset=UTF-8
+cache-control: max-age=0, must-revalidate, private
+date: Thu, 10 Sep 2026 23:22:55 GMT
+x-fonial-version: v2026.09.03-1
+expires: Thu, 10 Sep 2026 23:22:55 GMT
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+
+{"status":"ok","sid":"7e6bd3ec-69d6-4b07-84e6-0a977772ead8"}
+[0m
+[0m$ [0mcurl -s -X POST https://kundenkonto.fonial.de/api/2.0/session -H "Content-Type: application/json" -d '{}' -i
+HTTP/2 200 
+date: Thu, 10 Sep 2026 23:22:56 GMT
+content-type: text/json; charset=UTF-8
+server: cloudflare
+cache-control: max-age=0, must-revalidate, private
+expires: Thu, 10 Sep 2026 23:22:56 GMT
+x-fonial-version: v2026.09.03-1
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+cf-cache-status: DYNAMIC
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=fZiOwYRuYLg5hJuEVrlA5aQgSRW%2BC4SuOUz4MuDd6TYfTxRsgFIPK3VeD9Q32TaX0HpWNPXn05XjhceFmwCs3Bx5%2BtHmdvVBNJTN0GlU7WvF1AfogEkGhRmhNmE6Md5U9GiQTXvDIQ%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cf-ray: a3922d730f4110fb-ORD
+
+{"status":"ok","sid":"61059eee-ee49-4d19-bf9e-f3e0479ea66e"}
+[0m
+[0m$ [0mcurl -s -X POST https://kundenkonto.fonial.de/api/2.0/devices/get -H "Content-Type: application/json" -d '{"sid":"test"}' -i
+HTTP/2 200 
+date: Thu, 10 Sep 2026 23:23:03 GMT
+content-type: text/json;charset=UTF-8
+server: cloudflare
+cache-control: no-cache, private
+set-cookie: PHPSESSID=0rsv9am1t8u28i12e0hr2hm9is; path=/; secure; HttpOnly
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+cf-cache-status: DYNAMIC
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=gLN6HB872KNfy45uHcpWjd1XAe5n1hsuOR4cWEHairi9c%2BaMNROemYMLC9U4SL8aPOR5lSeY8%2BRhzdqTQwkqu2nd3IwKh62fDf75CovTYB6PUx9t5hQlEioVLxeMldJb%2BX4wibbMJA%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cf-ray: a3922d95ef9422b9-ORD
+
+{"sid":"test","status":"error","reason":"session invalid"}
+[0m
+[0m$ [0mcurl -s -X POST https://prov.fonial.de/api/2.0/devices/get -H "Content-Type: application/json" -d '{"sid":"test"}' -i
+HTTP/2 200 
+server: nginx/1.10.3
+content-type: text/json;charset=UTF-8
+set-cookie: PHPSESSID=gn3l64q27sa83n8ieij5m0ftua; path=/; secure; HttpOnly
+cache-control: no-cache, private
+date: Thu, 10 Sep 2026 23:23:03 GMT
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+
+{"sid":"test","status":"error","reason":"session invalid"}
+[0m
+[0m$ [0mcurl -s -X POST https://prov.fonial.de/api/2.0/call/initiate -H "Content-Type: application/json" -d '{"sid":"test","destination":"+49123456789","caller_id":"+49987654321"}' -i
+HTTP/2 200 
+server: nginx/1.10.3
+content-type: text/json;charset=UTF-8
+set-cookie: PHPSESSID=rmi5eqljgk7omi5l84nc5djos2; path=/; secure; HttpOnly
+cache-control: no-cache, private
+date: Thu, 10 Sep 2026 23:23:10 GMT
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+
+{"sid":"test","status":"error","reason":"session invalid"}
+[0m
+[0m$ [0mcurl -s -X POST https://kundenkonto.fonial.de/api/2.0/call/initiate -H "Content-Type: application/json" -d '{"sid":"test","destination":"+49123456789","caller_id":"+49987654321"}' -i
+HTTP/2 200 
+date: Thu, 10 Sep 2026 23:23:10 GMT
+content-type: text/json;charset=UTF-8
+server: cloudflare
+cache-control: no-cache, private
+set-cookie: PHPSESSID=ouoir9uokrthspkn2i5u4ivmhv; path=/; secure; HttpOnly
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+cf-cache-status: DYNAMIC
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=NMfmVwUAsW9anL3BTgIv5YY76v8jwFCMfkfj81%2F3M6xPg6IngrJkyCdxOSvzarcAT9z7oukQ8yW%2BfQGugCt4LU8g3ivWwIMdbDpvVsRKKgXnPmQBqacuvNC%2BclAp9yBSYdHrueEIag%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cf-ray: a3922dc3ea4c3457-ORD
+
+{"sid":"test","status":"error","reason":"session invalid"}
+[0m
+[0m$ [0mcurl -s -X POST https://prov.fonial.de/api/2.0/session/authenticate -H "Content-Type: application/json" -d '{"username":"test","password":"test"}' -i
+HTTP/2 200 
+server: nginx/1.10.3
+content-type: text/json; charset=UTF-8
+cache-control: max-age=0, must-revalidate, private
+date: Thu, 10 Sep 2026 23:23:15 GMT
+x-fonial-version: v2026.09.03-1
+expires: Thu, 10 Sep 2026 23:23:15 GMT
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+
+{"sid":null,"status":"ok","authenticated":false}
+[0m
+[0m$ [0mcurl -s -X POST https://kundenkonto.fonial.de/api/2.0/session/authenticate -H "Content-Type: application/json" -d '{"username":"test","password":"test"}' -i
+HTTP/2 200 
+date: Thu, 10 Sep 2026 23:23:15 GMT
+content-type: text/json; charset=UTF-8
+server: cloudflare
+cache-control: max-age=0, must-revalidate, private
+expires: Thu, 10 Sep 2026 23:23:15 GMT
+x-fonial-version: v2026.09.03-1
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+cf-cache-status: DYNAMIC
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=Ex6peg5Cqy0Gfr%2BJ%2F4Xro1uEAzZpA8ba1IFzj8L%2F80sa8C5t2REEsBIdHcLL6PMRc6qT%2Fg%2FLTNuAVfKWmPKC7AqKd3a%2F1dy5Z15Ipbty%2BENC3n%2FwfJTcV5UxrMg0UlAcfp%2FRKW2Rvg%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cf-ray: a3922deb6b1dba2c-ORD
+
+{"sid":null,"status":"ok","authenticated":false}
+[0m
+[0m$ [0mcurl -s -X POST https://shop.fonial.de/graphql -H "Content-Type: application/json" -d '{"query":"{ __schema { types { name } } }"}' -i
+HTTP/2 200 
+cache-control: max-age=0, must-revalidate, no-cache, no-store
+content-type: application/json
+date: Thu, 10 Sep 2026 23:23:19 GMT
+expires: Wed, 10 Sep 2025 23:23:19 GMT
+pragma: no-cache
+server: nginx/1.31.2
+set-cookie: PHPSESSID=978008a9b41f4bf09ef1fc8f7f9e3d73; expires=Fri, 11 Sep 2026 00:23:19 GMT; Max-Age=3600; path=/; domain=shop.fonial.de; secure; HttpOnly; SameSite=Lax
+set-cookie: private_content_version=bb7689d117c61a8b50be36064908bbb7; expires=Sun, 07 Sep 2036 23:23:19 GMT; Max-Age=315360000; path=/; secure; SameSite=Lax
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-magento-cache-id: e76dfb659e35e57956eeda4b55b6c98fba39c4f8f30bbdcf4d104f07143c1047
+x-magento-tags: FPC
+x-powered-by: PHP/8.3.3
+x-xss-protection: 1; mode=block
+
+{"data":{"__schema":{"types":[{"name":"Query"},{"name":"String"},{"name":"ID"},{"name":"Boolean"},{"name":"Int"},{"name":"Float"},{"name":"Mutation"},{"name":"FilterTypeInput"},{"name":"FilterEqualTypeInput"},{"name":"FilterRangeTypeInput"},{"name":"FilterMatchTypeInput"},{"name":"FilterMatchTypeEnum"},{"name":"FilterStringTypeInput"},{"name":"SearchResultPageInfo"},{"name":"SortEnum"},{"name":"ComplexTextValue"},{"name":"Money"},{"name":"CurrencyEnum"},{"name":"EnteredOptionInput"},{"name":"BatchMutationStatus"},{"name":"ErrorInterface"},{"name":"NoSuchEntityUidError"},{"name":"InternalError"},{"name":"CustomAttributeMetadata"},{"name":"Attribute"},{"name":"StorefrontProperties"},{"name":"UseInLayeredNavigationOptions"},{"name":"AttributeOption"},{"name":"AttributeInput"},{"name":"AttributesMetadataOutput"},{"name":"AttributeMetadataError"},{"name":"AttributeMetadataErrorType"},{"name":"CustomAttributeMetadataInterface"},{"name":"CustomAttributeOptionInterface"},{"name":"AttributeOptionMetadata"},{"name":"AttributeMetadata"},{"name":"AttributeEntityTypeEnum"},{"name":"AttributeFrontendInputEnum"},{"name":"AttributesFormOutput"},{"name":"AttributeValueInterface"},{"name":"AttributeValue"},{"name":"AttributeSelectedOptions"},{"name":"AttributeSelectedOptionInterface"},{"name":"AttributeSelectedOption"},{"name":"AttributeValueInput"},{"name":"AttributeInputSelectedOption"},{"name":"AttributeFilterInput"},{"name":"Website"},{"name":"StoreConfig"},{"name":"CheckoutAgreement"},{"name":"CheckoutAgreementMode"},{"name":"CmsPage"},{"name":"CmsBlocks"},{"name":"CmsBlock"},{"name":"UrlRewriteEntityTypeEnum"},{"name":"Price"},{"name":"PriceAdjustment"},{"name":"PriceAdjustmentCodesEnum"},{"name":"PriceAdjustmentDescriptionEnum"},{"name":"PriceTypeEnum"},{"name":"CustomizableDateTypeEnum"},{"name":"ProductPrices"},{"name":"PriceRange"},{"name":"ProductPrice"},{"name":"ProductDiscount"},{"name":"ProductLinks"},{"name":"ProductLinksInterface"},{"name":"ProductInterface"},{"name":"PhysicalProductInterface"},{"name":"CustomizableAreaOption"},{"name":"CustomizableAreaValue"},{"name":"CategoryTree"},{"name":"CategoryResult"},{"name":"CustomizableDateOption"},{"name":"CustomizableDateValue"},{"name":"CustomizableDropDownOption"},{"name":"CustomizableDropDownValue"},{"name":"CustomizableMultipleOption"},{"name":"CustomizableMultipleValue"},{"name":"CustomizableFieldOption"},{"name":"CustomizableFieldValue"},{"name":"CustomizableFileOption"},{"name":"CustomizableFileValue"},{"name":"MediaGalleryInterface"},{"name":"ProductImage"},{"name":"ProductVideo"},{"name":"CustomizableOptionInterface"},{"name":"CustomizableProductInterface"},{"name":"CategoryInterface"},{"name":"Breadcrumb"},{"name":"CustomizableRadioOption"},{"name":"CustomizableRadioValue"},{"name":"CustomizableCheckboxOption"},{"name":"CustomizableCheckboxValue"},{"name":"VirtualProduct"},{"name":"SimpleProduct"},{"name":"Products"},{"name":"AggregationsFilterInput"},{"name":"AggregationsCategoryFilterInput"},{"name":"CategoryProducts"},{"name":"ProductAttributeFilterInput"},{"name":"CategoryFilterInput"},{"name":"ProductFilterInput"},{"name":"ProductMediaGalleryEntriesContent"},{"name":"ProductMediaGalleryEntriesVideoContent"},{"name":"ProductSortInput"},{"name":"ProductAttributeSortInput"},{"name":"MediaGalleryEntry"},{"name":"LayerFilter"},{"name":"LayerFilterItemInterface"},{"name":"LayerFilterItem"},{"name":"Aggregation"},{"name":"SearchSuggestion"},{"name":"AggregationOptionInterface"},{"name":"AggregationOption"},{"name":"SortField"},{"name":"SortFields"},{"name":"SimpleWishlistItem"},{"name":"VirtualWishlistItem"},{"name":"CatalogAttributeMetadata"},{"name":"CatalogAttributeApplyToEnum"},{"name":"ProductCustomAttributes"},{"name":"CreateGuestCartInput"},{"name":"createEmptyCartInput"},{"name":"AddSimpleProductsToCartInput"},{"name":"SimpleProductCartItemInput"},{"name":"AddVirtualProductsToCartInput"},{"name":"VirtualProductCartItemInput"},{"name":"CartItemInput"},{"name":"SortQuoteItemsEnum"},{"name":"QuoteItemsSortInput"},{"name":"CustomizableOptionInput"},{"name":"ApplyCouponToCartInput"},{"name":"UpdateCartItemsInput"},{"name":"CartItemUpdateInput"},{"name":"RemoveItemFromCartInput"},{"name":"SetShippingAddressesOnCartInput"},{"name":"ShippingAddressInput"},{"name":"SetBillingAddressOnCartInput"},{"name":"BillingAddressInput"},{"name":"CartAddressInput"},{"name":"SetShippingMethodsOnCartInput"},{"name":"ShippingMethodInput"},{"name":"SetPaymentMethodAndPlaceOrderInput"},{"name":"PlaceOrderInput"},{"name":"SetPaymentMethodOnCartInput"},{"name":"PaymentMethodInput"},{"name":"SetGuestEmailOnCartInput"},{"name":"CartPrices"},{"name":"CartTaxItem"},{"name":"CartDiscount"},{"name":"CreateGuestCartOutput"},{"name":"SetPaymentMethodOnCartOutput"},{"name":"SetBillingAddressOnCartOutput"},{"name":"SetShippingAddressesOnCartOutput"},{"name":"SetShippingMethodsOnCartOutput"},{"name":"ApplyCouponToCartOutput"},{"name":"PlaceOrderOutput"},{"name":"PlaceOrderError"},{"name":"Cart"},{"name":"CartItems"},{"name":"CartAddressInterface"},{"name":"ShippingCartAddress"},{"name":"BillingCartAddress"},{"name":"CartItemQuantity"},{"name":"CartAddressRegion"},{"name":"CartAddressCountry"},{"name":"SelectedShippingMethod"},{"name":"AvailableShippingMethod"},{"name":"AvailablePaymentMethod"},{"name":"SelectedPaymentMethod"},{"name":"AppliedCoupon"},{"name":"RemoveCouponFromCartInput"},{"name":"RemoveCouponFromCartOutput"},{"name":"AddSimpleProductsToCartOutput"},{"name":"AddVirtualProductsToCartOutput"},{"name":"UpdateCartItemsOutput"},{"name":"RemoveItemFromCartOutput"},{"name":"SetGuestEmailOnCartOutput"},{"name":"SimpleCartItem"},{"name":"VirtualCartItem"},{"name":"CartItemInterface"},{"name":"CartItemError"},{"name":"CartItemErrorType"},{"name":"Discount"},{"name":"CartDiscountType"},{"name":"CartItemPrices"},{"name":"SelectedCustomizableOption"},{"name":"SelectedCustomizableOptionValue"},{"name":"CartItemSelectedOptionValuePrice"},{"name":"Order"},{"name":"CartUserInputError"},{"name":"AddProductsToCartOutput"},{"name":"CartUserInputErrorType"},{"name":"PlaceOrderErrorCodes"},{"name":"EstimateTotalsInput"},{"name":"EstimateTotalsOutput"},{"name":"EstimateAddressInput"},{"name":"ContactUsInput"},{"name":"ContactUsOutput"},{"name":"Currency"},{"name":"ExchangeRate"},{"name":"Country"},{"name":"Region"},{"name":"AddDownloadableProductsToCartInput"},{"name":"DownloadableProductCartItemInput"},{"name":"DownloadableProductLinksInput"},{"name":"AddDownloadableProductsToCartOutput"},{"name":"DownloadableCartItem"},{"name":"DownloadableProduct"},{"name":"DownloadableFileTypeEnum"},{"name":"DownloadableProductLinks"},{"name":"DownloadableProductSamples"},{"name":"DownloadableOrderItem"},{"name":"DownloadableInvoiceItem"},{"name":"DownloadableCreditMemoItem"},{"name":"DownloadableItemsLinks"},{"name":"DownloadableWishlistItem"},{"name":"CustomerDownloadableProducts"},{"name":"CustomerDownloadableProduct"},{"name":"ProductTierPrices"},{"name":"TierPrice"},{"name":"ConfigurableCartItem"},{"name":"BundleCartItem"},{"name":"GiftMessage"},{"name":"GiftMessageInput"},{"name":"SalesItemInterface"},{"name":"CustomerOrder"},{"name":"OrderItemInterface"},{"name":"AddBundleProductsToCartInput"},{"name":"BundleProductCartItemInput"},{"name":"BundleOptionInput"},{"name":"AddBundleProductsToCartOutput"},{"name":"SelectedBundleOption"},{"name":"SelectedBundleOptionValue"},{"name":"PriceDetails"},{"name":"BundleItem"},{"name":"BundleItemOption"},{"name":"BundleProduct"},{"name":"PriceViewEnum"},{"name":"ShipBundleItemsEnum"},{"name":"BundleOrderItem"},{"name":"BundleInvoiceItem"},{"name":"BundleShipmentItem"},{"name":"BundleCreditMemoItem"},{"name":"ItemSelectedBundleOption"},{"name":"ItemSelectedBundleOptionValue"},{"name":"BundleWishlistItem"},{"name":"GroupedProduct"},{"name":"GroupedProductItem"},{"name":"GroupedProductWishlistItem"},{"name":"ConfigurableProduct"},{"name":"ConfigurableVariant"},{"name":"ConfigurableAttributeOption"},{"name":"ConfigurableProductOptions"},{"name":"ConfigurableProductOptionsValues"},{"name":"AddConfigurableProductsToCartInput"},{"name":"AddConfigurableProductsToCartOutput"},{"name":"ConfigurableProductCartItemInput"},{"name":"SelectedConfigurableOption"},{"name":"ConfigurableWishlistItem"},{"name":"ConfigurableProductOptionsSelection"},{"name":"ConfigurableOptionAvailableForSelection"},{"name":"ConfigurableProductOption"},{"name":"ConfigurableProductOptionValue"},{"name":"AreaInput"},{"name":"PickupLocationFilterInput"},{"name":"PickupLocationSortInput"},{"name":"PickupLocations"},{"name":"PickupLocation"},{"name":"ProductInfoInput"},{"name":"ProductStockStatus"},{"name":"GenerateCustomerTokenAsAdminInput"},{"name":"GenerateCustomerTokenAsAdminOutput"},{"name":"Customer"},{"name":"CustomerCreateInput"},{"name":"CustomerUpdateInput"},{"name":"ConfirmEmailInput"},{"name":"CustomerAddressInput"},{"name":"CustomerAddressRegionInput"},{"name":"CustomerAddressAttributeInput"},{"name":"CustomerToken"},{"name":"CustomerInput"},{"name":"CustomerOutput"},{"name":"RevokeCustomerTokenOutput"},{"name":"CustomerAddress"},{"name":"CustomerAddressRegion"},{"name":"CustomerAddressAttribute"},{"name":"IsEmailAvailableOutput"},{"name":"CountryCodeEnum"},{"name":"CustomerAttributeMetadata"},{"name":"InputFilterEnum"},{"name":"ValidationRule"},{"name":"ValidationRuleEnum"},{"name":"ConfirmationStatusEnum"},{"name":"SubscribeEmailToNewsletterOutput"},{"name":"SubscriptionStatusesEnum"},{"name":"CancellationReason"},{"name":"CancelOrderInput"},{"name":"CancelOrderOutput"},{"name":"AddProductsToNewCartOutput"},{"name":"SetCartAsInactiveOutput"},{"name":"GetPaymentSDKOutput"},{"name":"PaymentSDKParamsItem"},{"name":"PaymentOrderOutput"},{"name":"PaymentSourceDetails"},{"name":"Card"},{"name":"CardBin"},{"name":"CreatePaymentOrderInput"},{"name":"CompleteOrderInput"},{"name":"SyncPaymentOrderInput"},{"name":"CreatePaymentOrderOutput"},{"name":"PaymentLocation"},{"name":"PaymentConfigOutput"},{"name":"PaymentConfigItem"},{"name":"PaymentCommonConfig"},{"name":"HostedFieldsConfig"},{"name":"ThreeDSMode"},{"name":"SmartButtonsConfig"},{"name":"ApplePayConfig"},{"name":"GooglePayConfig"},{"name":"FastlaneConfig"},{"name":"ButtonStyles"},{"name":"GooglePayButtonStyles"},{"name":"MessageStyles"},{"name":"MessageStyleLogo"},{"name":"SDKParams"},{"name":"VaultMethodInput"},{"name":"SmartButtonMethodInput"},{"name":"ApplePayMethodInput"},{"name":"GooglePayMethodInput"},{"name":"HostedFieldsInput"},{"name":"FastlaneMethodInput"},{"name":"CreateVaultCardSetupTokenInput"},{"name":"VaultSetupTokenInput"},{"name":"PaymentSourceInput"},{"name":"CardPaymentSourceInput"},{"name":"BillingAddressPaymentSourceInput"},{"name":"CreateVaultCardSetupTokenOutput"},{"name":"CreateVaultCardPaymentTokenInput"},{"name":"CreateVaultCardPaymentTokenOutput"},{"name":"PaymentSourceOutput"},{"name":"CardPaymentSourceOutput"},{"name":"VaultConfigOutput"},{"name":"VaultCreditCardConfig"},{"name":"PaypalExpressTokenInput"},{"name":"PaypalExpressToken"},{"name":"PaypalExpressTokenOutput"},{"name":"PayflowLinkToken"},{"name":"HostedProUrl"},{"name":"HostedProUrlInput"},{"name":"HostedProInput"},{"name":"PaypalExpressInput"},{"name":"PayflowExpressInput"},{"name":"PaypalExpressUrlsInput"},{"name":"PaypalExpressUrlList"},{"name":"PayflowLinkInput"},{"name":"PayflowLinkTokenInput"},{"name":"PayflowLinkMode"},{"name":"PayflowProTokenInput"},{"name":"PayflowProInput"},{"name":"CreditCardDetailsInput"},{"name":"PayflowProUrlInput"},{"name":"PayflowProToken"},{"name":"CreatePayflowProTokenOutput"},{"name":"PayflowProResponseInput"},{"name":"PayflowProResponseOutput"},{"name":"VaultTokenInput"},{"name":"ReCaptchaFormEnum"},{"name":"ReCaptchaConfigurationV3"},{"name":"ProductReviews"},{"name":"ProductReview"},{"name":"ProductReviewRating"},{"name":"ProductReviewRatingsMetadata"},{"name":"ProductReviewRatingMetadata"},{"name":"ProductReviewRatingValueMetadata"},{"name":"CreateProductReviewOutput"},{"name":"CreateProductReviewInput"},{"name":"ProductReviewRatingInput"},{"name":"ReorderItemsOutput"},{"name":"CheckoutUserInputError"},{"name":"CustomerOrdersFilterInput"},{"name":"CustomerOrderSortInput"},{"name":"CustomerOrderSortableField"},{"name":"CustomerOrders"},{"name":"OrderAddress"},{"name":"OrderItem"},{"name":"OrderItemOption"},{"name":"TaxItem"},{"name":"OrderTotal"},{"name":"Invoice"},{"name":"InvoiceItemInterface"},{"name":"InvoiceItem"},{"name":"InvoiceTotal"},{"name":"ShippingHandling"},{"name":"ShippingDiscount"},{"name":"OrderShipment"},{"name":"SalesCommentItem"},{"name":"ShipmentItemInterface"},{"name":"ShipmentItem"},{"name":"ShipmentTracking"},{"name":"OrderPaymentMethod"},{"name":"CreditMemo"},{"name":"CreditMemoItemInterface"},{"name":"CreditMemoItem"},{"name":"CreditMemoTotal"},{"name":"KeyValue"},{"name":"CheckoutUserInputErrorCodes"},{"name":"ScopeTypeEnum"},{"name":"OrderTokenInput"},{"name":"OrderInformationInput"},{"name":"SendEmailToFriendInput"},{"name":"SendEmailToFriendSenderInput"},{"name":"SendEmailToFriendRecipientInput"},{"name":"SendEmailToFriendOutput"},{"name":"SendEmailToFriendSender"},{"name":"SendEmailToFriendRecipient"},{"name":"SendFriendConfiguration"},{"name":"EntityUrl"},{"name":"UrlRewrite"},{"name":"HttpQueryParameter"},{"name":"RoutableUrl"},{"name":"RoutableInterface"},{"name":"ComparableItem"},{"name":"ProductAttribute"},{"name":"ComparableAttribute"},{"name":"CompareList"},{"name":"CreateCompareListInput"},{"name":"AddProductsToCompareListInput"},{"name":"RemoveProductsFromCompareListInput"},{"name":"DeleteCompareListOutput"},{"name":"AssignCompareListToCustomerOutput"},{"name":"SwatchLayerFilterItemInterface"},{"name":"SwatchLayerFilterItem"},{"name":"SwatchData"},{"name":"SwatchDataInterface"},{"name":"ImageSwatchData"},{"name":"TextSwatchData"},{"name":"ColorSwatchData"},{"name":"SwatchInputTypeEnum"},{"name":"TaxWrappingEnum"},{"name":"DeletePaymentTokenOutput"},{"name":"CustomerPaymentTokens"},{"name":"PaymentToken"},{"name":"PaymentTokenTypeEnum"},{"name":"FixedProductTax"},{"name":"FixedProductTaxDisplaySettings"},{"name":"WishlistOutput"},{"name":"Wishlist"},{"name":"WishlistItemInterface"},{"name":"WishlistItems"},{"name":"WishlistItem"},{"name":"AddWishlistItemsToCartOutput"},{"name":"WishlistCartUserInputError"},{"name":"WishlistCartUserInputErrorType"},{"name":"WishlistItemInput"},{"name":"AddProductsToWishlistOutput"},{"name":"RemoveProductsFromWishlistOutput"},{"name":"WishlistItemUpdateInput"},{"name":"UpdateProductsInWishlistOutput"},{"name":"WishListUserInputError"},{"name":"WishListUserInputErrorType"},{"name":"BraintreeInput"},{"name":"BraintreeCcVaultInput"},{"name":"BraintreeVaultInput"},{"name":"__Schema"},{"name":"__Type"},{"name":"__TypeKind"},{"name":"__Field"},{"name":"__InputValue"},{"name":"__EnumValue"},{"name":"__Directive"},{"name":"__DirectiveLocation"}]}}}
+[0m
+[0m$ [0mcurl -s -X POST https://shop.fonial.de/graphql -H "Content-Type: application/json" -d '{"query":"mutation { generateCustomerTokenAsAdmin(customer_email: \"test@test.com\") { customer_token } }"}' -i
+HTTP/2 200 
+cache-control: max-age=0, must-revalidate, no-cache, no-store
+content-type: application/json
+date: Thu, 10 Sep 2026 23:23:23 GMT
+expires: Wed, 10 Sep 2025 23:23:23 GMT
+pragma: no-cache
+server: nginx/1.31.2
+set-cookie: PHPSESSID=4aa490b1dbf7ddb70afdd59fccf48817; expires=Fri, 11 Sep 2026 00:23:22 GMT; Max-Age=3600; path=/; domain=shop.fonial.de; secure; HttpOnly; SameSite=Lax
+set-cookie: private_content_version=b6182bd838cee384691f3b2e4da42892; expires=Sun, 07 Sep 2036 23:23:22 GMT; Max-Age=315360000; path=/; secure; SameSite=Lax
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-powered-by: PHP/8.3.3
+x-xss-protection: 1; mode=block
+
+{"errors":[{"message":"Unknown argument \"customer_email\" on field \"generateCustomerTokenAsAdmin\" of type \"Mutation\".","locations":[{"line":1,"column":41}]}]}
+[0m
+[0m$ [0mcurl -s -X POST https://shop.fonial.de/graphql -H "Content-Type: application/json" -d '{"query":"{ __type(name: \"GenerateCustomerTokenAsAdminInput\") { name inputFields { name type { name kind ofType { name kind } } } } }"}' -i
+HTTP/2 200 
+cache-control: max-age=0, must-revalidate, no-cache, no-store
+content-type: application/json
+date: Thu, 10 Sep 2026 23:23:29 GMT
+expires: Wed, 10 Sep 2025 23:23:28 GMT
+pragma: no-cache
+server: nginx/1.31.2
+set-cookie: PHPSESSID=e97357265a3175dfa5f9e6d7e3833441; expires=Fri, 11 Sep 2026 00:23:28 GMT; Max-Age=3600; path=/; domain=shop.fonial.de; secure; HttpOnly; SameSite=Lax
+set-cookie: private_content_version=3bf1e509339996f70151dd2d67f6f3b4; expires=Sun, 07 Sep 2036 23:23:28 GMT; Max-Age=315360000; path=/; secure; SameSite=Lax
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-magento-cache-id: e76dfb659e35e57956eeda4b55b6c98fba39c4f8f30bbdcf4d104f07143c1047
+x-magento-tags: FPC
+x-powered-by: PHP/8.3.3
+x-xss-protection: 1; mode=block
+
+{"data":{"__type":{"name":"GenerateCustomerTokenAsAdminInput","inputFields":[{"name":"customer_email","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"String","kind":"SCALAR"}}}]}}}
+[0m
+[0m$ [0mcurl -s -X POST https://shop.fonial.de/graphql -H "Content-Type: application/json" -d '{"query":"mutation { generateCustomerTokenAsAdmin(customer_email: \"test@test.com\") { customer_token } }"}' -i
+HTTP/2 200 
+cache-control: max-age=0, must-revalidate, no-cache, no-store
+content-type: application/json
+date: Thu, 10 Sep 2026 23:23:37 GMT
+expires: Wed, 10 Sep 2025 23:23:37 GMT
+pragma: no-cache
+server: nginx/1.31.2
+set-cookie: PHPSESSID=33899598204df3986bc7b69f8e2890a4; expires=Fri, 11 Sep 2026 00:23:37 GMT; Max-Age=3600; path=/; domain=shop.fonial.de; secure; HttpOnly; SameSite=Lax
+set-cookie: private_content_version=dd80f35282a38366aaec255cc96520a4; expires=Sun, 07 Sep 2036 23:23:37 GMT; Max-Age=315360000; path=/; secure; SameSite=Lax
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-powered-by: PHP/8.3.3
+x-xss-protection: 1; mode=block
+
+{"errors":[{"message":"Unknown argument \"customer_email\" on field \"generateCustomerTokenAsAdmin\" of type \"Mutation\".","locations":[{"line":1,"column":41}]}]}
+[0m
+[0m$ [0mcurl -s -X POST https://shop.fonial.de/graphql -H "Content-Type: application/json" -d '{"query":"{ __schema { mutationType { fields { name args { name type { name kind ofType { name kind } } } } } } }"}' -i
+HTTP/2 200 
+cache-control: max-age=0, must-revalidate, no-cache, no-store
+content-type: application/json
+date: Thu, 10 Sep 2026 23:23:44 GMT
+expires: Wed, 10 Sep 2025 23:23:44 GMT
+pragma: no-cache
+server: nginx/1.31.2
+set-cookie: PHPSESSID=ab9af7a041e6560a81175706bbffce4f; expires=Fri, 11 Sep 2026 00:23:44 GMT; Max-Age=3600; path=/; domain=shop.fonial.de; secure; HttpOnly; SameSite=Lax
+set-cookie: private_content_version=d5d5e8ff49e4f8b1ffcb50d267deb2f6; expires=Sun, 07 Sep 2036 23:23:44 GMT; Max-Age=315360000; path=/; secure; SameSite=Lax
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-powered-by: PHP/8.3.3
+x-xss-protection: 1; mode=block
+
+{"data":{"__schema":{"mutationType":{"fields":[{"name":"addBundleProductsToCart","args":[{"name":"input","type":{"name":"AddBundleProductsToCartInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"addConfigurableProductsToCart","args":[{"name":"input","type":{"name":"AddConfigurableProductsToCartInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"addDownloadableProductsToCart","args":[{"name":"input","type":{"name":"AddDownloadableProductsToCartInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"addProductsToCart","args":[{"name":"cartId","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"String","kind":"SCALAR"}}},{"name":"cartItems","type":{"name":null,"kind":"NON_NULL","ofType":{"name":null,"kind":"LIST"}}}]},{"name":"addProductsToCompareList","args":[{"name":"input","type":{"name":"AddProductsToCompareListInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"addProductsToNewCart","args":[{"name":"cartItems","type":{"name":null,"kind":"NON_NULL","ofType":{"name":null,"kind":"LIST"}}}]},{"name":"addProductsToWishlist","args":[{"name":"wishlistId","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"ID","kind":"SCALAR"}}},{"name":"wishlistItems","type":{"name":null,"kind":"NON_NULL","ofType":{"name":null,"kind":"LIST"}}}]},{"name":"addSimpleProductsToCart","args":[{"name":"input","type":{"name":"AddSimpleProductsToCartInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"addVirtualProductsToCart","args":[{"name":"input","type":{"name":"AddVirtualProductsToCartInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"addWishlistItemsToCart","args":[{"name":"wishlistId","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"ID","kind":"SCALAR"}}},{"name":"wishlistItemIds","type":{"name":null,"kind":"LIST","ofType":{"name":null,"kind":"NON_NULL"}}}]},{"name":"applyCouponToCart","args":[{"name":"input","type":{"name":"ApplyCouponToCartInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"assignCompareListToCustomer","args":[{"name":"uid","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"ID","kind":"SCALAR"}}}]},{"name":"assignCustomerToGuestCart","args":[{"name":"cart_id","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"String","kind":"SCALAR"}}}]},{"name":"cancelOrder","args":[{"name":"input","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"CancelOrderInput","kind":"INPUT_OBJECT"}}}]},{"name":"changeCustomerPassword","args":[{"name":"currentPassword","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"String","kind":"SCALAR"}}},{"name":"newPassword","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"String","kind":"SCALAR"}}}]},{"name":"completeOrder","args":[{"name":"input","type":{"name":"CompleteOrderInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"confirmEmail","args":[{"name":"input","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"ConfirmEmailInput","kind":"INPUT_OBJECT"}}}]},{"name":"contactUs","args":[{"name":"input","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"ContactUsInput","kind":"INPUT_OBJECT"}}}]},{"name":"createBraintreeClientToken","args":[]},{"name":"createBraintreePayPalClientToken","args":[]},{"name":"createBraintreePayPalVaultClientToken","args":[{"name":"input","type":{"name":"BraintreeVaultInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"createCompareList","args":[{"name":"input","type":{"name":"CreateCompareListInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"createCustomer","args":[{"name":"input","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"CustomerInput","kind":"INPUT_OBJECT"}}}]},{"name":"createCustomerAddress","args":[{"name":"input","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"CustomerAddressInput","kind":"INPUT_OBJECT"}}}]},{"name":"createCustomerV2","args":[{"name":"input","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"CustomerCreateInput","kind":"INPUT_OBJECT"}}}]},{"name":"createGuestCart","args":[{"name":"input","type":{"name":"CreateGuestCartInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"createPayflowProToken","args":[{"name":"input","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"PayflowProTokenInput","kind":"INPUT_OBJECT"}}}]},{"name":"createPaymentOrder","args":[{"name":"input","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"CreatePaymentOrderInput","kind":"INPUT_OBJECT"}}}]},{"name":"createPaypalExpressToken","args":[{"name":"input","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"PaypalExpressTokenInput","kind":"INPUT_OBJECT"}}}]},{"name":"createProductReview","args":[{"name":"input","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"CreateProductReviewInput","kind":"INPUT_OBJECT"}}}]},{"name":"createVaultCardPaymentToken","args":[{"name":"input","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"CreateVaultCardPaymentTokenInput","kind":"INPUT_OBJECT"}}}]},{"name":"createVaultCardSetupToken","args":[{"name":"input","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"CreateVaultCardSetupTokenInput","kind":"INPUT_OBJECT"}}}]},{"name":"deleteCompareList","args":[{"name":"uid","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"ID","kind":"SCALAR"}}}]},{"name":"deleteCustomer","args":[]},{"name":"deleteCustomerAddress","args":[{"name":"id","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"Int","kind":"SCALAR"}}}]},{"name":"deletePaymentToken","args":[{"name":"public_hash","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"String","kind":"SCALAR"}}}]},{"name":"estimateShippingMethods","args":[{"name":"input","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"EstimateTotalsInput","kind":"INPUT_OBJECT"}}}]},{"name":"estimateTotals","args":[{"name":"input","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"EstimateTotalsInput","kind":"INPUT_OBJECT"}}}]},{"name":"generateCustomerToken","args":[{"name":"email","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"String","kind":"SCALAR"}}},{"name":"password","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"String","kind":"SCALAR"}}}]},{"name":"generateCustomerTokenAsAdmin","args":[{"name":"input","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"GenerateCustomerTokenAsAdminInput","kind":"INPUT_OBJECT"}}}]},{"name":"handlePayflowProResponse","args":[{"name":"input","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"PayflowProResponseInput","kind":"INPUT_OBJECT"}}}]},{"name":"mergeCarts","args":[{"name":"source_cart_id","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"String","kind":"SCALAR"}}},{"name":"destination_cart_id","type":{"name":"String","kind":"SCALAR","ofType":null}}]},{"name":"placeOrder","args":[{"name":"input","type":{"name":"PlaceOrderInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"removeCouponFromCart","args":[{"name":"input","type":{"name":"RemoveCouponFromCartInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"removeItemFromCart","args":[{"name":"input","type":{"name":"RemoveItemFromCartInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"removeProductsFromCompareList","args":[{"name":"input","type":{"name":"RemoveProductsFromCompareListInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"removeProductsFromWishlist","args":[{"name":"wishlistId","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"ID","kind":"SCALAR"}}},{"name":"wishlistItemsIds","type":{"name":null,"kind":"NON_NULL","ofType":{"name":null,"kind":"LIST"}}}]},{"name":"reorderItems","args":[{"name":"orderNumber","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"String","kind":"SCALAR"}}}]},{"name":"requestPasswordResetEmail","args":[{"name":"email","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"String","kind":"SCALAR"}}}]},{"name":"resetPassword","args":[{"name":"email","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"String","kind":"SCALAR"}}},{"name":"resetPasswordToken","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"String","kind":"SCALAR"}}},{"name":"newPassword","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"String","kind":"SCALAR"}}}]},{"name":"revokeCustomerToken","args":[]},{"name":"sendEmailToFriend","args":[{"name":"input","type":{"name":"SendEmailToFriendInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"setBillingAddressOnCart","args":[{"name":"input","type":{"name":"SetBillingAddressOnCartInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"setCartAsInactive","args":[{"name":"cartId","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"String","kind":"SCALAR"}}}]},{"name":"setGuestEmailOnCart","args":[{"name":"input","type":{"name":"SetGuestEmailOnCartInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"setPaymentMethodOnCart","args":[{"name":"input","type":{"name":"SetPaymentMethodOnCartInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"setShippingAddressesOnCart","args":[{"name":"input","type":{"name":"SetShippingAddressesOnCartInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"setShippingMethodsOnCart","args":[{"name":"input","type":{"name":"SetShippingMethodsOnCartInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"subscribeEmailToNewsletter","args":[{"name":"email","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"String","kind":"SCALAR"}}}]},{"name":"syncPaymentOrder","args":[{"name":"input","type":{"name":"SyncPaymentOrderInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"updateCartItems","args":[{"name":"input","type":{"name":"UpdateCartItemsInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"updateCustomer","args":[{"name":"input","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"CustomerInput","kind":"INPUT_OBJECT"}}}]},{"name":"updateCustomerAddress","args":[{"name":"id","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"Int","kind":"SCALAR"}}},{"name":"input","type":{"name":"CustomerAddressInput","kind":"INPUT_OBJECT","ofType":null}}]},{"name":"updateCustomerEmail","args":[{"name":"email","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"String","kind":"SCALAR"}}},{"name":"password","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"String","kind":"SCALAR"}}}]},{"name":"updateCustomerV2","args":[{"name":"input","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"CustomerUpdateInput","kind":"INPUT_OBJECT"}}}]},{"name":"updateProductsInWishlist","args":[{"name":"wishlistId","type":{"name":null,"kind":"NON_NULL","ofType":{"name":"ID","kind":"SCALAR"}}},{"name":"wishlistItems","type":{"name":null,"kind":"NON_NULL","ofType":{"name":null,"kind":"LIST"}}}]}]}}}}
+[0m
+[0m$ [0mcurl -s -X POST https://shop.fonial.de/graphql -H "Content-Type: application/json" -d '{"query":"mutation { generateCustomerTokenAsAdmin(input: { customer_email: \"test@test.com\" }) { customer_token } }"}' -i
+HTTP/2 200 
+cache-control: max-age=0, must-revalidate, no-cache, no-store
+content-type: application/json
+date: Thu, 10 Sep 2026 23:24:14 GMT
+expires: Wed, 10 Sep 2025 23:24:14 GMT
+pragma: no-cache
+server: nginx/1.31.2
+set-cookie: PHPSESSID=ae9288b2db9862078e64d780c42847c9; expires=Fri, 11 Sep 2026 00:24:14 GMT; Max-Age=3600; path=/; domain=shop.fonial.de; secure; HttpOnly; SameSite=Lax
+set-cookie: private_content_version=2179f84b650c9837232d0c97bbdeb1a8; expires=Sun, 07 Sep 2036 23:24:14 GMT; Max-Age=315360000; path=/; secure; SameSite=Lax
+x-content-type-options: nosniff
+x-frame-options: SAMEORIGIN
+x-powered-by: PHP/8.3.3
+x-xss-protection: 1; mode=block
+
+{"errors":[{"message":"Der aktuelle Kunde ist nicht berechtigt.","locations":[{"line":1,"column":12}],"path":["generateCustomerTokenAsAdmin"],"extensions":{"category":"graphql-authorization"}}],"data":{"generateCustomerTokenAsAdmin":null}}
+[0m
+**STEP 1 — DELTA**
+[NEW] prov.fonial.de/api/2.0 re-probed 2026-09-10 18:54 UTC: OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift across all probes since 2026-09-09
+[CHANGED] mm.fonial.de SPA shell degraded: /signup/email and /login now 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); GET /api/v4/users→401 `session_expired` confirms endpoint exists
+[CHANGED] shop.fonial.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+[NEW] kundenkonto.fonial.de/api/2.0 stable: Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07
+
+**STEP 2 — PRIORITIZE**
+[PRIO] prov.fonial.de/api/2.0,9.2,attack_surface=10,business_value=9,tech_exposure=9,gate_ease=10,cloud_surface=8,freshness=10
+[PRIO] kundenkonto.fonial.de/api/2.0,8.5,attack_surface=9,business_value=10,tech_exposure=9,gate_ease=8,cloud_surface=7,freshness=9
+[PRIO] shop.fonial.de/graphql,5.8,attack_surface=7,business_value=7,tech_exposure=8,gate_ease=6,cloud_surface=5,freshness=6
+[PRIO] mm.fonial.de,3.2,attack_surface=4,business_value=5,tech_exposure=5,gate_ease=3,cloud_surface=4,freshness=4
+
+**STEP 3 — HYPOTHESES**
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on prov.fonial.de/api/2.0
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 80
+reasoning: Unfronted byte-behavior clone of kundenkonto API (nginx/1.10.3, no Cloudflare). Dual-backend confirmed: session endpoints issue cleartext UUID SID; data endpoints authorize by body SID only, set decorative PHPSESSID. Independent session stores suggest SID-to-PHPSESSID binding not enforced on data layer. /call/initiate is LIVE WRITE endpoint with identical error pattern.
+evidence_needed: Data endpoint accepts valid SID from Account A with PHPSESSID from Account B → cross-tenant call initiation or device/EVN data access
+verify_steps: 1) POST https://prov.fonial.de/api/2.0/session → capture SID_A; 2) POST https://prov.fonial.de/api/2.0/session/authenticate with valid creds for Account A → authenticate SID_A; 3) POST https://prov.fonial.de/api/2.0/devices/get with {"sid": SID_A} → capture PHPSESSID_A; 4) Repeat for Account B → SID_B, PHPSESSID_B; 5) POST https://prov.fonial.de/api/2.0/call/initiate with body {"sid":"SID_B","destination":"+49123456789","caller_id":"+49987654321"} + Cookie: PHPSESSID=PHPSESSID_A; 6) Observe if call initiates (cross-tenant) or returns "session invalid"
+impact: Unauthorized outbound calls, toll fraud, caller ID spoofing, SIP credential abuse, cross-tenant device/EVN data access — CRITICAL
+testability: AUTH_HELPED
+
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on kundenkonto.fonial.de/api/2.0
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 75
+reasoning: Cloudflare-fronted production API with identical dual-backend architecture. Session endpoints (text/json, no PHPSESSID) issue cleartext UUID SID; data endpoints (text/json;charset=UTF-8) set PHPSESSID but authorize solely by body SID. Independent session stores suggest SID-to-PHPSESSID binding not enforced on data layer. /call/initiate is LIVE WRITE endpoint with identical error pattern.
+evidence_needed: Data endpoint accepts valid SID from Account A with PHPSESSID from Account B → cross-tenant call initiation or device/EVN data access
+verify_steps: 1) POST https://kundenkonto.fonial.de/api/2.0/session → capture SID_A; 2) POST https://kundenkonto.fonial.de/api/2.0/session/authenticate with valid creds for Account A → authenticate SID_A; 3) POST https://kundenkonto.fonial.de/api/2.0/devices/get with {"sid": SID_A} → capture PHPSESSID_A; 4) Repeat for Account B → SID_B, PHPSESSID_B; 5) POST https://kundenkonto.fonial.de/api/2.0/call/initiate with body {"sid":"SID_B","destination":"+49123456789","caller_id":"+49987654321"} + Cookie: PHPSESSID=PHPSESSID_A; 6) Observe if call initiates (cross-tenant) or returns "session invalid"
+impact: Unauthorized outbound calls, toll fraud, caller ID spoofing, SIP credential abuse, cross-tenant device/EVN data access — CRITICAL
+testability: AUTH_HELPED
+
+[HYP] Asymmetric admin-auth surface: GraphQL GenerateCustomerTokenAsAdminInput introspectable but REST admin token route removed
+class: AUTH
+asset: shop.fonial.de/graphql
+confidence: 40
+reasoning: REST /V1/integration/admin/token → 404 (route removed) but GraphQL GenerateCustomerTokenAsAdminInput remains introspectable. Adobe/Magento docs confirm requires admin Authorization Bearer + customer remote_shopping_assistance opt-in. No unauthenticated exploitation path confirmed.
+evidence_needed: Valid admin token + customer with remote_shopping_assistance=true → token generation for arbitrary customer
+verify_steps: 1) GraphQL introspection confirms GenerateCustomerTokenAsAdminInput schema; 2) Attempt mutation with invalid/no admin token → expect auth error (confirmed: "Der aktuelle Kunde ist nicht berechtigt"); 3) If admin token obtained, test with opted-in customer
+impact: Admin impersonation of customers → account takeover, PII access, order manipulation — HIGH (but requires admin compromise first)
+testability: AUTH_HELPED
+
+**STEP 4 — SELF-CRITIQUE**
+[PARKED] Asymmetric admin-auth surface: GraphQL GenerateCustomerTokenAsAdminInput introspectable but REST admin token route removed: confidence 40 at critique floor; requires admin token compromise + customer opt-in → no standalone exploit path; retain only as chain component
+[FINAL] 1. Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on prov.fonial.de (80)
+[FINAL] 2. Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on kundenkonto.fonial.de/api/2.0 (75)
+
+**STEP 5 — NEXT ACTION**
+[NEXT] PROBE: POST https://prov.fonial.de/api/2.0/call/initiate with body {"sid":"<valid_sid_from_account_A>","destination":"+49123456789","caller_id":"+49987654321"} + Cookie: PHPSESSID=<valid_phpsessid_from_account_B> — first live cross-bind test on unfronted duplicate (lowest gate)
+
+**STEP 6 — LEARNING**
+[LEARN] ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift across all probes since 2026-09-09
+[LEARN] ACCEPTED mm-alive @ mm.fonial.de: system/ping 200 `{"status":"OK"}`, X-Version-Id 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false, nginx/1.10.2; SPA /signup/email + /login 404 drift persisted since 06:37 — server restart/config change not reversed
+[LEARN] REJECTED further-passive-probing @ fonial: all re-probes continue to return zero-drift evidence; additional GET/HEAD/OPTIONS passes add no discrimination value on any remaining hypothesis — live momentum must go through the HUMAN approval gate
+[LEARN] ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe 2026-09-10 confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate deployment to test dual-backend cross-bind
+[LEARN] REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component
+
+**STEP 7 — RISK**
+[RISK] fonial: 78 — Customer portals (kundenkonto + dslkonto) have high business value (PII, CDR, SIP creds, billing, call control). Confirmed dual-backend architecture creating session confusion surface on kundenkonto API. prov.fonial.de provides unfronted duplicate for safe cross-bind testing. Symfony dev-mode exposed on dslkonto with profiler token leakage (critical misconfig but scope-excluded). CORS wildcard on auth domain confirmed. Main API not publicly documented but live with 5 endpoints including WRITE. Risk elevated due to enterprise telephony data sensitivity and architectural anomalies across two portals.

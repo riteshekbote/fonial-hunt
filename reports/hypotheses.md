@@ -1480,3 +1480,14 @@
 - LEARN: REJECTED further-passive-probing @ fonial: all re-probes continue to return zero-drift evidence; additional GET/HEAD/OPTIONS passes add no discrimination value 
 - LEARN: ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe 2026-09-10 confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-cr
 - LEARN: REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component
+
+## RANKED HYPOTHESES 2026-09-10 23:25:25 UTC
+- [80] prov.fonial.de/api/2.0: Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on prov.fonial.de/api/2.0 (from art/lead_nemotron3.txt)
+- [60] prov.fonial.de/signup/confirm/55: Self-signup on prov yields usable tenants, making the two-tenant cross-bind BOLA test self-service (from art/lead_bigpickle.txt)
+- NEXT(hypotheses-bigpickle.txt): HUMAN: Request program approval for ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email + fabricated address, CSR
+- NEXT(hypotheses-nemotron3.txt): PROBE: POST https://prov.fonial.de/api/2.0/call/initiate with body {"sid":"<valid_sid_from_account_A>","destination":"+49123456789","caller_id":"+49987654321"} 
+- LEARN: ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-cred
+- LEARN: ACCEPTED mm-alive @ mm.fonial.de: system/ping 200 `{"status":"OK"}`, X-Version-Id 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false, nginx/1.10.2; SPA /signup/
+- LEARN: REJECTED further-passive-probing @ fonial: all re-probes continue to return zero-drift evidence; additional GET/HEAD/OPTIONS passes add no discrimination value 
+- LEARN: ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe 2026-09-10 confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-cr
+- LEARN: REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component
