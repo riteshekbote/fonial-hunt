@@ -14687,3 +14687,72 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 [RISK] fonial: 48 — passive pool still exhausted, but this cycle's prov frontend/signup discovery converts the #1 hypothesis gate from "program must provision two staging tenants" to "ONE approved registration POST on an unfronted staging clone", raising reportable-outcome probability (BOLA proof self-serviceable ~60/40); MM (50) remains gated on a single approved POST; no sanctioned writes executed to date; all probes this cycle were GET-only, ≤1rps, no customer data touched.
+===== ANALYST bigpickle 2026-09-11 01:29:52 UTC =====
+[0m
+> build · big-pickle
+[0m
+## STEP 1 — DELTA
+
+NO_DELTA since 2026-09-10 23:25:25 UTC. All re-probes confirm zero drift on prov/kundenkonto/mm/shop. The prov self-signup enabler (from prior cycle's 23:25:16 lead) remains the only gate-easing discovery; no new endpoints, headers, or behavioral changes observed.
+
+## STEP 2 — PRIORITIZE
+
+[PRIO] prov.fonial.de/api/2.0,7.85,a=7,b=9,t=8,g=9,c=5,f=8
+[PRIO] mm.fonial.de,5.60,a=5,b=7,t=6,g=4,c=4,f=7
+[PRIO] kundenkonto.fonial.de/api/2.0,5.20,a=4,b=8,t=5,g=3,c=4,f=6
+[PRIO] shop.fonial.de,5.25,a=5,b=6,t=7,g=3,c=4,f=6
+
+## STEP 3 — HYPOTHESES
+
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted prov
+class: IDOR
+asset: prov.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 80
+reasoning: nginx/1.10.3 direct, no Cloudflare/WAF; data endpoints authorize by body SID only; PHPSESSID set decoratively in parallel; /session issues cleartext UUID sid; zero drift across all probes 2026-09-09→10; self-signup on prov (identical Symfony registration flow at /signup/confirm/55) potentially makes T_A/T_B self-service without program provisioning.
+evidence_needed: evn/get returns tenant-B device/SIP data when body sid=SID_B + Cookie:PHPSESSID_A (vs `session invalid`).
+verify_steps: (HUMAN, sanctioned; T_A/T_B via self-signup on prov) 1) GET /signup → jar; GET /signup/register/55 → capture _token; 2) POST /signup/confirm/55 {email, address, trunkTariff} → 2xx; 3) POST /api/2.0/session → SID_A; 4) POST /session/authenticate{T_A}; 5) POST /devices/get{"sid":SID_A}, capture Set-Cookie PHPSESSID_A; 6) fresh jar → /session → SID_B; 7) POST /evn/get{"sid":SID_B} + Cookie:PHPSESSID_A. ≤1rps; admin delete on completion.
+impact: Cross-tenant CDR/SIP credentials + call-initiate with caller-ID spoof → CRITICAL.
+testability: HUMAN_ONLY
+
+[HYP] Open self-signup on Mattermost 3.7.3 enables outsider account entry
+class: BUSLOGIC
+asset: mm.fonial.de/api/v4/users
+confidence: 50
+reasoning: system/ping 200 (X-Version-Id 3.7.3); GET /api/v4/users → 401 session_expired (route exists and recognizes auth); /signup/email + /login 404 since 06:37 UTC (SPA shell dropped, not evidence of disabled signup — v4 API path untested); POST /api/v4/users untested; Mattermost 3.7.3 default allows team signup unless admin-disabled.
+evidence_needed: POST /api/v4/users returns 201+token (open) vs adminApproval/disabled/400 (closed).
+verify_steps: (HUMAN, sanctioned) single POST /api/v4/users {email:"ot-<timestamp>@example.invalid",username:"ot-<ts>",password:"<random 16char>",first_name:"",last_name:""}; on 201 immediately admin delete/disable. ≤1rps.
+impact: Outsider foothold in internal chat (directory, channels, webhooks, file uploads) + legacy-3.7 CVE surface → HIGH if open.
+testability: HUMAN_ONLY
+
+[HYP] Post-auth CORS wildcard enables SID cross-origin exfil when chained with SID leak
+class: MISCONFIG
+asset: kundenkonto.fonial.de/api/2.0 + prov.fonial.de/api/2.0
+confidence: 45
+reasoning: ACAO * confirmed on all unauth endpoints both hosts (18:54 UTC 2026-09-10); no allow-credentials pre-auth; authenticated response header set never observed; standalone LOW impact (SID-in-body, not cookies); only becomes reportable if a separate flaw leaks SID and authenticated responses carry ACAO * — chain-enabler only.
+evidence_needed: authenticated response from /devices/get carrying ACAO * and absence/presence of allow-credentials.
+verify_steps: (HUMAN, sanctioned — one valid test account) login, POST /devices/get{"sid":SID_x}, diff CORS headers vs unauth baseline.
+impact: Bearer-SID cross-origin exfil if a separate flaw leaks SID; not reportable standalone.
+testability: HUMAN_ONLY
+
+## STEP 4 — SELF-CRITIQUE
+
+[PARKED] Post-auth CORS wildcard (45): below confidence threshold, chain-only with no SID leak vector identified, no standalone reportability. Drop as primary; retain only as chain component if BOLA proof materializes and SID exfil becomes relevant.
+
+[FINAL] Survivors ranked:
+1. prov BOLA (80) — CRITICAL impact, self-signup enabler eases gate, HUMAN gate is only blocker
+2. MM open-signup (50) — HIGH impact if open, single POST test, fallback if prov signup fails
+
+Both require HUMAN-sanctioned writes. No passive discrimination remains.
+
+## STEP 5 — NEXT ACTION
+
+[NEXT] HUMAN: Request program approval for ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email + fabricated address, CSRF `_token` + PHPSESSID from GET /signup; ≤1rps; SaaS admin delete-on-completion) to confirm tenant creation on the staging clone. If 2xx + authenticated `/devices/get` returns empty device list → proceed with two-tenant cross-bind BOLA sequence (SID_B + PHPSESSID_A on `/evn/get`). If signup fails → fall back to single POST mm.fonial.de/api/v4/users {email:"ot-<ts>@example.invalid",username:"ot-<ts>",password,first_name:"",last_name:""}, delete/disable on 201.
+
+## STEP 6 — LEARNING
+
+[LEARN] REJECTED further-passive-cycles @ fonial: 2026-09-10 re-confirms zero drift on prov/kundenkonto/mm/shop; extra GET/HEAD/OPTIONS passes add no discrimination value on any remaining hypothesis — all survivors are HUMAN_ONLY, gated on program approval, not on probe data.
+[LEARN] ACCEPTED prov-self-signup-enabler: prov.fonial.de serves identical Symfony registration flow (POST /signup/confirm/55, CSRF, AccountAddress, AccountContact, trunkTariff) on unfronted nginx/1.10.3; whether POST creates usable account on prov data backend is the sole unobserved variable; if confirmed, converts BOLA test from program-provisioning-dependent to self-service.
+
+## STEP 7 — RISK
+
+[RISK] fonial: 48 — passive pool exhausted since 2026-09-06; zero sanctioned writes to date; top survivor (80 BOLA) and MM (50) both blocked on program-side approval; prov self-signup enabler raises BOLA proof probability (~60/40 self-serviceable), but reportable-outcome probability remains ~45% flat-close if approvals stall this cycle.

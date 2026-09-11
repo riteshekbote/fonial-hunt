@@ -379,3 +379,10 @@ www.fonial.de
 - CHANGED mm.fonial.de SPA shell degraded: /signup/email and /login now 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); GET /api/v4/users→401 `session_expired` confirms endpoint ex
 - CHANGED shop.fonial.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
 - NEW kundenkonto.fonial.de/api/2.0 stable: Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07
+
+## 2026-09-11 01:29:52 UTC
+- NEW prov.fonial.de/signup/confirm/55: Self-signup flow confirmed live (sets PHPSESSID, CSRF _token, trunkTariff 19/21/22) → enables self-service two-tenant creation for cross-bind BOLA testing without pro
+- CHANGED mm.fonial.de SPA degradation persisted: /signup/email + /login 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); server alive (system/ping 200) — config change/restart not 
+- CHANGED shop.fional.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+- NEW kundenkonto.fonial.de/api/2.0 stable: Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07
+- NEW prov.fonial.de/api/2.0 canary-stable: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift across all probes si
