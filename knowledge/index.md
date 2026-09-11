@@ -246,3 +246,4 @@
 - 2026-09-11 ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe 2026-09-10 confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate deployment to test dual-backend cross-bind
 - 2026-09-11 REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component
 - 2026-09-11 ACCEPTED self-signup-live @ prov.fonial.de/signup/confirm/55: mirrors kundenkonto flow (PHPSESSID, CSRF _token, trunkTariff 19/21/22) on unfronted duplicate → enables self-service two-tenant creation for cross-bind BOLA
+- 2026-09-11 REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component.

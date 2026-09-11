@@ -1,7 +1,7 @@
-## 2026-09-11 01:29:43 UTC [target] (model nemotron3)
+## 2026-09-11 06:37:54 UTC [target] (model nemotron3)
 [NEW] prov.fonial.de/signup/confirm/55: Self-signup flow confirmed live (sets PHPSESSID, CSRF _token, trunkTariff 19/21/22) → enables self-service two-tenant creation for cross-bind BOLA testing without program-provisioned accounts
 [CHANGED] mm.fonial.de SPA degradation persisted: /signup/email + /login 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); server alive (system/ping 200) — config change/restart not reversed
-[CHANGED] shop.fional.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+[CHANGED] shop.fonial.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
 [NEW] kundenkonto.fonial.de/api/2.0 stable: Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07
 [NEW] prov.fonial.de/api/2.0 canary-stable: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift across all probes since 2026-09-09
 [PRIO] prov.fonial.de/api/2.0,9.2,attack_surface=10,business_value=9,tech_exposure=9,gate_ease=10,cloud_surface=8,freshness=10
@@ -33,11 +33,11 @@ asset: prov.fonial.de/signup/confirm/55
 confidence: 70
 reasoning: /signup redirects to /signup/register/55 (200, sets PHPSESSID, CSRF _token, trunkTariff 19/21/22) — not auth-gated. Identical flow to kundenkonto but on unfronted duplicate. Enables attacker to create two controlled tenants for cross-bind testing without program coordination.
 evidence_needed: Successful POST to /signup/confirm/55 with fabricated data (example.invalid email, fake address) returns valid tenant credentials usable for API authentication
-verify_steps: 1) GET https://prov.fonial.de/signup/register/55 → capture PHPSESSID + CSRF _token; 2) POST https://prov.fonial.de/signup/confirm/55 with form data (email=test@example.invalid, trunkTariff=19, CSRF _token, address fields) → observe 302/200 and new tenant creation; 3) Use created credentials on /api/2.0/session/authenticate → verify SID issuance
+verify_steps: 1) GET https://prov.fonial.de/signup/register/55 → capture PHPSESSID + CSRF _token; 2) POST https://prov.fonial.de/signup/confirm/55 with form data (email=test@example.invalid, trunkTariff=19, _token=<captured>, AccountAddress[street]=Test, AccountAddress[zip]=12345, AccountAddress[city]=Berlin, AccountContact[firstname]=Test, AccountContact[lastname]=User) → observe 302/200 and new tenant creation; 3) Use created credentials on /api/2.0/session/authenticate → verify SID issuance
 impact: Removes program-approval gate for two-tenant cross-bind BOLA testing; enables independent validation of dual-backend session confusion
 testability: PASSIVE
 [PARKED] Asymmetric admin-auth surface: GraphQL GenerateCustomerTokenAsAdminInput introspectable but REST admin token route removed: confidence 40 at critique floor; requires admin token compromise + customer opt-in → no standalone exploit path; retain only as chain component
-[PARKED] shop.fonial.dev CORS/SSRF/IDOR: no ACAO, no URL fields in mutations, uniform 401 ACL — all passive classes closed
+[PARKED] shop.fonial.de CORS/SSRF/IDOR: no ACAO, no URL fields in mutations, uniform 401 ACL — all passive classes closed
 [PARKED] dslkonto.fonial.de dev-mode/profiler: scope.yml excludes descriptive errors/stack traces; profiler token-gated 404 — non-reportable
 [PARKED] mm.fonial.de self-signup: /signup/email + /login now 404 (SPA shell degraded); /api/v4/users/create 404; no live registration surface
 [FINAL] 1. Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on prov.fonial.de/api/2.0 (80)

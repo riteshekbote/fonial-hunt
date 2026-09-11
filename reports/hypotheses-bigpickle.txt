@@ -1,4 +1,4 @@
-## 2026-09-11 01:26:54 UTC [target] (model bigpickle)
+## 2026-09-11 06:36:57 UTC [target] (model bigpickle)
 [PRIO] prov.fonial.de/api/2.0,7.85,a=7,b=9,t=8,g=9,c=5,f=8
 [PRIO] mm.fonial.de,5.60,a=5,b=7,t=6,g=4,c=4,f=7
 [PRIO] kundenkonto.fonial.de/api/2.0,5.20,a=4,b=8,t=5,g=3,c=4,f=6
@@ -33,6 +33,7 @@ testability: HUMAN_ONLY
 [PARKED] Post-auth CORS wildcard (45): below confidence threshold, chain-only with no SID leak vector identified, no standalone reportability. Drop as primary; retain only as chain component if BOLA proof materializes and SID exfil becomes relevant.
 [FINAL] Survivors ranked:
 [NEXT] HUMAN: Request program approval for ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email + fabricated address, CSRF `_token` + PHPSESSID from GET /signup; ≤1rps; SaaS admin delete-on-completion) to confirm tenant creation on the staging clone. If 2xx + authenticated `/devices/get` returns empty device list → proceed with two-tenant cross-bind BOLA sequence (SID_B + PHPSESSID_A on `/evn/get`). If signup fails → fall back to single POST mm.fonial.de/api/v4/users {email:"ot-<ts>@example.invalid",username:"ot-<ts>",password,first_name:"",last_name:""}, delete/disable on 201.
-[LEARN] REJECTED further-passive-cycles @ fonial: 2026-09-10 re-confirms zero drift on prov/kundenkonto/mm/shop; extra GET/HEAD/OPTIONS passes add no discrimination value on any remaining hypothesis — all survivors are HUMAN_ONLY, gated on program approval, not on probe data.
 [LEARN] ACCEPTED prov-self-signup-enabler: prov.fonial.de serves identical Symfony registration flow (POST /signup/confirm/55, CSRF, AccountAddress, AccountContact, trunkTariff) on unfronted nginx/1.10.3; whether POST creates usable account on prov data backend is the sole unobserved variable; if confirmed, converts BOLA test from program-provisioning-dependent to self-service.
-[RISK] fonial: 48 — passive pool exhausted since 2026-09-06; zero sanctioned writes to date; top survivor (80 BOLA) and MM (50) both blocked on program-side approval; prov self-signup enabler raises BOLA proof probability (~60/40 self-serviceable), but reportable-outcome probability remains ~45% flat-close if approvals stall this cycle.
+[LEARN] REJECTED further-passive-cycles @ fonial: 2026-09-10 re-confirms zero drift on prov/kundenkonto/mm/shop; extra GET/HEAD/OPTIONS passes add no discrimination value on any remaining hypothesis — all survivors are HUMAN_ONLY, gated on program approval, not on probe data.
+[LEARN] REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component.
+[RISK] fonial: 48 — Passive pool exhausted since 2026-09-06; zero sanctioned writes to date; top survivor (80 BOLA) and MM (50) both blocked on program-side approval; prov self-signup enabler raises BOLA proof probability (~60/40 self-serviceable), but reportable-outcome probability remains ~45% flat-close if approvals stall this cycle.
