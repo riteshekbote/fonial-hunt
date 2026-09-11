@@ -38,3 +38,6 @@
   - | 1 | CORS wildcard (kundenkonto) | **HOLD** | Needs 1 read-only step: authenticated GET with valid PHPSESSID |
   - | 2 | Dual-backend session confusion | **HOLD** | Needs 2 valid test accounts |
   - | 3 | **GraphQL introspection (shop)** | **VALID** | **Report-ready. CVSS 5.3.** |
+
+- 1 lead(s) marked VALID at 2026-09-11 06:37:16 UTC
+  - Once you provide the leads, I'll validate each one systematically against Q1-Q7 and provide verdicts with the required details for valid findings.
