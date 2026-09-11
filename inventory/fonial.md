@@ -403,3 +403,5 @@ www.fonial.de
 - CHANGED kundenkonto.fonial.de/signup/register/55: Still returns 302 (not 200) — unauthenticated registration flow exists but may redirect to login (probe 2026-09-11 01:30 + 06:38)
 
 ## 2026-09-11 15:52:39 UTC
+
+## 2026-09-11 19:06:14 UTC

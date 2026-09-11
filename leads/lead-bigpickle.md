@@ -2204,3 +2204,22 @@ testability: HUMAN_ONLY
 [LEARN] REJECTED further-passive-cycles @ fonial: 2026-09-11 re-confirms zero drift on prov/kundenkonto/mm/shop; extra GET/HEAD/OPTIONS passes add no discrimination value on any remaining hypothesis — all survivors are HUMAN_ONLY, gated on program approval, not on probe data.
 [LEARN] REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component.
 [RISK] fonial: 48 — Passive pool exhausted since 2026-09-06; zero sanctioned writes to date; top survivor (80 BOLA) and MM (50) both blocked on program-side approval; prov self-signup enabler raises BOLA proof probability (~60/40 self-serviceable), but reportable-outcome probability remains ~45% flat-close if approvals stall this cycle.
+## 2026-09-11 19:06:04 UTC [target] (model bigpickle)
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted prov
+class: IDOR
+asset: prov.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 80
+reasoning: nginx/1.10.3 direct, no Cloudflare/WAF; data endpoints authorize by body SID only; PHPSESSID decorative; /session issues cleartext UUID sid; zero drift 2026-09-09→11; prov serves identical Symfony registration flow at /signup/confirm/55; CT sweep today confirms prov still live → self-service T_A/T_B plausible without program provisioning.
+evidence_needed: evn/get returns tenant-B device/SIP data when body sid=SID_B + Cookie:PHPSESSID_A (vs `session invalid`).
+verify_steps: (HUMAN, sanctioned; T_A+T_B via prov self-signup) 1) GET /signup → jar; GET /signup/register/55 → _token; 2) POST /signup/confirm/55 {email,address,trunkTariff} → 2xx; 3) POST /api/2.0/session → SID_A; 4) POST /session/authenticate{T_A}; 5) POST /devices/get{"sid":SID_A} capture Set-Cookie PHPSESSID_A; 6) fresh jar → /session → SID_B; 7) POST /evn/get{"sid":SID_B}+Cookie:PHPSESSID_A. ≤1rps; SaaS admin delete on completion.
+impact: Cross-tenant CDR/SIP creds + caller-ID spoofing → CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Open self-signup on Mattermost 3.7.3 enables outsider account entry
+class: BUSLOGIC
+asset: mm.fonial.de/api/v4/users
+confidence: 50
+reasoning: system/ping 200 (X-Version-Id 3.7.3); GET /api/v4/users → 401 session_expired (route exists); /signup/email + /login 404 since 2026-09-10 06:37 (SPA shell dropped, not proof of disabled signup — v4 API path untested); POST /api/v4/users untested; Mattermost 3.7.3 default allows team signup unless admin-disabled; today: same box also hosts live Redmine (red.fonial.de) → account foothold = proximity to second app.
+evidence_needed: POST /api/v4/users returns 201+token (open) vs adminApproval/disabled/400 (closed).
+verify_steps: (HUMAN, sanctioned) single POST /api/v4/users {email:"ot-<ts>@example.invalid",username:"ot-<ts>",password:"<random16>",first_name:"",last_name:""}; on 201 immediately delete/disable. ≤1rps.
+impact: Outsider foothold in internal chat + legacy-3.7 CVE surface + co-hosted Redmine proximity → HIGH if open.
+testability: HUMAN_ONLY
