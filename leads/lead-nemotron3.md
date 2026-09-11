@@ -3445,3 +3445,25 @@ testability: PASSIVE
 [LEARN] REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component
 [LEARN] ACCEPTED self-signup-live @ prov.fonial.de/signup/confirm/55: mirrors kundenkonto flow (PHPSESSID, CSRF _token, trunkTariff 19/21/22) on unfronted duplicate → enables self-service two-tenant creation for cross-bind BOLA
 [RISK] fonial: 78 — Customer portals (kundenkonto + dslkonto) have high business value (PII, CDR, SIP creds, billing, call control). Confirmed dual-backend architecture creating session confusion surface on kundenkonto API. prov.fonial.de provides unfronted duplicate with self-service signup for safe cross-bind testing. Symfony dev-mode exposed on dslkonto with profiler token leakage (critical misconfig but scope-excluded). CORS wildcard on auth domain confirmed. Main API not publicly documented but live with 5 endpoints including WRITE. Risk elevated due to enterprise telephony data sensitivity and architectural anomalies across two portals.
+## 2026-09-11 11:57:24 UTC [target] (model nemotron3)
+[NEW] prov.fonial.de/signup/confirm/55: Self-signup flow confirmed live (sets PHPSESSID, CSRF _token, trunkTariff 19/21/22) → enables self-service two-tenant creation for cross-bind BOLA testing without program-provisioned accounts (probe 2026-09-11 01:30 + 06:38: 302 responses)
+[NEW] prov.fonial.de/api/2.0 canary-stable: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift across all probes since 2026-09-09
+[CHANGED] mm.fonial.de SPA degradation persisted: /signup/email + /login 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); server alive (system/ping 200) — config change/restart not reversed
+[CHANGED] shop.fonial.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+[NEW] kundenkonto.fonial.de/api/2.0 stable: Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07
+[CHANGED] kundenkonto.fonial.de/signup/register/55: Still returns 302 (not 200) — unauthenticated registration flow exists but may redirect to login (probe 2026-09-11 01:30 + 06:38)
+[PRIO] prov.fonial.de/api/2.0,9.4,attack_surface=10,business_value=9,tech_exposure=9,gate_ease=10,cloud_surface=8,freshness=10
+[PRIO] kundenkonto.fonial.de/api/2.0,8.9,attack_surface=9,business_value=10,tech_exposure=9,gate_ease=8,cloud_surface=7,freshness=9
+[PRIO] prov.fonial.de/signup/confirm/55,8.3,attack_surface=8,business_value=8,tech_exposure=7,gate_ease=10,cloud_surface=7,freshness=10
+[PRIO] shop.fonial.de/graphql,6.8,attack_surface=7,business_value=7,tech_exposure=8,gate_ease=6,cloud_surface=5,freshness=6
+[PRIO] mm.fonial.de,4.3,attack_surface=4,business_value=5,tech_exposure=5,gate_ease=3,cloud_surface=4,freshness=4
+[PRIO] dslkonto.fonial.de,2.8,attack_surface=3,business_value=4,tech_exposure=3,gate_ease=2,cloud_surface=3,freshness=3
+[PRIO] www.fonial.de,1.0,attack_surface=1,business_value=1,tech_exposure=1,gate_ease=1,cloud_surface=1,freshness=1
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on prov.fonial.de/api/2.0
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 80
+reasoning: Unfronted byte-behavior clone of kundenkonto API (nginx/1.10.3, no Cloudflare). Dual-backend confirmed: session endpoints issue cleartext UUID SID; data endpoints authorize by body SID only, set decorative PHPSESSID. Independent session stores suggest SID-to-PHPSESSID binding not enforced on data layer. /call/initiate is LIVE WRITE endpoint with identical error pattern. Self-signup at /signup/confirm/55 enables two-tenant creation without program approval.
+evidence_needed: Data endpoint accepts valid SID from Account A with PHPSESSID from Account B → cross-tenant call initiation or device/EVN data access
+verify_steps: 1) POST https://prov.fonial.de/api/2.0/session → capture SID_A; 2) POST https://prov.fonial.de/api/2.0/session/authenticate with valid creds for Account A → authenticate SID_A; 3) POST https://prov.fonial.de/api/[0m← [0mEdit analyst-out.txt
+[PARKED] [0m

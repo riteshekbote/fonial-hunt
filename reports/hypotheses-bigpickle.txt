@@ -1,5 +1,5 @@
-## 2026-09-11 06:36:57 UTC [target] (model bigpickle)
-[PRIO] prov.fonial.de/api/2.0,7.85,a=7,b=9,t=8,g=9,c=5,f=8
+## 2026-09-11 11:47:10 UTC [target] (model bigpickle)
+[PRIO] prov.fonial.de/api/2.0,8.00,a=8,b=7,t=8,g=9,c=5,f=8
 [PRIO] mm.fonial.de,5.60,a=5,b=7,t=6,g=4,c=4,f=7
 [PRIO] kundenkonto.fonial.de/api/2.0,5.20,a=4,b=8,t=5,g=3,c=4,f=6
 [PRIO] shop.fonial.de,5.25,a=5,b=6,t=7,g=3,c=4,f=6
