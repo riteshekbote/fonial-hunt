@@ -2244,3 +2244,41 @@ impact: Outsider foothold in internal chat + legacy-3.7 CVE surface + Redmine pr
 testability: HUMAN_ONLY
 [NEXT] HUMAN: request program approval for the two-tenant cross-bind BOLA sequence on prov.fonial.de — NOTE: self-signup enabler is now 302-looped, so tenants must be program-provisioned (or approve the 1-packet banner-only classification of customers.fonial.de 92.197.176.46:443, sbc.fonial.de 62.146.28.124:5060/5061 SIP OPTIONS, ldap.fonial.de 62.146.7.24:389/636, 62.146.7.22:15672 + sentry.fonial.dev 62.146.28.126 as the lower-risk alternative).
 [RISK] fonial: 48 — passive pool exhausted; BOLA (80) and MM (50) both HUMAN_ONLY; self-signup enabler breaking removes the cheap self-service path to BOLA proof, so reportable-outcome stays ~45% flat-close unless approvals land this cycle.
+## 2026-09-11 23:32:05 UTC [target] (model bigpickle)
+[PRIO] mm.fonial.de/api/v4/users,6.85,gate_ease(10-if-open)+business(internal-chat+redmine-cohost)+tech(legacy-3.7.3-CVE)
+[PRIO] shop.fonial.de/graphql,6.85,attack_surface+gate(68-mutation-unauth) — but passive-closed, chain-only
+[PRIO] prov.fonial.de/api/2.0,6.45,tech_exposure(dual-backend-session)+freshness(top-BOLA-80-testbed)
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted prov
+class: IDOR
+asset: prov.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 80
+reasoning: nginx/1.10.3 direct, no WAF; data endpoints authorize by body SID only; /session issues cleartext UUID sid; PHPSESSID decorative; call/initiate is live WRITE sibling with same session-invalid pattern; zero drift 09-09→11; POST signup flow re-confirmed live 21:37 while GET 302-loops → tenant provisioning likely program-dependent unless POST proves viable.
+evidence_needed: evn/get returns tenant-B device/CDR data with body sid=SID_B + Cookie:PHPSESSID_A (vs `session invalid`).
+verify_steps: (HUMAN, sanctioned; program-provisioned T_A/T_B unless signup approval lands) 1) POST /api/2.0/session (fresh jar) → SID_A; 2) authenticate T_A; 3) POST /devices/get{"sid":SID_A} → capture Set-Cookie PHPSESSID_A; 4) fresh jar POST /session → SID_B; 5) POST /evn/get{"sid":SID_B}+Cookie:PHPSESSID_A → tenant-B data vs `session invalid`; teardown after. ≤1rps; SaaS admin delete on completion.
+impact: Cross-tenant CDR/SIP creds + caller-ID spoof / unauthorized outbound calls via call/initiate → CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Open self-signup on Mattermost 3.7.3 gives outsider account foothold
+class: BUSLOGIC
+asset: mm.fonial.de/api/v4/users
+confidence: 50
+reasoning: system/ping 200 (X-Version-Id 3.7.3); GET /api/v4/users → 401 `session_expired` (route live); POST /api/v4/users untested; legacy 3.7.3 default team signup unless admin-disabled; same box also hosts red.fonial.de Redmine → foothold = proximity to second app.
+evidence_needed: POST /api/v4/users returns 201+token (open) vs 403 adminApproval/disabled/400 (closed).
+verify_steps: (HUMAN, sanctioned) single POST /api/v4/users {email:"ot-<ts>@example.invalid",username:"ot-<ts>",password:"<random16>",first_name:"",last_name:""}; on 201 delete/disable immediately. ≤1rps.
+impact: Outsider foothold in internal chat + legacy-3.7 CVE surface + Redmine co-host proximity → HIGH if open.
+testability: HUMAN_ONLY
+[HYP] Asymmetric admin-auth enables admin-token chain component
+class: AUTH
+asset: shop.fonial.de/graphql
+confidence: 40
+reasoning: REST /V1/integration/admin/token → 404 (route removed) while GraphQL generateCustomerTokenAsAdmin introspectable; Adobe docs require admin Bearer + customer remote_shopping_assistance opt-in → no direct unauth path.
+evidence_needed: A token source (admin Bearer or opt-in customer) plus one Authorized action exceeding standard rights.
+verify_steps: (HUMAN) introspection diff already collected; live step requires sanctioned creds — no passive discriminator remains.
+impact: Amplifies BOLA chain only, not standalone reportable.
+testability: HUMAN_ONLY
+[PARKED] shop admin-token 40: at critique floor, no new evidence since 09-09, chain-only; its passive surface (REST-vs-GraphQL diff) is fully enumerated.
+[PARKED] kundenkonto CORS wildcard 45: unchanged, no SID-leak vector; chain-only if BOLA proof materializes.
+[FINAL] Survivors ranked: 1) BOLA cross-bind prov 80 (HUMAN_ONLY); 2) MM open signup 50 (HUMAN_ONLY). Both gated on program authorization.
+[NEXT] HUMAN: request program approval for ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email + fabricated address, CSRF `_token` + PHPSESSID harvested from GET /signup → /signup/register/55; ≤1rps; SaaS admin delete-on-completion) — sole unobserved variable; if 2xx and authenticated /devices/get returns empty list, the T_A/T_B cross-bind BOLA sequence (SID_B + PHPSESSID_A on /evn/get) becomes self-service and proceeds without program-provisioned tenants; on signup failure fall back to program-provisioned T_A/T_B, and separately one POST mm.fonial.de/api/v4/users (delete/disable on 201).
+[LEARN] ACCEPTED signup-POST-viability-unknown @ prov.fonial.de: 21:37 reconfirms POST form fields live but 21:34 saw GET-side 302-loop; kundenkonto /signup/register/55 persists at 302 → GET gating ≠ POST failure; end-to-end tenant creation on prov data backend is the lone unobserved variable for self-service BOLA.
+[LEARN] REJECTED further-passive-cycles @ fonial: 09-11 reconfirms zero drift; extra GET/HEAD/OPTIONS add no discrimination to BOLA/MM; momentum requires sanctioned writes.
+[RISK] fonial: 48 — passive pool exhausted since 09-06; both survivors HUMAN_ONLY; one sanctioned POST decides prov signup viability (self-service BOLA) vs program provisioning; reportable-outcome ~45% flat-close if approvals stall this cycle.
