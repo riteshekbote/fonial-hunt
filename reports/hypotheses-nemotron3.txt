@@ -1,4 +1,10 @@
-## 2026-09-11 18:57:49 UTC [target] (model nemotron3)
+## 2026-09-11 21:37:03 UTC [target] (model nemotron3)
+[NEW] prov.fonial.de/signup/confirm/55: Self-signup flow confirmed live (POST form with PHPSESSID, CSRF _token, trunkTariff 19/21/22, AccountAddress, AccountContact) → enables self-service two-tenant creation for cross-bind BOLA testing without program approval
+[NEW] prov.fonial.de/api/2.0 canary-stable: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift across all probes since 2026-09-09
+[CHANGED] mm.fonial.de SPA degradation persisted: /signup/email + /login 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); server alive (system/ping 200) — config change/restart not reversed
+[CHANGED] shop.fonial.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+[CHANGED] kundenkonto.fonial.de/api/2.0 stable: Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07
+[CHANGED] kundenkonto.fonial.de/signup/register/55: Still returns 302 (not 200) — unauthenticated registration flow exists but redirects to login
 [PRIO] prov.fonial.de/api/2.0,9.4,attack_surface=10,business_value=9,tech_exposure=9,gate_ease=10,cloud_surface=8,freshness=10
 [PRIO] kundenkonto.fonial.de/api/2.0,8.9,attack_surface=9,business_value=10,tech_exposure=9,gate_ease=8,cloud_surface=7,freshness=9
 [PRIO] prov.fonial.de/signup/confirm/55,8.3,attack_surface=8,business_value=8,tech_exposure=7,gate_ease=10,cloud_surface=7,freshness=10
@@ -41,10 +47,10 @@ testability: PASSIVE
 [FINAL] 2. Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on kundenkonto.fonial.de/api/2.0 (75)
 [FINAL] 3. Self-service tenant creation via unauthenticated signup on prov.fonial.de/signup/confirm/55 (70)
 [NEXT] PROBE: POST https://prov.fonial.de/signup/confirm/55 with form data (email=test_<timestamp>@example.invalid, trunkTariff=19, _token=<captured_CSRF>, AccountAddress[street]=Test, AccountAddress[zip]=12345, AccountAddress[city]=Berlin, AccountContact[firstname]=Test, AccountContact[lastname]=User) + Cookie: PHPSESSID=<captured_from_GET_/signup/register/55> — validate self-service tenant creation for cross-bind testing
+[LEARN] ACCEPTED prov-self-signup-enabler: prov.fonial.de serves identical Symfony registration flow (POST /signup/confirm/55, CSRF, AccountAddress, AccountContact, trunkTariff 19/21/22) on unfronted duplicate → enables self-service two-tenant creation for cross-bind BOLA
 [LEARN] ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift across all probes since 2026-09-09
 [LEARN] ACCEPTED mm-alive @ mm.fonial.de: system/ping 200 `{"status":"OK"}`, X-Version-Id 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false, nginx/1.10.2; SPA /signup/email + /login 404 drift persisted since 06:37 — server restart/config change not reversed
-[LEARN] REJECTED further-passive-probing @ fonial: all re-probes continue to return zero-drift evidence; additional GET/HEAD/OPTIONS passes add no discrimination value on any remaining hypothesis — live momentum must go through the HUMAN approval gate
-[LEARN] ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe 2026-09-10 confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate deployment to test dual-backend cross-bind
+[LEARN] REJECTED further-passive-cycles @ fonial: 2026-09-11 re-confirms zero drift on prov/kundenkonto/mm/shop; extra GET/HEAD/OPTIONS passes add no discrimination value on any remaining hypothesis — all survivors are HUMAN_ONLY, gated on program approval, not on probe data
 [LEARN] REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component
-[LEARN] ACCEPTED self-signup-live @ prov.fonial.de/signup/confirm/55: mirrors kundenkonto flow (PHPSESSID, CSRF _token, trunkTariff 19/21/22) on unfronted duplicate → enables self-service two-tenant creation for cross-bind BOLA
+[LEARN] ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe 2026-09-10 confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate deployment to test dual-backend cross-bind
 [RISK] fonial: 78 — Customer portals (kundenkonto + dslkonto) have high business value (PII, CDR, SIP creds, billing, call control). Confirmed dual-backend architecture creating session confusion surface on kundenkonto API. prov.fonial.de provides unfronted duplicate with self-service signup for safe cross-bind testing. Symfony dev-mode exposed on dslkonto with profiler token leakage (critical misconfig but scope-excluded). CORS wildcard on auth domain confirmed. Main API not publicly documented but live with 5 endpoints including WRITE. Risk elevated due to enterprise telephony data sensitivity and architectural anomalies across two portals.

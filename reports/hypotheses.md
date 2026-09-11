@@ -1549,3 +1549,14 @@
 - LEARN: ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe 2026-09-10 confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-cr
 - LEARN: REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component
 - LEARN: ACCEPTED self-signup-live @ prov.fonial.de/signup/confirm/55: mirrors kundenkonto flow (PHPSESSID, CSRF _token, trunkTariff 19/21/22) on unfronted duplicate → e
+
+## RANKED HYPOTHESES 2026-09-11 21:37:12 UTC
+- [80] prov.fonial.de/api/2.0: Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on prov.fonial.de/api/2.0 (from art/lead_nemotron3.txt)
+- NEXT(hypotheses-bigpickle.txt): HUMAN: request program approval for the two-tenant cross-bind BOLA sequence on prov.fonial.de — NOTE: self-signup enabler is now 302-looped, so tenants must be 
+- NEXT(hypotheses-nemotron3.txt): PROBE: POST https://prov.fonial.de/signup/confirm/55 with form data (email=test_<timestamp>@example.invalid, trunkTariff=19, _token=<captured_CSRF>, AccountAddr
+- LEARN: ACCEPTED prov-self-signup-enabler: prov.fonial.de serves identical Symfony registration flow (POST /signup/confirm/55, CSRF, AccountAddress, AccountContact, tru
+- LEARN: ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-cred
+- LEARN: ACCEPTED mm-alive @ mm.fonial.de: system/ping 200 `{"status":"OK"}`, X-Version-Id 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false, nginx/1.10.2; SPA /signup/
+- LEARN: REJECTED further-passive-cycles @ fonial: 2026-09-11 re-confirms zero drift on prov/kundenkonto/mm/shop; extra GET/HEAD/OPTIONS passes add no discrimination val
+- LEARN: REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component
+- LEARN: ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe 2026-09-10 confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-cr

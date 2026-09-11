@@ -15195,3 +15195,158 @@ testability: HUMAN_ONLY
 
 **STEP 7 — RISK**
 - [RISK] fonial: 48 — unchanged passive-plus-drift posture; Survivors (80 BOLA, 50 MM) remain program-approval-gated; CT sweep added co-located Redmine existence (raises MM box value) and 3 dormant protocol hosts (sbc/ldap/git) but no new reportable standalone; reportable-outcome probability stays ~45% if approvals stall.
+===== ANALYST bigpickle 2026-09-11 21:37:12 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m✱ [0mGlob "**/*.{md,yml,txt}"[90m 89 matches[0m
+[0m
+[0m$ [0mgetent hosts red.fonial.de mm.fonial.de prov.fonial.de kundenkonto.fonial.de shop.fonial.de 2>/dev/null; echo "---"; getent ahostsv4 red.fonial.de 2>/dev/null | head -2
+62.146.7.29     red.fonial.de
+62.146.7.29     mm.fonial.de
+62.146.7.20     prov.fonial.de
+2606:4700:20::681a:db7 kundenkonto.fonial.de
+2606:4700:20::ac43:4910 kundenkonto.fonial.de
+2606:4700:20::681a:cb7 kundenkonto.fonial.de
+176.9.53.190    shop.fonial.de
+---
+62.146.7.29     STREAM red.fonial.de
+62.146.7.29     DGRAM
+[0m
+[0m✱ [0mGrep "red\.fonial"[90m in . · 71 matches[0m
+[0m
+[0m$ [0msleep 1; curl -sS -m 20 -o /dev/null -D - https://red.fonial.de/ 2>&1 | head -40
+HTTP/1.1 302 Found
+Content-Type: text/html; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Status: 302 Found
+Cache-Control: no-cache
+X-XSS-Protection: 1; mode=block
+X-Request-Id: 61a446a1-905b-4905-b318-a24706dca91f
+Location: https://red.fonial.de/login?back_url=https%3A%2F%2Fred.fonial.de%2F
+X-Runtime: 0.016150
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+Date: Fri, 11 Sep 2026 21:31:59 GMT
+X-Powered-By: Phusion Passenger 5.1.1
+Server: nginx/1.10.2 + Phusion Passenger 5.1.1
+[0m
+[0m$ [0mdate -u +"%Y-%m-%d %H:%M:%S UTC"
+2026-09-11 21:32:10 UTC
+[0m
+[0m→ [0mRead triage/run-2026-09-11-18-58.md
+[0m✱ [0mGrep "sentry|kampagne|customers\.fonial|sbc\.fonial|ldap\.fonial|git\.fonial|NODNS|nohost"[90m in reports/analyst-bigpickle.log · 100 matches[0m
+[0m
+[0m$ [0msleep 1; curl -s -m 20 -D - "https://prov.fonial.de/signup/register/55" -o /tmp/opencode/prov_signup.html -w "CODE:%{http_code} SIZE:%{size_download}\n" 2>&1 | grep -iE "^HTTP|^location|^server|^set-cookie|^x-fonial|CODE"; echo "--- form markers ---"; grep -ioE '_token|trunkTariff|AccountAddress|AccountContact|name="_token"' /tmp/opencode/prov_signup.html | sort | uniq -c 2>/dev/null; grep -ioE '<input[^>]*name="_token"[^>]*>' /tmp/opencode/prov_signup.html | head -1
+HTTP/2 302 
+server: nginx/1.10.3
+location: /signup/55
+x-fonial-version: v2026.09.03-1
+CODE:302 SIZE:286
+--- form markers ---
+[0m
+[0m$ [0msleep 1; curl -s -m 20 -L -D - "https://prov.fonial.de/signup/register/55" -o /tmp/opencode/prov_signup2.html -w "FINAL:%{url_effective} CODE:%{http_code}\n" 2>&1 | grep -iE "^HTTP|^location|CODE|FINAL" | head -8; echo "--- markers ---"; grep -ioE '_token|trunkTariff|AccountAddress|AccountContact|name="email"|form' /tmp/opencode/prov_signup2.html 2>/dev/null | sort | uniq -c | head
+HTTP/2 302 
+location: /signup/55
+HTTP/2 302 
+location: /signup/register/55
+HTTP/2 302 
+location: /signup/55
+HTTP/2 302 
+location: /signup/register/55
+--- markers ---
+[0m
+[0m$ [0msleep 1; curl -s -m 20 -D - "https://prov.fonial.de/signup" -o /tmp/opencode/prov_signup0.html -w "CODE:%{http_code} SIZE:%{size_download}\n" 2>&1 | grep -iE "^HTTP|^location|^set-cookie|^server|^x-fonial|CODE"; echo "--- markers ---"; grep -ioE '_token|trunkTariff|AccountAddress|AccountContact|name="email"|action="[^"]*"' /tmp/opencode/prov_signup0.html 2>/dev/null | sort | uniq -c | head
+HTTP/2 302 
+server: nginx/1.10.3
+location: /signup/register/55
+x-fonial-version: v2026.09.03-1
+set-cookie: PHPSESSID=4bqafskjjnf0hm2k62msl9bvg2; path=/; secure; httponly; samesite=lax
+CODE:302 SIZE:322
+--- markers ---
+[0m
+[0m$ [0msleep 1; curl -s -m 20 -D - "https://prov.fonial.de/signup/confirm/55" -o /tmp/opencode/prov_confirm.html -w "CODE:%{http_code} SIZE:%{size_download}\n" 2>&1 | grep -iE "^HTTP|^location|^server|^set-cookie|^x-fonial|CODE"; echo "--- markers ---"; grep -ioE '_token|trunkTariff|AccountAddress|AccountContact|name="email"|action="/[^"]*"' /tmp/opencode/prov_confirm.html 2>/dev/null | sort | uniq -c | head; echo "--- title ---"; grep -ioE '<title>[^<]*</title>' /tmp/opencode/prov_confirm.html 2>/dev/null | head -1
+HTTP/2 302 
+server: nginx/1.10.3
+location: /signup/55
+x-fonial-version: v2026.09.03-1
+CODE:302 SIZE:286
+--- markers ---
+--- title ---
+<title>Redirecting to /signup/55</title>
+[0m
+[0m$ [0msleep 1; curl -s -m 20 -D - "https://kundenkonto.fonial.de/signup" -o /tmp/opencode/kk_signup0.html -w "CODE:%{http_code}\n" 2>&1 | grep -iE "^HTTP|^location|^server|^set-cookie|^x-fonial|CODE"; echo "=== follow one hop ==="; sleep 1; curl -s -m 20 -L --max-redirs 3 -D - "https://kundenkonto.fonial.de/signup" -o /tmp/opencode/kk_signup1.html -w "FINAL:%{url_effective} CODE:%{http_code} SIZE:%{size_download}\n" 2>&1 | grep -iE "^HTTP|^location|FINAL"; echo "--- markers ---"; grep -ioE '_token|trunkTariff|AccountAddress|name="email"' /tmp/opencode/kk_signup1.html 2>/dev/null | sort | uniq -c | head
+HTTP/2 302 
+server: cloudflare
+location: /signup/register/55
+set-cookie: PHPSESSID=urp7rnmvl4khmpb73egj78g981; path=/; secure; httponly; samesite=lax
+x-fonial-version: v2026.09.03-1
+CODE:302
+=== follow one hop ===
+HTTP/2 302 
+location: /signup/register/55
+HTTP/2 302 
+location: /signup/55
+HTTP/2 302 
+location: /signup/register/55
+HTTP/2 302 
+location: /signup/55
+FINAL:https://kundenkonto.fonial.de/signup/register/55 CODE:302 SIZE:286
+--- markers ---
+[0m
+[0m$ [0msleep 1; curl -s -m 20 -L --max-redirs 2 -D - "https://prov.fonial.de/signup/register" -o /tmp/opencode/prov_reg.html -w "FINAL:%{url_effective} CODE:%{http_code} SIZE:%{size_download}\n" 2>&1 | grep -iE "^HTTP|^location|FINAL"; echo "--- markers ---"; grep -ioE '_token|trunkTariff|AccountAddress|name="email"' /tmp/opencode/prov_reg.html 2>/dev/null | sort | uniq -c | head
+HTTP/2 302 
+location: /signup/register/register
+HTTP/2 302 
+location: /signup/register
+HTTP/2 302 
+location: /signup/register/register
+FINAL:https://prov.fonial.de/signup/register CODE:302 SIZE:346
+--- markers ---
+[0m
+STEP 1 — DELTA
+- [CHANGED] kundenkonto.fonial.de + prov.fonial.de `/signup*` flow: GET `/signup` → 302 `/signup/register/55` ↔ `/signup/55` → infinite 302 loop (prov also loops `/signup/register` ↔ `/signup/register/register`); registration form (CSRF `_token`, trunkTariff, AccountAddress) NOT rendered on either host → the 2026-09-11 01:29 self-signup enabler is no longer reachable; BOLA two-tenant creation reverts to program provisioning.
+- [NO_DELTA] red.fonial.de 302→`/login` (nginx/1.10.2 + Phusion Passenger 5.1.1, co-host 62.146.7.29 with mm) — parked; X-Fonial-Version v2026.09.03-1 and PHPSESSID set-cookie on both hosts unchanged.
+
+STEP 2 — PRIORITIZE
+- [PRIO] prov.fonial.de/api/2.0, 8.00, a=8,b=7,t=8,g=9,c=5,f=8
+- [PRIO] customers.fonial.de(92.197.176.46)/sbc/ldap/sentry infra, 6.20, a=4,b=8,t=7,g=5,c=9,f=6 (unclassified public-IP telephony/identity, binary-liveness unknown)
+- [PRIO] mm.fonial.de, 5.60, a=5,b=7,t=6,g=4,c=4,f=7
+- [PRIO] kundenkonto.fonial.de/api/2.0, 5.20, a=4,b=8,t=5,g=3,c=4,f=6
+
+STEP 3 — HYPOTHESES
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on prov
+class: IDOR
+asset: prov.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 80
+reasoning: nginx/1.10.3 direct, no WAF; data endpoints authorize by body SID only; /session issues cleartext UUID sid; PHPSESSID decorative; zero drift on API canary; BUT signup enabler now 302-loops on GET — T_A/T_B self-provisioning no longer confirmed, program provisioning required.
+evidence_needed: evn/get returns tenant-B data with body sid=SID_B + Cookie:PHPSESSID_A (vs `session invalid`).
+verify_steps: (HUMAN, sanctioned, program-provisioned T_A/T_B; POST steps omitted pending approval) 1) POST /api/2.0/session → SID_A; 2) authenticate T_A; 3) POST /devices/get{"sid":SID_A} → capture Set-Cookie PHPSESSID_A; 4) fresh jar → /session → SID_B; 5) POST /evn/get{"sid":SID_B}+Cookie:PHPSESSID_A; 6) admin delete. ≤1rps.
+impact: Cross-tenant CDR/SIP creds + caller-ID spoof via /call/initiate → CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Open self-signup on Mattermost 3.7.3 enables outsider account entry
+class: BUSLOGIC
+asset: mm.fonial.de/api/v4/users
+confidence: 50
+reasoning: system/ping 200 (3.7.3); GET /api/v4/users → 401 session_expired (route live); POST untested; legacy 3.7.3 default signup; co-host red.fonial.de Redmine on same box.
+evidence_needed: POST /api/v4/users returns 201+token vs adminApproval/disabled/400.
+verify_steps: (HUMAN, sanctioned) one POST /api/v4/users {email:"ot-<ts>@example.invalid",username:"ot-<ts>",password:"<random16>",first_name:"",last_name:""}; delete/disable on 201. ≤1rps.
+impact: Outsider foothold in internal chat + legacy-3.7 CVE surface + Redmine proximity → HIGH if open.
+testability: HUMAN_ONLY
+
+STEP 4 — SELF-CRITIQUE
+- [PARKED] customers/sbc/ldap/sentry liveness (40): binary-liveness only, silent from this egress, needs sanctioned banner probe; below floor without it.
+- [PARKED] /signup redirect-loop (30): functional DoS on registration flow, OOS DoS class; not reportable.
+- [PARKED] post-auth CORS wildcard (45): chain-only, no SID leak vector.
+- [FINAL] survivors: prov BOLA (80) > mm signup (50) > call/initiate (75, same asset as BOLA) — all HUMAN_ONLY.
+
+STEP 5 — NEXT ACTION
+[NEXT] HUMAN: request program approval for the two-tenant cross-bind BOLA sequence on prov.fonial.de — NOTE: self-signup enabler is now 302-looped, so tenants must be program-provisioned (or approve the 1-packet banner-only classification of customers.fonial.de 92.197.176.46:443, sbc.fonial.de 62.146.28.124:5060/5061 SIP OPTIONS, ldap.fonial.de 62.146.7.24:389/636, 62.146.7.22:15672 + sentry.fonial.dev 62.146.28.126 as the lower-risk alternative).
+
+STEP 6 — LEARNING
+- [LEARN] REJECTED self-signup-enabler-live @ prov/kundenkonto.fonial.de: GET /signup → 302 `/signup/register/55` ↔ `/signup/55` infinite loop; form not rendered on either host; 2026-09-11 01:29 ACCEPTED enabler is now unreachable → BOLA two-tenant creation requires program provisioning again.
+- [LEARN] ACCEPTED red-auth-gated-unchanged @ red.fonial.de: re-probe 2026-09-11 21:32 → 302 /login, Passenger 5.1.1, same box 62.146.7.29; nothing new.
+
+STEP 7 — RISK
+[RISK] fonial: 48 — passive pool exhausted; BOLA (80) and MM (50) both HUMAN_ONLY; self-signup enabler breaking removes the cheap self-service path to BOLA proof, so reportable-outcome stays ~45% flat-close unless approvals land this cycle.

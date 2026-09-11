@@ -1,19 +1,21 @@
-## 2026-09-11 19:06:04 UTC [target] (model bigpickle)
-[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted prov
+## 2026-09-11 21:34:20 UTC [target] (model bigpickle)
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on prov
 class: IDOR
 asset: prov.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
 confidence: 80
-reasoning: nginx/1.10.3 direct, no Cloudflare/WAF; data endpoints authorize by body SID only; PHPSESSID decorative; /session issues cleartext UUID sid; zero drift 2026-09-09→11; prov serves identical Symfony registration flow at /signup/confirm/55; CT sweep today confirms prov still live → self-service T_A/T_B plausible without program provisioning.
-evidence_needed: evn/get returns tenant-B device/SIP data when body sid=SID_B + Cookie:PHPSESSID_A (vs `session invalid`).
-verify_steps: (HUMAN, sanctioned; T_A+T_B via prov self-signup) 1) GET /signup → jar; GET /signup/register/55 → _token; 2) POST /signup/confirm/55 {email,address,trunkTariff} → 2xx; 3) POST /api/2.0/session → SID_A; 4) POST /session/authenticate{T_A}; 5) POST /devices/get{"sid":SID_A} capture Set-Cookie PHPSESSID_A; 6) fresh jar → /session → SID_B; 7) POST /evn/get{"sid":SID_B}+Cookie:PHPSESSID_A. ≤1rps; SaaS admin delete on completion.
-impact: Cross-tenant CDR/SIP creds + caller-ID spoofing → CRITICAL.
+reasoning: nginx/1.10.3 direct, no WAF; data endpoints authorize by body SID only; /session issues cleartext UUID sid; PHPSESSID decorative; zero drift on API canary; BUT signup enabler now 302-loops on GET — T_A/T_B self-provisioning no longer confirmed, program provisioning required.
+evidence_needed: evn/get returns tenant-B data with body sid=SID_B + Cookie:PHPSESSID_A (vs `session invalid`).
+verify_steps: (HUMAN, sanctioned, program-provisioned T_A/T_B; POST steps omitted pending approval) 1) POST /api/2.0/session → SID_A; 2) authenticate T_A; 3) POST /devices/get{"sid":SID_A} → capture Set-Cookie PHPSESSID_A; 4) fresh jar → /session → SID_B; 5) POST /evn/get{"sid":SID_B}+Cookie:PHPSESSID_A; 6) admin delete. ≤1rps.
+impact: Cross-tenant CDR/SIP creds + caller-ID spoof via /call/initiate → CRITICAL.
 testability: HUMAN_ONLY
 [HYP] Open self-signup on Mattermost 3.7.3 enables outsider account entry
 class: BUSLOGIC
 asset: mm.fonial.de/api/v4/users
 confidence: 50
-reasoning: system/ping 200 (X-Version-Id 3.7.3); GET /api/v4/users → 401 session_expired (route exists); /signup/email + /login 404 since 2026-09-10 06:37 (SPA shell dropped, not proof of disabled signup — v4 API path untested); POST /api/v4/users untested; Mattermost 3.7.3 default allows team signup unless admin-disabled; today: same box also hosts live Redmine (red.fonial.de) → account foothold = proximity to second app.
-evidence_needed: POST /api/v4/users returns 201+token (open) vs adminApproval/disabled/400 (closed).
-verify_steps: (HUMAN, sanctioned) single POST /api/v4/users {email:"ot-<ts>@example.invalid",username:"ot-<ts>",password:"<random16>",first_name:"",last_name:""}; on 201 immediately delete/disable. ≤1rps.
-impact: Outsider foothold in internal chat + legacy-3.7 CVE surface + co-hosted Redmine proximity → HIGH if open.
+reasoning: system/ping 200 (3.7.3); GET /api/v4/users → 401 session_expired (route live); POST untested; legacy 3.7.3 default signup; co-host red.fonial.de Redmine on same box.
+evidence_needed: POST /api/v4/users returns 201+token vs adminApproval/disabled/400.
+verify_steps: (HUMAN, sanctioned) one POST /api/v4/users {email:"ot-<ts>@example.invalid",username:"ot-<ts>",password:"<random16>",first_name:"",last_name:""}; delete/disable on 201. ≤1rps.
+impact: Outsider foothold in internal chat + legacy-3.7 CVE surface + Redmine proximity → HIGH if open.
 testability: HUMAN_ONLY
+[NEXT] HUMAN: request program approval for the two-tenant cross-bind BOLA sequence on prov.fonial.de — NOTE: self-signup enabler is now 302-looped, so tenants must be program-provisioned (or approve the 1-packet banner-only classification of customers.fonial.de 92.197.176.46:443, sbc.fonial.de 62.146.28.124:5060/5061 SIP OPTIONS, ldap.fonial.de 62.146.7.24:389/636, 62.146.7.22:15672 + sentry.fonial.dev 62.146.28.126 as the lower-risk alternative).
+[RISK] fonial: 48 — passive pool exhausted; BOLA (80) and MM (50) both HUMAN_ONLY; self-signup enabler breaking removes the cheap self-service path to BOLA proof, so reportable-outcome stays ~45% flat-close unless approvals land this cycle.
