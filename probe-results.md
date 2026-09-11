@@ -389,3 +389,15 @@ https://prov.fonial.de/api/2.0/session -> 200 len=?
 https://prov.fonial.de/api/2.0/session/authenticate -> 200 len=?
 https://prov.fonial.de/api/[0m← -> ERR URL can't contain control characters. '/api/\x1b[0
 https://prov.fonial.de/signup/confirm/55 -> HTTP 302
+
+## 2026-09-11 15:53:05 UTC
+https://prov.fonial.de/api/2.0/session -> 200 len=?
+https://prov.fonial.de/api/2.0/session/authenticate -> 200 len=?
+https://prov.fonial.de/api/2.0/devices/get -> 200 len=?
+https://prov.fonial.de/api/2.0/call/initiate -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/session -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/session/authenticate -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/devices/get -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/call/initiate -> 200 len=?
+https://prov.fonial.de/signup/register/55 -> HTTP 302
+https://prov.fonial.de/signup/confirm/55 -> HTTP 302

@@ -401,3 +401,5 @@ www.fonial.de
 - CHANGED shop.fonial.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
 - NEW kundenkonto.fonial.de/api/2.0 stable: Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07
 - CHANGED kundenkonto.fonial.de/signup/register/55: Still returns 302 (not 200) — unauthenticated registration flow exists but may redirect to login (probe 2026-09-11 01:30 + 06:38)
+
+## 2026-09-11 15:52:39 UTC
