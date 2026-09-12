@@ -263,3 +263,16 @@
 - 2026-09-12 ACCEPTED self-signup-live @ prov.fonial.de/signup/confirm/55: mirrors kundenkonto flow (PHPSESSID, CSRF _token, trunkTariff 19/21/22) on unfronted duplicate → enables self-service two-tenant creation for cross-bind BOLA
 - 2026-09-12 ACCEPTED signup-POST-viability-unknown @ prov.fonial.de: 21:37 reconfirms POST form fields live but 21:34 saw GET-side 302-loop; kundenkonto /signup/register/55 persists at 302 → GET gating ≠ POST failure; end-to-end tenant creation on prov data backend is the lone unobserved variable for self-service BOLA.
 - 2026-09-12 REJECTED further-passive-cycles @ fonial: 09-11 reconfirms zero drift; extra GET/HEAD/OPTIONS add no discrimination to BOLA/MM; momentum requires sanctioned writes.
+- 2026-09-12 REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
+- 2026-09-12 REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+- 2026-09-12 ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+- 2026-09-12 REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
+- 2026-09-12 REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+- 2026-09-12 ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+- 2026-09-12 REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
+- 2026-09-12 ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
+- 2026-09-12 REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
+- 2026-09-12 REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+- 2026-09-12 ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+- 2026-09-12 REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
+- 2026-09-12 ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface

@@ -442,3 +442,14 @@ www.fonial.de
 - CHANGED mm.fonial.de SPA degradation persisted: /signup/email + /login 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); server alive (system/ping 200) — config change/restart not 
 - CHANGED kundenkonto.fonial.de/signup/register/55: Still returns 302 (not 200) — unauthenticated registration flow exists but redirects to login
 - CHANGED shop.fonial.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+
+## 2026-09-12 11:18:33 UTC
+- NEW kundenkonto.fonial.de: Customer portal behind Cloudflare, PHP 8.3, permissive CORS (*), version header exposed (X-Fonial-Version: v2026.09.01-1)
+- NEW www.fonial.de/graphql/: GraphQL endpoint exists but returns 404 (TYPO3), not functional
+- NEW API marketed at /telefonanlage/funktionen/api/ but no public OpenAPI/Swagger/GraphQL introspection accessible
+- CHANGED Inventory passive recon previously showed 0 live HTTP; now 2 confirmed live (www, kundenkonto), 3 dead (app, admin, staging)
+- NEW kundenkonto.fonial.de/api/2.0 confirmed as POST-only REST API with dual-backend architecture (session vs data endpoints with different Content-Type headers and session mechanisms)
+- NEW CORS wildcard `access-control-allow-origin: *` on ALL API endpoints including `/session/authenticate` (no `allow-credentials`)
+- NEW Two distinct backends: session endpoints return `text/json` (no PHPSESSID); data endpoints return `text/json;charset=UTF-8` and set `PHPSESSID` with Secure;HttpOnly
+- CHANGED Probe results confirm: `/login` 200, `/` 200, `/graphql` 404 on both hosts, `/api/2.0/session/authenticate` 200
+- CHANGED Knowledge base updated: ACCEPTED dual-backend architecture → session confusion attack surface; REJECTED CORS direct-exploit (SID in body, no credentials)

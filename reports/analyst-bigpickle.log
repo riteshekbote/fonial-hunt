@@ -15536,3 +15536,479 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 [RISK] fonial: 50 — passive pool fully exhausted since 09-06 (incl. red.fonial.de co-host surfacing); both survivors (BOLA 80, MM 50) HUMAN_ONLY and approval-gated for a third day; without sanction this cycle, expected flat-close ~45%; approval of either sanctioned write is the single upside lever.
+===== ANALYST bigpickle 2026-09-12 11:18:33 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mls -la && ls art/ 2>/dev/null | head -50
+total 336
+drwxr-xr-x 12 runner runner   4096 Sep 12 11:13 .
+drwxr-xr-x  3 runner runner   4096 Sep 12 11:13 ..
+drwxr-xr-x  7 runner runner   4096 Sep 12 11:13 .git
+drwxr-xr-x  3 runner runner   4096 Sep 12 11:13 .github
+-rw-r--r--  1 runner runner   1740 Sep 12 11:13 README.md
+-rw-r--r--  1 runner runner     32 Sep 12 11:13 analyst-out.txt
+-rw-r--r--  1 runner runner 114923 Sep 12 11:13 analyst-prompt.txt
+-rw-r--r--  1 runner runner 111109 Sep 12 11:13 ctx.txt
+drwxr-xr-x  2 runner runner   4096 Sep 12 11:13 inventory
+drwxr-xr-x  2 runner runner   4096 Sep 12 11:13 knowledge
+drwxr-xr-x  2 runner runner   4096 Sep 12 11:13 leads
+-rw-r--r--  1 runner runner  21039 Sep 12 11:13 probe-results.md
+drwxr-xr-x  2 runner runner   4096 Sep 12 11:13 recon-notes
+drwxr-xr-x  2 runner runner   4096 Sep 12 11:13 reports
+drwxr-xr-x  2 runner runner   4096 Sep 12 11:13 reposcan-raw
+-rw-r--r--  1 runner runner   3227 Sep 12 11:13 scope.yml
+drwxr-xr-x  2 runner runner   4096 Sep 12 11:13 scripts
+-rw-r--r--  1 runner runner     33 Sep 12 11:13 state_bigpickle.json
+-rw-r--r--  1 runner runner     33 Sep 12 11:13 state_laguna.json
+-rw-r--r--  1 runner runner     33 Sep 12 11:13 state_ling3.json
+-rw-r--r--  1 runner runner     33 Sep 12 11:13 state_longcat.json
+-rw-r--r--  1 runner runner     33 Sep 12 11:13 state_mimo.json
+-rw-r--r--  1 runner runner     33 Sep 12 11:13 state_nemotron3.json
+drwxr-xr-x  2 runner runner   4096 Sep 12 11:13 triage
+[0m
+[0m$ [0mls leads/ knowledge/ inventory/ recon-notes/ triage/ reports/ && cat state_bigpickle.json && cat analyst-out.txt
+inventory/:
+fonial.md
+
+knowledge/:
+index.md
+
+leads/:
+lead-bigpickle.md
+lead-laguna.md
+lead-ling3.md
+lead-longcat.md
+lead-mimo.md
+lead-nemotron3.md
+reposcan-fonial.md
+
+recon-notes/:
+DEDICATED-DEEP.md
+
+reports/:
+analyst-bigpickle.log
+analyst-laguna.log
+analyst-ling3.log
+analyst-longcat.log
+analyst-nemotron3.log
+hypotheses-bigpickle.txt
+hypotheses-laguna.txt
+hypotheses-ling3.txt
+hypotheses-longcat.txt
+hypotheses-nemotron3.txt
+hypotheses.md
+valid-bugs.md
+
+triage/:
+run-2026-09-02-21-52.md
+run-2026-09-02-23-50.md
+run-2026-09-03-02-54.md
+run-2026-09-03-07-46.md
+run-2026-09-03-12-35.md
+run-2026-09-03-16-40.md
+run-2026-09-03-19-27.md
+run-2026-09-03-21-53.md
+run-2026-09-03-23-46.md
+run-2026-09-04-02-53.md
+run-2026-09-04-07-44.md
+run-2026-09-04-12-29.md
+run-2026-09-04-16-35.md
+run-2026-09-04-19-08.md
+run-2026-09-04-21-33.md
+run-2026-09-04-23-17.md
+run-2026-09-05-01-04.md
+run-2026-09-05-05-49.md
+run-2026-09-05-09-57.md
+run-2026-09-05-13-17.md
+run-2026-09-05-16-08.md
+run-2026-09-05-18-22.md
+run-2026-09-05-20-42.md
+run-2026-09-05-22-38.md
+run-2026-09-06-00-12.md
+run-2026-09-06-04-47.md
+run-2026-09-06-09-08.md
+run-2026-09-06-12-55.md
+run-2026-09-06-15-58.md
+run-2026-09-06-18-10.md
+run-2026-09-06-20-28.md
+run-2026-09-06-22-18.md
+run-2026-09-07-00-05.md
+run-2026-09-07-04-50.md
+run-2026-09-07-09-58.md
+run-2026-09-07-15-35.md
+run-2026-09-07-19-23.md
+run-2026-09-07-22-15.md
+run-2026-09-08-00-28.md
+run-2026-09-08-05-10.md
+run-2026-09-08-09-48.md
+run-2026-09-08-14-07.md
+run-2026-09-08-17-57.md
+run-2026-09-08-20-51.md
+run-2026-09-08-23-11.md
+run-2026-09-09-01-17.md
+run-2026-09-09-06-04.md
+run-2026-09-09-11-31.md
+run-2026-09-09-15-19.md
+run-2026-09-09-18-41.md
+run-2026-09-09-21-29.md
+run-2026-09-09-23-30.md
+run-2026-09-10-01-25.md
+run-2026-09-10-06-38.md
+run-2026-09-10-06-48.md
+run-2026-09-10-11-50.md
+run-2026-09-10-15-49.md
+run-2026-09-10-18-57.md
+run-2026-09-10-21-27.md
+run-2026-09-10-23-24.md
+run-2026-09-11-01-26.md
+run-2026-09-11-06-37.md
+run-2026-09-11-11-47.md
+run-2026-09-11-15-51.md
+run-2026-09-11-18-58.md
+run-2026-09-11-21-36.md
+run-2026-09-11-23-31.md
+run-2026-09-12-01-31.md
+run-2026-09-12-06-29.md
+{"phase": "POC", "target": "api"}[0m
+> build · big-pickle
+[0m
+[0m$ [0mls -la && ls art/ 2>/dev/null | head -50
+total 336
+drwxr-xr-x 12 runner runner   4096 Sep 12 11:13 .
+drwxr-xr-x  3 runner runner   4096 Sep 12 11:13 ..
+drwxr-xr-x  7 runner runner   4096 Sep 12 11:13 .git
+drwxr-xr-x  3 runner runner   4096 Sep 12 11:13 .github
+-rw-r--r--  1 runner runner   1740 Sep 12 11:13 README.md
+-rw-r--r--  1 runner runner     32 Sep 12 11:13 analyst-out.txt
+-rw-r--r--  1 runner runner 114923 Sep 12 11:13 analyst-prompt.txt
+-rw-r--r--  1 runner runner 111109 Sep 12 11:13 ctx.txt
+drwxr-xr-x  2 runner runner   4096 Sep 12 11:13 inventory
+drwxr-xr-x  2 runner runner   4096 Sep 12 11:13 knowledge
+drwxr-xr-x  2 runner runner   4096 Sep 12 11:13 leads
+-rw-r--r--  1 runner runner  21039 Sep 12 11:13 probe-results.md
+drwxr-xr-x  2 runner runner   4096 Sep 12 11:13 recon-notes
+drwxr-xr-x  2 runner runner   4096 Sep 12 11:13 reports
+drwxr-xr-x  2 runner runner   4096 Sep 12 11:13 reposcan-raw
+-rw-r--r--  1 runner runner   3227 Sep 12 11:13 scope.yml
+drwxr-xr-x  2 runner runner   4096 Sep 12 11:13 scripts
+-rw-r--r--  1 runner runner     33 Sep 12 11:13 state_bigpickle.json
+-rw-r--r--  1 runner runner     33 Sep 12 11:13 state_laguna.json
+-rw-r--r--  1 runner runner     33 Sep 12 11:13 state_ling3.json
+-rw-r--r--  1 runner runner     33 Sep 12 11:13 state_longcat.json
+-rw-r--r--  1 runner runner     33 Sep 12 11:13 state_mimo.json
+-rw-r--r--  1 runner runner     33 Sep 12 11:13 state_nemotron3.json
+drwxr-xr-x  2 runner runner   4096 Sep 12 11:13 triage
+[0m
+[0m
+[0m$ [0mcat scope.yml && echo "=====" && tail -40 triage/run-2026-09-12-06-29.md
+programs:
+  fonial:
+    name: fonial GmbH Bug Bounty
+    disclosure_policy: via bugs.olivermaicher.eu (Oliver Maicher private program) - report + PoC + contact + payment
+    assets:
+      - name: "All company-owned infrastructure, cloud PBX systems, VoIP services, SIP platforms, APIs, web applications, customer interfaces, and domains operated by fonial GmbH"
+        priority: In
+    out_of_scope:
+- "Network level Denial of Service attacks"
+      - "Application Denial of Service by locking user accounts"
+      - "Descriptive error messages or headers (e.g. Stack Traces, banner grabbing)"
+      - "Disclosure of known public files or directories (e.g. robots.txt)"
+      - "Outdated software / library versions"
+      - "OPTIONS / TRACE HTTP method enabled"
+      - "CSRF on logout"
+      - "CSRF on forms that are available to anonymous users"
+      - "Cookies that lack HTTP Only or Secure settings for non-sensitive data"
+      - "Self-XSS and issues exploitable only through Self-XSS"
+      - "Reports resulting from automated scanning utilities without additional details or a POC demonstrating a specific exploit"
+      - "Attacks requiring physical access to a user's device"
+      - "Attacks dependent upon social engineering of employees or vendors"
+      - "Username enumeration based on login or forgot password pages"
+      - "Enforcement policies for brute force, rate limiting, or account lockout"
+      - "SSL/TLS best practices"
+      - "SSL attacks such as BEAST, BREACH, Renegotiation attack"
+      - "Clickjacking, without additional details demonstrating a specific exploit"
+      - "Mail configuration issues including SPF, DKIM, DMARC settings"
+      - "Use of a known-vulnerable library without a description of an exploit specific to our implementation"
+      - "Password and account recovery policies"
+      - "Presence of autocomplete functionality in form fields"
+      - "Publicly accessible login panels"
+      - "Lack of email address verification during account registration or account invitation"
+      - "Lack of email address verification password restore"
+      - "Session control during email/password changes"
+      - "Social engineering, physical attacks, and DoS/DDoS testing (per program notes)"
+      - "Exposure of customer/employee/financial/authentication data during testing (per program notes)"
+    github_orgs:
+      - none-configured
+
+rules:
+  passive_first: false          # deep-hunt agent: active probes allowed when scoped
+  max_requests_per_second: 1    # never hammer live infra
+  no_doom: true                 # no DoS/DDoS, no account-lockout attacks
+  account_creation: restricted  # only on test/sandbox assets, never live customer data
+  no_data_modification: true    # no writes/deletes on live customer data
+  no_pre_disclosure: true       # never disclose before program response
+  poc_required: true            # scanner output alone is REJECTED
+  redact_secrets_in_commits: true
+
+models:
+  - { id: opencode/big-pickle, name: bigpickle }
+  - { id: opencode/nemotron-3-ultra-free, name: nemotron3 }
+  - { id: opencode/longcat-2.0-free, name: longcat }
+  - { id: opencode/ling-3.0-flash-free, name: ling3 }
+  - { id: opencode/laguna-s-2.1-free, name: laguna }
+=====
+
+===== TRIAGE 2026-09-12 06:29:27 UTC =====
+[0m
+> build · mimo-v2.5-free
+[0m
+I need to understand the scope of the fonial GmbH program to validate leads, but you haven't included the actual leads in your message. The "LEADS:" section is empty.
+
+Let me check the scope document first so I'm ready when you provide them:
+[0m✱ [0mGlob "**/*fonial*"[90m 2 matches[0m
+[0m✱ [0mGlob "**/*scope*"[90m 1 match[0m
+[0m→ [0mRead scope.yml
+[0m→ [0mRead inventory/fonial.md
+[0m→ [0mRead leads/reposcan-fonial.md
+The **LEADS** section is empty. I've loaded the scope and inventory files and am ready to triage — please paste the specific leads you want validated against the 7-Question Gate.
+[0m
+[0m$ [0mtail -60 inventory/fonial.md && echo "=====HYP=====" && tail -25 reports/hypotheses-bigpickle.txt
+- CHANGED mm.fonial.de SPA degradation persisted: /signup/email + /login 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); server alive (system/ping 200) — config change/restart not 
+- CHANGED shop.fional.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+- NEW kundenkonto.fonial.de/api/2.0 stable: Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07
+- NEW prov.fonial.de/api/2.0 canary-stable: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift across all probes si
+
+## 2026-09-11 06:38:04 UTC
+- NEW prov.fonial.de/signup/confirm/55: Self-signup flow confirmed live (sets PHPSESSID, CSRF _token, trunkTariff 19/21/22) → enables self-service two-tenant creation for cross-bind BOLA testing without pro
+- CHANGED mm.fonial.de SPA degradation persisted: /signup/email + /login 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); server alive (system/ping 200) — config change/restart not 
+- CHANGED shop.fonial.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+- NEW kundenkonto.fonial.de/api/2.0 stable: Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07
+- NEW prov.fonial.de/api/2.0 canary-stable: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift across all probes si
+
+## 2026-09-11 11:57:39 UTC
+- NEW prov.fonial.de/signup/confirm/55: Self-signup flow confirmed live (sets PHPSESSID, CSRF _token, trunkTariff 19/21/22) → enables self-service two-tenant creation for cross-bind BOLA testing without pro
+- NEW prov.fonial.de/api/2.0 canary-stable: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift across all probes si
+- CHANGED mm.fonial.de SPA degradation persisted: /signup/email + /login 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); server alive (system/ping 200) — config change/restart not 
+- CHANGED shop.fonial.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+- NEW kundenkonto.fonial.de/api/2.0 stable: Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07
+- CHANGED kundenkonto.fonial.de/signup/register/55: Still returns 302 (not 200) — unauthenticated registration flow exists but may redirect to login (probe 2026-09-11 01:30 + 06:38)
+
+## 2026-09-11 15:52:39 UTC
+
+## 2026-09-11 19:06:14 UTC
+
+## 2026-09-11 21:37:12 UTC
+- NEW prov.fonial.de/signup/confirm/55: Self-signup flow confirmed live (POST form with PHPSESSID, CSRF _token, trunkTariff 19/21/22, AccountAddress, AccountContact) → enables self-service two-tenant creati
+- NEW prov.fonial.de/api/2.0 canary-stable: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift across all probes si
+- CHANGED mm.fonial.de SPA degradation persisted: /signup/email + /login 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); server alive (system/ping 200) — config change/restart not 
+- CHANGED shop.fonial.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+- CHANGED kundenkonto.fonial.de/api/2.0 stable: Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07
+- CHANGED kundenkonto.fonial.de/signup/register/55: Still returns 302 (not 200) — unauthenticated registration flow exists but redirects to login
+
+## 2026-09-11 23:32:31 UTC
+
+## 2026-09-12 01:34:16 UTC
+- NEW prov.fonial.de/signup/confirm/55: POST form fields confirmed live (PHPSESSID, CSRF _token, trunkTariff 19/21/22, AccountAddress, AccountContact) but GET-side shows 302-loop; end-to-end tenant creation
+- NEW prov.fonial.de/api/2.0 canary-stable: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift across all probes si
+- CHANGED mm.fonial.de SPA degradation persisted: /signup/email + /login 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); server alive (system/ping 200) — config change/restart not 
+- CHANGED kundenkonto.fonial.de/signup/register/55: Still returns 302 (not 200) — unauthenticated registration flow exists but redirects to login
+- CHANGED shop.fonial.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+
+## 2026-09-12 06:34:07 UTC
+- NEW red.fonial.de @ mm box: RedmineOP Stack (redmine_questions/redmine_agile) confirmed co-hosted on mm.fonial.de box this reconnaissance cycle — no standalone unauth path (self-registration closed, anon 
+- CHANGED nothing else: prov canary v2026.09.03-1 / 5-endpoint surface / ACAO* / nginx 1.10.3 unchanged (09-09→09-12); mm signup-email+login 404 drift persisted; kundenkonto /signup/register/55 still 302 — end-
+- NEW prov.fonial.de/signup/confirm/55: Self-signup flow confirmed live (POST form with PHPSESSID, CSRF _token, trunkTariff 19/21/22, AccountAddress, AccountContact) → enables self-service two-tenant creati
+- NEW prov.fonial.de/api/2.0 canary-stable: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift across all probes si
+- CHANGED mm.fonial.de SPA degradation persisted: /signup/email + /login 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); server alive (system/ping 200) — config change/restart not 
+- CHANGED shop.fonial.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+- CHANGED kundenkonto.fonial.de/api/2.0 stable: Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07
+- CHANGED kundenkonto.fonial.de/signup/register/55: Still returns 302 (not 200) — unauthenticated registration flow exists but redirects to login
+- NEW prov.fonial.de/signup/confirm/55: POST form fields confirmed live (PHPSESSID, CSRF _token, trunkTariff 19/21/22, AccountAddress, AccountContact) but GET-side shows 302-loop; end-to-end tenant creation
+- NEW prov.fonial.de/api/2.0 canary-stable: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift across all probes si
+- CHANGED mm.fonial.de SPA degradation persisted: /signup/email + /login 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); server alive (system/ping 200) — config change/restart not 
+- CHANGED kundenkonto.fonial.de/signup/register/55: Still returns 302 (not 200) — unauthenticated registration flow exists but redirects to login
+- CHANGED shop.fonial.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+- NEW prov.fonial.de/signup/confirm/55: POST form fields confirmed live (PHPSESSID, CSRF _token, trunkTariff 19/21/22, AccountAddress, AccountContact) but GET-side shows 302-loop; end-to-end tenant creation
+- NEW prov.fonial.de/api/2.0 canary-stable: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift across all probes si
+- CHANGED mm.fonial.de SPA degradation persisted: /signup/email + /login 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); server alive (system/ping 200) — config change/restart not 
+- CHANGED kundenkonto.fonial.de/signup/register/55: Still returns 302 (not 200) — unauthenticated registration flow exists but redirects to login
+- CHANGED shop.fonial.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+=====HYP=====
+[HYP] Open self-signup on Mattermost 3.7.3 gives outsider foothold on internal-chat+Redmine box
+class: BUSLOGIC
+asset: mm.fonial.de/api/v4/users
+confidence: 50
+reasoning: system/ping 200 (X-Version-Id 3.7.0.3.7.3...=3.7.3 legacy); GET /api/v4/users → 401 `session_expired` (route live, v4 router alive); POST /api/v4/users untested; legacy 3.7.3 default team signup enabled unless admin-disabled; red.fonial.de Redmine co-host confirmed → foothold = proximity to second app.
+evidence_needed: POST /api/v4/users returns 201+token (open) vs 403 adminApproval/disabled/400 (closed).
+verify_steps: (HUMAN, sanctioned) single POST /api/v4/users {email:"ot-<ts>@example.invalid", username:"ot-<ts>", password:"<random16>", first_name:"", last_name:""}; delete/disable immediately on 201. ≤1rps.
+impact: Outsider foothold in internal chat; legacy-3.7 CVE surface; Redmine-proximity for chain — HIGH if open.
+testability: HUMAN_ONLY
+[HYP] MM-foothold → RedmineUP plugin/REST data access on co-host (chain)
+class: OTHER
+asset: red.fonial.de
+confidence: 40
+reasoning: Redmine 3.4.x-era + redmine_questions/redmine_agile active; self-registration closed + anon gated → no standalone unauth path; version alone = excluded class; reachable only with insider creds from established MM account.
+evidence_needed: authenticated MM account; then Redmine login/API with obtained-insider creds; or post-auth plugin-level IDOR (attachments/issues).
+verify_steps: (HUMAN, sanctioned, after MM account) GET https://red.fonial.de/attachments/{id} enumeration on known project contexts; GET /issues.json with session. ≤1rps.
+impact: Amplification of MM foothold toward Redmine project data → MEDIUM (chain-only).
+testability: HUMAN_ONLY
+[PARKED] shop admin-token asymmetric-auth 40: at critique floor, no new evidence since 09-09; chain-only component, passive surface (REST-vs-GraphQL diff) fully enumerated.
+[PARKED] MM→RedmineUP chain 40: gated behind MM account; held as chain-only, not standalone.
+[FINAL] survivors ranked: 1) BOLA cross-bind prov 80 (HUMAN_ONLY); 2) MM open signup 50 (HUMAN_ONLY). Both require program sanction; no passive discriminator remains on either.
+[NEXT] HUMAN: request program approval for ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email + fabricated address, CSRF `_token` + PHPSESSID harvested from GET /signup → /signup/register/55, trunkTariff 19; ≤1rps; SaaS admin delete-on-completion) — sole unobserved variable converting BOLA to self-service two-tenancy; on failure, fall back to program-provisioned T_A/T_B; separately authorize one POST mm.fonial.de/api/v4/users (delete/disable on 201).
+[LEARN] REJECTED further-passive-cycles @ fonial: 09-12 re-confirms zero drift on prov/kundenkonto/mm/shop inside this cycle; extra GET/HEAD/OPTIONS add no discrimination to BOLA/MM; momentum requires sanctioned writes, not probe data.
+[LEARN] ACCEPTED red-chain-only @ red.fonial.de: Redmine version + plugin stack = excluded class standalone; usable solely as post-MM-account amplification component.
+[RISK] fonial: 50 — passive pool fully exhausted since 09-06 (incl. red.fonial.de co-host surfacing); both survivors (BOLA 80, MM 50) HUMAN_ONLY and approval-gated for a third day; without sanction this cycle, expected flat-close ~45%; approval of either sanctioned write is the single upside lever.
+[0m
+[0m$ [0mcat recon-notes/DEDICATED-DEEP.md 2>/dev/null | head -80; echo "=====MIMO LEAD====="; cat leads/lead-mimo.md | head -60
+# Dedicated deep surface (wildcard-filtered) 2026-09-03
+
+**Target:** `fonial`
+**Root zones:** `fonial.de`
+
+## Wildcard analysis
+
+- Total resolving hostnames in zone: 0
+- After shared/wildcard IP filtering: **0 genuinely dedicated hosts**
+- Reason: all resolving hostnames use shared/CDN/wildcard IP signatures
+
+## Honest conclusion
+
+This target's subdomain space is wildcard-dominated. No genuinely dedicated
+subdomain surface was recovered from passive brute + subfinder enumeration.
+The surface either (a) uses wildcard DNS records, (b) all CNAME records
+point to shared CDN/Cloudflare/CloudFront/AWS IPs, or (c) has no
+subdomain program at all. This is the honest exhaustive result.
+
+---
+_Honest framing: passive DNS enumeration + shared-IP wildcard filtering. No finding claimed. No active testing performed._
+=====MIMO LEAD=====
+# Lead log (seed)
+[0m
+[0m$ [0mcat leads/lead-nemotron3.md leads/lead-laguna.md leads/lead-ling3.md leads/lead-longcat.md 2>/dev/null | head -120
+## 2026-09-03 16:47:30 UTC [target] (model nemotron3)
+[NEW] kundenkonto.fonial.de: Customer portal behind Cloudflare, PHP 8.3, permissive CORS (*), version header exposed (X-Fonial-Version: v2026.09.01-1)
+[NEW] www.fonial.de/graphql/: GraphQL endpoint exists but returns 404 (TYPO3), not functional
+[NEW] API marketed at /telefonanlage/funktionen/api/ but no public OpenAPI/Swagger/GraphQL introspection accessible
+[CHANGED] Inventory passive recon previously showed 0 live HTTP; now 2 confirmed live (www, kundenkonto), 3 dead (app, admin, staging)
+[PRIO] kundenkonto.fonial.de,7.5,attack_surface=8,business_value=9,tech_exposure=7,gate_ease=6,cloud_surface=8,freshness=7
+[PRIO] www.fonial.de,4.0,attack_surface=4,business_value=5,tech_exposure=3,gate_ease=10,cloud_surface=4,freshness=5
+[PRIO] api.fonial.de (not resolving),0.0,attack_surface=0,business_value=0,tech_exposure=0,gate_ease=0,cloud_surface=0,freshness=0
+[HYP] Overly permissive CORS on authenticated customer portal
+class: MISCONFIG
+asset: kundenkonto.fonial.de
+confidence: 85
+reasoning: Response headers show 'access-control-allow-origin: *' on authenticated endpoints (login page sets PHPSESSID). Wildcard CORS with credentials creates risk of cross-origin data theft if any endpoint reflects user data.
+evidence_needed: Confirmation that authenticated API endpoints (if any) also return ACAO: * without Vary: Origin
+verify_steps: GET https://kundenkonto.fonial.de/login (check headers); GET https://kundenkonto.fonial.de/ (authenticated, check CORS on any JSON endpoint)
+impact: If authenticated API endpoints exist with wildcard CORS, any malicious site could exfiltrate customer call records, SIP credentials, billing data — HIGH
+testability: PASSIVE
+[HYP] GraphQL endpoint present but non-functional — potential hidden attack surface
+class: MISCONFIG
+asset: www.fonial.de/graphql/
+confidence: 60
+reasoning: /graphql returns 301 to /graphql/ which serves TYPO3 404. Suggests GraphQL was planned/implemented but disabled or misrouted. Could indicate stale code paths or misconfigured routing.
+evidence_needed: Check if GraphQL works with valid auth or on different host (kundenkonto)
+verify_steps: POST https://www.fonial.de/graphql/ with introspection query; GET https://kundenkonto.fonial.de/graphql
+impact: If GraphQL exists internally with introspection enabled, schema enumeration could reveal sensitive mutations (call control, number management) — MEDIUM
+testability: PASSIVE
+[HYP] Version disclosure via X-Fonial-Version header
+class: MISCONFIG
+asset: kundenkonto.fonial.de
+confidence: 95
+reasoning: Header 'x-fonial-version: v2026.09.01-1' present on login response. Exposes exact deployment version to unauthenticated attackers.
+evidence_needed: Confirm header persists across all endpoints
+verify_steps: GET https://kundenkonto.fonial.de/login (already observed); GET https://kundenkonto.fonial.de/
+impact: Facilitates targeted exploit research for known versions; low direct impact but aids recon — LOW
+testability: PASSIVE
+[PARKED] GraphQL endpoint present but non-functional — potential hidden attack surface: confidence 60 but verify_steps only check public endpoints; no evidence of actual GraphQL API existing. Low actionability without auth.
+[FINAL] 1. Overly permissive CORS on authenticated customer portal (85) 2. Version disclosure via X-Fonial-Version header (95)
+[NEXT] PROBE: GET https://kundenkonto.fonial.de/ (with cookie from login redirect) to check CORS headers on authenticated landing page and enumerate any JSON API endpoints via Link headers or JS source
+[LEARN] REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
+[LEARN] REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+[LEARN] ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+[RISK] fonial: 65 — Customer portal (kundenkonto) has high business value (PII, call logs, SIP creds, billing) and exploitable misconfig (wildcard CORS). Main API surface not publicly enumerable but marketed. No critical vulns confirmed yet; risk rises if authenticated API endpoints inherit same CORS policy.
+## 2026-09-03 19:30:48 UTC [target] (model nemotron3)
+[NEW] kundenkonto.fonial.de/api/2.0 confirmed as POST-only REST API with dual-backend architecture (session vs data endpoints with different Content-Type headers and session mechanisms)
+[NEW] CORS wildcard `access-control-allow-origin: *` on ALL API endpoints including `/session/authenticate` (no `allow-credentials`)
+[NEW] Two distinct backends: session endpoints return `text/json` (no PHPSESSID); data endpoints return `text/json;charset=UTF-8` and set `PHPSESSID` with Secure;HttpOnly
+[CHANGED] Probe results confirm: `/login` 200, `/` 200, `/graphql` 404 on both hosts, `/api/2.0/session/authenticate` 200
+[CHANGED] Knowledge base updated: ACCEPTED dual-backend architecture → session confusion attack surface; REJECTED CORS direct-exploit (SID in body, no credentials)
+[PRIO] kundenkonto.fonial.de/api/2.0,9.1,attack_surface=9,business_value=10,tech_exposure=8,gate_ease=8,cloud_surface=9,freshness=10
+[PRIO] kundenkonto.fonial.de,7.5,attack_surface=8,business_value=9,tech_exposure=7,gate_ease=6,cloud_surface=8,freshness=7
+[PRIO] www.fonial.de,4.0,attack_surface=4,business_value=5,tech_exposure=3,gate_ease=10,cloud_surface=4,freshness=5
+[HYP] Dual-backend session confusion enables cross-tenant data access
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 75
+reasoning: Session endpoints (/session, /session/authenticate) use SID in JSON body with text/json responses (no PHPSESSID). Data endpoints (/devices/get, /evn/get, /call/initiate) set PHPSESSID cookie with Secure;HttpOnly and return text/json;charset=UTF-8. Independent session stores suggest SID-to-PHPSESSID binding may not be enforced on data layer.
+evidence_needed: Proof that data endpoint accepts valid SID without matching PHPSESSID, or that PHPSESSID from Account A works with SID from Account B
+verify_steps: 1) POST /api/2.0/session → get SID1; 2) POST /api/2.0/session/authenticate with valid creds → SID1 authenticated; 3) POST /api/2.0/devices/get with SID1 in body → capture PHPSESSID1; 4) Repeat for Account B → get SID2, PHPSESSID2; 5) POST /api/2.0/evn/get with SID2 + PHPSESSID1 (cross-bind); 6) Observe if data returns
+impact: Cross-tenant CDR (call records), phone numbers, SIP credentials, device lists, outbound call initiation — CRITICAL
+testability: AUTH_HELPED
+[HYP] Authentication endpoint lacks rate limiting enabling credential stuffing
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0/session/authenticate
+confidence: 72
+reasoning: Auth endpoint returns `{"authenticated":false}` with no observable delay, lockout, or CAPTCHA after repeated failures. API uses email+password with optional PIN 2FA. No rate limiting observed across 5+ rapid requests. SIDs not invalidated on failed auth. Dual backend increases risk if session layer lacks protection.
+evidence_needed: Confirm no 429/lockout/delay after 20+ rapid failed attempts; verify 2FA PIN cannot be brute-forced; check SID invalidation on failures
+verify_steps: 1) POST /api/2.0/session → get SID; 2) Send 20 rapid POST /api/2.0/session/authenticate with same SID, varying passwords; 3) Monitor response codes, timing, headers for 429/Retry-Aelay/lockout; 4) Verify SID remains valid after failures
+impact: Credential stuffing against customer accounts → full account takeover (CDR, SIP creds, billing, call control) — HIGH
+testability: AUTH_HELPED
+[HYP] Overly permissive CORS on authenticated customer portal endpoints
+class: MISCONFIG
+asset: kundenkonto.fonial.de
+confidence: 85
+reasoning: Response headers show `access-control-allow-origin: *` on login page (sets PHPSESSID) and likely on authenticated landing page. Wildcard CORS with credentials creates risk if any authenticated JSON endpoint reflects user data without `Vary: Origin`.
+evidence_needed: Confirm authenticated JSON endpoints (if any) also return ACAO: * without Vary: Origin
+verify_steps: GET https://kundenkonto.fonial.de/ (with PHPSESSID from login redirect) → check CORS headers on response; inspect JS source for API endpoint references
+impact: If authenticated API endpoints inherit wildcard CORS, malicious site could exfiltrate call records, SIP credentials, billing data — HIGH
+testability: PASSIVE
+[PARKED] GraphQL endpoint present but non-functional — potential hidden attack surface: confidence 60 but verify_steps only check public endpoints; no evidence of actual GraphQL API existing on kundenkonto. Low actionability without auth.
+[PARKED] API exposes cross-tenant data via session enumeration: confidence 45, depends on unproven session-binding flaw; subsumed by dual-backend session confusion hypothesis above.
+[FINAL] 1. Dual-backend session confusion enables cross-tenant data access (75) 2. Authentication endpoint lacks rate limiting enabling credential stuffing (72) 3. Overly permissive CORS on authenticated customer portal endpoints (85)
+[NEXT] PROBE: POST https://kundenkonto.fonial.de/api/2.0/session → get SID, then POST https://kundenkonto.fonial.de/api/2.0/session/authenticate with valid test credentials (or known invalid) to capture PHPSESSID from data endpoint response, then test cross-bind with second account's SID + first account's PHPSESSID on /api/2.0/evn/get
+[LEARN] REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
+[LEARN] REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+[LEARN] ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+[LEARN] REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
+[LEARN] ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
+[RISK] fonial: 70 — Customer portal (kundenkonto) has high business value (PII, CDR, SIP creds, billing, call control) and confirmed dual-backend architecture creating session confusion surface. Auth endpoint shows no visible rate limiting. CORS wildcard on auth domain confirmed. Main API not publicly documented but live. Risk elevated due to enterprise telephony data sensitivity and architectural anomaly.
+## 2026-09-03 21:56:02 UTC [target] (model nemotron3)
+[PRIO] kundenkonto.fonial.de/api/2.0,9.1,attack_surface=9,business_value=10,tech_exposure=8,gate_ease=8,cloud_surface=9,freshness=10
+[PRIO] kundenkonto.fonial.de,7.5,attack_surface=8,business_value=9,tech_exposure=7,gate_ease=6,cloud_surface=8,freshness=7
+[PRIO] www.fonial.de,4.0,attack_surface=4,business_value=5,tech_exposure=3,gate_ease=10,cloud_surface=4,freshness=5
+[HYP] Dual-backend session confusion enables cross-tenant data access
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 75
+reasoning: Session endpoints (/session, /session/authenticate) use SID in JSON body with text/json responses (no PHPSESSID). Data endpoints (/devices/get, /evn/get, /call/initiate) set PHPSESSID cookie with Secure;HttpOnly and return text/json;charset=UTF-8. Independent session stores suggest SID-to-PHPSESSID binding may not be enforced on data layer.
+evidence_needed: Proof that data endpoint accepts valid SID without matching PHPSESSID, or that PHPSESSID from Account A works with SID from Account B
+verify_steps: 1) POST /api/2.0/session → get SID1; 2) POST /api/2.0/session/authenticate with valid creds → SID1 authenticated; 3) POST /api/2.0/devices/get with SID1 in body → capture PHPSESSID1; 4) Repeat for Account B → get SID2, PHPSESSID2; 5) POST /api/2.0/evn/get with SID2 + PHPSESSID1 (cross-bind); 6) Observe if data returns
+impact: Cross-tenant CDR (call records), phone numbers, SIP credentials, device lists, outbound call initiation — CRITICAL
+testability: AUTH_HELPED
+[HYP] Overly permissive CORS on authenticated customer portal endpoints
+class: MISCONFIG
+asset: kundenkonto.fonial.de
+confidence: 85
+reasoning: Response headers show `access-control-allow-origin: *` on login page (sets PHPSESSID) and likely on authenticated landing page. Wildcard CORS with credentials creates risk if any authenticated JSON endpoint reflects user data without `Vary: Origin`.
+evidence_needed: Confirm authenticated JSON endpoints (if any) also return ACAO: * without Vary: Origin
+verify_steps: GET https://kundenkonto.fonial.de/ (with PHPSESSID from login redirect) → check CORS headers on response; inspect JS source for API endpoint references
+impact: If authenticated API endpoints inherit wildcard CORS, malicious site could exfiltrate call records, SIP credentials, billing data — HIGH
+testability: PASSIVE
+[PARKED] Authentication endpoint lacks rate limiting enabling credential stuffing: class AUTH but "Enforcement policies for brute force, rate limiting, or account lockout" is explicitly out-of-scope per program rules.
+[FINAL] 1. Overly permissive CORS on authenticated customer portal endpoints (85) 2. Dual-backend session confusion enables cross-tenant data access (75)
+[NEXT] PROBE: POST https://kundenkonto.fonial.de/api/2.0/session → get SID, then POST https://kundenkonto.fonial.de/api/2.0/session/authenticate with valid test credentials (or known invalid) to capture PHPSESSID from data endpoint response, then test cross-bind with second account's SID + first account's PHPSESSID on /api/2.0/evn/get
+[LEARN] REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
+[LEARN] REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+[LEARN] ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+[LEARN] REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
+[LEARN] ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
+[RISK] fonial: 70 — Customer portal (kundenkonto) has high business value (PII, CDR, SIP creds, billing, call control) and confirmed dual-backend architecture creating session confusion surface. Auth endpoint shows no visible rate limiting. CORS wildcard on auth domain confirmed. Main API not publicly documented but live. Risk elevated due to enterprise telephony data sensitivity and architectural anomaly.
+## 2026-09-03 23:48:34 UTC [target] (model nemotron3)
+[0m
+[93m[1m! [0mpermission requested: external_directory (/tmp/*); auto-rejecting
+[0m✗ [0mcurl -sS -o /tmp/op1.txt -w "HTTP %{http_code} | %{time_total}s\n" --max-time 12 -X OPTIONS -D - https://prov.fonial.de/api/2.0/session -o /dev/null | head -20; sleep 1; curl -sS -o /tmp/op2.txt -w "HTTP %{http_code} | %{time_total}s\n" --max-time 12 https://mm.fonial.de/api/v4/system/ping 2>&1 | head -5; cat /tmp/op2.txt; echo; sleep 1; curl -sS -o /tmp/op3.txt -w "HTTP %{http_code}\n" --max-time 12 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session -o /dev/null failed
+[91m[1mError: [0mThe user rejected permission to use this specific tool call.
+I have full context. Let me run a minimal passive delta check on the two surviving canaries (read-only, ≤1 rps) to ground this cycle before analysis.
