@@ -1,30 +1,40 @@
-## 2026-09-12 01:32:18 UTC [target] (model bigpickle)
+## 2026-09-12 06:29:04 UTC [target] (model bigpickle)
+[NEW] red.fonial.de @ mm box: RedmineOP Stack (redmine_questions/redmine_agile) confirmed co-hosted on mm.fonial.de box this reconnaissance cycle — no standalone unauth path (self-registration closed, anon gated), first time it appears as chain target vs the 01:34 ranking.
+[CHANGED] nothing else: prov canary v2026.09.03-1 / 5-endpoint surface / ACAO* / nginx 1.10.3 unchanged (09-09→09-12); mm signup-email+login 404 drift persisted; kundenkonto /signup/register/55 still 302 — end-to-end prov signup POST remains lone unobserved variable.
+[PRIO] prov.fonial.de/api/2.0, 6.6, a7/b10/t8/g3/c2/f5 — unfronted dual-backend API, cleartext-UUID-session, only gate = one valid tenant session.
+[PRIO] mm.fonial.de/api/v4/users, 5.6, a6/b6/t6/g7/c1/f6 — legacy 3.7.3 signup may be open (no-auth gate, 10-scale 7), Co-host proximity to Redmine.
+[PRIO] red.fonial.de, 4.4, a5/b7/t5/g1/c1/f7 — project data + plugin (RedmineUP) surface, hard-gated, chain-only amplifies MM.
 [HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted prov
 class: IDOR
 asset: prov.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
 confidence: 80
-reasoning: nginx/1.10.3 direct, no WAF; data endpoints authorize by body SID only; /session issues cleartext UUID sid, PHPSESSID decorative; call/initiate live WRITE sibling; zero drift 09-09→12; signup GET 302-loops → tenant provisioning program-dependent unless POST wins approval.
-evidence_needed: POST /evn/get {"sid":SID_B}+Cookie:PHPSESSID_A returns tenant-B device/CDR data vs `session invalid`.
-verify_steps: (HUMAN, sanctioned, program-provisioned T_A/T_B) 1) POST /api/2.0/session fresh jar → SID_A; 2) authenticate T_A; 3) POST /devices/get{"sid":SID_A} → capture Set-Cookie PHPSESSID_A; 4) fresh jar POST /session → SID_B; 5) POST /evn/get{"sid":SID_B}+Cookie:PHPSESSID_A; 6) SaaS admin delete. ≤1rps.
-impact: Cross-tenant CDR/SIP creds + caller-ID spoof via /call/initiate → CRITICAL.
+reasoning: nginx/1.10.3 direct, no WAF; data endpoints authorize by body SID only; /session issues cleartext UUID sid, PHPSESSID decorative; call/initiate live WRITE sibling; zero drift 09-09→09-12; prov signup POST form fields live while GET 302-loops → two-tenancy only via sanctioned provisioning unless POST approved.
+evidence_needed: POST /evn/get {"sid":SID_B}+Cookie:PHPSESSID_A returns tenant-B device/CDR data instead of `session invalid`.
+verify_steps: (HUMAN, sanctioned; program-provisioned T_A/T_B, else approved self-signup) 1) POST /api/2.0/session fresh jar → SID_A; 2) authenticate T_A; 3) POST /devices/get {"sid":SID_A} → capture Set-Cookie PHPSESSID_A; 4) fresh jar POST /api/2.0/session → SID_B; 5) POST /evn/get {"sid":SID_B} + Cookie:PHPSESSID_A; 6) SaaS admin delete. ≤1rps.
+impact: Cross-tenant CDR, device/SIP credentials, caller-ID spoof + unauthorized outbound calls via call/initiate → CRITICAL.
 testability: HUMAN_ONLY
 [HYP] Open self-signup on Mattermost 3.7.3 gives outsider foothold on internal-chat+Redmine box
 class: BUSLOGIC
 asset: mm.fonial.de/api/v4/users
 confidence: 50
-reasoning: system/ping 200 (3.7.3); GET /api/v4/users → 401 route-live; POST untested; co-host red.fonial.de Redmine confirmed same box this cycle; legacy 3.7.3 default signup unless admin-disabled.
-evidence_needed: POST /api/v4/users returns 201+token (open) vs 403/400/disabled.
-verify_steps: (HUMAN, sanctioned) single POST /api/v4/users {email:"ot-<ts>@example.invalid",username:"ot-<ts>",password:"<random16>",first_name:"",last_name:""}; delete/disable on 201. ≤1rps.
-impact: Outsider foothold in internal chat + legacy-3.7 CVE surface + Redmine-proximity (confirmable tenants, plugin data) → HIGH if open.
+reasoning: system/ping 200 (X-Version-Id 3.7.0.3.7.3...=3.7.3 legacy); GET /api/v4/users → 401 `session_expired` (route live, v4 router alive); POST /api/v4/users untested; legacy 3.7.3 default team signup enabled unless admin-disabled; red.fonial.de Redmine co-host confirmed → foothold = proximity to second app.
+evidence_needed: POST /api/v4/users returns 201+token (open) vs 403 adminApproval/disabled/400 (closed).
+verify_steps: (HUMAN, sanctioned) single POST /api/v4/users {email:"ot-<ts>@example.invalid", username:"ot-<ts>", password:"<random16>", first_name:"", last_name:""}; delete/disable immediately on 201. ≤1rps.
+impact: Outsider foothold in internal chat; legacy-3.7 CVE surface; Redmine-proximity for chain — HIGH if open.
 testability: HUMAN_ONLY
 [HYP] MM-foothold → RedmineUP plugin/REST data access on co-host (chain)
 class: OTHER
 asset: red.fonial.de
 confidence: 40
-reasoning: Redmine 3.4.x-era + redmine_questions/redmine_agile (RedmineUP) plugins active; self-registration closed and anon gated → no standalone unauth path; only reachable after MM account; version alone = excluded class.
-evidence_needed: authenticated MM account; then Redmine login/API with obtained-insider creds harvesting; or plugin-level post-auth IDOR mapping.
-verify_steps: (HUMAN, sanctioned, post-MM-account) GET https://red.fonial.de/attachments/{id} enumeration on known project contexts; REST GET /issues.json with session. ≤1rps.
+reasoning: Redmine 3.4.x-era + redmine_questions/redmine_agile active; self-registration closed + anon gated → no standalone unauth path; version alone = excluded class; reachable only with insider creds from established MM account.
+evidence_needed: authenticated MM account; then Redmine login/API with obtained-insider creds; or post-auth plugin-level IDOR (attachments/issues).
+verify_steps: (HUMAN, sanctioned, after MM account) GET https://red.fonial.de/attachments/{id} enumeration on known project contexts; GET /issues.json with session. ≤1rps.
 impact: Amplification of MM foothold toward Redmine project data → MEDIUM (chain-only).
 testability: HUMAN_ONLY
-[NEXT] HUMAN: request program approval for ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email, fabricated address, CSRF `_token`+PHPSESSID from GET /signup, trunkTariff 19; ≤1rps; SaaS admin delete-on-completion) — sole unobserved variable converting BOLA to self-service; fall back to program-provisioned T_A/T_B, plus one POST mm.fonial.de/api/v4/users (delete/disable on 201).
-[RISK] fonial: 50 — passive pool fully exhausted (incl. red.fonial.de); both survivors (BOLA 80, MM 50) HUMAN_ONLY and approval-gated for a third day; without approval this cycle, expected flat-close ~45%; approval of either sanctioned write is the single upside lever.
+[PARKED] shop admin-token asymmetric-auth 40: at critique floor, no new evidence since 09-09; chain-only component, passive surface (REST-vs-GraphQL diff) fully enumerated.
+[PARKED] MM→RedmineUP chain 40: gated behind MM account; held as chain-only, not standalone.
+[FINAL] survivors ranked: 1) BOLA cross-bind prov 80 (HUMAN_ONLY); 2) MM open signup 50 (HUMAN_ONLY). Both require program sanction; no passive discriminator remains on either.
+[NEXT] HUMAN: request program approval for ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email + fabricated address, CSRF `_token` + PHPSESSID harvested from GET /signup → /signup/register/55, trunkTariff 19; ≤1rps; SaaS admin delete-on-completion) — sole unobserved variable converting BOLA to self-service two-tenancy; on failure, fall back to program-provisioned T_A/T_B; separately authorize one POST mm.fonial.de/api/v4/users (delete/disable on 201).
+[LEARN] REJECTED further-passive-cycles @ fonial: 09-12 re-confirms zero drift on prov/kundenkonto/mm/shop inside this cycle; extra GET/HEAD/OPTIONS add no discrimination to BOLA/MM; momentum requires sanctioned writes, not probe data.
+[LEARN] ACCEPTED red-chain-only @ red.fonial.de: Redmine version + plugin stack = excluded class standalone; usable solely as post-MM-account amplification component.
+[RISK] fonial: 50 — passive pool fully exhausted since 09-06 (incl. red.fonial.de co-host surfacing); both survivors (BOLA 80, MM 50) HUMAN_ONLY and approval-gated for a third day; without sanction this cycle, expected flat-close ~45%; approval of either sanctioned write is the single upside lever.

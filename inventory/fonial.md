@@ -422,3 +422,23 @@ www.fonial.de
 - CHANGED mm.fonial.de SPA degradation persisted: /signup/email + /login 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); server alive (system/ping 200) — config change/restart not 
 - CHANGED kundenkonto.fonial.de/signup/register/55: Still returns 302 (not 200) — unauthenticated registration flow exists but redirects to login
 - CHANGED shop.fonial.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+
+## 2026-09-12 06:34:07 UTC
+- NEW red.fonial.de @ mm box: RedmineOP Stack (redmine_questions/redmine_agile) confirmed co-hosted on mm.fonial.de box this reconnaissance cycle — no standalone unauth path (self-registration closed, anon 
+- CHANGED nothing else: prov canary v2026.09.03-1 / 5-endpoint surface / ACAO* / nginx 1.10.3 unchanged (09-09→09-12); mm signup-email+login 404 drift persisted; kundenkonto /signup/register/55 still 302 — end-
+- NEW prov.fonial.de/signup/confirm/55: Self-signup flow confirmed live (POST form with PHPSESSID, CSRF _token, trunkTariff 19/21/22, AccountAddress, AccountContact) → enables self-service two-tenant creati
+- NEW prov.fonial.de/api/2.0 canary-stable: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift across all probes si
+- CHANGED mm.fonial.de SPA degradation persisted: /signup/email + /login 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); server alive (system/ping 200) — config change/restart not 
+- CHANGED shop.fonial.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+- CHANGED kundenkonto.fonial.de/api/2.0 stable: Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07
+- CHANGED kundenkonto.fonial.de/signup/register/55: Still returns 302 (not 200) — unauthenticated registration flow exists but redirects to login
+- NEW prov.fonial.de/signup/confirm/55: POST form fields confirmed live (PHPSESSID, CSRF _token, trunkTariff 19/21/22, AccountAddress, AccountContact) but GET-side shows 302-loop; end-to-end tenant creation
+- NEW prov.fonial.de/api/2.0 canary-stable: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift across all probes si
+- CHANGED mm.fonial.de SPA degradation persisted: /signup/email + /login 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); server alive (system/ping 200) — config change/restart not 
+- CHANGED kundenkonto.fonial.de/signup/register/55: Still returns 302 (not 200) — unauthenticated registration flow exists but redirects to login
+- CHANGED shop.fonial.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+- NEW prov.fonial.de/signup/confirm/55: POST form fields confirmed live (PHPSESSID, CSRF _token, trunkTariff 19/21/22, AccountAddress, AccountContact) but GET-side shows 302-loop; end-to-end tenant creation
+- NEW prov.fonial.de/api/2.0 canary-stable: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift across all probes si
+- CHANGED mm.fonial.de SPA degradation persisted: /signup/email + /login 404 (were byte-identical 200 at 01:31 UTC); /api/v4/teams HEAD→404 (was 401); server alive (system/ping 200) — config change/restart not 
+- CHANGED kundenkonto.fonial.de/signup/register/55: Still returns 302 (not 200) — unauthenticated registration flow exists but redirects to login
+- CHANGED shop.fonial.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component

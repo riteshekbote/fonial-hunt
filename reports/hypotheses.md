@@ -1584,3 +1584,42 @@
 - LEARN: REJECTED further-passive-cycles @ fonial: 2026-09-11 re-confirms zero drift on prov/kundenkonto/mm/shop; extra GET/HEAD/OPTIONS passes add no discrimination val
 - LEARN: REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component
 - LEARN: ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe 2026-09-10 confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-cr
+
+## RANKED HYPOTHESES 2026-09-12 06:34:07 UTC
+- [80] prov.fonial.de/api/2.0: Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted prov (from art/lead_bigpickle.txt)
+- NEXT(hypotheses-bigpickle.txt): HUMAN: request program approval for ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email + fabricated address, CSR
+- NEXT(hypotheses-nemotron3.txt): PROBE: POST https://prov.fonial.de/signup/confirm/55 with form data (email=test_<timestamp>@example.invalid, trunkTariff=19, _token=<captured_CSRF>, AccountAddr
+- LEARN: REJECTED further-passive-cycles @ fonial: 09-12 re-confirms zero drift on prov/kundenkonto/mm/shop inside this cycle; extra GET/HEAD/OPTIONS add no discriminati
+- LEARN: ACCEPTED red-chain-only @ red.fonial.de: Redmine version + plugin stack = excluded class standalone; usable solely as post-MM-account amplification component.
+- LEARN: ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-cred
+- LEARN: ACCEPTED mm-alive @ mm.fonial.de: system/ping 200 `{"status":"OK"}`, X-Version-Id 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false, nginx/1.10.2; SPA /signup/
+- LEARN: REJECTED further-passive-probing @ fonial: all re-probes continue to return zero-drift evidence; additional GET/HEAD/OPTIONS passes add no discrimination value 
+- LEARN: ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe 2026-09-10 confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-cr
+- LEARN: REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component
+- LEARN: ACCEPTED self-signup-live @ prov.fonial.de/signup/confirm/55: mirrors kundenkonto flow (PHPSESSID, CSRF _token, trunkTariff 19/21/22) on unfronted duplicate → e
+- LEARN: ACCEPTED prov-self-signup-enabler: prov.fonial.de serves identical Symfony registration flow (POST /signup/confirm/55, CSRF, AccountAddress, AccountContact, tru
+- LEARN: ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-cred
+- LEARN: ACCEPTED mm-alive @ mm.fonial.de: system/ping 200 `{"status":"OK"}`, X-Version-Id 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false, nginx/1.10.2; SPA /signup/
+- LEARN: REJECTED further-passive-cycles @ fonial: 2026-09-11 re-confirms zero drift on prov/kundenkonto/mm/shop; extra GET/HEAD/OPTIONS passes add no discrimination val
+- LEARN: REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component
+- LEARN: ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe 2026-09-10 confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-cr
+- LEARN: ACCEPTED prov-self-signup-enabler: prov.fonial.de serves identical Symfony registration flow (POST /signup/confirm/55, CSRF, AccountAddress, AccountContact, tru
+- LEARN: ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-cred
+- LEARN: ACCEPTED mm-alive @ mm.fonial.de: system/ping 200 `{"status":"OK"}`, X-Version-Id 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false, nginx/1.10.2; SPA /signup/
+- LEARN: REJECTED further-passive-cycles @ fonial: 2026-09-11 re-confirms zero drift on prov/kundenkonto/mm/shop; extra GET/HEAD/OPTIONS passes add no discrimination val
+- LEARN: REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component
+- LEARN: ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe 2026-09-10 confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-cr
+- LEARN: ACCEPTED prov-self-signup-enabler: prov.fonial.de serves identical Symfony registration flow (POST /signup/confirm/55, CSRF, AccountAddress, AccountContact, tru
+- LEARN: ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-cred
+- LEARN: ACCEPTED mm-alive @ mm.fonial.de: system/ping 200 `{"status":"OK"}`, X-Version-Id 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false, nginx/1.10.2; SPA /signup/
+- LEARN: REJECTED further-passive-cycles @ fonial: 2026-09-11 re-confirms zero drift on prov/kundenkonto/mm/shop; extra GET/HEAD/OPTIONS passes add no discrimination val
+- LEARN: REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component
+- LEARN: ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe 2026-09-10 confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-cr
+- LEARN: ACCEPTED signup-POST-viability-unknown @ prov.fonial.de: 21:37 reconfirms POST form fields live but 21:34 saw GET-side 302-loop; kundenkonto /signup/register/55
+- LEARN: REJECTED further-passive-cycles @ fonial: 09-11 reconfirms zero drift; extra GET/HEAD/OPTIONS add no discrimination to BOLA/MM; momentum requires sanctioned wri
+- LEARN: ACCEPTED prov-self-signup-enabler: prov.fonial.de serves identical Symfony registration flow (POST /signup/confirm/55, CSRF, AccountAddress, AccountContact, tru
+- LEARN: ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: 18:54 UTC OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-cred
+- LEARN: ACCEPTED mm-alive @ mm.fonial.de: system/ping 200 `{"status":"OK"}`, X-Version-Id 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false, nginx/1.10.2; SPA /signup/
+- LEARN: REJECTED further-passive-cycles @ fonial: 2026-09-11 re-confirms zero drift on prov/kundenkonto/mm/shop; extra GET/HEAD/OPTIONS passes add no discrimination val
+- LEARN: REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component
+- LEARN: ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe 2026-09-10 confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-cr
