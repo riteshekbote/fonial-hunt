@@ -2282,3 +2282,33 @@ testability: HUMAN_ONLY
 [LEARN] ACCEPTED signup-POST-viability-unknown @ prov.fonial.de: 21:37 reconfirms POST form fields live but 21:34 saw GET-side 302-loop; kundenkonto /signup/register/55 persists at 302 → GET gating ≠ POST failure; end-to-end tenant creation on prov data backend is the lone unobserved variable for self-service BOLA.
 [LEARN] REJECTED further-passive-cycles @ fonial: 09-11 reconfirms zero drift; extra GET/HEAD/OPTIONS add no discrimination to BOLA/MM; momentum requires sanctioned writes.
 [RISK] fonial: 48 — passive pool exhausted since 09-06; both survivors HUMAN_ONLY; one sanctioned POST decides prov signup viability (self-service BOLA) vs program provisioning; reportable-outcome ~45% flat-close if approvals stall this cycle.
+## 2026-09-12 01:32:18 UTC [target] (model bigpickle)
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted prov
+class: IDOR
+asset: prov.fonial.de/api/2.0 (devices/get, evn/get, call/initiate)
+confidence: 80
+reasoning: nginx/1.10.3 direct, no WAF; data endpoints authorize by body SID only; /session issues cleartext UUID sid, PHPSESSID decorative; call/initiate live WRITE sibling; zero drift 09-09→12; signup GET 302-loops → tenant provisioning program-dependent unless POST wins approval.
+evidence_needed: POST /evn/get {"sid":SID_B}+Cookie:PHPSESSID_A returns tenant-B device/CDR data vs `session invalid`.
+verify_steps: (HUMAN, sanctioned, program-provisioned T_A/T_B) 1) POST /api/2.0/session fresh jar → SID_A; 2) authenticate T_A; 3) POST /devices/get{"sid":SID_A} → capture Set-Cookie PHPSESSID_A; 4) fresh jar POST /session → SID_B; 5) POST /evn/get{"sid":SID_B}+Cookie:PHPSESSID_A; 6) SaaS admin delete. ≤1rps.
+impact: Cross-tenant CDR/SIP creds + caller-ID spoof via /call/initiate → CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Open self-signup on Mattermost 3.7.3 gives outsider foothold on internal-chat+Redmine box
+class: BUSLOGIC
+asset: mm.fonial.de/api/v4/users
+confidence: 50
+reasoning: system/ping 200 (3.7.3); GET /api/v4/users → 401 route-live; POST untested; co-host red.fonial.de Redmine confirmed same box this cycle; legacy 3.7.3 default signup unless admin-disabled.
+evidence_needed: POST /api/v4/users returns 201+token (open) vs 403/400/disabled.
+verify_steps: (HUMAN, sanctioned) single POST /api/v4/users {email:"ot-<ts>@example.invalid",username:"ot-<ts>",password:"<random16>",first_name:"",last_name:""}; delete/disable on 201. ≤1rps.
+impact: Outsider foothold in internal chat + legacy-3.7 CVE surface + Redmine-proximity (confirmable tenants, plugin data) → HIGH if open.
+testability: HUMAN_ONLY
+[HYP] MM-foothold → RedmineUP plugin/REST data access on co-host (chain)
+class: OTHER
+asset: red.fonial.de
+confidence: 40
+reasoning: Redmine 3.4.x-era + redmine_questions/redmine_agile (RedmineUP) plugins active; self-registration closed and anon gated → no standalone unauth path; only reachable after MM account; version alone = excluded class.
+evidence_needed: authenticated MM account; then Redmine login/API with obtained-insider creds harvesting; or plugin-level post-auth IDOR mapping.
+verify_steps: (HUMAN, sanctioned, post-MM-account) GET https://red.fonial.de/attachments/{id} enumeration on known project contexts; REST GET /issues.json with session. ≤1rps.
+impact: Amplification of MM foothold toward Redmine project data → MEDIUM (chain-only).
+testability: HUMAN_ONLY
+[NEXT] HUMAN: request program approval for ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email, fabricated address, CSRF `_token`+PHPSESSID from GET /signup, trunkTariff 19; ≤1rps; SaaS admin delete-on-completion) — sole unobserved variable converting BOLA to self-service; fall back to program-provisioned T_A/T_B, plus one POST mm.fonial.de/api/v4/users (delete/disable on 201).
+[RISK] fonial: 50 — passive pool fully exhausted (incl. red.fonial.de); both survivors (BOLA 80, MM 50) HUMAN_ONLY and approval-gated for a third day; without approval this cycle, expected flat-close ~45%; approval of either sanctioned write is the single upside lever.
