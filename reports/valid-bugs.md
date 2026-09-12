@@ -41,3 +41,9 @@
 
 - 1 lead(s) marked VALID at 2026-09-11 06:37:16 UTC
   - Once you provide the leads, I'll validate each one systematically against Q1-Q7 and provide verdicts with the required details for valid findings.
+
+- 4 lead(s) marked VALID at 2026-09-12 11:15:16 UTC
+  - | Q4 Provable non-invasively? | **NO** — requires 2 valid test accounts to cross-bind SID+PHPSESSID; passive recon exhausted |
+  - | Q4 Provable non-invasively? | **NO** — requires POST with valid SID to unconfirmed endpoints |
+  - | Q4 Provable non-invasively? | **NO** — needs valid account + phone number to test |
+  - | 7 | /call/initiate cross-tenant | **HOLD** | Needs valid account + phone number |
