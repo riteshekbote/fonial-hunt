@@ -16342,3 +16342,53 @@ testability: HUMAN_ONLY
 
 ## STEP 7 — RISK
 [RISK] fonial: 72 — Sole surviving high-value vector is cross-tenant telephony BOLA (CDR/SIP/call-control, CRITICAL) gated behind two test tenants; prov unfronted twin makes tenant creation self-service pending ONE sanctioned write. Confirmed wildcard CORS (ACAO * on session endpoint both hosts, this cycle) and cleartext UUID SID tokens widen any leak chain. Passive surface fully enumerated; risk now concentrated on AUTH-gated exploit confirmation, not on discovery.
+===== ANALYST bigpickle 2026-09-12 19:29:57 UTC =====
+[0m
+> build · big-pickle
+[0m
+STEP 1 — DELTA: NO_DELTA. No new probes since 2026-09-12 17:20:34 UTC. All surfaces unchanged.
+
+STEP 2 — PRIORITIZE:
+[PRIO] prov.fonial.de/api/2.0,8.1,a8/b9/t7/g6/c5/f9
+[PRIO] mm.fonial.de,5.4,a5/b6/t6/g4/c5/f7
+[PRIO] red.fonial.de,3.8,a3/b5/t4/g3/c4/f6
+
+STEP 3 — HYPOTHESES:
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted duplicate
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 80
+reasoning: prov = byte-identical clone of kundenkonto API (nginx/1.10.3, v2026.09.03-1, ACAO*, cleartext UUID SID, decorative PHPSESSID). Data endpoints authorize by body SID auth-state only; whether cross-layer PHPSESSID binding exists is sole unobserved variable. Self-signup flow confirmed live on prov (POST /signup/confirm/55, CSRF, trunkTariff).
+evidence_needed: Two valid tenant sessions; Account B SID + Account A PHPSESSID on /evn/get or /devices/get returns Account A data or clean rejection.
+verify_steps: HUMAN: POST /api/2.0/session → sidA; /session/authenticate A; /devices/get sidA → PHPSESSID-A; repeat for B; POST /evn/get {sid:B, phpsessid:A} → compare data scoping; identical on /call/initiate.
+impact: Cross-tenant CDR, phone numbers, SIP credentials, device lists, outbound call initiation — CRITICAL.
+testability: HUMAN_ONLY
+
+[HYP] Open self-signup on legacy Mattermost enables outsider foothold
+class: AUTH
+asset: mm.fonial.de/api/v4
+confidence: 50
+reasoning: Mattermost 3.7.3 alive (system/ping 200); GET /api/v4/users → 401 session_expired; default EnableSignUpWithEmail state unobservable passively. SPA /signup/email + /login degraded to 404 drift since 09-10.
+evidence_needed: Sanctioned GET /api/v4/config or test account creation.
+verify_steps: HUMAN: POST /api/v4/users (fake data) after program approval.
+impact: Internal chat + co-hosted red.fonial.de Redmine — MEDIUM-HIGH.
+testability: HUMAN_ONLY
+
+[HYP] Dual-backend cross-bind directly on Cloudflare-fronted production portal
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 75
+reasoning: Same mechanics as prov but Cloudflare-fronted; testing risks production customer data.
+evidence_needed: Same as prov; execute on prov first.
+verify_steps: identical to prov hyp on program-sanctioned test accounts.
+impact: Cross-tenant telephony data + call control on production — CRITICAL.
+testability: HUMAN_ONLY
+
+STEP 4 — SELF-CRITIQUE: All three HUMAN_ONLY. No new passive data to refine or drop. [PARKED] CORS wildcard: no allow-credentials + SID in body, confidence 35 below floor. [PARKED] shop admin-token: confidence 40 at floor, chain-only. [FINAL] 1. prov BOLA (80) 2. mm self-signup (50) 3. kundenkonto BOLA (75, deferred to prov).
+
+STEP 5 — NEXT:
+[NEXT] HUMAN: request program approval for ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email + fabricated address, CSRF _token harvested from preceding GET, trunkTariff 19/21/22) — proves two-tenant creation and unlocks self-service BOLA cross-bind test.
+
+STEP 6 — LEARNING: [LEARN] REJECTED further-passive-cycles @ fonial: 09-12 re-probes reconfirm zero drift; extra OPTIONS/GET add no discrimination; both HUMAN_ONLY survivors gated on program approval, not probe data.
+
+STEP 7 — RISK: [RISK] fonial: 72 — Sole high-value vector is cross-tenant telephony BOLA (CRITICAL) gated behind two test tenants; prov unfronted twin makes tenant creation self-service pending ONE sanctioned write. Wildcard CORS and cleartext UUID SID tokens widen any leak chain. Passive surface fully enumerated; risk concentrated on AUTH-gated exploit confirmation.

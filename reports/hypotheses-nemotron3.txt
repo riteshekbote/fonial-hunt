@@ -1,5 +1,5 @@
-## 2026-09-12 17:20:24 UTC [target] (model nemotron3)
-[NEW] prov.fonial.de/signup/confirm/55 POST form viability confirmed live (PHPSESSID, CSRF _token, trunkTariff 19/21/22, AccountAddress, AccountContact) but GET-side 302-loop; end-to-end tenant creation on prov data backend remains sole unobserved variable for self-service BOLA
+## 2026-09-12 19:28:49 UTC [target] (model nemotron3)
+[NEW] prov.fonial.de/signup/confirm/55 POST form viability confirmed live (PHPSESSID, CSRF _token, trunkTariff 19/21/22, AccountAddress, AccountContact) but GET-side 302-loop; end-to-end tenant creation on prov data backend unobserved
 [NEW] prov.fonial.de/api/2.0 canary-stable reconfirmed 2026-09-12 cycle — nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift since 2026-09-09
 [NEW] red.fonial.de confirmed co-hosted on mm.fonial.de box (RedmineOP stack: redmine_questions/redmine_agile) — no standalone unauth path, auth-gated; usable only as post-MM-account amplification component
 [CHANGED] kundenkonto.fonial.de/api/2.0 stable: Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07
