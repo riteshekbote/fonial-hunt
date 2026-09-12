@@ -2535,3 +2535,33 @@ testability: HUMAN_ONLY
 [LEARN] REJECTED further-passive-cycles @ fonial: 09-12 re-probes (both hosts) reconfirm zero drift; extra OPTIONS/GET add no discrimination value to the two HUMAN_ONLY survivors; momentum requires sanctioned writes, not probe data.
 [LEARN] ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: reconfirmed this cycle — nginx/1.10.3, v2026.09.03-1, ACAO\*, ACAM GET/POST/OPTIONS, no allow-credentials, /signup/register/55 → 302; zero drift since 09-09.
 [RISK] fonial: 72 — Sole surviving high-value vector is cross-tenant telephony BOLA (CDR/SIP/call-control, CRITICAL) gated behind two test tenants; prov unfronted twin makes tenant creation self-service pending one sanctioned write. Confirmed wildcard CORS and cleartext UUID SID tokens widen any leak chain. Passive surface fully enumerated on all assets; risk now concentrated on AUTH-gated exploit confirmation, not on discovery.
+## 2026-09-12 17:14:58 UTC [target] (model bigpickle)
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted duplicate
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 80
+reasoning: prov = byte-identical clone of kundenkonto API (confirmed 17:14: nginx/1.10.3, v2026.09.03-1, ACAO*, text/json, cleartext UUID sid, decorative parallel PHPSESSID). Data endpoints (/devices/get, /evn/get, /call/initiate) authorize by body SID auth-state only ("session unauthenticated" vs "session invalid"); /session deletes unknown PHPSESSID. Whether authenticated sid→credential binding is cross-checked against data-layer PHPSESSID is the sole unobserved variable.
+evidence_needed: Two valid tenant sessions; Account B SID + Account A PHPSESSID returns Account A data on /evn/get or /devices/get (or is cleanly rejected).
+verify_steps: HUMAN: POST /api/2.0/session → sidA; /session/authenticate A; /devices/get sidA → PHPSESSID-A; repeat for B; POST /evn/get {sid:B, phpsessid:A} → compare data scoping; identical on /call/initiate.
+impact: Cross-tenant CDR, phone numbers, SIP credentials, device lists, outbound call initiation — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Open self-signup on legacy Mattermost enables outsider foothold on internal chat box
+class: AUTH
+asset: mm.fonial.de/api/v4
+confidence: 50
+reasoning: Mattermost 3.7.3 unchanged (system/ping OK this cycle); GET /api/v4/users → 401 session_expired (route exists); /api/v4/teams HEAD→404 drift since 09-10; SPA /signup/email + /login 404 = client-side routing, not server-rendered signup. Default vendor EnableSignUpWithEmail state unobservable passively.
+evidence_needed: sanctioned GET /api/v4/config (needs auth) or a test account creation to read EnableSignUpWithEmail / EnableTeamCreation.
+verify_steps: HUMAN: POST /api/v4/users (fake data) after program approval; observe create-or-acl.
+impact: internal chat + co-hosted red.fonial.de Redmine (redmine_questions/redmine_agile) as post-auth amplification — MEDIUM-HIGH.
+testability: HUMAN_ONLY
+[HYP] Dual-backend cross-bind directly on Cloudflare-fronted production portal
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 75
+reasoning: Same mechanics as prov (5-endpoint surface, body-SID authz, decorative PHPSESSID, v2026.09.03-1, ACAO* confirmed 17:14 this cycle) but Cloudflare-fronted; byte-behavior equality with prov established; testing here risks production customer data (out-of-scope exposure clause).
+evidence_needed: Same as prov hyp; execute on prov first, reproduce here only on program approval.
+verify_steps: identical to prov hyp on program-sanctioned test accounts.
+impact: Cross-tenant telephony data + call control on production — CRITICAL.
+testability: HUMAN_ONLY
+[NEXT] HUMAN: request program approval for ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email + fabricated address, CSRF _token harvested from preceding GET, trunkTariff 19/21/22) on the unfronted test-grade duplicate — proves two-tenant creation and unlocks the self-service BOLA cross-bind test; scope.yml permits account_creation on test/sandbox assets only.
+[RISK] fonial: 72 — Sole surviving high-value vector is cross-tenant telephony BOLA (CDR/SIP/call-control, CRITICAL) gated behind two test tenants; prov unfronted twin makes tenant creation self-service pending ONE sanctioned write. Confirmed wildcard CORS (ACAO * on session endpoint both hosts, this cycle) and cleartext UUID SID tokens widen any leak chain. Passive surface fully enumerated; risk now concentrated on AUTH-gated exploit confirmation, not on discovery.

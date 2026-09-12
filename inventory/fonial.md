@@ -455,3 +455,12 @@ www.fonial.de
 - CHANGED Knowledge base updated: ACCEPTED dual-backend architecture → session confusion attack surface; REJECTED CORS direct-exploit (SID in body, no credentials)
 
 ## 2026-09-12 14:18:12 UTC
+
+## 2026-09-12 17:20:34 UTC
+- NEW prov.fonial.de/signup/confirm/55 POST form viability confirmed live (PHPSESSID, CSRF _token, trunkTariff 19/21/22, AccountAddress, AccountContact) but GET-side 302-loop; end-to-end tenant creation on 
+- NEW prov.fonial.de/api/2.0 canary-stable reconfirmed 2026-09-12 cycle — nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift since 2026-09-09
+- NEW red.fonial.de confirmed co-hosted on mm.fonial.de box (RedmineOP stack: redmine_questions/redmine_agile) — no standalone unauth path, auth-gated; usable only as post-MM-account amplification component
+- CHANGED kundenkonto.fonial.de/api/2.0 stable: Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07
+- CHANGED mm.fonial.de SPA degradation persisted: /signup/email + /login 404 (were byte-identical SPA shell at 2026-09-10 01:31); /api/v4/teams HEAD→404 (was 401); server alive (system/ping 200)
+- CHANGED shop.fonial.de asymmetric admin-auth: standalone confidence dropped to 40 (critique floor), relegated to chain-only component
+- CHANGED further-passive-cycles REJECTED: 2026-09-12 re-probes reconfirm zero drift on prov/kundenkonto/mm/shop; extra GET/HEAD/OPTIONS add no discrimination value; both HUMAN_ONLY survivors gated on program a
