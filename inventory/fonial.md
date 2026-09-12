@@ -479,3 +479,9 @@ www.fonial.de
 - CHANGED kundenkonto.fonial.de/api/2.0 stable: Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07
 - CHANGED further-passive-cycles REJECTED: 2026-09-12 re-probes reconfirm zero drift on prov/kundenkonto/mm/shop; extra GET/HEAD/OPTIONS add no discrimination value; both HUMAN_ONLY survivors gated on program a
 - CHANGED red.fonial.de confirmed co-hosted on mm.fonial.de box (RedmineOP stack) — no standalone unauth path; usable only as post-MM-account amplification component
+
+## 2026-09-12 23:20:14 UTC
+- CHANGED prov.fonial.de/api/2.0 canary-stable reconfirmed — nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift since 2026-09-09
+- CHANGED kundenkonto.fonial.de/api/2.0 stable — Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07
+- CHANGED further-passive-cycles REJECTED — 2026-09-12 re-probes reconfirm zero drift on prov/kundenkonto/mm/shop; extra GET/HEAD/OPTIONS add no discrimination value; both HUMAN_ONLY survivors gated on program 
+- CHANGED red.fonial.de confirmed co-hosted on mm.fonial.de box (RedmineOP stack) — no standalone unauth path; usable only as post-MM-account amplification component
