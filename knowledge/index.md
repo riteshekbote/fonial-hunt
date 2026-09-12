@@ -276,3 +276,5 @@
 - 2026-09-12 ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
 - 2026-09-12 REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
 - 2026-09-12 ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
+- 2026-09-12 REJECTED further-passive-cycles @ fonial: 09-12 re-probes (both hosts) reconfirm zero drift; extra OPTIONS/GET add no discrimination value to the two HUMAN_ONLY survivors; momentum requires sanctioned writes, not probe data.
+- 2026-09-12 ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: reconfirmed this cycle — nginx/1.10.3, v2026.09.03-1, ACAO\*, ACAM GET/POST/OPTIONS, no allow-credentials, /signup/register/55 → 302; zero drift since 09-09.

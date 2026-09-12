@@ -16012,3 +16012,118 @@ testability: PASSIVE
 [0m✗ [0mcurl -sS -o /tmp/op1.txt -w "HTTP %{http_code} | %{time_total}s\n" --max-time 12 -X OPTIONS -D - https://prov.fonial.de/api/2.0/session -o /dev/null | head -20; sleep 1; curl -sS -o /tmp/op2.txt -w "HTTP %{http_code} | %{time_total}s\n" --max-time 12 https://mm.fonial.de/api/v4/system/ping 2>&1 | head -5; cat /tmp/op2.txt; echo; sleep 1; curl -sS -o /tmp/op3.txt -w "HTTP %{http_code}\n" --max-time 12 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session -o /dev/null failed
 [91m[1mError: [0mThe user rejected permission to use this specific tool call.
 I have full context. Let me run a minimal passive delta check on the two surviving canaries (read-only, ≤1 rps) to ground this cycle before analysis.
+===== ANALYST bigpickle 2026-09-12 14:18:12 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mls -la; git log --oneline -5 2>/dev/null
+total 336
+drwxr-xr-x 12 runner runner   4096 Sep 12 14:11 .
+drwxr-xr-x  3 runner runner   4096 Sep 12 14:11 ..
+drwxr-xr-x  7 runner runner   4096 Sep 12 14:11 .git
+drwxr-xr-x  3 runner runner   4096 Sep 12 14:11 .github
+-rw-r--r--  1 runner runner   1740 Sep 12 14:11 README.md
+-rw-r--r--  1 runner runner     32 Sep 12 14:11 analyst-out.txt
+-rw-r--r--  1 runner runner 117872 Sep 12 14:11 analyst-prompt.txt
+-rw-r--r--  1 runner runner 114058 Sep 12 14:11 ctx.txt
+drwxr-xr-x  2 runner runner   4096 Sep 12 14:11 inventory
+drwxr-xr-x  2 runner runner   4096 Sep 12 14:11 knowledge
+drwxr-xr-x  2 runner runner   4096 Sep 12 14:11 leads
+-rw-r--r--  1 runner runner  21764 Sep 12 14:11 probe-results.md
+drwxr-xr-x  2 runner runner   4096 Sep 12 14:11 recon-notes
+drwxr-xr-x  2 runner runner   4096 Sep 12 14:11 reports
+drwxr-xr-x  2 runner runner   4096 Sep 12 14:11 reposcan-raw
+-rw-r--r--  1 runner runner   3227 Sep 12 14:11 scope.yml
+drwxr-xr-x  2 runner runner   4096 Sep 12 14:11 scripts
+-rw-r--r--  1 runner runner     33 Sep 12 14:11 state_bigpickle.json
+-rw-r--r--  1 runner runner     33 Sep 12 14:11 state_laguna.json
+-rw-r--r--  1 runner runner     33 Sep 12 14:11 state_ling3.json
+-rw-r--r--  1 runner runner     33 Sep 12 14:11 state_longcat.json
+-rw-r--r--  1 runner runner     33 Sep 12 14:11 state_mimo.json
+-rw-r--r--  1 runner runner     33 Sep 12 14:11 state_nemotron3.json
+drwxr-xr-x  2 runner runner   4096 Sep 12 14:11 triage
+dd80fbe reposcan 2026-09-12-13-09
+[0m
+[0m✱ [0mGlob "**/*.{md,txt,yml,yaml,json}"[90m 100 matches[0m
+[0m→ [0mRead scope.yml
+[0m→ [0mRead analyst-out.txt
+[0m→ [0mRead triage/run-2026-09-12-11-15.md
+[0m→ [0mRead state_bigpickle.json
+[0m→ [0mRead leads/lead-bigpickle.md
+[0m→ [0mRead probe-results.md[90m [offset=360][0m
+Read-only freshness check on the two priority assets to anchor this cycle (≤1 rps, OPTIONS/HEAD only):
+[0m
+[0m$ [0mcurl -sS -m 15 -o /dev/null -D - -X OPTIONS https://prov.fonial.de/api/2.0/session 2>&1 | tr -d '\r' | grep -iE '^(HTTP|server|x-fonial|access-control|set-cookie|content-type)'; sleep 1; curl -sS -m 15 -o /dev/null -w 'prov_REG: %{http_code}\n' https://prov.fonial.de/signup/register/55 2>&1
+HTTP/2 200 
+server: nginx/1.10.3
+content-type: text/json; charset=UTF-8
+x-fonial-version: v2026.09.03-1
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+prov_REG: 302
+[0m
+[0m$ [0msleep 1; curl -sS -m 15 -o /dev/null -D - -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session 2>&1 | tr -d '\r' | grep -iE '^(HTTP|server|x-fonial|access-control|content-type|cf-ray)'
+HTTP/2 200 
+content-type: text/json; charset=UTF-8
+server: cloudflare
+x-fonial-version: v2026.09.03-1
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+cf-ray: a39f81ee8989c8de-SJC
+[0m
+STEP 1 — DELTA
+NO_DELTA — fresh probes (2026-09-12 this cycle) reconfirm zero drift: prov.fonial.de/api/2.0 → nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO \* / ACAM GET,POST,OPTIONS, no allow-credentials; kundenkonto.fonial.de/api/2.0 → Cloudflare, v2026.09.03-1, ACAO \*; prov /signup/register/55 → 302. Identical to every probe since 09-09. No new surface on any in-scope asset.
+
+STEP 2 — PRIORITIZE
+[PRIO] prov.fonial.de/api/2.0,7.8,attack_surface=8,business_value=10,tech_exposure=6,gate_ease=8,cloud_surface=2,freshness=10
+[PRIO] kundenkonto.fonial.de/api/2.0,7.55,attack_surface=7,business_value=10,tech_exposure=6,gate_ease=6,cloud_surface=9,freshness=6
+[PRIO] mm.fonial.de/api/v4,6.55,attack_surface=6,business_value=7,tech_exposure=7,gate_ease=7,cloud_surface=2,freshness=10
+[PRIO] red.fonial.de,4.7,attack_surface=5,business_value=5,tech_exposure=5,gate_ease=5,cloud_surface=2,freshness=5
+
+STEP 3 — HYPOTHESES
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted duplicate
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 80
+reasoning: prov is byte-identical clone of kundenkonto API (confirmed this cycle: same version, text/json;charset, ACAO*, PHPSESSID decoration, cleartext UUID sid). Data endpoints (/devices/get, /evn/get, /call/initiate) authorize by body SID auth-state only (session unauthenticated vs invalid); PHPSESSID set decoratively in parallel. Session endpoint issues cleartext UUID sid and actively deletes unknown PHPSESSID. Whether the authenticated sid→credential binding is cross-checked against the data-layer PHPSESSID is the sole unobserved variable.
+evidence_needed: Two valid tenant sessions. Prove Account B's SID + Account A's PHPSESSID returns Account A data on /evn/get or /devices/get (or is cleanly rejected).
+verify_steps: HUMAN: POST /api/2.0/session → sidA; /session/authenticate A; /devices/get sidA → PHPSESSID-A; repeat for B; POST /evn/get {sid:B, phpsessid:A} → compare data scoping; identical test on /call/initiate.
+impact: Cross-tenant CDR, phone numbers, SIP credentials, device lists, outbound call initiation — CRITICAL.
+testability: HUMAN_ONLY
+
+[HYP] Open self-signup on legacy Mattermost enables outsider foothold on internal chat box
+class: AUTH
+asset: mm.fonial.de/api/v4
+confidence: 50
+reasoning: Mattermost 3.7.3 (X-Version-Id confirmed), nginx/1.10.2 unfronted. GET /api/v4/users → 401 `session_expired` (route exists); /api/v4/teams HEAD→404 drift since 09-10; SPA /signup/email + /login degraded 200→404 (client-side routing, not a server-rendered signup proof). Default vendor self-registration state (EnableSignUpWithEmail) unobservable passively.
+evidence_needed: A sanctioned GET /api/v4/config (need auth) or a test account creation to read EnableSignUpWithEmail / EnableTeamCreation.
+verify_steps: HUMAN: POST /api/v4/users (fake data) after program approval; observe create-or-acl; if denied, confirm logged-out endpoints require token and drop.
+impact: Internal chat + co-hosted Redmine (red.fonial.de redmine_questions/redmine_agile) explicit-role access as amplification for post-auth chains — MEDIUM-HIGH.
+testability: HUMAN_ONLY
+
+[HYP] Dual-backend cross-bind directly on Cloudflare-fronted production portal
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 75
+reasoning: Same mechanics as prov (5-endpoint surface, body-SID authz, decorative PHPSESSID, cleartext UUID sid) but Cloudflare-fronted and version-pinned v2026.09.03-1 since 09-07. Byte-behavior equality with prov already established — testing here risks production customer data (out-of-scope exposure clause); prov is the sanctioned twin.
+evidence_needed: Same as prov hyp; prefer executing on prov first, reproduce on kundenkonto only on program approval.
+verify_steps: identical to prov hyp, restricted to program-sanctioned test accounts.
+impact: Cross-tenant telephony data + call control on production — CRITICAL.
+testability: HUMAN_ONLY
+
+STEP 4 — SELF-CRITIQUE
+[PARKED] kundenkonto BOLA: byte-identical copy of prov hyp; consolidate — validate on prov (lower gate) before touching production twin.
+[PARKED] CORS wildcard @ kundenkonto: no allow-credentials + SID in body, no demonstrated JS sid-exfil chain → confidence 35, below floor.
+[PARKED] shop admin-token: confidence 40 at critique floor, no new evidence; chain-only.
+[PARKED] red.fonial.de standalone: Redmine version/plugin stack = excluded class; chain-only post-MM-account (confidence 45).
+[FINAL] 1. prov BOLA cross-bind (80, HUMAN_ONLY) 2. mm self-signup (50, HUMAN_ONLY) 3. red post-MM amplification (45, HUMAN_ONLY, chain-only)
+
+STEP 5 — NEXT ACTION
+[NEXT] HUMAN: request program approval for ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email + fabricated address, CSRF _token harvested from preceding GET, trunkTariff 19/21/22) on the unfronted test-grade duplicate — proves two-tenant creation and unlocks the self-service BOLA cross-bind test; scope.yml permits account_creation on test/sandbox assets only.
+
+STEP 6 — LEARNING
+[LEARN] REJECTED further-passive-cycles @ fonial: 09-12 re-probes (both hosts) reconfirm zero drift; extra OPTIONS/GET add no discrimination value to the two HUMAN_ONLY survivors; momentum requires sanctioned writes, not probe data.
+[LEARN] ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: reconfirmed this cycle — nginx/1.10.3, v2026.09.03-1, ACAO\*, ACAM GET/POST/OPTIONS, no allow-credentials, /signup/register/55 → 302; zero drift since 09-09.
+
+STEP 7 — RISK
+[RISK] fonial: 72 — Sole surviving high-value vector is cross-tenant telephony BOLA (CDR/SIP/call-control, CRITICAL) gated behind two test tenants; prov unfronted twin makes tenant creation self-service pending one sanctioned write. Confirmed wildcard CORS and cleartext UUID SID tokens widen any leak chain. Passive surface fully enumerated on all assets; risk now concentrated on AUTH-gated exploit confirmation, not on discovery.
