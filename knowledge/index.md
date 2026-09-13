@@ -317,3 +317,9 @@
 - 2026-09-13 ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
 - 2026-09-13 REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
 - 2026-09-13 ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
+- 2026-09-13 REJECTED further-passive-cycles @ fonial: 09-13 re-confirms zero drift; prov-symfony-dev-mode sweep was the last passive discriminator on the twin and closed REJECTED; all three survivors are HUMAN_ONLY — momentum requires sanctioned writes, not probe data.
+- 2026-09-13 ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: twin remains reachable and byte-identical (nginx/1.10.3, v2026.09.03-1, ACAO*, 5-endpoint) — the required comparison base for the BOLA cross-bind test remains valid pending approval.
+- 2026-09-13 ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: OPTIONS /session → 200, nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift across all probes since 2026-09-09
+- 2026-09-13 REJECTED mm-fonial-de-api-surface: /api/v4/system/ping, /api/v4/users, /api/v4/teams all 404; root 404; Mattermost instance degraded — self-signup class eliminated
+- 2026-09-13 REJECTED further-passive-cycles @ fonial: 2026-09-13 re-confirms zero drift on prov/kundenkonto/shop/red; extra GET/HEAD/OPTIONS passes add no discrimination value — all survivors are HUMAN_ONLY, gated on program approval
+- 2026-09-13 ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate deployment to test dual-backend cross-bind

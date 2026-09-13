@@ -497,3 +497,7 @@ www.fonial.de
 - CHANGED kundenkonto.fonial.de/api/2.0 stable — Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07
 - CHANGED further-passive-cycles REJECTED — extra GET/HEAD/OPTIONS add no discrimination value; both HUMAN_ONLY survivors gated on program approval
 - CHANGED red.fonial.de confirmed co-hosted on mm.fonial.de box (RedmineOP stack) — no standalone unauth path; usable only as post-MM-account amplification component
+
+## 2026-09-13 06:33:03 UTC
+- CHANGED mm.fonial.de: All API endpoints now return 404 (previously /api/v4/system/ping→200, /api/v4/users→401); root path 404; Mattermost instance severely degraded/reconfigured — self-signup surface eliminat
+- CHANGED mm.fonial.de: X-Version-Id header no longer observable on 404 responses; nginx/1.10.2 still responds

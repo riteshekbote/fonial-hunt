@@ -549,3 +549,15 @@ https://prov.fonial.de/api/2.0/session -> 200 len=?
 https://prov.fonial.de/api/2.0/session/authenticate -> 200 len=?
 https://prov.fonial.de/api/2.0/devices/get -> 200 len=?
 https://prov.fonial.de/api/2.0/call/initiate -> 200 len=?
+
+## 2026-09-13 06:33:35 UTC
+https://prov.fonial.de/api/2.0/session -> 200 len=?
+https://prov.fonial.de/api/2.0/session/authenticate -> 200 len=?
+https://prov.fonial.de/api/2.0/devices/get -> 200 len=?
+https://prov.fonial.de/api/2.0/call/initiate -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/session -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/session/authenticate -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/devices/get -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/call/initiate -> 200 len=?
+https://prov.fonial.de/signup/register/55 -> HTTP 302
+https://prov.fonial.de/signup/confirm/55 -> HTTP 302
