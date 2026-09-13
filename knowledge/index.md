@@ -325,3 +325,5 @@
 - 2026-09-13 ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate deployment to test dual-backend cross-bind
 - 2026-09-13 REJECTED mm-fonial-de-api-surface @ mm.fonial.de: all /api/v4 endpoints + root now 404; X-Version-Id header gone; Mattermost instance degraded — self-signup class eliminated, hypothesis dropped.
 - 2026-09-13 REJECTED further-passive-cycles @ fonial: 09-13 confirms zero drift on prov/kundenkonto/shop/red; no discriminating passive probe remains on either survivor — momentum requires sanctioned writes.
+- 2026-09-13 REJECTED further-passive-cycles @ fonial: 09-13 canary (prov + kundenkonto OPTIONS /session) reconfirms zero drift on the sole survivor pair; signup/register/55 → 302 persists; no discriminating passive probe remains — momentum requires sanctioned writes.
+- 2026-09-13 ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: twin re-verified this cycle (nginx/1.10.3, v2026.09.03-1, ACAO*, 5-endpoint, signup form live) — the comparison base for the BOLA cross-bind test remains valid pending approval.

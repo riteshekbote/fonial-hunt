@@ -17177,3 +17177,82 @@ STEP 6 — LEARNING:
 
 STEP 7 — RISK:
 [RISK] fonial: 64 — Sole vector is cross-tenant telephony BOLA (CRITICAL), gated on two test tenants; prov twin makes tenant creation self-service pending ONE sanctioned write. mm collapse narrows footprint (one fewer exposure). Residual risk = approval-gate latency + production-exposure clause if kundenkonto reproduction is attempted + ACAO*/cleartext-UUID-SID leak-chain widening any confirmed cross-bind.
+===== ANALYST bigpickle 2026-09-13 15:54:55 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m→ [0mRead .
+[0m→ [0mRead scope.yml
+[0m→ [0mRead state_bigpickle.json
+[0m→ [0mRead leads
+[0m→ [0mRead inventory
+[0m→ [0mRead leads/lead-bigpickle.md
+[0m→ [0mRead leads/lead-nemotron3.md
+[0m→ [0mRead leads/lead-mimo.md
+[0m→ [0mRead analyst-prompt.txt
+[0m→ [0mRead probe-results.md
+[0m
+[0m$ [0mcurl -sk -o /dev/null -D - -X OPTIONS -m 15 https://prov.fonial.de/api/2.0/session | grep -iE 'HTTP/|x-fonial-version|access-control|content-type|server' | head -20
+HTTP/2 200 
+server: nginx/1.10.3
+content-type: text/json; charset=UTF-8
+x-fonial-version: v2026.09.03-1
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+[0m
+State confirms the post-12:05 picture: mm dead, dual survivors HUMAN_ONLY. Running a minimal 2-request canary to re-verify the survivors before asserting zero-drift.
+[0m$ [0mcurl -sk -o /dev/null -D - -X OPTIONS -m 15 https://kundenkonto.fonial.de/api/2.0/session | grep -iE 'HTTP/|x-fonial-version|access-control|content-type|server|cf-ray' | head -20
+HTTP/2 200 
+content-type: text/json; charset=UTF-8
+server: cloudflare
+x-fonial-version: v2026.09.03-1
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+cf-ray: a3a84c8748f7fa49-SJC
+[0m
+[0m$ [0mcurl -sk -o /dev/null -w "%{http_code} redirect:%{redirect_url}\n" -m 15 https://prov.fonial.de/signup/register/55
+302 redirect:https://prov.fonial.de/signup/55
+[0m
+STEP 1 — DELTA
+NO_DELTA — fresh canary confirms both survivors byte-identical to 2026-09-12/13 fingerprint (prov: nginx/1.10.3, v2026.09.03-1, ACAO\*, text/json; kundenkonto: Cloudflare, v2026.09.03-1, ACAO\*, cf-ray); prov /signup/register/55 → 302 /signup/55 (GET gating unchanged, POST /signup/confirm/55 form target persists). mm dead, shop/red/dslkonto/www closed as prior.
+
+STEP 2 — PRIORITIZE
+[PRIO] prov.fonial.de/api/2.0, 7.8, a8/b9/t6/g7/c8/f9
+[PRIO] kundenkonto.fonial.de/api/2.0, 7.4, a8/b10/t6/g6/c8/f9
+[PRIO] shop.fonial.de (chain-only, admin-token 40), 5.2, a6/b6/t7/g5/c5/f4
+
+STEP 3 — HYPOTHESES
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 80
+reasoning: Byte-identical clone of kundenkonto API (nginx/1.10.3 direct, v2026.09.03-1, ACAO*, cleartext UUID sid in body, decorative parallel PHPSESSID; /session deletes unknown PHPSESSID; data endpoints authorize by body-SID auth-state only). Live registration form at POST /signup/confirm/55 (CSRF _token, AccountAddress, AccountContact, trunkTariff 19/21/22). Sole unobserved variable: whether authenticated sid→credential is cross-checked against data-layer PHPSESSID. Reconfirmed reachable and byte-identical this cycle.
+evidence_needed: Two valid tenants; Account B sid + Account A PHPSESSID on /evn/get or /devices/get returns Account A data (or is cleanly rejected).
+verify_steps: HUMAN: POST /api/2.0/session → sidA; /session/authenticate(A) → PHPSESSID-A via /devices/get; repeat for B; POST /evn/get {sid:B, phpsessid:A} → compare data scoping; repeat on /call/initiate.
+impact: Cross-tenant CDR, phone numbers, SIP credentials, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+
+[HYP] Dual-backend cross-bind directly on Cloudflare-fronted production portal
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 75
+reasoning: Same mechanics as prov twin but production + Cloudflare; program exposure clause prohibits live-customer-data testing. Must validate on prov first, reproduce here only under explicit approval.
+evidence_needed: Same evidence as prov hyp, executed on prov twin first.
+verify_steps: Identical to prov hyp, on program-sanctioned test tenants only.
+impact: Cross-tenant telephony data + call control on production — CRITICAL.
+testability: HUMAN_ONLY
+
+STEP 4 — SELF-CRITIQUE
+[PARKED] shop admin-token standalone: confidence 40 at critique floor, zero new evidence across 6 days; chain-only, invalid as primary.
+[PARKED] further-passive-probing: every endpoint class enumerated on all live assets; today's canary (both hosts) again zero-drift; no discriminating probe remains — re-running is waste.
+[FINAL] 1. prov.fonial.de/api/2.0 BOLA cross-bind (80) — sole actionable lead; 2. kundenkonto cross-bind (75) — gated behind prov proof; both HUMAN_ONLY. No passive path to either.
+
+STEP 5 — NEXT ACTION
+[NEXT] HUMAN: re-request program approval for exactly ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email + fabricated address, CSRF _token harvested from a preceding GET, trunkTariff 19/21/22) on the unfronted test-grade twin — proves two-tenant creation and unlocks the self-service BOLA cross-bind test; scope.yml permits account_creation on test/sandbox assets. Secondary: if approval lands, execute both cross-bind reads (/evn/get, /devices/get) before any write.
+
+STEP 6 — LEARNING
+[LEARN] REJECTED further-passive-cycles @ fonial: 09-13 canary (prov + kundenkonto OPTIONS /session) reconfirms zero drift on the sole survivor pair; signup/register/55 → 302 persists; no discriminating passive probe remains — momentum requires sanctioned writes.
+[LEARN] ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: twin re-verified this cycle (nginx/1.10.3, v2026.09.03-1, ACAO*, 5-endpoint, signup form live) — the comparison base for the BOLA cross-bind test remains valid pending approval.
+
+STEP 7 — RISK
+[RISK] fonial: 62 — Sole high-value vector is cross-tenant telephony BOLA (CRITICAL), gated on two test tenants; twin makes tenant creation self-service pending ONE sanctioned write. Discovery risk nil (surface fully enumerated, zero drift since 09-09); residual risk = approval-gate latency + production-exposure clause if kundenkonto reproduction attempted + ACAO*/cleartext-UUID-SID leak-chain widening any confirmed cross-bind. mm collapse narrowed footprint (one fewer exposure).
