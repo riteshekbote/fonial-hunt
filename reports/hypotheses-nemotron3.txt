@@ -1,4 +1,4 @@
-## 2026-09-13 21:13:42 UTC [target] (model nemotron3)
+## 2026-09-13 23:13:09 UTC [target] (model nemotron3)
 [PRIO] prov.fonial.de/api/2.0,9.4,attack_surface=10,business_value=9,tech_exposure=9,gate_ease=10,cloud_surface=8,freshness=10
 [PRIO] kundenkonto.fonial.de/api/2.0,8.9,attack_surface=9,business_value=10,tech_exposure=9,gate_ease=8,cloud_surface=7,freshness=9
 [PRIO] prov.fonial.de/signup/confirm/55,8.3,attack_surface=8,business_value=8,tech_exposure=7,gate_ease=10,cloud_surface=7,freshness=10

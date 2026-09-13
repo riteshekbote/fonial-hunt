@@ -509,3 +509,9 @@ www.fonial.de
 ## 2026-09-13 18:39:24 UTC
 
 ## 2026-09-13 21:13:52 UTC
+
+## 2026-09-13 23:18:10 UTC
+- NEW crt.sh passive sweep exposes ~19 subdomains never in inventory: sbc.fonial.de (62.146.28.124), interfaces.fonial.de + wbci.fonial.de (62.146.7.27), git.fonial.de (CNAME git.fonial.dev → 92.51.132.112)
+- NEW int.fonial.de → 192.168.10.71 (RFC1918) in public DNS; internal host naming disclosed.
+- NEW kampagne.fonial.de live TYPO3 (200, `server: nginx-rc`, backend login `TYPO3 CMS Login: fonial GmbH (LIVE)` at /typo3/; /install.php 404, eID=dump 404); hilfe.fonial.de 403 openresty; www-neu.fonial.d
+- CHANGED sbc/interfaces/wbci/git/customers/pages/relaunch-2025 all TCP-timeout from egress on 80+443 — firewalled/internal, untestable from here. Canary: prov + kundenkonto OPTIONS /api/2.0/session byte-identi
