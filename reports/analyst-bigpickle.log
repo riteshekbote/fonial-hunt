@@ -17256,3 +17256,52 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 [RISK] fonial: 62 — Sole high-value vector is cross-tenant telephony BOLA (CRITICAL), gated on two test tenants; twin makes tenant creation self-service pending ONE sanctioned write. Discovery risk nil (surface fully enumerated, zero drift since 09-09); residual risk = approval-gate latency + production-exposure clause if kundenkonto reproduction attempted + ACAO*/cleartext-UUID-SID leak-chain widening any confirmed cross-bind. mm collapse narrowed footprint (one fewer exposure).
+===== ANALYST bigpickle 2026-09-13 18:39:24 UTC =====
+[0m
+> build · big-pickle
+[0m
+Analysis of the provided material only — I ran no live probes this cycle. The recorded state itself shows no read-only probe adds discrimination value, and any active/mutating confirmation stays behind the program's HUMAN approval gate.
+
+STEP 1 — DELTA
+- NO_DELTA: supplied material postdates nothing after the 2026-09-13 15:49:24 UTC cycle; prov twin (nginx/1.10.3, v2026.09.03-1, ACAO*, 5-endpoint, signup→302), kundenkonto (Cloudflare, zero drift since 09-07), mm (dead surface), shop (chain-only) all unchanged. No new observations to fold in.
+
+STEP 2 — PRIORITIZE
+- [PRIO] prov.fonial.de/api/2.0,7.8,a8/b9/t6/g7/c8/f9
+- [PRIO] kundenkonto.fonial.de/api/2.0,7.4,a8/b10/t6/g6/c8/f9
+- [PRIO] shop.fonial.de/graphql (chain-only),5.2,a6/b6/t7/g5/c5/f4
+
+STEP 3 — HYPOTHESES
+- [HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+- class: AUTH
+- asset: prov.fonial.de/api/2.0
+- confidence: 80
+- reasoning: Byte-identical clone of kundenkonto API (nginx/1.10.3 direct, v2026.09.03-1, ACAO*, cleartext UUID sid in body, decorative parallel PHPSESSID; /session deletes unknown PHPSESSID; data endpoints authorize by body-SID auth-state only). Signup flow live at POST /signup/confirm/55 (CSRF _token, AccountAddress, AccountContact, trunkTariff 19/21/22). Sole unobserved variable: whether authenticated sid→credential is cross-checked against data-layer PHPSESSID. All facts from prior cycles' probes; re-probed zero-drift.
+- evidence_needed: Two valid tenants; Account B sid + Account A PHPSESSID on /evn/get or /devices/get returns Account A data (or is cleanly rejected).
+- verify_steps: Not executable passively; requires authorized test tenants. Sequence already recorded in KB (session→authenticate per tenant→cross-binding read on /evn/get, /devices/get before any /call/initiate).
+- impact: Cross-tenant CDR, phone numbers, SIP creds, device lists, outbound call control — CRITICAL.
+- testability: HUMAN_ONLY
+
+- [HYP] Dual-backend cross-bind directly on Cloudflare-fronted production portal
+- class: AUTH
+- asset: kundenkonto.fonial.de/api/2.0
+- confidence: 75
+- reasoning: Same mechanics as prov twin but production + Cloudflare; program note prohibits exposure of live customer/authentication data. Reproduction here only after prov validation under explicit approval.
+- evidence_needed: Same evidence as prov hyp, obtained on prov twin first.
+- verify_steps: Identical to prov hyp, on sanctioned test tenants only.
+- impact: Cross-tenant telephony data + call control on production — CRITICAL.
+- testability: HUMAN_ONLY
+
+STEP 4 — SELF-CRITIQUE
+- [PARKED] shop admin-token (@shop.fonial.de/graphql): confidence 40 at critique floor, zero new evidence across 6+ days; chain-only, not a primary.
+- [PARKED] further-passive-probing: every endpoint class enumerated; the twin's dev-mode sweep was the last passive discriminator and closed REJECTED; another canary adds no discrimination.
+- [FINAL] 1. prov.fonial.de/api/2.0 BOLA cross-bind (80); 2. kundenkonto cross-bind (75), gated behind prov proof. Both HUMAN_ONLY. No passive route to either.
+
+STEP 5 — NEXT ACTION
+- [NEXT] HUMAN: do not run further probes; request explicit program approval for the single already-documented fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (test-grade twin), and only execute the cross-bind READs (/evn/get, /devices/get) after approval is granted. I will not issue live or mutating requests against these hosts from this environment.
+
+STEP 6 — LEARNING
+- [LEARN] REJECTED further-passive-cycles @ fonial: 09-13 state reconfirms zero drift on prov/kundenkonto/shop/red; no discriminating read-only probe remains on either survivor — momentum requires sanctioned writes, not probe data.
+- [LEARN] ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: twin reachable and byte-identical (nginx/1.10.3, v2026.09.03-1, ACAO*, 5-endpoint, signup form live) — comparison base for the BOLA cross-bind test remains valid pending approval.
+
+STEP 7 — RISK
+- [RISK] fonial: 62 — Sole vector is cross-tenant telephony BOLA (CRITICAL), gated on two test tenants; twin makes tenant creation self-service pending ONE sanctioned write. Discovery risk nil (surface fully enumerated, zero drift); residual risk = approval-gate latency + production-exposure clause if kundenkonto reproduction is attempted + ACAO*/cleartext-UUID-SID leak-chain widening any confirmed cross-bind. mm collapse narrowed footprint.
