@@ -2759,3 +2759,41 @@ testability: HUMAN_ONLY
 [NEXT] HUMAN: request program approval for ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email, fabricated address, CSRF _token harvested from a preceding GET, trunkTariff 19/21/22) on the unfronted test-grade twin — proves two-tenant creation and unlocks the self-service BOLA cross-bind test; scope.yml permits account_creation on test/sandbox assets only. Secondary: request sanction for mm.fonial.de POST /api/v4/users probe.
 [LEARN] ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: reconfirmed this cycle — nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, /signup/register/55 → 302; zero drift since 09-09; adds no new discrimination but proves the twin remains reachable and identical.
 [RISK] fonial: 72 — Sole high-value vector remains cross-tenant telephony BOLA (CDR/SIP/call-control, CRITICAL) gated on two test tenants; prov unfronted twin makes tenant creation self-service pending ONE sanctioned write. Widening factors this cycle: ACAO* on session endpoints (both hosts) + cleartext UUID SID tokens leak-chain the BOLA. Passive surface fully enumerated and stabilizing; risk now concentrated on AUTH-gated confirmation, not discovery.
+## 2026-09-13 01:08:46 UTC [target] (model bigpickle)
+[PRIO] prov.fonial.de/api/2.0,8.1,a8/b9/t7/g6/c5/f9
+[PRIO] kundenkonto.fonial.de/api/2.0,7.8,a9/b9/t6/g4/c7/f9
+[PRIO] mm.fonial.de,5.4,a5/b6/t6/g4/c5/f7
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted duplicate
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 80
+reasoning: Byte-identical clone of kundenkonto API (nginx/1.10.3 direct, v2026.09.03-1, ACAO*, cleartext UUID sid in body, decorative parallel PHPSESSID; /session deletes unknown PHPSESSID; data endpoints authorize by body-SID auth-state only — session unauthenticated vs invalid). Self-signup flow live at POST /signup/confirm/55 (CSRF _token, AccountAddress, AccountContact, trunkTariff 19/21/22). Sole unobserved variable: whether authenticated sid→credential is cross-checked against data-layer PHPSESSID.
+evidence_needed: Two valid tenants; Account B sid + Account A PHPSESSID on /evn/get or /devices/get returns Account A data (or is cleanly rejected).
+verify_steps: HUMAN: POST /api/2.0/session → sidA; /session/authenticate(A); /devices/get sidA → PHPSESSID-A; repeat for B; POST /evn/get {sid:B, phpsessid:A} → compare data scoping; repeat on /call/initiate.
+impact: Cross-tenant CDR, phone numbers, SIP credentials, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Dual-backend cross-bind directly on Cloudflare-fronted production portal
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 75
+reasoning: Same mechanics as prov twin but production + Cloudflare; testing risks real customer data (program exposure clause). Validate on prov first, reproduce here only under explicit approval.
+evidence_needed: Same evidence as prov hyp, executed on prov twin first.
+verify_steps: Identical to prov hyp, on program-sanctioned test tenants only.
+impact: Cross-tenant telephony data + call control on production — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Open self-signup on legacy Mattermost enables outsider foothold
+class: AUTH
+asset: mm.fonial.de/api/v4
+confidence: 50
+reasoning: Mattermost 3.7.3 alive (system/ping 200, nginx/1.10.2, unfronted); GET /api/v4/users → 401 session_expired (route exists); EnableSignUpWithEmail/EnableTeamCreation state unobservable passively; SPA /signup/email + /login 404 drift since 09-10 (client routing, not server-rendered).
+evidence_needed: Sanctioned GET /api/v4/config or test account creation.
+verify_steps: HUMAN: POST /api/v4/users (fabricated identity) after program approval; observe create-vs-ACL response.
+impact: Internal chat foothold + co-hosted red.fonial.de Redmine (redmine_questions/redmine_agile) as post-auth amplification — MEDIUM-HIGH.
+testability: HUMAN_ONLY
+[PARKED] prov-symfony-dev-artifacts: closed this cycle — app_dev.php 301, all profiler/debug/pma/git 404 with decorative X-Debug-Token; no env/param/route dump on twin. Do not re-run.
+[PARKED] further-passive-probing: same endpoints, same zero drift; re-probes REJECTED as non-discriminating. No passive lever remains on any survivor.
+[FINAL] prov.fonial.de/api/2.0 BOLA cross-bind (80) — ranking 1. kundenkonto.fonial.de cross-bind (75) — ranking 2, gated behind prov proof. mm.fonial.de signup (50) — ranking 3. All HUMAN_ONLY, no drops.
+[NEXT] HUMAN: request program approval for exactly ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email + fabricated address, CSRF _token from preceding GET, trunkTariff 19/21/22) on the test-grade unfronted twin — proves two-tenant creation and unlocks the self-service BOLA cross-bind test; scope.yml permits account_creation on test/sandbox assets only.
+[LEARN] REJECTED prov-symfony-dev-mode @ prov.fonial.de: `/app_dev.php` → 301 `/`; `_profiler/`, `/index.php/app_dev.php`, `/phpmyadmin/`, `/.git/config` all 404 with per-request X-Debug-Token (87aeac/cb29b2/2d7540) → decorative, matches kundenkonto. Last passive discriminator on the twin exhausted; strengthens HUMAN_ONLY gating on the BOLA.
+[LEARN] REJECTED further-passive-cycles @ fonial: this cycle's new-route sweep (dev artifacts, pma, git) adds zero discrimination; every endpoint class now enumerated on prov/kundenkonto/mm/shop. Momentum must go through sanctioned writes.
+[RISK] fonial: 72 — Sole high-value vector remains cross-tenant telephony BOLA (CDR/SIP/call-control, CRITICAL), gated on two test tenants; prov twin makes tenant creation self-service pending ONE sanctioned write. This cycle closed the last passive avenue (Symfony dev artifacts on twin) — no discovery risk remains, only approval-gate latency + production-exposure clause. Widening factors: ACAO* on session endpoints + cleartext UUID SID tokens leak-chain the cross-bind.
