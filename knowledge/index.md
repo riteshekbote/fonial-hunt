@@ -327,3 +327,4 @@
 - 2026-09-13 REJECTED further-passive-cycles @ fonial: 09-13 confirms zero drift on prov/kundenkonto/shop/red; no discriminating passive probe remains on either survivor — momentum requires sanctioned writes.
 - 2026-09-13 REJECTED further-passive-cycles @ fonial: 09-13 canary (prov + kundenkonto OPTIONS /session) reconfirms zero drift on the sole survivor pair; signup/register/55 → 302 persists; no discriminating passive probe remains — momentum requires sanctioned writes.
 - 2026-09-13 ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: twin re-verified this cycle (nginx/1.10.3, v2026.09.03-1, ACAO*, 5-endpoint, signup form live) — the comparison base for the BOLA cross-bind test remains valid pending approval.
+- 2026-09-13 REJECTED further-passive-cycles @ fonial: 09-13 18:39 canary confirms byte-identical zero drift on prov/kundenkonto; no discriminating passive probe remains on either survivor — momentum requires sanctioned writes.

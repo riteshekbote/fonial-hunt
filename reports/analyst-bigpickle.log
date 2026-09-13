@@ -17305,3 +17305,257 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 - [RISK] fonial: 62 — Sole vector is cross-tenant telephony BOLA (CRITICAL), gated on two test tenants; twin makes tenant creation self-service pending ONE sanctioned write. Discovery risk nil (surface fully enumerated, zero drift); residual risk = approval-gate latency + production-exposure clause if kundenkonto reproduction is attempted + ACAO*/cleartext-UUID-SID leak-chain widening any confirmed cross-bind. mm collapse narrowed footprint.
+===== ANALYST bigpickle 2026-09-13 21:13:52 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mls -la && git log --oneline -5 2>/dev/null; ls art/ 2>/dev/null; ls inventory/ 2>/dev/null
+total 372
+drwxr-xr-x 12 runner runner   4096 Sep 13 21:07 .
+drwxr-xr-x  3 runner runner   4096 Sep 13 21:06 ..
+drwxr-xr-x  7 runner runner   4096 Sep 13 21:07 .git
+drwxr-xr-x  3 runner runner   4096 Sep 13 21:06 .github
+-rw-r--r--  1 runner runner   1740 Sep 13 21:06 README.md
+-rw-r--r--  1 runner runner     32 Sep 13 21:07 analyst-out.txt
+-rw-r--r--  1 runner runner 134505 Sep 13 21:07 analyst-prompt.txt
+-rw-r--r--  1 runner runner 130691 Sep 13 21:07 ctx.txt
+drwxr-xr-x  2 runner runner   4096 Sep 13 21:06 inventory
+drwxr-xr-x  2 runner runner   4096 Sep 13 21:06 knowledge
+drwxr-xr-x  2 runner runner   4096 Sep 13 21:06 leads
+-rw-r--r--  1 runner runner  28014 Sep 13 21:06 probe-results.md
+drwxr-xr-x  2 runner runner   4096 Sep 13 21:06 recon-notes
+drwxr-xr-x  2 runner runner   4096 Sep 13 21:06 reports
+drwxr-xr-x  2 runner runner   4096 Sep 13 21:06 reposcan-raw
+-rw-r--r--  1 runner runner   3227 Sep 13 21:06 scope.yml
+drwxr-xr-x  2 runner runner   4096 Sep 13 21:06 scripts
+-rw-r--r--  1 runner runner     33 Sep 13 21:06 state_bigpickle.json
+-rw-r--r--  1 runner runner     33 Sep 13 21:06 state_laguna.json
+-rw-r--r--  1 runner runner     33 Sep 13 21:06 state_ling3.json
+-rw-r--r--  1 runner runner     33 Sep 13 21:06 state_longcat.json
+-rw-r--r--  1 runner runner     33 Sep 13 21:06 state_mimo.json
+-rw-r--r--  1 runner runner     33 Sep 13 21:06 state_nemotron3.json
+drwxr-xr-x  2 runner runner   4096 Sep 13 21:06 triage
+4fe10c4 reposcan 2026-09-13-18-57
+fonial.md
+[0m
+[0m$ [0mls leads/ knowledge/ triage/ scripts/ reports/ && cat triage/latest.md 2>/dev/null | head -50 && echo "---PROBE TAIL---" && tail -30 probe-results.md
+knowledge/:
+index.md
+
+leads/:
+lead-bigpickle.md
+lead-laguna.md
+lead-ling3.md
+lead-longcat.md
+lead-mimo.md
+lead-nemotron3.md
+reposcan-fonial.md
+
+reports/:
+analyst-bigpickle.log
+analyst-laguna.log
+analyst-ling3.log
+analyst-longcat.log
+analyst-nemotron3.log
+hypotheses-bigpickle.txt
+hypotheses-laguna.txt
+hypotheses-ling3.txt
+hypotheses-longcat.txt
+hypotheses-nemotron3.txt
+hypotheses.md
+valid-bugs.md
+
+scripts/:
+sync-issues.py
+
+triage/:
+run-2026-09-02-21-52.md
+run-2026-09-02-23-50.md
+run-2026-09-03-02-54.md
+run-2026-09-03-07-46.md
+run-2026-09-03-12-35.md
+run-2026-09-03-16-40.md
+run-2026-09-03-19-27.md
+run-2026-09-03-21-53.md
+run-2026-09-03-23-46.md
+run-2026-09-04-02-53.md
+run-2026-09-04-07-44.md
+run-2026-09-04-12-29.md
+run-2026-09-04-16-35.md
+run-2026-09-04-19-08.md
+run-2026-09-04-21-33.md
+run-2026-09-04-23-17.md
+run-2026-09-05-01-04.md
+run-2026-09-05-05-49.md
+run-2026-09-05-09-57.md
+run-2026-09-05-13-17.md
+run-2026-09-05-16-08.md
+run-2026-09-05-18-22.md
+run-2026-09-05-20-42.md
+run-2026-09-05-22-38.md
+run-2026-09-06-00-12.md
+run-2026-09-06-04-47.md
+run-2026-09-06-09-08.md
+run-2026-09-06-12-55.md
+run-2026-09-06-15-58.md
+run-2026-09-06-18-10.md
+run-2026-09-06-20-28.md
+run-2026-09-06-22-18.md
+run-2026-09-07-00-05.md
+run-2026-09-07-04-50.md
+run-2026-09-07-09-58.md
+run-2026-09-07-15-35.md
+run-2026-09-07-19-23.md
+run-2026-09-07-22-15.md
+run-2026-09-08-00-28.md
+run-2026-09-08-05-10.md
+run-2026-09-08-09-48.md
+run-2026-09-08-14-07.md
+run-2026-09-08-17-57.md
+run-2026-09-08-20-51.md
+run-2026-09-08-23-11.md
+run-2026-09-09-01-17.md
+run-2026-09-09-06-04.md
+run-2026-09-09-11-31.md
+run-2026-09-09-15-19.md
+run-2026-09-09-18-41.md
+run-2026-09-09-21-29.md
+run-2026-09-09-23-30.md
+run-2026-09-10-01-25.md
+run-2026-09-10-06-38.md
+run-2026-09-10-06-48.md
+run-2026-09-10-11-50.md
+run-2026-09-10-15-49.md
+run-2026-09-10-18-57.md
+run-2026-09-10-21-27.md
+run-2026-09-10-23-24.md
+run-2026-09-11-01-26.md
+run-2026-09-11-06-37.md
+run-2026-09-11-11-47.md
+run-2026-09-11-15-51.md
+run-2026-09-11-18-58.md
+run-2026-09-11-21-36.md
+run-2026-09-11-23-31.md
+run-2026-09-12-01-31.md
+run-2026-09-12-06-29.md
+run-2026-09-12-11-15.md
+run-2026-09-12-14-12.md
+run-2026-09-12-17-15.md
+run-2026-09-12-19-25.md
+run-2026-09-12-21-36.md
+run-2026-09-12-23-19.md
+run-2026-09-13-01-11.md
+run-2026-09-13-06-16.md
+run-2026-09-13-12-01.md
+run-2026-09-13-16-25.md
+run-2026-09-13-18-55.md
+---PROBE TAIL---
+https://kundenkonto.fonial.de/api/2.0/session -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/session/authenticate -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/devices/get -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/call/initiate -> 200 len=?
+https://prov.fonial.de/signup/register/55 -> HTTP 302
+https://prov.fonial.de/signup/confirm/55 -> HTTP 302
+
+## 2026-09-13 15:55:26 UTC
+https://prov.fonial.de/api/2.0/session -> 200 len=?
+https://prov.fonial.de/api/2.0/session/authenticate -> 200 len=?
+https://prov.fonial.de/api/2.0/devices/get -> 200 len=?
+https://prov.fonial.de/api/2.0/call/initiate -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/session -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/session/authenticate -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/devices/get -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/call/initiate -> 200 len=?
+https://prov.fonial.de/signup/register/55 -> HTTP 302
+https://prov.fonial.de/signup/confirm/55 -> HTTP 302
+
+## 2026-09-13 18:39:54 UTC
+https://prov.fonial.de/api/2.0/session -> 200 len=?
+https://prov.fonial.de/api/2.0/session/authenticate -> 200 len=?
+https://prov.fonial.de/api/2.0/devices/get -> 200 len=?
+https://prov.fonial.de/api/2.0/call/initiate -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/session -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/session/authenticate -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/devices/get -> 200 len=?
+https://kundenkonto.fonial.de/api/2.0/call/initiate -> 200 len=?
+https://prov.fonial.de/signup/register/55 -> HTTP 302
+https://prov.fonial.de/signup/confirm/55 -> HTTP 302
+[0m
+[0m$ [0mtail -5 leads/lead-nemotron3.md 2>/dev/null; echo "---REPOREAD---"; cat reposcan-raw/summary.txt 2>/dev/null | head -20; echo "---VALIDBUGS---"; cat reports/valid-bugs.md 2>/dev/null | head -20; echo "---LATEST TRIAGE---"; tail -25 triage/run-2026-09-13-18-55.md
+[LEARN] REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+[LEARN] ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+[LEARN] REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
+[LEARN] ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
+[RISK] fonial: 78 — Customer portals (kundenkonto + dslkonto) have high business value (PII, CDR, SIP creds, billing, call control). Confirmed dual-backend architecture creating session confusion surface on kundenkonto API. prov.fonial.de provides unfronted duplicate with self-service signup for safe cross-bind testing. Symfony dev-mode exposed on dslkonto with profiler token leakage (critical misconfig but scope-excluded). CORS wildcard on auth domain confirmed. Main API not publicly documented but live with 5 endpoints including WRITE. Risk elevated due to enterprise telephony data sensitivity and architectural anomalies across two portals.
+---REPOREAD---
+TARGET_ORG not configured for fonial; skipping public-org deep scan.
+---VALIDBUGS---
+# Validated findings (running count 0)
+
+- 2 lead(s) marked VALID at 2026-09-04 07:44:00 UTC
+  - | Q4 Provable | **PARTIAL** — passive recon confirms independent session stores (different Content-Type, PHPSESSID behavior); full cross-tenant proof requires two valid accounts |
+  - | Q3 Impact | **NO** — no valid eID parameters found; marketing site has low business value |
+
+- 5 lead(s) marked VALID at 2026-09-04 19:08:56 UTC
+  - | Q4 Provable | No (HUMAN_ONLY) — requires 2 valid test accounts to cross-bind SID+PHPSESSID; passive only confirms architecture, not exploit |
+  - **Verdict: HOLD** — Architectural anomaly confirmed passively but exploitability unproven. Need 2 valid test accounts for cross-binding proof. Report only after successful cross-tenant data retrieval.
+  - | Q7 Reasonable triager | No — same blocker as Lead 1: needs valid test account to prove authz bypass. Endpoint existence alone is not a vulnerability |
+  - **Verdict: HOLD** — Live write endpoint confirmed but exploitation unproven. Report only after demonstrating unauthorized outbound call with valid credentials.
+  - | 4 | call/initiate write endpoint | **HOLD** | Need valid account for PoC |
+
+- 3 lead(s) marked VALID at 2026-09-07 15:35:13 UTC
+  - **Verdict: HOLD** — Misconfig is real and confirmed. Park until: (1) authenticated landing page is tested with valid PHPSESSID to confirm ACAO: * persists post-auth, and (2) JS bundle grep finds an AP
+  - | Q2 Attacker reachable? | **PARTIALLY** — API is public/unauth; SID mintable via GET. But cross-tenant test requires 2 valid accounts (2FA-gated) |
+  - **Verdict: HOLD** — High-confidence hypothesis with CRITICAL impact if proven, but completely unverified. Requires 2 valid test accounts for the cross-bind matrix (SID-B body + PHPSESSID-A cookie on /
+
+- 1 lead(s) marked VALID at 2026-09-10 11:50:18 UTC
+  - | 1 | Dual-backend session confusion (SID-only authz, decorative PHPSESSID) | **HOLD** | Architectural anomaly real, but needs 2 valid test accounts to prove cross-tenant access. HUMAN_ONLY. |
+---LATEST TRIAGE---
+
+===== TRIAGE 2026-09-13 18:55:51 UTC =====
+[0m
+> build · mimo-v2.5-free
+[0m
+No leads were provided in the `LEADS:` section. Please paste the lead data (URLs, probe results, findings) so I can run the 7-Question Gate.
+[0m
+STEP 1 — DELTA: NO_DELTA. probe-results 18:39:54 UTC identical to every prior cycle (8 API endpoints 200, signup/register/55 + confirm/55 → 302); reposcan never ran for fonial (TARGET_ORG unset); triage 18:55 empty; valid-bugs all HOLD on two-account gate. No new surface since 2026-09-09.
+
+STEP 2 — PRIORITIZE (unchanged survivors; scores stable):
+- [PRIO] prov.fonial.de/api/2.0, 7.8, a8/b9/t6/g7/c8/f9 — sole actionable asset
+- [PRIO] kundenkonto.fonial.de/api/2.0, 7.4, a8/b10/t6/g6/c8/f9 — gated behind prov proof
+- [PRIO] shop.fonial.de, 5.2, a6/b6/t7/g5/c5/f4 — chain-only, admin-token stuck at 40
+
+STEP 3 — HYPOTHESES:
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 80
+reasoning: Byte-identical clone of kundenkonto API (nginx/1.10.3 direct, v2026.09.03-1, ACAO*, cleartext UUID sid in body, decorative PHPSESSID; data endpoints authorize by body-SID auth-state only). Live registration form at POST /signup/confirm/55 (CSRF _token, AccountAddress/Contact, trunkTariff 19/21/22). Sole unobserved variable: whether authenticated sid→credential is cross-checked against data-layer PHPSESSID. Twin re-verified reachable + byte-identical this cycle.
+evidence_needed: Two valid tenants; Account B sid + Account A PHPSESSID on /evn/get or /devices/get returns Account A data (or clean rejection).
+verify_steps: HUMAN: POST /api/2.0/session → sidA; /session/authenticate(A) → PHPSESSID-A; repeat for B; POST /evn/get {sid:B, phpsessid:A} compare scoping; repeat on /call/initiate.
+impact: Cross-tenant CDR, phone numbers, SIP creds, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+
+[HYP] Dual-backend cross-bind on Cloudflare-fronted production portal
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 75
+reasoning: Same mechanics as prov twin but production + Cloudflare; program exposure clause prohibits live-customer-data testing. Validate on prov first, reproduce here only under explicit approval.
+evidence_needed: Same as prov hyp, executed on prov twin first.
+verify_steps: Identical to prov hyp, on sanctioned test tenants only.
+impact: Cross-tenant telephony data + call control on production — CRITICAL.
+testability: HUMAN_ONLY
+
+STEP 4 — SELF-CRITIQUE: no new evidence since last cycle changes any confidence; >40 floor holds for the two above.
+[PARKED] shop admin-token standalone: 40 at critique floor, six days zero new evidence; chain-only.
+[PARKED] further-passive-probing: every endpoint class enumerated on all live assets; today's probes again byte-identical; re-running adds zero discrimination.
+[FINAL] 1. prov.fonial.de/api/2.0 BOLA cross-bind (80) — sole actionable lead; 2. kundenkonto cross-bind (75) — gated behind prov proof. Both HUMAN_ONLY; no passive path to either.
+
+STEP 5 — NEXT ACTION:
+[NEXT] HUMAN: re-request program approval for exactly ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email + fabricated address, CSRF _token harvested from preceding GET, trunkTariff 19/21/22) on the unfronted test-grade twin — proves two-tenant creation and unlocks the self-service BOLA cross-bind test; scope.yml permits account_creation on test/sandbox assets. If approved, execute both cross-bind reads (/evn/get, /devices/get) before any write. No new probes this cycle.
+
+STEP 6 — LEARNING:
+[LEARN] REJECTED further-passive-cycles @ fonial: 09-13 18:39 canary confirms byte-identical zero drift on prov/kundenkonto; no discriminating passive probe remains on either survivor — momentum requires sanctioned writes.
+
+STEP 7 — RISK:
+[RISK] fonial: 62 — Sole vector is cross-tenant telephony BOLA (CRITICAL), gated on two test tenants; prov twin makes tenant creation self-service pending ONE sanctioned write. Discovery risk nil (surface fully enumerated, zero drift since 09-09); residual risk = indefinite approval-gate latency (this is the 4th consecutive cycle at the same gate) + production-exposure clause if kundenkonto reproduction attempted + ACAO*/cleartext-UUID-SID leak-chain widening any confirmed cross-bind.
