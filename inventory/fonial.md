@@ -501,3 +501,5 @@ www.fonial.de
 ## 2026-09-13 06:33:03 UTC
 - CHANGED mm.fonial.de: All API endpoints now return 404 (previously /api/v4/system/ping→200, /api/v4/users→401); root path 404; Mattermost instance severely degraded/reconfigured — self-signup surface eliminat
 - CHANGED mm.fonial.de: X-Version-Id header no longer observable on 404 responses; nginx/1.10.2 still responds
+
+## 2026-09-13 12:05:34 UTC

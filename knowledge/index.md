@@ -323,3 +323,5 @@
 - 2026-09-13 REJECTED mm-fonial-de-api-surface: /api/v4/system/ping, /api/v4/users, /api/v4/teams all 404; root 404; Mattermost instance degraded — self-signup class eliminated
 - 2026-09-13 REJECTED further-passive-cycles @ fonial: 2026-09-13 re-confirms zero drift on prov/kundenkonto/shop/red; extra GET/HEAD/OPTIONS passes add no discrimination value — all survivors are HUMAN_ONLY, gated on program approval
 - 2026-09-13 ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate deployment to test dual-backend cross-bind
+- 2026-09-13 REJECTED mm-fonial-de-api-surface @ mm.fonial.de: all /api/v4 endpoints + root now 404; X-Version-Id header gone; Mattermost instance degraded — self-signup class eliminated, hypothesis dropped.
+- 2026-09-13 REJECTED further-passive-cycles @ fonial: 09-13 confirms zero drift on prov/kundenkonto/shop/red; no discriminating passive probe remains on either survivor — momentum requires sanctioned writes.
