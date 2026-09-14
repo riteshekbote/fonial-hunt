@@ -1,9 +1,15 @@
-## 2026-09-14 01:17:07 UTC [target] (model nemotron3)
+## 2026-09-14 06:26:42 UTC [target] (model nemotron3)
+[CHANGED] prov.fonial.de/api/2.0 canary-stable reconfirmed — nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift since 2026-09-09
+[CHANGED] kundenkonto.fonial.de/api/2.0 stable — Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07
+[CHANGED] further-passive-cycles REJECTED — 2026-09-13 re-probes reconfirm zero drift on prov/kundenkonto/shop/red; extra GET/HEAD/OPTIONS add no discrimination value; both HUMAN_ONLY survivors gated on program approval
+[CHANGED] mm.fonial.de API surface eliminated — all /api/v4 endpoints + root now 404; X-Version-Id header gone; Mattermost instance degraded
+[CHANGED] CT-sweep inventory expansion — crt.sh exposes ~19 new subdomains (7 reachable, 12 firewalled); kampagne.fonial.de TYPO3 backend login (LIVE) = out-of-scope; int.fional.de leaks RFC1918 192.168.10.71 + git.fonial.de→git.fonial.dev (LOW, chain-info only)
 [PRIO] prov.fonial.de/api/2.0,9.4,attack_surface=10,business_value=9,tech_exposure=9,gate_ease=10,cloud_surface=8,freshness=10
 [PRIO] kundenkonto.fonial.de/api/2.0,8.9,attack_surface=9,business_value=10,tech_exposure=9,gate_ease=8,cloud_surface=7,freshness=9
-[PRIO] prov.fonial.de/signup/confirm/55,8.3,attack_surface=8,business_value=8,tech_exposure=7,gate_ease=10,cloud_surface=7,freshness=10
+[PRIO] prov.fional.de/signup/confirm/55,8.3,attack_surface=8,business_value=8,tech_exposure=7,gate_ease=10,cloud_surface=7,freshness=10
 [PRIO] shop.fonial.de/graphql,6.8,attack_surface=7,business_value=7,tech_exposure=8,gate_ease=6,cloud_surface=5,freshness=6
 [PRIO] red.fonial.de,2.0,attack_surface=3,business_value=3,tech_exposure=3,gate_ease=2,cloud_surface=3,freshness=3
+[PRIO] kampagne.fonial.de,1.5,attack_surface=2,business_value=2,tech_exposure=2,gate_ease=3,cloud_surface=2,freshness=2
 [PRIO] dslkonto.fonial.de,1.5,attack_surface=2,business_value=3,tech_exposure=2,gate_ease=1,cloud_surface=2,freshness=2
 [PRIO] www.fonial.de,1.0,attack_surface=1,business_value=1,tech_exposure=1,gate_ease=1,cloud_surface=1,freshness=1
 [PRIO] mm.fonial.de,0.5,attack_surface=1,business_value=1,tech_exposure=1,gate_ease=1,cloud_surface=1,freshness=1
