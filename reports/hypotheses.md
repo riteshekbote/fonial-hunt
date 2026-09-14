@@ -1979,3 +1979,11 @@
 - LEARN: ACCEPTED CT-sweep-inventory-expansion @ fonial: crt.sh enumeration surfaces ~19 subdomains absent from inventory; 7 reachable (kampagne TYPO3 200, staging 401/4
 - LEARN: ACCEPTED internal-host-DNS-leak @ int.fonial.de: 192.168.10.71 (RFC1918) + git.fonial.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure,
 - LEARN: REJECTED kampagne-typo3-backend-login @ kampagne.fonial.de/typo3/: standard TYPO3 CMS Login (LIVE) = "publicly accessible login panels" out-of-scope; /install.p
+
+## RANKED HYPOTHESES 2026-09-14 19:02:12 UTC
+- [82] prov.fonial.de/api/2.0: Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin (from art/lead_bigpickle.txt)
+- NEXT(hypotheses-bigpickle.txt): HUMAN: Request program approval for exactly ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email + fabricated addr
+- LEARN: ACCEPTED prov-canary-drift-risk @ prov.fonial.de/api/2.0: Target state records v2026.09.10-1 (bumped from v2026.09.03-1) but last confirmed canary was 2026-09-1
+- LEARN: ACCEPTED lockstep-deploy-confirm @ prov.fonial.de + kundenkonto.fonial.de: Same version bump target state (v2026.09.10-1) on both hosts confirms shared codebase
+- LEARN: REJECTED version-bump-surface-drift as standalone hypothesis: Single OPTIONS probe resolves the question; folded into BOLA verify_steps, not reportable on its o
+- LEARN: REJECTED further-passive-cycles @ fonial: 2026-09-14 re-confirms zero drift on prov/kundenkonto/shop/red; extra GET/HEAD/OPTIONS passes add no discrimination va

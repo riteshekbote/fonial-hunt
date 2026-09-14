@@ -15228,3 +15228,107 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 [RISK] fonial: 78 — Customer portals (kundenkonto + dslkonto) have high business value (PII, CDR, SIP creds, billing, call control). Confirmed dual-backend architecture creating session confusion surface on kundenkonto API. prov.fonial.de provides unfronted duplicate with self-service signup for safe cross-bind testing. Symfony dev-mode exposed on dslkonto with profiler token leakage (critical misconfig but scope-excluded). CORS wildcard on auth domain confirmed. Main API not publicly documented but live with 5 endpoints including WRITE. Risk elevated due to enterprise telephony data sensitivity and architectural anomalies across two portals.
+===== ANALYST nemotron3 2026-09-14 19:02:12 UTC =====
+[0m
+> build · nemotron-3-ultra-free
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" -X OPTIONS "https://prov.fonial.de/api/2.0/session" -H "Origin: https://evil.example" 2>&1
+200
+[0m
+[0m$ [0mcurl -s -I -X OPTIONS "https://prov.fonial.de/api/2.0/session" -H "Origin: https://evil.example" 2>&1 | head -20
+HTTP/2 200 
+server: nginx/1.10.3
+content-type: text/json; charset=UTF-8
+cache-control: max-age=0, must-revalidate, private
+date: Mon, 14 Sep 2026 18:45:34 GMT
+x-fonial-version: v2026.09.10-1
+expires: Mon, 14 Sep 2026 18:45:34 GMT
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+[0m
+[0m$ [0mcurl -s -I -X OPTIONS "https://kundenkonto.fonial.de/api/2.0/session" -H "Origin: https://evil.example" 2>&1 | head -20
+HTTP/2 200 
+date: Mon, 14 Sep 2026 18:46:46 GMT
+content-type: text/json; charset=UTF-8
+server: cloudflare
+cache-control: max-age=0, must-revalidate, private
+expires: Mon, 14 Sep 2026 18:46:46 GMT
+x-fonial-version: v2026.09.10-1
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+cf-cache-status: DYNAMIC
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=XVLqWDiwEpeHz0Jw9B3XGlp2Dty3xLxSlh4WgnHYU%2FVm2UPZkm0nEYgn4XABiyj3AzrVQpaFGBa0qk94jmvLVdQ4PEGz9Mc4tfqWG%2FmqyBlCRg%2BJXbp1HN%2B%2F2uYahs9pBiBr198mjQ%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cf-ray: a3b18e684b1aaeb6-YYZ
+[0m
+[0m$ [0mcurl -s -I "https://prov.fonial.de/signup/register/55" 2>&1 | head -20
+HTTP/2 302 
+server: nginx/1.10.3
+content-type: text/html; charset=utf-8
+cache-control: max-age=0, must-revalidate, private
+date: Mon, 14 Sep 2026 18:47:41 GMT
+location: /signup/55
+x-fonial-version: v2026.09.10-1
+expires: Mon, 14 Sep 2026 18:47:41 GMT
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+[0m
+[0m$ [0mcurl -s -I "https://prov.fonial.de/signup/55" 2>&1 | head -20
+HTTP/2 302 
+server: nginx/1.10.3
+content-type: text/html; charset=utf-8
+cache-control: max-age=0, must-revalidate, private
+date: Mon, 14 Sep 2026 18:49:41 GMT
+location: /signup/register/55
+x-fonial-version: v2026.09.10-1
+expires: Mon, 14 Sep 2026 18:49:41 GMT
+set-cookie: PHPSESSID=ndpu3h9nkp0c3e0ij5tbqpqm03; path=/; secure; httponly; samesite=lax
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+[0m
+[0m$ [0mcurl -s -I "https://mm.fonial.de/" 2>&1 | head -15
+HTTP/1.1 404 Not Found
+Server: nginx/1.10.2
+Date: Mon, 14 Sep 2026 18:51:35 GMT
+Content-Type: text/plain; charset=utf-8
+Connection: keep-alive
+Location: /error?title=Mattermost+braucht+Ihre+Hilfe%3A&message=Entschuldigung%2C+wir+k%C3%B6nnen+die+Seite+nicht+finden.&details=&link=%2F&linkmessage=Gehe+zur%C3%BCck+zu+Mattermost
+[0m
+[0m$ [0mcurl -s -I "https://mm.fonial.de/api/v4/system/ping" 2>&1 | head -15
+HTTP/1.1 404 Not Found
+Server: nginx/1.10.2
+Date: Mon, 14 Sep 2026 18:53:37 GMT
+Content-Type: text/plain; charset=utf-8
+Content-Length: 209
+Connection: keep-alive
+[0m
+[0m$ [0mcurl -s -I -X POST "https://shop.fonial.de/graphql" -H "Content-Type: application/json" -d '{"query":"{__schema{queryType{name}}}"}' 2>&1 | head -15
+(no output)
+[0m
+[0m$ [0mcurl -s -I -X POST "https://shop.fonial.de/graphql" -H "Content-Type: application/json" -d '{"query":"{__schema{queryType{name}}}"}' 2>&1
+(no output)
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" --max-time 10 "https://shop.fonial.de/graphql" 2>&1
+500
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" --max-time 10 "https://shop.fonial.de/" 2>&1
+200
+[0m
+[0m$ [0mdig +short int.fonial.de 2>&1
+192.168.10.71
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code}" --max-time 10 "https://kampagne.fonial.de/typo3/" 2>&1
+200
+[0m
+[0m$ [0mdig +short git.fonial.de 2>&1
+git.fonial.dev.
+92.51.132.112
+[0m

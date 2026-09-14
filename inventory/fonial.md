@@ -533,3 +533,8 @@ www.fonial.de
 - CHANGED prov.fonial.de/api/2.0 canary-stable reconfirmed: nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift since 2026-09-09
 - CHANGED kundenkonto.fonial.de/api/2.0 stable: Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07
 - CHANGED further-passive-cycles REJECTED: canary (both twin + kundenkonto OPTIONS /session) byte-identical zero drift; sole survivors remain the two HUMAN_ONLY cross-binds — momentum requires sanctioned writes
+
+## 2026-09-14 19:02:12 UTC
+- NEW X-Fonial-Version bump detected on prov.fonial.de/api/2.0: v2026.09.03-1 → v2026.09.10-1 (target state); prior canary 2026-09-13 still shows v2026.09.03-1 — new deploy since last recorded canary. Need 
+- NEW prov-canary drift testable via OPTIONS /session — single GET confirms version + surface unchanged post-deploy.
+- CHANGED All passive discovery on all assets closed since 2026-09-06; two HUMAN_ONLY survivors remain unchanged in class.
