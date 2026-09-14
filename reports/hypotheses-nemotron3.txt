@@ -1,4 +1,4 @@
-## 2026-09-13 23:13:09 UTC [target] (model nemotron3)
+## 2026-09-14 01:17:07 UTC [target] (model nemotron3)
 [PRIO] prov.fonial.de/api/2.0,9.4,attack_surface=10,business_value=9,tech_exposure=9,gate_ease=10,cloud_surface=8,freshness=10
 [PRIO] kundenkonto.fonial.de/api/2.0,8.9,attack_surface=9,business_value=10,tech_exposure=9,gate_ease=8,cloud_surface=7,freshness=9
 [PRIO] prov.fonial.de/signup/confirm/55,8.3,attack_surface=8,business_value=8,tech_exposure=7,gate_ease=10,cloud_surface=7,freshness=10
@@ -39,6 +39,8 @@ testability: PASSIVE
 [PARKED] dslkonto.fonial.de dev-mode/profiler: scope.yml excludes descriptive errors/stack traces; profiler token-gated 404 — non-reportable
 [PARKED] mm.fonial.de self-signup: /signup/email + /login now 404 (SPA shell degraded); /api/v4/users/create 404; no live registration surface — all endpoints 404
 [PARKED] red.fonial.de attachment enumeration: auth-gated, no standalone unauth path; usable solely as post-MM-account amplification component
+[PARKED] Internal DNS leak @ int.fonial.de (192.168.10.71) + git.fonial.de→git.fonial.dev: LOW standalone, chain-info only
+[PARKED] kampagne.fonial.de TYPO3 backend login: publicly accessible login panel = out-of-scope per scope.yml
 [FINAL] 1. Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on prov.fonial.de/api/2.0 (80)
 [FINAL] 2. Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on kundenkonto.fonial.de/api/2.0 (75)
 [FINAL] 3. Self-service tenant creation via unauthenticated signup on prov.fonial.de/signup/confirm/55 (70)

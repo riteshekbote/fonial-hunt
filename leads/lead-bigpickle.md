@@ -3077,3 +3077,31 @@ testability: HUMAN_ONLY
 [LEARN] REJECTED kampagne-typo3-backend-login @ kampagne.fonial.de/typo3/: standard TYPO3 CMS Login (LIVE) = "publicly accessible login panels" out-of-scope; /install.php + eID=dump 404.
 [LEARN] REJECTED further-passive-cycles @ fonial: canary (both twin + kundenkonto OPTIONS /session) byte-identical zero drift; sole survivors remain the two HUMAN_ONLY cross-binds — momentum requires sanctioned writes.
 [RISK] fonial: 61 — Sole actionable vector remains cross-tenant telephony BOLA (CRITICAL), gated on two test tenants; prov twin makes tenant creation self-service pending ONE sanctioned write (5th consecutive cycle at this gate, gate-latency risk rising). CT sweep widens nominal in-scope footprint (sbc/interfaces/git/ldap/customers infra identifiable but unreachable → no new discovery risk); int.fonial.de DNS leak is low-info only. ACAO*/cleartext-UUID-SID leak-chain still widens any confirmed cross-bind.
+## 2026-09-14 01:11:35 UTC [target] (model bigpickle)
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 80
+reasoning: Byte-identical clone of kundenkonto (nginx/1.10.3 direct, v2026.09.03-1, ACAO*, cleartext UUID sid in body, decorative PHPSESSID; data endpoints authorize by body-SID auth-state only; /session deletes unknown PHPSESSID). Live registration form at POST /signup/confirm/55 (CSRF _token, AccountAddress, AccountContact, trunkTariff 19/21/22). Sole unobserved variable: whether authenticated sid→credential is cross-checked against data-layer PHPSESSID. Twin re-verified byte-identical every cycle since 09-09.
+evidence_needed: Two valid tenants; tenant-B sid + tenant-A PHPSESSID on /evn/get or /devices/get returns tenant-A data (or clean rejection).
+verify_steps: HUMAN: GET /signup/register/55 harvest CSRF; POST /signup/confirm/55 fabricate tenant A (example.invalid) — repeat for B; POST /api/2.0/session → sidA; /session/authenticate(A) → PHPSESSID-A; repeat for B; POST /evn/get {sid:B,phpsessid:A} compare scoping; repeat on /devices/get, then /call/initiate only after clean read-result.
+impact: Cross-tenant CDR, phone numbers, SIP credentials, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Dual-backend cross-bind on Cloudflare-fronted production portal
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 75
+reasoning: Same mechanics as prov twin but production + Cloudflare; program exposure clause prohibits live-customer-data testing. Valid must reproduce on prov first; identical surface, headers, session semantics (v2026.09.03-1, 5 endpoints, ACAO*, /signup/register/55→302 gating).
+evidence_needed: Same evidence as prov hyp, executed on prov twin first.
+verify_steps: Identical to prov hyp, on program-sanctioned test tenants only.
+impact: Cross-tenant telephony data + call control on production — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Internal-infra reachability expansion
+class: OTHER
+asset: sbc/interfaces/wbci/git/customers/pages/relaunch-2025.fonial.de
+confidence: 20
+reasoning: All 7 resolve (62.146.28.124, 62.146.7.27, 92.51.132.112, 92.197.176.46, 46.4.123.118) but TCP-timeout on 80/443 from this egress since 09-13; infra-identifiable only, no passive surface exposed.
+evidence_needed: Any reachable path/port, or program-side confirmation these are in-scope internal systems.
+verify_steps: HUMAN: ask if program-side network (or a scoped VPN) can reach these; passive TCP reachability re-check only.
+impact: Unknown until reachable; candidate internal-only admin (sbc=Session Border Controller, ldap) — HIGH if reachable, nil now.
+testability: HUMAN_ONLY

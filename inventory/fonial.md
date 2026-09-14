@@ -515,3 +515,5 @@ www.fonial.de
 - NEW int.fonial.de → 192.168.10.71 (RFC1918) in public DNS; internal host naming disclosed.
 - NEW kampagne.fonial.de live TYPO3 (200, `server: nginx-rc`, backend login `TYPO3 CMS Login: fonial GmbH (LIVE)` at /typo3/; /install.php 404, eID=dump 404); hilfe.fonial.de 403 openresty; www-neu.fonial.d
 - CHANGED sbc/interfaces/wbci/git/customers/pages/relaunch-2025 all TCP-timeout from egress on 80+443 — firewalled/internal, untestable from here. Canary: prov + kundenkonto OPTIONS /api/2.0/session byte-identi
+
+## 2026-09-14 01:18:27 UTC

@@ -332,3 +332,15 @@
 - 2026-09-13 ACCEPTED internal-host-DNS-leak @ int.fonial.de: 192.168.10.71 (RFC1918) + git.fonial.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure, LOW standalone, chain-info only.
 - 2026-09-13 REJECTED kampagne-typo3-backend-login @ kampagne.fonial.de/typo3/: standard TYPO3 CMS Login (LIVE) = "publicly accessible login panels" out-of-scope; /install.php + eID=dump 404.
 - 2026-09-13 REJECTED further-passive-cycles @ fonial: canary (both twin + kundenkonto OPTIONS /session) byte-identical zero drift; sole survivors remain the two HUMAN_ONLY cross-binds — momentum requires sanctioned writes.
+- 2026-09-14 REJECTED further-passive-cycles @ fonial: 2026-09-13 re-confirms zero drift on prov/kundenkonto/shop/red; extra GET/HEAD/OPTIONS passes add no discrimination value — all survivors are HUMAN_ONLY, gated on program approval
+- 2026-09-14 ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: twin remains reachable and byte-identical (nginx/1.10.3, v2026.09.03-1, ACAO*, 5-endpoint) — the required comparison base for the BOLA cross-bind test remains valid pending approval
+- 2026-09-14 ACCEPTED prov-self-signup-enabler: prov.fonial.de serves identical Symfony registration flow (POST /signup/confirm/55, CSRF, AccountAddress, AccountContact, trunkTariff 19/21/22) on unfronted duplicate → enables self-service two-tenant creation for cross-bind BOLA
+- 2026-09-14 REJECTED mm-fonial-de-api-surface: /api/v4/system/ping, /api/v4/users, /api/v4/teams all 404; root 404; Mattermost instance degraded — self-signup class eliminated
+- 2026-09-14 REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component
+- 2026-09-14 ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate deployment to test dual-backend cross-bind
+- 2026-09-14 ACCEPTED red-chain-only @ red.fonial.de: Redmine version + plugin stack = excluded class standalone; usable solely as post-MM-account amplification component
+- 2026-09-14 REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
+- 2026-09-14 REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+- 2026-09-14 ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+- 2026-09-14 REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
+- 2026-09-14 ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
