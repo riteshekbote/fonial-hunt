@@ -47,3 +47,10 @@
   - | Q4 Provable non-invasively? | **NO** — requires POST with valid SID to unconfirmed endpoints |
   - | Q4 Provable non-invasively? | **NO** — needs valid account + phone number to test |
   - | 7 | /call/initiate cross-tenant | **HOLD** | Needs valid account + phone number |
+
+- 5 lead(s) marked VALID at 2026-09-14 22:16:43 UTC
+  - **Verdict: VALID**
+  - | Q4 | Provable non-invasively? | **PARTIAL** — unauthenticated wildcard confirmed via header inspection; authenticated wildcard **not yet proven** (needs valid PHPSESSID from login redirect) |
+  - | Q4 | Provable non-invasively? | **NO** — requires 2 valid customer accounts to cross-bind SID-A + PHPSESSID-B; passive recon exhausted |
+  - | 1 | GraphQL introspection (shop) | **VALID** | 5.3 | Report-ready |
+  - | 3 | Dual-backend session confusion | **HOLD** | 9.8 if proven | Needs 2 valid accounts |
