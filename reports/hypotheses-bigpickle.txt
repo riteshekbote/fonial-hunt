@@ -1,42 +1,24 @@
-## 2026-09-14 18:43:47 UTC [target] (model bigpickle)
-[NEW] X-Fonial-Version bump detected on prov.fonial.de/api/2.0: v2026.09.03-1 → v2026.09.10-1 (target state); prior canary 2026-09-13 still shows v2026.09.03-1 — new deploy since last recorded canary. Need live re-probe to confirm.
-[NEW] prov-canary drift testable via OPTIONS /session — single GET confirms version + surface unchanged post-deploy.
-[CHANGED] All passive discovery on all assets closed since 2026-09-06; two HUMAN_ONLY survivors remain unchanged in class.
-[PRIO] prov.fonial.de/api/2.0,9.1,attack_surface:9,business_value:10,tech_exposure:8,gate_ease:7,cloud_surface:8,freshness:9 — unfronted clone, 5 endpoints, self-signup live, version just bumped
-[PRIO] kundenkonto.fonial.de/api/2.0,8.5,attack_surface:8,business_value:10,tech_exposure:8,gate_ease:4,cloud_surface:6,freshness:8 — production, Cloudflare, same mechanics, program-prohibited for live customer data
-[PRIO] shop.fonial.de/graphql,6.0,attack_surface:7,business_value:7,tech_exposure:9,gate_ease:7,cloud_surface:3,freshness:5 — Magento 2.4 CE, 68 mutations, admin-token hypothesis at 40 (chain component only)
+## 2026-09-14 22:15:16 UTC [target] (model bigpickle)
 [HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
 class: AUTH
 asset: prov.fonial.de/api/2.0
-confidence: 82
-reasoning: Byte-identical clone of kundenkonto (nginx/1.10.3 direct, ACAO*, cleartext UUID sid in body, decorative PHPSESSID; data endpoints authorize by body-SID auth-state only; /session deletes unknown PHPSESSID). Live registration form at POST /signup/confirm/55 (CSRF _token, AccountAddress, AccountContact, trunkTariff 19/21/22). X-Fonial-Version bumped to v2026.09.10-1 (target state) — new deploy confirms active maintenance, not abandoned. Tos18Unobserved: whether authenticated sid→credential is cross-checked against data-layer PHPSESSID. Fresh canary prior to deploy confirmed byte-identical comparison base. Version bump strengthens reproducibility odds (codebase actively deployed = shared-prod deployment pipeline confirmed).
-evidence_needed: Two valid tenants; tenant-B sid + tenant-A PHPSESSID on /evn/get or /devices/get returns tenant-A data (or clean rejection).
-verify_steps: HUMAN: GET /signup/register/55 harvest CSRF; POST /signup/confirm/55 fabricate tenant A (example.invalid) — repeat for B; POST /api/2.0/session → sidA; /session/authenticate(A) → PHPSESSID-A; repeat for B; POST /evn/get {sid:B,phpsessid:A} compare scoping; repeat /devices/get; /call/initiate only after clean read-result.
-impact: Cross-tenant CDR, phone numbers, SIP credentials, device lists, outbound call control — CRITICAL.
+confidence: 83
+reasoning: Live probe 2026-09-14 22:14 UTC: v2026.09.10-1, nginx/1.10.3 direct, ACAO *, ACAM GET/POST/OPTIONS, no allow-credentials; /session issues cleartext UUID sid (no PHPSESSID); /evn/get authorizes by body SID only (`session invalid`), sets decorative PHPSESSID — semantics identical post-deploy. Registration form live at POST /signup/confirm/55. New deploy confirms active maintenance → prov→prod transferability strengthened.
+evidence_needed: Two authenticated tenants; tenant-B sid + tenant-A PHPSESSID on /evn/get or /devices/get returns tenant-A data (or clean rejection).
+verify_steps: HUMAN: harvest CSRF from GET /signup/register/55; POST /signup/confirm/55 (example.invalid email, fabricated address, trunkTariff 19) → tenant A; repeat → tenant B; POST /api/2.0/session + /session/authenticate for both; POST /evn/get {sid:B,phpsessid:A}; repeat /devices/get; /call/initiate only after clean read result.
+impact: Cross-tenant CDR, phone numbers, SIP creds, device lists, outbound call control — CRITICAL.
 testability: HUMAN_ONLY
-[HYP] Lockstep version bump confirms shared codebase → prov-confirmed BOLA would reproduce on production
+[HYP] Lockstep v2026.09.10-1 → prov-confirmed BOLA reproduces on production
 class: AUTH
 asset: kundenkonto.fonial.de/api/2.0
-confidence: 77
-reasoning: Same lockstep version v2026.09.10-1 as prov (target state confirms same deploy pipeline); same mechanics, headers, 5-endpoint surface, cloudflare edge. Version bump from v2026.09.03-1 → v2026.09.10-1 on both hosts in lockstep raises confidence that prov findings map directly to prod. Program exposure clause prohibits live-customer-data testing; validation path must reproduce on prov first.
+confidence: 78
+reasoning: Both hosts live-probed at v2026.09.10-1 (22:14 UTC) → same deploy pipeline confirmed, not just target-state. Identical mechanics, headers, 5-endpoint surface; prod is Cloudflare-fronted. Program exposure clause prohibits live-customer testing → reproduce on prov first.
 evidence_needed: Same evidence as prov hyp, executed on prov twin first.
 verify_steps: Identical to prov hyp, on program-sanctioned test tenants only.
 impact: Cross-tenant telephony data + call control on production — CRITICAL.
 testability: HUMAN_ONLY
-[HYP] Version-bump surface drift check
-class: OTHER
-asset: prov.fonial.de/api/2.0
-confidence: 45
-reasoning: Target state records X-Fonial-Version v2026.09.10-1 but last confirmed canary (2026-09-13) showed v2026.09.03-1. New deploy may have altered endpoint surface, authz semantics, or added/removal of endpoints. Single OPTIONS probe resolves this. If surface changed materially (e.g., SID now bound to PHPSESSID, new endpoints), the BOLA hypothesis class may shift.
-evidence_needed: OPTIONS /session response on prov.fonial.de returning current X-Fonial-Version header and CORS policy.
-verify_steps: HUMAN: OPTIONS https://prov.fonial.de/api/2.0/session → confirm version + ACAO + ACAM; GET /api/2.0/evn/get → confirm same session-invalid JSON pattern persists.
-impact: Informs whether BOLA hypothesis base is still valid post-deploy — gate for all write testing.
-testability: HUMAN_ONLY
-[PARKED] Version-bump surface drift check: Relegated to chain component only. Single OPTIONS probe resolves the question but does not itself constitute a finding. Fold into verify_steps of the BOLA hypothesis rather than standalone. Class OTHER adds no new attack path.
-[FINAL] Ranked survivors:
-[NEXT] HUMAN: Request program approval for exactly ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email + fabricated address) to confirm end-to-end tenant creation on the unfronted twin. This is the sole gate for the BOLA cross-bind test. Current version is v2026.09.10-1 (new deploy detected); verify the OPTIONS /session canary simultaneously to confirm the comparison base is still byte-identical post-deploy.
-[LEARN] ACCEPTED prov-canary-drift-risk @ prov.fonial.de/api/2.0: Target state records v2026.09.10-1 (bumped from v2026.09.03-1) but last confirmed canary was 2026-09-13 at v2026.09.03-1 — new deploy detected since last live probe; comparison base validity uncertain until re-verified.
-[LEARN] ACCEPTED lockstep-deploy-confirm @ prov.fonial.de + kundenkonto.fonial.de: Same version bump target state (v2026.09.10-1) on both hosts confirms shared codebase/deploy pipeline → prov findings map to prod with high fidelity once BOLA confirmed.
-[LEARN] REJECTED version-bump-surface-drift as standalone hypothesis: Single OPTIONS probe resolves the question; folded into BOLA verify_steps, not reportable on its own.
-[LEARN] REJECTED further-passive-cycles @ fonial: 2026-09-14 re-confirms zero drift on prov/kundenkonto/shop/red; extra GET/HEAD/OPTIONS passes add no discrimination value — all survivors are HUMAN_ONLY, gated on program approval.
-[RISK] fonial: 78 — Customer portals (kundenkonto) have high business value (PII, CDR, SIP creds, billing, call control). Confirmed dual-backend architecture creating session confusion surface. prov.fonial.de provides unfronted duplicate with self-service signup for safe cross-bind testing. X-Fonial-Version bumped v2026.09.03-1 → v2026.09.10-1 confirms active shared deploy pipeline (strengthens prov→prod transferability). Main API live with 5 endpoints including WRITE (call/initiate). Sole active hypothesis (BOLA) is CRITICAL severity but gated on HUMAN approval for registration POST. No regressions detected. All other asset classes (shop, www, dslkonto, mm, red) closed or excluded.
+[NEXT] HUMAN: Request program approval for exactly ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email + fabricated address, trunkTariff 19) to confirm end-to-end tenant creation. Comparison base re-verified live at v2026.09.10-1 (22:14 UTC, no drift post-deploy); confirmation of tenant creation is the sole remaining gate for the two-tenant cross-bind BOLA test.
+[LEARN] ACCEPTED version-bump-drift-free @ prov.fonial.de/api/2.0: Live probe 2026-09-14 22:14 UTC confirms v2026.09.10-1 with unchanged semantics (cleartext UUID sid, body-SID-only authz, decorative PHPSESSID, ACAO*, nginx/1.10.3) → comparison base valid post-deploy; standalone drift hyp resolved, folded into BOLA verify_steps.
+[LEARN] ACCEPTED lockstep-deploy-live @ kundenkonto + prov: both hosts live-probed at v2026.09.10-1 same minute → shared deploy pipeline confirmed at probe level, raising prov→prod fidelity of any confirmed BOLA.
+[LEARN] REJECTED further-passive-cycles @ fonial: version drift was the last resolvable passive discriminator and is now resolved; no remaining passive probe discriminates the two HUMAN_ONLY survivors.
+[RISK] fonial: 79 — Customer portal holds PII/CDR/SIP-creds/call-control; dual-backend session confusion surface confirmed; prov.fonial.de is an unfronted byte-identical twin with live self-signup flow and newly confirmed active deploy pipeline (v2026.09.10-1, lockstep with prod) — BOLA test reproducible safely on twin before any prod claim. Sole BOLA hypothesis is CRITICAL-severity but gated on HUMAN approval for a single fabricated registration. No new defensible finding from today's passive cycle; all other asset classes closed or out-of-scope.

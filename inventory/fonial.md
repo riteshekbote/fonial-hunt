@@ -538,3 +538,5 @@ www.fonial.de
 - NEW X-Fonial-Version bump detected on prov.fonial.de/api/2.0: v2026.09.03-1 → v2026.09.10-1 (target state); prior canary 2026-09-13 still shows v2026.09.03-1 — new deploy since last recorded canary. Need 
 - NEW prov-canary drift testable via OPTIONS /session — single GET confirms version + surface unchanged post-deploy.
 - CHANGED All passive discovery on all assets closed since 2026-09-06; two HUMAN_ONLY survivors remain unchanged in class.
+
+## 2026-09-14 22:19:22 UTC
