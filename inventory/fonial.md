@@ -524,3 +524,12 @@ www.fonial.de
 - CHANGED further-passive-cycles REJECTED — 2026-09-13 re-probes reconfirm zero drift on prov/kundenkonto/shop/red; extra GET/HEAD/OPTIONS add no discrimination value; both HUMAN_ONLY survivors gated on program
 - CHANGED mm.fonial.de API surface eliminated — all /api/v4 endpoints + root now 404; X-Version-Id header gone; Mattermost instance degraded
 - CHANGED CT-sweep inventory expansion — crt.sh exposes ~19 new subdomains (7 reachable, 12 firewalled); kampagne.fonial.de TYPO3 backend login (LIVE) = out-of-scope; int.fional.de leaks RFC1918 192.168.10.71 +
+
+## 2026-09-14 13:22:35 UTC
+- NEW CT-sweep inventory expansion @ fonial: crt.sh exposes ~19 new subdomains (7 reachable: kampagne TYPO3 200, staging 401/403, dead 404s; 12 firewalled/unreachable) — first new breadth since 2026-09-06
+- NEW kampagne.fonial.de/typo3/ live TYPO3 backend login (200, "TYPO3 CMS Login: fonial GmbH (LIVE)") — publicly accessible login panel = OUT-OF-SCOPE per scope.yml
+- NEW int.fonial.de → 192.168.10.71 (RFC1918) + git.fonial.de→git.fonial.dev exposed in public DNS — internal naming/infra disclosure, LOW standalone
+- CHANGED mm.fonial.de API surface eliminated: all /api/v4 endpoints + root now 404; X-Version-Id header gone; Mattermost instance degraded — self-signup class eliminated
+- CHANGED prov.fonial.de/api/2.0 canary-stable reconfirmed: nginx/1.10.3, v2026.09.03-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fresh UUID SID; zero drift since 2026-09-09
+- CHANGED kundenkonto.fonial.de/api/2.0 stable: Cloudflare-fronted, v2026.09.03-1, 5 endpoints, zero drift since 2026-09-07
+- CHANGED further-passive-cycles REJECTED: canary (both twin + kundenkonto OPTIONS /session) byte-identical zero drift; sole survivors remain the two HUMAN_ONLY cross-binds — momentum requires sanctioned writes

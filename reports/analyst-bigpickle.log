@@ -19713,3 +19713,156 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 - [RISK] fonial: 62 — Sole actionable vector remains cross-tenant telephony BOLA (CRITICAL), gated on one sanctioned write/two test tenants; 5th+ consecutive cycle at the same human gate, gate-latency risk rising (introduced by pipeline channel, not discounting the finding). CT-swept hosts (sbc/interfaces/git/ldap/customers) are identifiable but unreachable → no new discovery risk; int.fonial.de DNS leak chain-info only. ICORS+cleartext-UUID-SID leak-chain still amplifies any confirmed cross-bind.
+===== ANALYST bigpickle 2026-09-14 13:22:35 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m✱ [0mGlob "**/*.md"[90m 98 matches[0m
+[0m✱ [0mGlob "**/*.txt"[90m 9 matches[0m
+[0m✱ [0mGlob "**/scope*"[90m 1 match[0m
+[0m→ [0mRead scope.yml
+[0m→ [0mRead reports/hypotheses-bigpickle.txt
+[0m→ [0mRead leads/lead-bigpickle.md
+[0m→ [0mRead triage/run-2026-09-14-06-24.md
+[0m→ [0mRead analyst-out.txt[90m [limit=100][0m
+Now let me check the latest triage run and current probe results to see if anything changed:
+Let me run the passive canary probes to verify the current surface state:
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "prov OPTIONS /session => %{http_code} | %{time_total}s\n" -X OPTIONS https://prov.fonial.de/api/2.0/session -H "Origin: https://evil.example" 2>&1 | head -5
+prov OPTIONS /session => 200 | 1.098120s
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "kundenkonto OPTIONS /session => %{http_code} | %{time_total}s\n" -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session -H "Origin: https://evil.example" 2>&1 | head -5
+kundenkonto OPTIONS /session => 200 | 0.748407s
+[0m
+[0m$ [0mcurl -s -D - -o /dev/null -X OPTIONS https://prov.fonial.de/api/2.0/session -H "Origin: https://evil.example" 2>&1 | grep -iE "HTTP/|server:|x-fonial|x-debug|access-control|content-type|set-cookie|via|cf-|cache"
+HTTP/2 200 
+server: nginx/1.10.3
+content-type: text/json; charset=UTF-8
+cache-control: max-age=0, must-revalidate, private
+x-fonial-version: v2026.09.10-1
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+[0m
+[0m$ [0mcurl -s -D - -o /dev/null -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session -H "Origin: https://evil.example" 2>&1 | grep -iE "HTTP/|server:|x-fonial|x-debug|access-control|content-type|set-cookie|via|cf-|cache"
+HTTP/2 200 
+content-type: text/json; charset=UTF-8
+server: cloudflare
+cache-control: max-age=0, must-revalidate, private
+x-fonial-version: v2026.09.10-1
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+cf-cache-status: DYNAMIC
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=2bbCNYAi3HHbLeqp2v3Bw383dRDHyStJR1G3tIFBYWRxTj1XY0hGjC%2BbZBRHD%2BLaq%2FD%2BM4ikJo%2Fjy64kHBddxFgygsGsA5ul4%2BzKH8ErGNSg6axLYp44I0%2BdFm3Vk6%2Fwd2cPkNChTg%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cf-ray: a3afaeb6082d8123-SJC
+[0m
+Both hosts bumped to `v2026.09.10-1` (first drift since 09-07/09-09). Let me verify the session semantics and signup surface are unchanged:
+[0m$ [0msleep 2; curl -s -X POST https://prov.fonial.de/api/2.0/session 2>&1 | head -3
+{"status":"ok","sid":"b75184ab-ddf7-427d-8d0d-32dd9e7a9a36"}
+[0m
+[0m$ [0msleep 2; curl -s -X POST https://prov.fonial.de/api/2.0/devices/get -H "Content-Type: application/json" -d '{"sid":"b75184ab-ddf7-427d-8d0d-32dd9e7a9a36"}' 2>&1 | head -3; echo "---"; curl -s -o /dev/null -w "signup/register/55 => %{http_code} -> %{redirect_url}\n" https://prov.fonial.de/signup/register/55
+{"sid":"b75184ab-ddf7-427d-8d0d-32dd9e7a9a36","status":"error","reason":"session unauthenticated"}---
+signup/register/55 => 302 -> https://prov.fonial.de/signup/55
+[0m
+[0m$ [0msleep 2; curl -s -D - -o /dev/null -w "\nfinal: %{http_code} via %{url_effective}\n" -L --max-redirs 5 "https://prov.fonial.de/signup/55" 2>&1 | grep -iE "HTTP/|location|set-cookie|final" | head -10
+HTTP/2 302 
+location: /signup/register/55
+set-cookie: PHPSESSID=od6aq8smmaf50r6kgpqfeecsmh; path=/; secure; httponly; samesite=lax
+HTTP/2 302 
+location: /signup/55
+HTTP/2 302 
+location: /signup/register/55
+set-cookie: PHPSESSID=tsag0fpmk8fj6lue196jkmde7q; path=/; secure; httponly; samesite=lax
+HTTP/2 302 
+location: /signup/55
+[0m
+Surface re-verified with fresh probes. Writing structured analysis.
+
+---
+
+## STEP 1 — DELTA
+
+- **CHANGED** X-Fonial-Version on BOTH prov.fonial.de and kundenkonto.fonial.de: **v2026.09.03-1 → v2026.09.10-1** (confirm 2026-09-14 06:26 UTC, lockstep bump on both hosts — first version drift since 2026-09-07/09-09 deploy tag group; all response headers, ACAO `*`, ACAM, no allow-credentials, session semantics byte-identical).
+- **NO-DELTA** prov `/signup/55` ↔ `/signup/register/55` 302 ping-pong persists (fresh PHPSESSID issued each hop, CSRF form live at POST target).
+- **NO-DELTA** POST `/api/2.0/session` → cleartext UUID sid; `/devices/get` with unauth sid → `{"reason":"session unauthenticated"}`.
+- **NO-DELTA** 5-endpoint surface, mm 404-degraded, shop/red/dslkonto/www classes all closed.
+
+---
+
+## STEP 2 — PRIORITIZE
+
+- `[PRIO] prov.fonial.de/api/2.0,9.4,attack_surface=10,business_value=9,tech_exposure=9,gate_ease=10,cloud_surface=8,freshness=10`
+- `[PRIO] kundenkonto.fonial.de/api/2.0,8.9,attack_surface=9,business_value=10,tech_exposure=9,gate_ease=8,cloud_surface=7,freshness=9`
+- `[PRIO] prov.fonial.de/signup/confirm/55,8.3,attack_surface=8,business_value=8,tech_exposure=7,gate_ease=10,cloud_surface=7,freshness=10`
+- `[PRIO] shop.fonial.de/graphql,6.8,attack_surface=7,business_value=7,tech_exposure=8,gate_ease=6,cloud_surface=5,freshness=6`
+- `[PRIO] red.fonial.de,2.0,attack_surface=3,business_value=3,tech_exposure=3,gate_ease=2,cloud_surface=3,freshness=3`
+
+---
+
+## STEP 3 — HYPOTHESES
+
+`[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin`
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 80
+reasoning: Byte-identical clone of kundenkonto, now with matching version tag v2026.09.10-1 (lockstep deploy confirms shared codebase → prov findings reproduce on prod). Data endpoints authorize by body-SID auth-state only; `/session` issues cleartext UUID sid and deletes unknown PHPSESSID; fresh probe 2026-09-14 confirms `session unauthenticated` / 302-loop behavior unchanged. Live registration form at POST /signup/confirm/55 (CSRF _token, AccountAddress, AccountContact, trunkTariff 19/21/22). Sole unobserved variable: whether authenticated sid→credential is cross-checked against data-layer PHPSESSID.
+evidence_needed: Two valid tenants; tenant-B sid + tenant-A PHPSESSID on /evn/get or /devices/get returns tenant-A data (or clean rejection).
+verify_steps: HUMAN: GET /signup/register/55 harvest PHPSESSID+CSRF; POST /signup/confirm/55 fabricate tenant A (example.invalid) — repeat for B; POST /api/2.0/session → sidA; /session/authenticate(A) → PHPSESSID-A; repeat for B; POST /evn/get {sid:B,phpsessid:A} compare scoping; repeat /devices/get; /call/initiate only after clean read-result.
+impact: Cross-tenant CDR, phone numbers, SIP credentials, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+
+`[HYP] Dual-backend cross-bind on Cloudflare-fronted production portal`
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 75
+reasoning: Same lockstep version v2026.09.10-1 as prov (confirmed same deploy pipeline); same mechanics, headers, 5-endpoint surface, cloudflare edge. Program exposure clause prohibits live-customer-data testing; validation path must reproduce on prov first. Lockstep versioning raises reproducibility odds of a prov-confirmed BOLA.
+evidence_needed: Same evidence as prov hyp, executed on prov twin first.
+verify_steps: Identical to prov hyp, on program-sanctioned test tenants only.
+impact: Cross-tenant telephony data + call control on production — CRITICAL.
+testability: HUMAN_ONLY
+
+`[HYP] Self-service tenant creation via unauthenticated signup on prov.fonial.de/signup/confirm/55`
+class: AUTH
+asset: prov.fonial.de/signup/confirm/55
+confidence: 70
+reasoning: `/signup` ↔ `/signup/register/55` 302 ping-pong persists (fresh PHPSESSID on every hop, reconfirmed 2026-09-14); POST form fields (CSRF _token, trunkTariff, AccountAddress, AccountContact) confirmed live on the post target. Enables attacker-controlled two-tenant creation on the twin without program coordination, converting the BOLA test to self-service.
+evidence_needed: Successful POST to /signup/confirm/55 with fabricated data (example.invalid email, fake address) returns a tenant usable for /api/2.0/session/authenticate.
+verify_steps: 1) GET https://prov.fonial.de/signup/register/55 → capture PHPSESSID + CSRF _token; 2) POST /signup/confirm/55 (email=test_<ts>@example.invalid, trunkTariff=19, _token=<captured>, AccountAddress[street/zip/city], AccountContact[firstname/lastname]) → observe 302/200; 3) use resulting creds on /api/2.0/session/authenticate → verify SID issuance.
+impact: Removes program-approval gate for two-tenant cross-bind BOLA testing — enables independent validation of the session-confusion finding.
+testability: HUMAN_ONLY
+
+---
+
+## STEP 4 — SELF-CRITIQUE
+
+- `[PARKED]` Asymmetric admin-auth @ shop GraphQL `generateCustomerTokenAsAdmin`: confidence 40 at critique floor; docs require admin Bearer + customer opt-in → no standalone path; chain-only.
+- `[PARKED]` shop CORS/SSRF/IDOR: no ACAO, no URL fields in mutations, uniform 401 ACL — closed.
+- `[PARKED]` dslkonto dev-mode/profiler: scope.yml-excluded (descriptive errors/stack traces).
+- `[PARKED]` mm.fonial.de self-signup: all /api/v4 + SPA 404 — class eliminated.
+- `[PARKED]` red.fonial.de enumeration: auth-gated standalone; chain-only post-MM.
+- `[PARKED]` int.fonial.de RFC1918 DNS leak: LOW standalone, chain-info.
+- `[PARKED]` kampagne TYPO3 login: out-of-scope (public login panels).
+- `[FINAL]` 1. prov.fonial.de/api/2.0 cross-bind BOLA (80)
+- `[FINAL]` 2. kundenkonto.fonial.de/api/2.0 cross-bind BOLA (75)
+- `[FINAL]` 3. prov.fonial.de/signup/confirm/55 self-service tenant creation (70)
+
+---
+
+## STEP 5 — NEXT ACTION
+
+`[NEXT] HUMAN: Request program approval for exactly ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email + fabricated address, CSRF _token + PHPSESSID from GET /signup/register/55, trunkTariff=19; ≤1 rps; SaaS admin delete-on-completion) — sole unobserved variable converting BOLA to self-service; fallback: program-provisioned T_A/T_B on kundenkonto API.`
+
+---
+
+## STEP 6 — LEARNING
+
+- `[LEARN] ACCEPTED lockstep-deploy-version @ prov+kundenkonto: X-Fonial-Version v2026.09.03-1 → v2026.09.10-1 bumped in lockstep on both hosts with identical headers — confirms shared CI/CD pipeline and raises BOLA reproduce-rate from prov to production.`
+- `[LEARN] REJECTED further-passive-cycles @ fonial: canary (both twin + kundenkonto) byte-identical aside from deploy tag; 5-endpoint surface, `/session` semantics, ACAO*, signup 302-loop all zero-drift — no discriminating passive probe remains; momentum requires sanctioned writes.`
+- `[LEARN] ACCEPTED prov-signup-loop-persists: /signup/55 ↔ /signup/register/55 302 ping-pong reconfirmed 2026-09-14 with fresh PHPSESSID per hop — GET-gating unchanged; POST viability remains the sole unobserved variable for self-service BOLA.`
+- `[LEARN] ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: twin remains reachable, byte-identical behavior, matching version v2026.09.10-1 — comparison base for BOLA cross-bind test remains valid pending approval.`
+
+---
+
+## STEP 7 — RISK
+
+`[RISK] fonial: 62 — Sole actionable vector remains cross-tenant telephony BOLA (CRITICAL), still gated on two test tenants; the lockstep v2026.09.10-1 bump confirms shared codebase (higher reproducibility prov→prod) but also means both hosts were freshly re-deployed with the cross-bind surface intact (5 endpoints, sid-in-body, decorative PHPSESSID). Registration GET-loop persists, keeping self-service tenant creation gated on ONE sanctioned POST (6th cycle at this gate; gate-latency risk rising, surface-attrition risk if vendor hardens the twin). No new exploitable passive surface; CT-sweep hosts firewalled; all other classes closed/excluded.`

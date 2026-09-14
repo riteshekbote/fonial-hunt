@@ -3277,3 +3277,28 @@ evidence_needed: Any reachable path/port, or program-side confirmation these are
 verify_steps: HUMAN: ask if program-side network (or a scoped VPN) can reach these; passive TCP reachability re-check only.
 impact: Unknown until reachable; candidate internal-only admin (sbc=Session Border Controller, ldap) — HIGH if reachable, nil now.
 testability: HUMAN_ONLY
+## 2026-09-14 13:20:32 UTC [target] (model bigpickle)
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 80
+reasoning: Byte-identical clone of kundenkonto, now with matching version tag v2026.09.10-1 (lockstep deploy confirms shared codebase → prov findings reproduce on prod). Data endpoints authorize by body-SID auth-state only; `/session` issues cleartext UUID sid and deletes unknown PHPSESSID; fresh probe 2026-09-14 confirms `session unauthenticated` / 302-loop behavior unchanged. Live registration form at POST /signup/confirm/55 (CSRF _token, AccountAddress, AccountContact, trunkTariff 19/21/22). Sole unobserved variable: whether authenticated sid→credential is cross-checked against data-layer PHPSESSID.
+evidence_needed: Two valid tenants; tenant-B sid + tenant-A PHPSESSID on /evn/get or /devices/get returns tenant-A data (or clean rejection).
+verify_steps: HUMAN: GET /signup/register/55 harvest PHPSESSID+CSRF; POST /signup/confirm/55 fabricate tenant A (example.invalid) — repeat for B; POST /api/2.0/session → sidA; /session/authenticate(A) → PHPSESSID-A; repeat for B; POST /evn/get {sid:B,phpsessid:A} compare scoping; repeat /devices/get; /call/initiate only after clean read-result.
+impact: Cross-tenant CDR, phone numbers, SIP credentials, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 75
+reasoning: Same lockstep version v2026.09.10-1 as prov (confirmed same deploy pipeline); same mechanics, headers, 5-endpoint surface, cloudflare edge. Program exposure clause prohibits live-customer-data testing; validation path must reproduce on prov first. Lockstep versioning raises reproducibility odds of a prov-confirmed BOLA.
+evidence_needed: Same evidence as prov hyp, executed on prov twin first.
+verify_steps: Identical to prov hyp, on program-sanctioned test tenants only.
+impact: Cross-tenant telephony data + call control on production — CRITICAL.
+testability: HUMAN_ONLY
+class: AUTH
+asset: prov.fonial.de/signup/confirm/55
+confidence: 70
+reasoning: `/signup` ↔ `/signup/register/55` 302 ping-pong persists (fresh PHPSESSID on every hop, reconfirmed 2026-09-14); POST form fields (CSRF _token, trunkTariff, AccountAddress, AccountContact) confirmed live on the post target. Enables attacker-controlled two-tenant creation on the twin without program coordination, converting the BOLA test to self-service.
+evidence_needed: Successful POST to /signup/confirm/55 with fabricated data (example.invalid email, fake address) returns a tenant usable for /api/2.0/session/authenticate.
+verify_steps: 1) GET https://prov.fonial.de/signup/register/55 → capture PHPSESSID + CSRF _token; 2) POST /signup/confirm/55 (email=test_<ts>@example.invalid, trunkTariff=19, _token=<captured>, AccountAddress[street/zip/city], AccountContact[firstname/lastname]) → observe 302/200; 3) use resulting creds on /api/2.0/session/authenticate → verify SID issuance.
+impact: Removes program-approval gate for two-tenant cross-bind BOLA testing — enables independent validation of the session-confusion finding.
+testability: HUMAN_ONLY

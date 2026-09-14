@@ -1960,3 +1960,22 @@
 - LEARN: ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
 - LEARN: REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origi
 - LEARN: ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanism
+
+## RANKED HYPOTHESES 2026-09-14 13:22:35 UTC
+- [80] prov.fonial.de/api/2.0: Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on prov.fonial.de/api/2.0 (from art/lead_nemotron3.txt)
+- NEXT(hypotheses-nemotron3.txt): HUMAN: Request program approval for exactly ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email + fabricated addr
+- LEARN: REJECTED further-passive-cycles @ fonial: 2026-09-13 re-confirms zero drift on prov/kundenkonto/shop/red; extra GET/HEAD/OPTIONS passes add no discrimination va
+- LEARN: ACCEPTED prov-canary-stable @ prov.fonial.de/api/2.0: twin remains reachable and byte-identical (nginx/1.10.3, v2026.09.03-1, ACAO*, 5-endpoint) — the required 
+- LEARN: ACCEPTED prov-self-signup-enabler: prov.fonial.de serves identical Symfony registration flow (POST /signup/confirm/55, CSRF, AccountAddress, AccountContact, tru
+- LEARN: REJECTED mm-fonial-de-api-surface: /api/v4/system/ping, /api/v4/users, /api/v4/teams all 404; root 404; Mattermost instance degraded — self-signup class elimina
+- LEARN: REJECTED shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence; drop as primary, retain only as chain component
+- LEARN: ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.03-1, ACAO*/ACAM, no allow-credentials, 
+- LEARN: ACCEPTED red-chain-only @ red.fonial.de: Redmine version + plugin stack = excluded class standalone; usable solely as post-MM-account amplification component
+- LEARN: REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
+- LEARN: REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+- LEARN: ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+- LEARN: REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origi
+- LEARN: ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanism
+- LEARN: ACCEPTED CT-sweep-inventory-expansion @ fonial: crt.sh enumeration surfaces ~19 subdomains absent from inventory; 7 reachable (kampagne TYPO3 200, staging 401/4
+- LEARN: ACCEPTED internal-host-DNS-leak @ int.fonial.de: 192.168.10.71 (RFC1918) + git.fonial.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure,
+- LEARN: REJECTED kampagne-typo3-backend-login @ kampagne.fonial.de/typo3/: standard TYPO3 CMS Login (LIVE) = "publicly accessible login panels" out-of-scope; /install.p

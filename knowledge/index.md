@@ -346,3 +346,6 @@
 - 2026-09-14 ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
 - 2026-09-14 REJECTED further-passive-cycles @ fonial: canary (both twin + kundenkonto OPTIONS /session) byte-identical zero drift; sole survivors remain the two HUMAN_ONLY cross-binds — momentum requires sanctioned writes.
 - 2026-09-14 REJECTED further-passive-cycles @ fonial: canary (both twin + kundenkonto OPTIONS /session) byte-identical zero drift; sole survivors remain the two HUMAN_ONLY cross-binds — momentum requires sanctioned writes.
+- 2026-09-14 ACCEPTED CT-sweep-inventory-expansion @ fonial: crt.sh enumeration surfaces ~19 subdomains absent from inventory; 7 reachable (kampagne TYPO3 200, staging 401/403, dead 404s), 12 firewalled/unreachable — first new breadth since 2026-09-06, but no new exploitable passive surface
+- 2026-09-14 ACCEPTED internal-host-DNS-leak @ int.fonial.de: 192.168.10.71 (RFC1918) + git.fonial.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure, LOW standalone, chain-info only
+- 2026-09-14 REJECTED kampagne-typo3-backend-login @ kampagne.fonial.de/typo3/: standard TYPO3 CMS Login (LIVE) = "publicly accessible login panels" out-of-scope; /install.php + eID=dump 404
