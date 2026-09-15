@@ -540,3 +540,12 @@ www.fonial.de
 - CHANGED All passive discovery on all assets closed since 2026-09-06; two HUMAN_ONLY survivors remain unchanged in class.
 
 ## 2026-09-14 22:19:22 UTC
+
+## 2026-09-15 00:46:13 UTC
+- NEW Version bump detected on prov.fonial.de/api/2.0: X-Fonial-Version target state v2026.09.10-1 (from v2026.09.03-1); last live canary 2026-09-13 showed v2026.09.03-1 — new deploy since last probe
+- NEW Lockstep deploy confirmed: kundenkonto.fonial.de + prov.fonial.de both live-probed at v2026.09.10-1 same minute (2026-09-14 22:14 UTC) — shared pipeline at probe level
+- NEW prov.fonial.de/api/2.0 drift-free post-deploy: Live probe 2026-09-14 22:14 confirms v2026.09.10-1 with unchanged semantics (cleartext UUID SID, body-SID-only authz, decorative PHPSESSID, ACAO*, nginx/
+- CHANGED mm.fonial.de API surface eliminated: all /api/v4/* + root now 404; X-Version-Id header gone — self-signup class fully eliminated
+- CHANGED kampagne.fonial.de TYPO3 backend login (LIVE) = publicly accessible login panel → OUT-OF-SCOPE per scope.yml
+- CHANGED CT-sweep inventory expansion: crt.sh exposes ~19 new subdomains (7 reachable, 12 firewalled) — first new breadth since 2026-09-06, no exploitable passive surface
+- CHANGED int.fional.de DNS leak: 192.168.10.71 (RFC1918) + git.fonial.de→git.fonial.dev exposed — LOW standalone, chain-info only
