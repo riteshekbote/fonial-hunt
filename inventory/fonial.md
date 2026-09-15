@@ -553,3 +553,11 @@ www.fonial.de
 ## 2026-09-15 05:46:28 UTC
 
 ## 2026-09-15 11:05:41 UTC
+
+## 2026-09-15 15:36:23 UTC
+- CHANGED Canary refresh 2026-09-15 15:24 UTC: prov.fonial.de + kundenkonto.fonial.de both OPTIONS /api/2.0/session → 200, X-Fonial-Version v2026.09.10-1, ACAO*, ACAM GET/POST/OPTIONS, no allow-credentials, fre
+- NEW Live canary confirms prov.fonial.de/api/2.0/session at v2026.09.10-1 (nginx/1.10.3, ACAO*, no allow-credentials, no PHPSESSID) — zero drift since 2026-09-14 22:14 probe
+- NEW Live canary confirms kundenkonto.fonial.de/api/2.0/session at v2026.09.10-1 (Cloudflare, identical headers) — lockstep deploy verified at probe level
+- CHANGED mm.fonial.de API surface fully eliminated (all /api/v4/* + root 404, X-Version-Id gone) — self-signup class dead
+- CHANGED CT-sweep inventory expansion complete: ~19 new subdomains, 7 reachable (kampagne TYPO3 200, staging 401/403, dead 404s), 12 firewalled — no exploitable passive surface
+- CHANGED int.fional.de DNS leak confirmed: 192.168.10.71 (RFC1918) + git.fonial.de→git.fonial.dev in public DNS

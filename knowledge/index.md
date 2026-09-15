@@ -383,3 +383,6 @@
 - 2026-09-15 REJECTED mm-fonial-de-api-surface: all /api/v4 endpoints + root now 404 — self-signup class eliminated.
 - 2026-09-15 REJECTED shop admin-token standalone: confidence 40 at critique floor, no new evidence — chain component only.
 - 2026-09-15 ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.10-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate deployment to test dual-backend cross-bind
+- 2026-09-15 ACCEPTED canary-drift-free-refresh @ prov+kundenkonto: both live-probed 2026-09-15 15:24 UTC at v2026.09.10-1 same minute → lockstep reconfirmed, comparison base valid post-deploy, HUMAN gate is the only remaining step.
+- 2026-09-15 REJECTED further-passive-cycles @ fonial: canary refresh (this cycle) reconfirms zero drift on the sole survivor pair — no discriminating passive probe remains on either survivor; momentum requires sanctioned writes, not probe data.
+- 2026-09-15 ACCEPTED version-bump-drift-free @ prov.fonial.de/api/2.0: Live probe 2026-09-14 22:14 UTC confirms v2026.09.10-1 with unchanged semantics → comparison base valid post-deploy; standalone drift hyp resolved, folded into BOLA verify_steps
