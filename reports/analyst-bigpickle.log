@@ -20407,3 +20407,8 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 - [RISK] fonial: 79 — Customer portal holds PII/CDR/SIP-creds/call-control; dual-backend session-confusion surface confirmed; prov is an unfronted byte-identical twin with active deploy pipeline (lockstep v2026.09.10-1 reconfirmed 19:11 UTC) and live self-signup flow, making the CRITICAL-severity BOLA safely reproducible on the twin before any prod claim. Hypothesis gated solely on HUMAN/program approval for one fabricated registration. No new defensible passive finding this cycle; all other asset classes closed or out-of-scope. Canary fresh — the immediate micro-step before the HUMAN gate is complete.
+===== ANALYST bigpickle 2026-09-15 22:21:50 UTC =====
+[0m
+> build · big-pickle
+[0m
+[91m[1mError: [0mError from provider (Console): Upstream request failed: [invalid_request_error] request could not be processed
