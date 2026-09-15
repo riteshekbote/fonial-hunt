@@ -379,3 +379,7 @@
 - 2026-09-15 ACCEPTED CT-sweep-inventory-expansion @ fonial: crt.sh enumeration surfaces ~19 subdomains absent from inventory; 7 reachable (kampagne TYPO3 200, staging 401/403, dead 404s), 12 firewalled/unreachable — first new breadth since 2026-09-06, but no new exploitable passive surface
 - 2026-09-15 ACCEPTED internal-host-DNS-leak @ int.fonial.de: 192.168.10.71 (RFC1918) + git.fonial.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure, LOW standalone, chain-info only
 - 2026-09-15 REJECTED kampagne-typo3-backend-login @ kampagne.fonial.de/typo3/: standard TYPO3 CMS Login (LIVE) = "publicly accessible login panels" out-of-scope; /install.php + eID=dump 404
+- 2026-09-15 ACCEPTED version-bump-drift-free @ prov.fonial.de/api/2.0: Live probe 2026-09-14 22:14 UTC confirms v2026.09.10-1 with unchanged semantics → comparison base valid post-deploy.
+- 2026-09-15 REJECTED mm-fonial-de-api-surface: all /api/v4 endpoints + root now 404 — self-signup class eliminated.
+- 2026-09-15 REJECTED shop admin-token standalone: confidence 40 at critique floor, no new evidence — chain component only.
+- 2026-09-15 ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.10-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate deployment to test dual-backend cross-bind
