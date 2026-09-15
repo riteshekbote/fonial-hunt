@@ -549,3 +549,5 @@ www.fonial.de
 - CHANGED kampagne.fonial.de TYPO3 backend login (LIVE) = publicly accessible login panel → OUT-OF-SCOPE per scope.yml
 - CHANGED CT-sweep inventory expansion: crt.sh exposes ~19 new subdomains (7 reachable, 12 firewalled) — first new breadth since 2026-09-06, no exploitable passive surface
 - CHANGED int.fional.de DNS leak: 192.168.10.71 (RFC1918) + git.fonial.de→git.fonial.dev exposed — LOW standalone, chain-info only
+
+## 2026-09-15 05:46:28 UTC

@@ -3395,3 +3395,28 @@ testability: HUMAN_ONLY
 [LEARN] ACCEPTED lockstep-deploy-live @ kundenkonto+prov: both live-probed v2026.09.10-1 same minute in prior cycle → shared deploy pipeline confirmed at probe level; prov→prod fidelity raised.
 [LEARN] REJECTED further-passive-cycles @ fonial: no remaining passive probe discriminates the two HUMAN_ONLY survivors; momentum requires sanctioned writes, not probe data.
 [RISK] fonial: 79 — Customer portal holds PII/CDR/SIP-creds/call-control; dual-backend session-confusion surface confirmed; prov is an unfronted byte-identical twin with active deploy pipeline (lockstep v2026.09.10-1) and live self-signup flow, making the CRITICAL-severity BOLA safely reproducible on the twin before any prod claim. Hypothesis gated solely on HUMAN/program approval for one fabricated registration. No new defensible passive finding this cycle; all other asset classes closed or out-of-scope.
+## 2026-09-15 05:43:11 UTC [target] (model bigpickle)
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 84
+reasoning: Unchanged since 22:14 UTC live probe: v2026.09.10-1, nginx/1.10.3 direct, ACAO*, body-SID-only authz on data endpoints, decorative PHPSESSID, cleartext UUID sid, live POST /signup/confirm/55 form. Lockstep deploy with prod confirmed. No passive discriminator remains. Unfronted = lowest-gate target.
+evidence_needed: Tenant-B sid + tenant-A PHPSESSID on /evn/get or /devices/get returns tenant-A data (or clean rejection).
+verify_steps: HUMAN: harvest CSRF from GET /signup/register/55; POST /signup/confirm/55 (example.invalid email, fabricated address, trunkTariff 19) → tenant A; repeat → tenant B; POST /api/2.0/session + /session/authenticate per tenant; POST /evn/get {sid:B,phpsessid:A}; repeat /devices/get; /call/initiate only after clean read.
+impact: Cross-tenant CDR, phone numbers, SIP creds, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Lockstep v2026.09.10-1 → prov-confirmed BOLA reproduces on production
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 79
+reasoning: Same-version live probes (22:14 UTC) on both hosts verify shared deploy pipeline. Identical 5-endpoint surface, headers, session semantics. Prod Cloudflare-fronted; exposure clause prohibits live-customer testing → validate on prov first.
+evidence_needed: Same evidence as prov hyp, executed on prov twin first.
+verify_steps: Identical to prov hyp, program-sanctioned test tenants only.
+impact: Cross-tenant telephony data + call control on production — CRITICAL.
+testability: HUMAN_ONLY
+[PARKED] Version-bump surface drift: resolved by 22:14 probe, folded into BOLA verify_steps. Not standalone.
+[PARKED] shop admin-token standalone @ shop.fonial.de/graphql: confidence 40 at critique floor, no new evidence. Chain component only.
+[PARKED] int.fonial.de DNS/RFC1918 leak: accepted LOW informational, chain-info only.
+[FINAL] survivors ranked:
+[NEXT] HUMAN: Request program approval for exactly ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email, fabricated address, trunkTariff 19) to confirm end-to-end tenant creation on the twin — the sole remaining gate for the two-tenant BOLA cross-bind test. Do not self-execute; gated on program approval. Simultaneously re-verify OPTIONS /session canary at v2026.09.10-1 to confirm no drift since 22:14 UTC.
+[RISK] fonial: 79 — Customer portal holds PII/CDR/SIP-creds/call-control; dual-backend session-confusion surface confirmed; prov is an unfronted byte-identical twin with active deploy pipeline (lockstep v2026.09.10-1) and live self-signup flow, making the CRITICAL-severity BOLA safely reproducible on the twin before any prod claim. Hypothesis gated solely on HUMAN/program approval for one fabricated registration. No new defensible passive finding this cycle; all other asset classes closed or out-of-scope.
