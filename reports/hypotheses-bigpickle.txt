@@ -1,23 +1,20 @@
-## 2026-09-16 18:37:15 UTC [target] (model bigpickle)
-[PRIO] prov.fonial.de/api/2.0 — 8.5 (a10 b10 t7 g6 c4 f12) — dual-backend seam confirmed, unfronted, live signup form, lockstep deploys
-[PRIO] kundenkonto.fonial.de/api/2.0 — 7.9 (a8 b10 t7 g5 c7 f8) — prod payload, Cloudflare-gated, exposure clause binds
-[PRIO] kampagne.fonial.de — 3.1 (a4 b4 t5 g8 c2 f3) — TYPO3 backend login only; /install.php, eID=dump 404; out-of-scope class
+## 2026-09-16 21:41:35 UTC [target] (model bigpickle)
 [HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
 class: AUTH
 asset: prov.fonial.de/api/2.0
 confidence: 85
-reasoning: v2026.09.16-1 live-probed both hosts 10:00:17 UTC same minute, zero semantic drift — body-SID-only authz on /evn/get+/devices/get+/call/initiate (`session invalid` on absent SID), decorative PHPSESSID (Secure;HttpOnly), cleartext UUID sid, ACAO * no credentials, 5-endpoint surface intact, nginx/1.10.3 direct. Live POST /signup/confirm/55 (CSRF _token, trunkTariff 19/21/22, AccountAddress/AccountContact) confirmed in prior cycles. Two-tenant creation remains the sole unobserved variable.
-evidence_needed: tenant-B sid + tenant-A PHPSESSID on /evn/get or /devices/get returns tenant-A data (or a clean rejection proving the bind).
-verify_steps: HUMAN: harvest CSRF from GET /signup/register/55; 2× POST /signup/confirm/55 (example.invalid email, fabricated address, trunkTariff 19) → tenants A+B; POST /api/2.0/session per tenant; cross-present {sid:B, phpsessid:A} on /evn/get then /devices/get; /call/initiate only after a clean read.
+reasoning: v2026.09.16-1 live-probed this cycle (18:5x UTC) on both hosts with zero semantic drift — body-SID-only authz (`session invalid` on absent SID), decorative PHPSESSID (Secure;HttpOnly), cleartext UUID sid, ACAO * no credentials, 5-endpoint surface, nginx/1.10.3 direct. Signup POST form (CSRF _token, trunkTariff 19/21/22) live on twin in prior cycles; GET-side 302→/signup/55 unchanged. Two-tenant creation remains the sole unobserved variable; fresh deploy marginally raises template-drift risk → twin-first validation remains correct.
+evidence_needed: tenant-B sid + tenant-A PHPSESSID on /evn/get or /devices/get returns tenant-A data, or a clean rejection proving the bind.
+verify_steps: HUMAN: harvest CSRF from GET /signup/register/55; 2× POST /signup/confirm/55 (example.invalid email, fabricated address, trunkTariff 19) → tenants A+B; POST /api/2.0/session per tenant; cross-present {sid:B, phpsessid:A} on /evn/get then /devices/get; /call/initiate only after clean read.
 impact: cross-tenant CDR, phone numbers, SIP creds, device lists, outbound call control — CRITICAL.
 testability: HUMAN_ONLY
 [HYP] Prov-confirmed BOLA reproduces on production (lockstep v2026.09.16-1)
 class: AUTH
 asset: kundenkonto.fonial.de/api/2.0
 confidence: 80
-reasoning: Fourth consecutive same-minute lockstep pair (v2026.09.10-1 → v2026.09.16-1, 10:00:17 UTC); identical 5-endpoint surface, headers, session semantics. Shared deploy pipeline evidenced across multiple version hops; seam survived 2 deploy cycles unchanged. Cloudflare-fronted; exposure clause forbids live-customer testing → prov-validate first, sanctioned test tenants only.
-evidence_needed: same cross-bind evidence as prov hyp, produced on prov twin before any prod repro.
-verify_steps: identical to prov hyp; program-sanctioned test tenants; never live customer data.
+reasoning: Fourth consecutive same-minute lockstep pair (v2026.09.10-1 → v2026.09.16-1), re-confirmed this cycle at 18:5x UTC after the 10:00:17 UTC pair; seam survived 2 deploy cycles unchanged. Shared deploy pipeline evidenced across multiple version hops → prov→prod fidelity high. Cloudflare-fronted; exposure clause forbids live-customer testing → validate prov first, sanctioned test tenants only.
+evidence_needed: same cross-bind evidence, produced on prov twin before any prod repro.
+verify_steps: identical to prov hyp; program-sanctioned test tenants only; never live customer data.
 impact: cross-tenant telephony data + call control on production — CRITICAL.
 testability: HUMAN_ONLY
 [HYP] TYPO3 backend enumeration on kampagne remains closed — parked
@@ -27,11 +24,3 @@ confidence: 15
 reasoning: Live TYPO3 backend login is a public login panel (out-of-scope); /install.php and eID=dump confirmed 404; no TYPO3-specific unauth route known without creds.
 impact: none standalone.
 testability: PASSIVE
-[PARKED] kampagne-typo3: public login panel = out-of-scope; /install.php 404; no passive discriminator left. Below floor.
-[PARKED] shop admin-token: confidence 40 at critique floor, no new evidence — chain component only.
-[FINAL] cross-bind BOLA @ prov (85, HUMAN_ONLY) > prov-to-prod repro @ kundenkonto (80, HUMAN_ONLY)
-[NEXT] HUMAN: Canary fresh (v2026.09.16-1, 10:00:17 UTC, 4th lockstep pair), comparison base valid post-deploy, signup POST form unchanged. Request program approval for exactly ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email, fabricated address, trunkTariff 19) to confirm end-to-end tenant creation on the twin — the sole remaining gate before the two-tenant BOLA cross-bind test. Do not self-execute; no further passive probe discriminates the survivor.
-[LEARN] REJECTED kampagne-typo3-backend @ kampagne.fonial.de: live TYPO3 login = out-of-scope public login panel; /install.php + eID=dump 404; class closed (re-confirmed this cycle, no drift).
-[LEARN] ACCEPTED lockstep-deploy-live @ kundenkonto+prov: fourth consecutive same-minute lockstep pair (v2026.09.16-1, 10:00:17 UTC) — shared deploy pipeline confirmed across 2 version hops; seam survived deploy; prov→prod fidelity raised.
-[LEARN] REJECTED further-passive-cycles @ fonial: canary refresh reconfirms zero drift on the sole survivor pair; no remaining passive probe discriminates the two HUMAN_ONLY survivors — momentum requires sanctioned writes, not probe data.
-[RISK] fonial: 80 — Customer portal holds PII/CDR/SIP-creds/call-control; dual-backend session-confusion seam re-verified intact on a brand-new deploy (v2026.09.16-1), surviving two deploy cycles unchanged; unfronted byte-identical twin (prov) with live self-signup flow makes the CRITICAL-severity BOLA objectively reproducible before any prod claim. Sole blocker is program approval for one fabricated registration (HUMAN gate). No new defensible passive finding; all other classes closed or out-of-scope.

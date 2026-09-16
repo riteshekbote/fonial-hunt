@@ -2254,3 +2254,6 @@
 - LEARN: REJECTED kampagne-typo3-backend @ kampagne.fonial.de: live TYPO3 login = out-of-scope public login panel; /install.php + eID=dump 404; class closed (re-confirme
 - LEARN: ACCEPTED lockstep-deploy-live @ kundenkonto+prov: fourth consecutive same-minute lockstep pair (v2026.09.16-1, 10:00:17 UTC) — shared deploy pipeline confirmed 
 - LEARN: REJECTED further-passive-cycles @ fonial: canary refresh reconfirms zero drift on the sole survivor pair; no remaining passive probe discriminates the two HUMAN
+
+## RANKED HYPOTHESES 2026-09-16 21:42:38 UTC
+- [85] prov.fonial.de/api/2.0: Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin (from art/lead_bigpickle.txt)
