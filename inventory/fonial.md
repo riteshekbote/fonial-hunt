@@ -589,3 +589,5 @@ www.fonial.de
 - CHANGED shop.fonial.de/graphql: Introspection live unauthenticated; asymmetric admin-auth (REST 404, GraphQL introspectable) unchanged at confidence 40
 - CHANGED dslkonto.fonial.de/app_dev.php: Dev-mode stack traces + fs paths only; scope.yml excludes descriptive errors — non-reportable standalone
 - CHANGED CT-sweep: ~19 new subdomains (7 reachable, 12 firewalled); kampagne.fonial.de TYPO3 backend login (LIVE) = out-of-scope; int.fonial.de RFC1918 leak (LOW, chain-only)
+
+## 2026-09-16 15:00:33 UTC

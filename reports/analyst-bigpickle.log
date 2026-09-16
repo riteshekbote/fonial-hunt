@@ -20831,3 +20831,32 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 [RISK] fonial: 80 — Customer portal holds PII/CDR/SIP-creds/call-control; dual-backend session-confusion surface re-verified intact on a brand-new deploy (v2026.09.16-1, same-minute lockstep 4th pair verified at 10:00:17 UTC), meaning the seam survived at least two deploy cycles unchanged. Unfronted twin + live self-signup flow make the CRITICAL-severity BOLA objectively reproducible before any prod claim. Gated solely on program approval for one fabricated registration. No new passive finding this cycle; all other classes closed or out-of-scope.
+===== ANALYST bigpickle 2026-09-16 15:00:33 UTC =====
+[0m
+> build · big-pickle
+[0m
+Looking at the knowledge base and current state, here's the structured assessment:
+
+## Current Security Posture Summary
+
+**CRITICAL FINDING (85% confidence)**: Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on kundenkonto.fonial.de API
+
+### Attack Vector
+- Data endpoints (`/evn/get`, `/devices/get`, `/call/initiate`) authorize by **body SID only**
+- PHPSESSID cookie is decorative - doesn't control access
+- `/session` endpoint issues cleartext UUID SID in response body
+- Dual-backend architecture (session vs data) with different response headers
+
+### Exploitation Path
+1. Obtain SID for Tenant A via `/session` + `/session/authenticate`
+2. Obtain SID for Tenant B (requires second account)
+3. Cross-present: `{sid: TenantB, phpsessid: TenantA}` on data endpoints
+4. If successful: Cross-tenant CDR, phone numbers, SIP creds, device lists, outbound call control
+
+### Why This Matters
+- **Impact**: CRITICAL - Full telephony data exposure + call control
+- **Attack Surface**: kundenkonto.fonial.de (Cloudflare-fronted) + prov.fonial.de (unfronted twin)
+- **Barrier**: Program approval needed for one fabricated registration POST to validate tenant creation
+
+### Recommendation
+The findings are structured and ready for program submission. The dual-session binding anomaly is a genuine architectural weakness that could enable cross-tenant data access. Requesting HUMAN approval for the proof-of-concept validation on prov.fonial.de before any prod claim.
