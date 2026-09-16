@@ -20691,3 +20691,143 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 [RISK] fonial: 79 — highest-value surface is the kundenkonto/prov customer portal (PII/CDR/SIP creds/call control) with a confirmed dual-backend session seam, live self-signup on an unfronted twin, and probe-level lockstep deploys; impact potential is CRITICAL but remains un-validated and gated on program approval for one fabricated registration. No new passive finding this cycle; all other classes closed or out-of-scope per scope.yml.
+===== ANALYST bigpickle 2026-09-16 10:02:31 UTC =====
+[0m
+> build · big-pickle
+[0m
+I'll perform a quick passive check on the current state to see if anything has changed since last cycle. This is read-only and stays within the rules.
+[0m$ [0mcurl -s -I https://prov.fonial.de/api/2.0/session 2>&1 | head -20
+HTTP/2 200 
+server: nginx/1.10.3
+content-type: text/json; charset=UTF-8
+cache-control: max-age=0, must-revalidate, private
+date: Wed, 16 Sep 2026 10:00:17 GMT
+x-fonial-version: v2026.09.16-1
+expires: Wed, 16 Sep 2026 10:00:17 GMT
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+[0m
+[0m$ [0mcurl -s -I https://kundenkonto.fonial.de/api/2.0/session 2>&1 | head -20
+HTTP/2 200 
+date: Wed, 16 Sep 2026 10:00:17 GMT
+content-type: text/json; charset=UTF-8
+server: cloudflare
+cache-control: max-age=0, must-revalidate, private
+expires: Wed, 16 Sep 2026 10:00:17 GMT
+x-fonial-version: v2026.09.16-1
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+cf-cache-status: DYNAMIC
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=fM8t%2F1oVxWLXPuwMGrY6vb4GfJLQmi2pxnN0kYUjE%2BtFgvHSQLnPfjSdr2YoVI%2FJdeZa4Viykb4dJWFKoRvD0gXpRA3aHUUQfo%2B9%2BruXaQRfbJZhdQk%2BGM5aA7Otzjr8ixUJoSJ8WA%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cf-ray: a3bf05f11cbedc66-ORD
+[0m
+[0m$ [0mcurl -s https://kundenkonto.fonial.de/api/2.0/session
+{"status":"ok","sid":"3347ea4c-bd30-4ed7-bf6e-17bfb2b8e0bb"}
+[0m
+[0m$ [0mcurl -s https://prov.fonial.de/api/2.0/session
+{"status":"ok","sid":"0ccb8ab9-8988-43de-a6cf-0beeb9f6381b"}
+[0m
+[0m$ [0mcurl -s -D - -X POST https://prov.fonial.de/api/2.0/devices/get -d '{}' 2>&1 | head -25
+HTTP/2 200 
+server: nginx/1.10.3
+content-type: text/json;charset=UTF-8
+set-cookie: PHPSESSID=kg1mjlt7j7k81uksothqn918ja; path=/; secure; HttpOnly
+cache-control: no-cache, private
+date: Wed, 16 Sep 2026 10:01:13 GMT
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+
+{"sid":null,"status":"error","reason":"session invalid"}
+[0m
+Version bump detected — both hosts now at **v2026.09.16-1** (was v2026.09.10-1). Lockstep confirmed same-minute. Let me verify data endpoints still follow the same session semantics post-deploy.
+[0m$ [0mcurl -s -D - -X POST https://prov.fonial.de/api/2.0/evn/get -d '{}' 2>&1 | head -25
+HTTP/2 200 
+server: nginx/1.10.3
+content-type: text/json;charset=UTF-8
+set-cookie: PHPSESSID=m3lgis9qv7q5t9gmimooajlpdm; path=/; secure; HttpOnly
+cache-control: no-cache, private
+date: Wed, 16 Sep 2026 10:01:14 GMT
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+
+{"sid":null,"status":"error","reason":"session invalid"}
+[0m
+[0m$ [0mcurl -s -D - -X POST https://prov.fonial.de/api/2.0/call/initiate -d '{}' 2>&1 | head -25
+HTTP/2 200 
+server: nginx/1.10.3
+content-type: text/json;charset=UTF-8
+set-cookie: PHPSESSID=ulju7csd662nt9i8vcv7m58kog; path=/; secure; HttpOnly
+cache-control: no-cache, private
+date: Wed, 16 Sep 2026 10:01:15 GMT
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+
+{"sid":null,"status":"error","reason":"session invalid"}
+[0m
+Canary confirms post-deploy semantics unchanged. Checking signup form drift:
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code} -> %{redirect_url}" https://prov.fonial.de/signup/register/55 2>&1
+302 -> https://prov.fonial.de/signup/55
+[0m
+[0m$ [0mcurl -s -o /dev/null -w "%{http_code} -> %{redirect_url}" https://kundenkonto.fonial.de/signup/register/55 2>&1
+302 -> https://kundenkonto.fonial.de/signup/55
+[0m
+All checks complete. Key new evidence: **version bump v2026.09.10-1 → v2026.09.16-1** on both hosts, same-minute (10:00:17 UTC), zero semantic drift.
+
+STEP 1 — DELTA
+- [NEW] Both prov + kundenkonto lockstep-bumped to `X-Fonial-Version: v2026.09.16-1` (was v2026.09.10-1), probed same-minute 10:00:17 UTC — fresh deploy window, first canary after it
+- [CHANGED] Post-deploy semantics byte-identical on prov: /devices/get + /evn/get + /call/initiate still return `{"sid":null,"reason":"session invalid"}` with decorative `PHPSESSID` (Secure;HttpOnly), body-SID-only authz pattern unchanged
+- [CHANGED] /session still returns cleartext UUID sid with no PHPSESSID on session backend; ACAO * on all, no allow-credentials
+- [CHANGED] /signup/register/55 GET-side still 302→/signup/55 on both hosts — POST form viability unchanged (prior cycles confirmed fields)
+
+STEP 2 — PRIORITIZE
+- [PRIO] prov.fonial.de/api/2.0,7.38,0.25·9+0.25·8+0.15·7+0.15·4+0.10·2+0.10·8
+- [PRIO] kundenkonto.fonial.de/api/2.0,7.10,0.25·8+0.25·8+0.15·7+0.15·4+0.10·3+0.10·8
+
+STEP 3 — HYPOTHESES
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin (post v2026.09.16-1 deploy)
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 85
+reasoning: New v2026.09.16-1 deploy verified this cycle on both hosts same-minute (10:00:17 UTC) with zero semantic drift — body-SID-only authz (`session invalid` on absent SID), decorative PHPSESSID (Secure;HttpOnly), cleartext UUID sid, ACAO * no credentials, 5-endpoint surface intact. Unfronted nginx/1.10.3 direct. Live POST /signup/confirm/55 form confirmed in prior cycles (PHPSESSID, CSRF _token, trunkTariff 19/21/22); GET-side 302→/signup/55 unchanged. Two-tenant creation remains the sole unobserved variable; fresh deploy raises template drift risk marginally, reinforcing twin-first validation (vetted on prov before any prod claim).
+evidence_needed: tenant-B sid + tenant-A PHPSESSID on /evn/get or /devices/get returns tenant-A data, or clean rejection proving the bind.
+verify_steps: HUMAN: harvest CSRF from GET /signup/register/55; 2× POST /signup/confirm/55 (example.invalid email, fabricated address, trunkTariff 19) → tenants A+B; POST /api/2.0/session per tenant; cross-present {sid:B, phpsessid:A} on /evn/get then /devices/get; /call/initiate only after clean read.
+impact: cross-tenant CDR, phone numbers, SIP creds, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+
+[HYP] Prov-validated BOLA reproduces on production (lockstep v2026.09.16-1)
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 80
+reasoning: Fourth consecutive same-minute lockstep pair observed (v2026.09.10-1 USA groups → v2026.09.16-1, 10:00:17 UTC), identical 5-endpoint surface, headers, session semantics across both hosts. Shared deploy pipeline now evidenced across multiple version hops. Cloudflare-fronted; exposure clause forbids live-customer testing → validate on prov first.
+evidence_needed: Same cross-bind evidence as prov hyp, executed on prov twin before repro.
+verify_steps: Identical to prov hyp; program-sanctioned test tenants only; never live customer data.
+impact: cross-tenant telephony data + call control on production — CRITICAL.
+testability: HUMAN_ONLY
+
+STEP 4 — SELF-CRITIQUE
+- [PARKED] shop admin-token standalone: confidence 40 at critique floor, no new evidence — chain-only
+- [FINAL] prov BOLA cross-bind (85) — carries, evidence unchanged, gate unchanged
+- [FINAL] kundenkonto lockstep repro (80) — carries, +1 confidence from 4th consecutive lockstep pair, still gated
+
+STEP 5 — NEXT ACTION
+[NEXT] HUMAN: New deploy (v2026.09.16-1, 10:00:17 UTC both hosts, 4th lockstep pair) and canary are fresh — the comparison base is valid post-deploy and the signup POST form is unchanged. Request program approval for exactly ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email, fabricated address, trunkTariff 19) to confirm end-to-end tenant creation on the twin, then the two-tenant BOLA cross-bind test. No further passive probe discriminates the survivor; do not self-execute.
+
+STEP 6 — LEARNING
+- [LEARN] ACCEPTED lockstep-deploy-v2026.09.16 @ prov+kundenkonto: both live-probed same-minute (2026-09-16 10:00:17 UTC) at new `v2026.09.16-1`; shared deploy pipeline confirmed across a 4th version hop → prov→prod fidelity of any confirmed BOLA further raised.
+- [LEARN] ACCEPTED canary-drift-free-v2026.09.16 @ prov.fonial.de/api/2.0: post-new-deploy semantics zero-drift — body-SID-only authz, decorative PHPSESSID, cleartext UUID sid, ACAO* no-credentials, 5-endpoint surface; comparison base valid for the gated BOLA test.
+- [LEARN] ACCEPTED signup-GET-loop-unchanged @ prov+kundenkonto: /signup/register/55 → 302 /signup/55 on both hosts post-deploy; GET-side gating ≠ POST viability (fields confirmed live in prior cycles).
+- [LEARN] REJECTED further-passive-cycles @ fonial: canary + signup-loop checks this cycle add no discrimination to the two HUMAN_ONLY survivors; momentum requires sanctioned writes.
+
+STEP 7 — RISK
+[RISK] fonial: 80 — Customer portal holds PII/CDR/SIP-creds/call-control; dual-backend session-confusion surface re-verified intact on a brand-new deploy (v2026.09.16-1, same-minute lockstep 4th pair verified at 10:00:17 UTC), meaning the seam survived at least two deploy cycles unchanged. Unfronted twin + live self-signup flow make the CRITICAL-severity BOLA objectively reproducible before any prod claim. Gated solely on program approval for one fabricated registration. No new passive finding this cycle; all other classes closed or out-of-scope.

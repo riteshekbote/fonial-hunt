@@ -581,3 +581,11 @@ www.fonial.de
 ## 2026-09-16 00:29:10 UTC
 
 ## 2026-09-16 05:13:28 UTC
+
+## 2026-09-16 10:02:31 UTC
+- NEW prov.fonial.de/api/2.0 + kundenkonto.fonial.de/api/2.0: X-Fonial-Version bumped v2026.09.10-1 → v2026.09.16-1 (live OPTIONS /session 2026-09-16 10:00 UTC); lockstep deploy reconfirmed same minute
+- NEW prov.fonial.de/signup/register/55: GET still 302→/signup/55 loop; POST form viability unconfirmed this cycle (prior cycles: PHPSESSID, CSRF _token, trunkTariff 19/21/22, AccountAddress, AccountContact
+- CHANGED mm.fonial.de: All /api/v4/* + root 404 confirmed; X-Version-Id gone; self-signup class fully eliminated
+- CHANGED shop.fonial.de/graphql: Introspection live unauthenticated; asymmetric admin-auth (REST 404, GraphQL introspectable) unchanged at confidence 40
+- CHANGED dslkonto.fonial.de/app_dev.php: Dev-mode stack traces + fs paths only; scope.yml excludes descriptive errors — non-reportable standalone
+- CHANGED CT-sweep: ~19 new subdomains (7 reachable, 12 firewalled); kampagne.fonial.de TYPO3 backend login (LIVE) = out-of-scope; int.fonial.de RFC1918 leak (LOW, chain-only)
