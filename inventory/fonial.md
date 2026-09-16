@@ -577,3 +577,5 @@ www.fonial.de
 - CHANGED kampagne.fonial.de/typo3/: TYPO3 backend login (LIVE) confirmed out-of-scope per scope.yml
 - CHANGED int.fional.de: RFC1918 192.168.10.71 + git.fonial.de→git.fonial.dev in public DNS confirmed
 - CHANGED prov.fonial.de/signup/register/55: GET-side still 302-loop; POST form fields confirmed live in prior cycles (PHPSESSID, CSRF _token, trunkTariff 19/21/22, AccountAddress, AccountContact)
+
+## 2026-09-16 00:29:10 UTC

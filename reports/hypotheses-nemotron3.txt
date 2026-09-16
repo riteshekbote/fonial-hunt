@@ -1,13 +1,7 @@
-## 2026-09-15 22:21:42 UTC [target] (model nemotron3)
-[CHANGED] prov.fonial.de/api/2.0 + kundenkonto.fonial.de/api/2.0: both live-probed 2026-09-15 15:24 UTC at v2026.09.10-1 same minute → lockstep deploy reconfirmed, comparison base valid post-deploy
-[CHANGED] mm.fonial.de: all /api/v4/* + root now 404, X-Version-Id gone — self-signup class fully eliminated
-[CHANGED] kampagne.fonial.de/typo3/: TYPO3 backend login (LIVE) confirmed out-of-scope per scope.yml
-[CHANGED] int.fional.de: RFC1918 192.168.10.71 + git.fonial.de→git.fonial.dev in public DNS confirmed
-[CHANGED] prov.fonial.de/signup/register/55: GET-side still 302-loop; POST form fields confirmed live in prior cycles (PHPSESSID, CSRF _token, trunkTariff 19/21/22, AccountAddress, AccountContact)
-[PRIO] prov.fonial.de/api/2.0, 8.9, attack_surface=9, business_value=8, tech_exposure=8, gate_ease=10, cloud_surface=3, freshness=10
-[PRIO] kundenkonto.fonial.de/api/2.0, 8.1, attack_surface=9, business_value=9, tech_exposure=8, gate_ease=5, cloud_surface=4, freshness=9
-[PRIO] shop.fonial.de/graphql, 6.8, attack_surface=7, business_value=7, tech_exposure=7, gate_ease=10, cloud_surface=4, freshness=6
-[PRIO] prov.fonial.de/signup/confirm/55, 6.5, attack_surface=6, business_value=7, tech_exposure=6, gate_ease=10, cloud_surface=3, freshness=7
+## 2026-09-16 00:28:58 UTC [target] (model nemotron3)
+[PRIO] prov.fonial.de/api/2.0, 9.1, attack_surface=9, business_value=9, tech_exposure=8, gate_ease=10, cloud_surface=3, freshness=8
+[PRIO] kundenkonto.fonial.de/api/2.0, 8.3, attack_surface=8, business_value=10, tech_exposure=8, gate_ease=4, cloud_surface=5, freshness=7
+[PRIO] prov.fonial.de/signup/confirm/55, 7.4, attack_surface=6, business_value=7, tech_exposure=6, gate_ease=10, cloud_surface=3, freshness=7
 [HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
 class: AUTH
 asset: prov.fonial.de/api/2.0

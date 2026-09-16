@@ -386,3 +386,22 @@
 - 2026-09-15 ACCEPTED canary-drift-free-refresh @ prov+kundenkonto: both live-probed 2026-09-15 15:24 UTC at v2026.09.10-1 same minute → lockstep reconfirmed, comparison base valid post-deploy, HUMAN gate is the only remaining step.
 - 2026-09-15 REJECTED further-passive-cycles @ fonial: canary refresh (this cycle) reconfirms zero drift on the sole survivor pair — no discriminating passive probe remains on either survivor; momentum requires sanctioned writes, not probe data.
 - 2026-09-15 ACCEPTED version-bump-drift-free @ prov.fonial.de/api/2.0: Live probe 2026-09-14 22:14 UTC confirms v2026.09.10-1 with unchanged semantics → comparison base valid post-deploy; standalone drift hyp resolved, folded into BOLA verify_steps
+- 2026-09-16 ACCEPTED canary-drift-free-refresh @ prov+kundenkonto: both live-probed 2026-09-15 15:24 UTC at v2026.09.10-1 same minute → lockstep reconfirmed, comparison base valid post-deploy, HUMAN gate is the only remaining step
+- 2026-09-16 REJECTED further-passive-cycles @ fonial: canary refresh (this cycle) reconfirms zero drift on the sole survivor pair — no discriminating passive probe remains on either survivor; momentum requires sanctioned writes, not probe data
+- 2026-09-16 ACCEPTED lockstep-deploy-live @ kundenkonto+prov: both live-probed v2026.09.10-1 same minute in prior cycle → shared deploy pipeline confirmed at probe level; prov→prod fidelity raised
+- 2026-09-16 REJECTED further-passive-cycles @ fonial: no remaining passive probe discriminates the two HUMAN_ONLY survivors; momentum requires sanctioned writes, not probe data
+- 2026-09-16 ACCEPTED version-bump-drift-free @ prov.fonial.de/api/2.0: Live probe 2026-09-14 22:14 UTC confirms v2026.09.10-1 with unchanged semantics → comparison base valid post-deploy; standalone drift hyp resolved, folded into BOLA verify_steps
+- 2026-09-16 ACCEPTED lockstep-deploy-live @ kundenkonto + prov: both hosts live-probed at v2026.09.10-1 same minute → shared deploy pipeline confirmed at probe level, raising prov→prod fidelity of any confirmed BOLA
+- 2026-09-16 REJECTED further-passive-cycles @ fonial: version drift was the last resolvable passive discriminator and is now resolved; no remaining passive probe discriminates the two HUMAN_ONLY survivors
+- 2026-09-16 REJECTED mm-fonial-de-api-surface: all /api/v4 endpoints + root now 404 — self-signup class eliminated
+- 2026-09-16 REJECTED shop admin-token standalone: confidence 40 at critique floor, no new evidence — chain component only
+- 2026-09-16 ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.10-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate deployment to test dual-backend cross-bind
+- 2026-09-16 ACCEPTED red-chain-only @ red.fonial.de: Redmine version + plugin stack = excluded class standalone; usable solely as post-MM-account amplification component
+- 2026-09-16 REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
+- 2026-09-16 REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+- 2026-09-16 ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+- 2026-09-16 REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
+- 2026-09-16 ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
+- 2026-09-16 ACCEPTED CT-sweep-inventory-expansion @ fonial: crt.sh enumeration surfaces ~19 subdomains absent from inventory; 7 reachable (kampagne TYPO3 200, staging 401/403, dead 404s), 12 firewalled/unreachable — first new breadth since 2026-09-06, but no new exploitable passive surface
+- 2026-09-16 ACCEPTED internal-host-DNS-leak @ int.fonial.de: 192.168.10.71 (RFC1918) + git.fonial.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure, LOW standalone, chain-info only
+- 2026-09-16 REJECTED kampagne-typo3-backend-login @ kampagne.fonial.de/typo3/: standard TYPO3 CMS Login (LIVE) = "publicly accessible login panels" out-of-scope; /install.php + eID=dump 404

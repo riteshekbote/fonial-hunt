@@ -2152,3 +2152,27 @@
 - LEARN: ACCEPTED CT-sweep-inventory-expansion @ fonial: crt.sh enumeration surfaces ~19 subdomains absent from inventory; 7 reachable (kampagne TYPO3 200, staging 401/4
 - LEARN: ACCEPTED internal-host-DNS-leak @ int.fonial.de: 192.168.10.71 (RFC1918) + git.fonial.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure,
 - LEARN: REJECTED kampagne-typo3-backend-login @ kampagne.fonial.de/typo3/: standard TYPO3 CMS Login (LIVE) = "publicly accessible login panels" out-of-scope; /install.p
+
+## RANKED HYPOTHESES 2026-09-16 00:29:10 UTC
+- [84] prov.fonial.de/api/2.0: Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin (from art/lead_nemotron3.txt)
+- NEXT(hypotheses-bigpickle.txt): HUMAN: Canary is fresh (00:28 UTC, v2026.09.10-1 both hosts, lockstep 3/3). Sequencing gate satisfied. Request program approval for exactly ONE fake-data regist
+- NEXT(hypotheses-nemotron3.txt): HUMAN: Canary refreshed and lockstep reconfirmed this cycle (15:24 UTC, v2026.09.10-1 both hosts). Request program approval for exactly ONE fake-data registrati
+- LEARN: ACCEPTED canary-drift-free-refresh @ prov+kundenkonto: both live-probed 2026-09-15 15:24 UTC at v2026.09.10-1 same minute → lockstep reconfirmed, comparison bas
+- LEARN: REJECTED further-passive-cycles @ fonial: canary refresh (this cycle) reconfirms zero drift on the sole survivor pair — no discriminating passive probe remains 
+- LEARN: ACCEPTED lockstep-deploy-live @ kundenkonto+prov: both live-probed v2026.09.10-1 same minute in prior cycle → shared deploy pipeline confirmed at probe level; p
+- LEARN: REJECTED further-passive-cycles @ fonial: no remaining passive probe discriminates the two HUMAN_ONLY survivors; momentum requires sanctioned writes, not probe 
+- LEARN: ACCEPTED version-bump-drift-free @ prov.fonial.de/api/2.0: Live probe 2026-09-14 22:14 UTC confirms v2026.09.10-1 with unchanged semantics → comparison base val
+- LEARN: ACCEPTED lockstep-deploy-live @ kundenkonto + prov: both hosts live-probed at v2026.09.10-1 same minute → shared deploy pipeline confirmed at probe level, raisi
+- LEARN: REJECTED further-passive-cycles @ fonial: version drift was the last resolvable passive discriminator and is now resolved; no remaining passive probe discrimina
+- LEARN: REJECTED mm-fonial-de-api-surface: all /api/v4 endpoints + root now 404 — self-signup class eliminated
+- LEARN: REJECTED shop admin-token standalone: confidence 40 at critique floor, no new evidence — chain component only
+- LEARN: ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.10-1, ACAO*/ACAM, no allow-credentials, 
+- LEARN: ACCEPTED red-chain-only @ red.fonial.de: Redmine version + plugin stack = excluded class standalone; usable solely as post-MM-account amplification component
+- LEARN: REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
+- LEARN: REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+- LEARN: ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+- LEARN: REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origi
+- LEARN: ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanism
+- LEARN: ACCEPTED CT-sweep-inventory-expansion @ fonial: crt.sh enumeration surfaces ~19 subdomains absent from inventory; 7 reachable (kampagne TYPO3 200, staging 401/4
+- LEARN: ACCEPTED internal-host-DNS-leak @ int.fonial.de: 192.168.10.71 (RFC1918) + git.fonial.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure,
+- LEARN: REJECTED kampagne-typo3-backend-login @ kampagne.fonial.de/typo3/: standard TYPO3 CMS Login (LIVE) = "publicly accessible login panels" out-of-scope; /install.p

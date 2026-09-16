@@ -5622,3 +5622,66 @@ testability: PASSIVE
 [LEARN] ACCEPTED internal-host-DNS-leak @ int.fonial.de: 192.168.10.71 (RFC1918) + git.fonial.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure, LOW standalone, chain-info only
 [LEARN] REJECTED kampagne-typo3-backend-login @ kampagne.fonial.de/typo3/: standard TYPO3 CMS Login (LIVE) = "publicly accessible login panels" out-of-scope; /install.php + eID=dump 404
 [RISK] fonial: 84 — Customer portals (kundenkonto + dslkonto) have high business value (PII, CDR, SIP creds, billing, call control). Confirmed dual-backend architecture creating session confusion surface on kundenkonto API. prov.fonial.de provides unfronted duplicate with self-service signup for safe cross-bind testing. Lockstep deploy confirmed (same version bump v2026.09.10-1 on both). Symfony dev-mode exposed on dslkonto with profiler token leakage (critical misconfig but scope-excluded). CORS wildcard on auth domain confirmed. Main API not publicly documented but live with 5 endpoints including WRITE (/call/initiate). Risk elevated due to enterprise telephony data sensitivity and architectural anomalies across two portals.
+## 2026-09-16 00:28:58 UTC [target] (model nemotron3)
+[PRIO] prov.fonial.de/api/2.0, 9.1, attack_surface=9, business_value=9, tech_exposure=8, gate_ease=10, cloud_surface=3, freshness=8
+[PRIO] kundenkonto.fonial.de/api/2.0, 8.3, attack_surface=8, business_value=10, tech_exposure=8, gate_ease=4, cloud_surface=5, freshness=7
+[PRIO] prov.fonial.de/signup/confirm/55, 7.4, attack_surface=6, business_value=7, tech_exposure=6, gate_ease=10, cloud_surface=3, freshness=7
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 84
+reasoning: Unfronted byte-behavior clone of kundenkonto API (nginx/1.10.3, no Cloudflare, X-Fonial-Version v2026.09.10-1 live). Dual-backend confirmed: session endpoints (/session) issue cleartext UUID SID in body, no PHPSESSID; data endpoints (/devices/get, /evn/get, /call/initiate) return text/json;charset=UTF-8, set decorative PHPSESSID, authorize solely by body SID. Independent session stores suggest SID-to-PHPSESSID binding not enforced on data layer. /call/initiate is LIVE WRITE endpoint with identical error pattern. Self-signup at /signup/confirm/55 enables two-tenant creation without program approval. Lockstep deploy with prod confirmed (same version bump v2026.09.10-1).
+evidence_needed: Data endpoint accepts valid SID from Account A with PHPSESSID from Account B → cross-tenant call initiation or device/EVN data access
+verify_steps: 1) POST https://prov.fonial.de/api/2.0/session → capture SID_A; 2) POST https://prov.fonial.de/api/2.0/session/authenticate with valid creds for Account A → authenticate SID_A; 3) POST https://prov.fonial.de/api/2.0/devices/get with {"sid": "SID_A"} → capture PHPSESSID_A; 4) Repeat for Account B → SID_B, PHPSESSID_B; 5) POST https://prov.fonial.de/api/2.0/call/initiate with body {"sid":"SID_B","destination":"+49123456789","caller_id":"+49987654321"} + Cookie: PHPSESSID=PHPSESSID_A; 6) Observe if call initiates (cross-tenant) or returns "session invalid"
+impact: Unauthorized outbound calls, toll fraud, caller ID spoofing, SIP credential abuse, cross-tenant device/EVN data access — CRITICAL
+testability: AUTH_HELPED
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on production API
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 75
+reasoning: Cloudflare-fronted production API with identical dual-backend architecture. Session endpoints (text/json, no PHPSESSID) issue cleartext UUID SID; data endpoints (text/json;charset=UTF-8) set PHPSESSID but authorize solely by body SID. Independent session stores suggest SID-to-PHPSESSID binding not enforced on data layer. /call/initiate is LIVE WRITE endpoint with identical error pattern. Requires program-provisioned test accounts (no self-signup). Lockstep deploy with prov confirmed (same version bump v2026.09.10-1).
+evidence_needed: Data endpoint accepts valid SID from Account A with PHPSESSID from Account B → cross-tenant call initiation or device/EVN data access
+verify_steps: 1) POST https://kundenkonto.fonial.de/api/2.0/session → capture SID_A; 2) POST https://kundenkonto.fonial.de/api/2.0/session/authenticate with valid creds for Account A → authenticate SID_A; 3) POST https://kundenkonto.fonial.de/api/2.0/devices/get with {"sid": "SID_A"} → capture PHPSESSID_A; 4) Repeat for Account B → SID_B, PHPSESSID_B; 5) POST https://kundenkonto.fonial.de/api/2.0/call/initiate with body {"sid":"SID_B","destination":"+49123456789","caller_id":"+49987654321"} + Cookie: PHPSESSID=PHPSESSID_A; 6) Observe if call initiates (cross-tenant) or returns "session invalid"
+impact: Unauthorized outbound calls, toll fraud, caller ID spoofing, SIP credential abuse, cross-tenant device/EVN data access — CRITICAL
+testability: AUTH_HELPED
+[HYP] Self-service tenant creation via unauthenticated signup on unfronted twin
+class: AUTH
+asset: prov.fonial.de/signup/confirm/55
+confidence: 70
+reasoning: /signup redirects to /signup/register/55 (302 loop with /signup/55), sets PHPSESSID, exposes CSRF _token, trunkTariff 19/21/22, AccountAddress, AccountContact fields — not auth-gated. Identical flow to kundenkonto but on unfronted duplicate. POST form fields confirmed live in prior cycles (2026-09-11/12). GET-side shows 302-loop but POST form fields confirmed live. Enables attacker to create two controlled tenants for cross-bind testing without program coordination.
+evidence_needed: Successful POST to /signup/confirm/55 with fabricated data (example.invalid email, fake address) returns valid tenant credentials usable for API authentication
+verify_steps: 1) GET https://prov.fonial.de/signup/register/55 → capture PHPSESSID + CSRF _token; 2) POST https://prov.fonial.de/signup/confirm/55 with form data (email=test_<timestamp>@example.invalid, trunkTariff=19, _token=<captured>, AccountAddress[street]=Test, AccountAddress[zip]=12345, AccountAddress[city]=Berlin, AccountContact[firstname]=Test, AccountContact[lastname]=User) → observe 302/200 and new tenant creation; 3) Use created credentials on /api/2.0/session/authenticate → verify SID issuance
+impact: Removes program-approval gate for two-tenant cross-bind BOLA testing; enables independent validation of dual-backend session confusion
+testability: PASSIVE
+[PARKED] Asymmetric admin-auth surface: GraphQL GenerateCustomerTokenAsAdminInput introspectable but REST admin token route removed — confidence 40 at critique floor; requires admin token compromise + customer opt-in → no standalone exploit path; retain only as chain component
+[PARKED] shop.fonial.de CORS/SSRF/IDOR: no ACAO, no URL fields in mutations, uniform 401 ACL — all passive classes closed
+[PARKED] dslkonto.fonial.de dev-mode/profiler: scope.yml excludes descriptive errors/stack traces; profiler token-gated 404 — non-reportable
+[PARKED] mm.fonial.de self-signup: /signup/email + /login now 404 (SPA shell degraded); /api/v4/users/create 404; no live registration surface — all endpoints 404
+[PARKED] red.fonial.de attachment enumeration: auth-gated, no standalone unauth path; usable solely as post-MM-account amplification component
+[PARKED] Internal DNS leak @ int.fonial.de (192.168.10.71) + git.fonial.de→git.fonial.dev: LOW standalone, chain-info only
+[PARKED] kampagne.fonial.de TYPO3 backend login: publicly accessible login panel = out-of-scope per scope.yml
+[PARKED] version-bump-surface-drift: Single OPTIONS probe resolves the question; folded into BOLA verify_steps, not reportable on its own
+[FINAL] 1. Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on prov.fonial.de/api/2.0 (84)
+[FINAL] 2. Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on kundenkonto.fonial.de/api/2.0 (75)
+[FINAL] 3. Self-service tenant creation via unauthenticated signup on prov.fonial.de/signup/confirm/55 (70)
+[NEXT] HUMAN: Canary refreshed and lockstep reconfirmed this cycle (15:24 UTC, v2026.09.10-1 both hosts). Request program approval for exactly ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email + fabricated address, CSRF `_token`+PHPSESSID from GET /signup/register/55, trunkTariff 19; ≤1 rps; SaaS admin delete-on-completion) — sole unobserved variable converting BOLA to self-service; fallback: program-provisioned T_A/T_B for kundenkonto API
+[LEARN] ACCEPTED canary-drift-free-refresh @ prov+kundenkonto: both live-probed 2026-09-15 15:24 UTC at v2026.09.10-1 same minute → lockstep reconfirmed, comparison base valid post-deploy, HUMAN gate is the only remaining step
+[LEARN] REJECTED further-passive-cycles @ fonial: canary refresh (this cycle) reconfirms zero drift on the sole survivor pair — no discriminating passive probe remains on either survivor; momentum requires sanctioned writes, not probe data
+[LEARN] ACCEPTED lockstep-deploy-live @ kundenkonto+prov: both live-probed v2026.09.10-1 same minute in prior cycle → shared deploy pipeline confirmed at probe level; prov→prod fidelity raised
+[LEARN] REJECTED further-passive-cycles @ fonial: no remaining passive probe discriminates the two HUMAN_ONLY survivors; momentum requires sanctioned writes, not probe data
+[LEARN] ACCEPTED version-bump-drift-free @ prov.fonial.de/api/2.0: Live probe 2026-09-14 22:14 UTC confirms v2026.09.10-1 with unchanged semantics → comparison base valid post-deploy; standalone drift hyp resolved, folded into BOLA verify_steps
+[LEARN] ACCEPTED lockstep-deploy-live @ kundenkonto + prov: both hosts live-probed at v2026.09.10-1 same minute → shared deploy pipeline confirmed at probe level, raising prov→prod fidelity of any confirmed BOLA
+[LEARN] REJECTED further-passive-cycles @ fonial: version drift was the last resolvable passive discriminator and is now resolved; no remaining passive probe discriminates the two HUMAN_ONLY survivors
+[LEARN] REJECTED mm-fonial-de-api-surface: all /api/v4 endpoints + root now 404 — self-signup class eliminated
+[LEARN] REJECTED shop admin-token standalone: confidence 40 at critique floor, no new evidence — chain component only
+[LEARN] ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.10-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate deployment to test dual-backend cross-bind
+[LEARN] ACCEPTED red-chain-only @ red.fonial.de: Redmine version + plugin stack = excluded class standalone; usable solely as post-MM-account amplification component
+[LEARN] REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
+[LEARN] REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+[LEARN] ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+[LEARN] REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
+[LEARN] ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
+[LEARN] ACCEPTED CT-sweep-inventory-expansion @ fonial: crt.sh enumeration surfaces ~19 subdomains absent from inventory; 7 reachable (kampagne TYPO3 200, staging 401/403, dead 404s), 12 firewalled/unreachable — first new breadth since 2026-09-06, but no new exploitable passive surface
+[LEARN] ACCEPTED internal-host-DNS-leak @ int.fonial.de: 192.168.10.71 (RFC1918) + git.fonial.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure, LOW standalone, chain-info only
+[LEARN] REJECTED kampagne-typo3-backend-login @ kampagne.fonial.de/typo3/: standard TYPO3 CMS Login (LIVE) = "publicly accessible login panels" out-of-scope; /install.php + eID=dump 404
+[RISK] fonial: 84 — Customer portals (kundenkonto + dslkonto) have high business value (PII, CDR, SIP creds, billing, call control). Confirmed dual-backend architecture creating session confusion surface on kundenkonto API. prov.fonial.de provides unfronted duplicate with self-service signup for safe cross-bind testing. Lockstep deploy confirmed (same version bump v2026.09.10-1 on both). Symfony dev-mode exposed on dslkonto with profiler token leakage (critical misconfig but scope-excluded). CORS wildcard on auth domain confirmed. Main API not publicly documented but live with 5 endpoints including WRITE (/call/initiate). Risk elevated due to enterprise telephony data sensitivity and architectural anomalies across two portals.
