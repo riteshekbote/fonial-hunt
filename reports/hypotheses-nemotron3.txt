@@ -1,7 +1,7 @@
-## 2026-09-16 00:28:58 UTC [target] (model nemotron3)
-[PRIO] prov.fonial.de/api/2.0, 9.1, attack_surface=9, business_value=9, tech_exposure=8, gate_ease=10, cloud_surface=3, freshness=8
-[PRIO] kundenkonto.fonial.de/api/2.0, 8.3, attack_surface=8, business_value=10, tech_exposure=8, gate_ease=4, cloud_surface=5, freshness=7
-[PRIO] prov.fonial.de/signup/confirm/55, 7.4, attack_surface=6, business_value=7, tech_exposure=6, gate_ease=10, cloud_surface=3, freshness=7
+## 2026-09-16 05:12:28 UTC [target] (model nemotron3)
+[PRIO] prov.fonial.de/api/2.0, 8.4, attack_surface=9, business_value=8, tech_exposure=8, gate_ease=10, cloud_surface=3, freshness=8
+[PRIO] kundenkonto.fonial.de/api/2.0, 7.9, attack_surface=8, business_value=9, tech_exposure=8, gate_ease=6, cloud_surface=4, freshness=7
+[PRIO] prov.fonial.de/signup/confirm/55, 7.2, attack_surface=7, business_value=7, tech_exposure=7, gate_ease=10, cloud_surface=3, freshness=7
 [HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
 class: AUTH
 asset: prov.fonial.de/api/2.0
@@ -40,7 +40,7 @@ testability: PASSIVE
 [FINAL] 1. Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on prov.fonial.de/api/2.0 (84)
 [FINAL] 2. Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on kundenkonto.fonial.de/api/2.0 (75)
 [FINAL] 3. Self-service tenant creation via unauthenticated signup on prov.fonial.de/signup/confirm/55 (70)
-[NEXT] HUMAN: Canary refreshed and lockstep reconfirmed this cycle (15:24 UTC, v2026.09.10-1 both hosts). Request program approval for exactly ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email + fabricated address, CSRF `_token`+PHPSESSID from GET /signup/register/55, trunkTariff 19; ≤1 rps; SaaS admin delete-on-completion) — sole unobserved variable converting BOLA to self-service; fallback: program-provisioned T_A/T_B for kundenkonto API
+[NEXT] HUMAN: Canary refreshed and lockstep reconfirmed (2026-09-15 15:24 UTC, v2026.09.10-1 both hosts). Request program approval for exactly ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email + fabricated address, CSRF `_token`+PHPSESSID from GET /signup/register/55, trunkTariff 19; ≤1 rps; SaaS admin delete-on-completion) — sole unobserved variable converting BOLA to self-service; fallback: program-provisioned T_A/T_B for kundenkonto API
 [LEARN] ACCEPTED canary-drift-free-refresh @ prov+kundenkonto: both live-probed 2026-09-15 15:24 UTC at v2026.09.10-1 same minute → lockstep reconfirmed, comparison base valid post-deploy, HUMAN gate is the only remaining step
 [LEARN] REJECTED further-passive-cycles @ fonial: canary refresh (this cycle) reconfirms zero drift on the sole survivor pair — no discriminating passive probe remains on either survivor; momentum requires sanctioned writes, not probe data
 [LEARN] ACCEPTED lockstep-deploy-live @ kundenkonto+prov: both live-probed v2026.09.10-1 same minute in prior cycle → shared deploy pipeline confirmed at probe level; prov→prod fidelity raised

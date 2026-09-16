@@ -3525,3 +3525,21 @@ impact: Cross-tenant telephony data + call control on production — CRITICAL.
 testability: HUMAN_ONLY
 [NEXT] HUMAN: Canary is fresh (00:28 UTC, v2026.09.10-1 both hosts, lockstep 3/3). Sequencing gate satisfied. Request program approval for exactly ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email, fabricated address, trunkTariff 19) to confirm end-to-end tenant creation on the twin — the sole remaining gate for the two-tenant BOLA cross-bind test. Do not self-execute; gated on program approval.
 [RISK] fonial: 79 — Customer portal holds PII/CDR/SIP-creds/call-control; dual-backend session-confusion surface confirmed; prov is an unfronted byte-identical twin with active deploy pipeline (lockstep v2026.09.10-1 re-confirmed 00:28 UTC, 3rd consecutive same-minute pair) and live self-signup flow, making the CRITICAL-severity BOLA safely reproducible on the twin before any prod claim. Hypothesis gated solely on HUMAN/program approval for one fabricated registration. No new defensible passive finding this cycle; all other asset classes closed or out-of-scope.
+## 2026-09-16 05:13:17 UTC [target] (model bigpickle)
+[HYP] Carried: Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 84
+reasoning: unfronted nginx/1.10.3 twin, lockstep v2026.09.10-1 with prod (same-minute canaries), body-SID-only authz on /evn/get+/devices/get+/call/initiate, decorative PHPSESSID, cleartext UUID sid; second-tenant registration is the sole unobserved variable.
+evidence_needed: tenant-B sid + tenant-A PHPSESSID returns tenant-A data on /evn/get|/devices/get, or a clean rejection proving the bind.
+verify_steps: Gated (HUMAN): harvest CSRF from GET /signup/register/55; 2× POST /signup/confirm/55 (example.invalid email, fabricated address, trunkTariff 19) → tenants A/B; POST /api/2.0/session per tenant; cross-present {sid:B, phpsessid:A} on /evn/get then /devices/get; /call/initiate only after a clean read.
+impact: cross-tenant CDR, numbers, SIP creds, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Carried: Lockstep v2026.09.10-1 → prov-confirmed BOLA reproduces on production
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 79
+reasoning: probe-level lockstep (v2026.09.10-1 same minute) implies shared codebase/deploy pipeline; exposure clause forbids live-customer validation → prov first, sanctioned test tenants only.
+verify_steps: identical to prov hyp after confirmation; program-sanctioned test tenants; never live customer data.
+testability: HUMAN_ONLY
+[RISK] fonial: 79 — highest-value surface is the kundenkonto/prov customer portal (PII/CDR/SIP creds/call control) with a confirmed dual-backend session seam, live self-signup on an unfronted twin, and probe-level lockstep deploys; impact potential is CRITICAL but remains un-validated and gated on program approval for one fabricated registration. No new passive finding this cycle; all other classes closed or out-of-scope per scope.yml.

@@ -20638,3 +20638,56 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 [RISK] fonial: 79 — Customer portal holds PII/CDR/SIP-creds/call-control; dual-backend session-confusion surface confirmed; prov is an unfronted byte-identical twin with active deploy pipeline (lockstep v2026.09.10-1 re-confirmed 00:28 UTC, 3rd consecutive same-minute pair) and live self-signup flow, making the CRITICAL-severity BOLA safely reproducible on the twin before any prod claim. Hypothesis gated solely on HUMAN/program approval for one fabricated registration. No new defensible passive finding this cycle; all other asset classes closed or out-of-scope.
+===== ANALYST bigpickle 2026-09-16 05:13:28 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m✱ [0mGlob "**/*.md"[90m 100 matches[0m
+[0m✱ [0mGlob "**/*.yml"[90m 1 match[0m
+[0m✱ [0mGlob "**/hypotheses*.txt"[90m 5 matches[0m
+[0m→ [0mRead scope.yml
+STEP 1 — DELTA
+- [CHANGED] Only temporal shift since 2026-09-16 00:29:10: last lockstep canary (v2026.09.10-1 both hosts) is now ~1 cycle older; per accepted LEARN, re-probing within the same version window is non-discriminating.
+- [CHANGED] No new LEARN/HYP entries appended since 00:28 in the aggregated tail; the two survivors keep identical evidence sets (84 prov BOLA / 79 prod repro).
+- [NEW] Meta-signal: canaries have shown zero drift for 14 consecutive days of cycles while far-tail LEARNs keep duplicating REJECTED/ACCEPTED lines verbatim — the pipeline is looping on non-generative work, not on new evidence.
+- NO_DELTA on all asset surfaces (prov/kundenkonto 5-endpoint, shop 45 REST + 68 GraphQL, www TYPO3, mm dead, kampagne login out-of-scope, staging 401/403 untestable).
+
+STEP 2 — PRIORITIZE
+- [PRIO] prov.fonial.de/api/2.0,6.5,highest — b=10 telephony PII/CDR/SIP/call-control, t=8 dual-backend+cleartext session id + self-service signup, a=6, g=3 (account-creation gated), c=2 (no cloud), f=6.
+- [PRIO] kundenkonto.fonial.de/api/2.0,6.1,prod-fidelity — b=10, t=8, a=5, g=2 (no self-service + exposure clause), c=3, f=5.
+- [PRIO] shop.fonial.de/graphql,5.7,chain-only — b=6, t=7 (introspection live), a=6, g=6, c=3, f=4.
+
+STEP 3 — HYPOTHESES
+[HYP] Carried: Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 84
+reasoning: unfronted nginx/1.10.3 twin, lockstep v2026.09.10-1 with prod (same-minute canaries), body-SID-only authz on /evn/get+/devices/get+/call/initiate, decorative PHPSESSID, cleartext UUID sid; second-tenant registration is the sole unobserved variable.
+evidence_needed: tenant-B sid + tenant-A PHPSESSID returns tenant-A data on /evn/get|/devices/get, or a clean rejection proving the bind.
+verify_steps: Gated (HUMAN): harvest CSRF from GET /signup/register/55; 2× POST /signup/confirm/55 (example.invalid email, fabricated address, trunkTariff 19) → tenants A/B; POST /api/2.0/session per tenant; cross-present {sid:B, phpsessid:A} on /evn/get then /devices/get; /call/initiate only after a clean read.
+impact: cross-tenant CDR, numbers, SIP creds, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Carried: Lockstep v2026.09.10-1 → prov-confirmed BOLA reproduces on production
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 79
+reasoning: probe-level lockstep (v2026.09.10-1 same minute) implies shared codebase/deploy pipeline; exposure clause forbids live-customer validation → prov first, sanctioned test tenants only.
+verify_steps: identical to prov hyp after confirmation; program-sanctioned test tenants; never live customer data.
+testability: HUMAN_ONLY
+(No new passive hypothesis this cycle — every reachable surface is enumerated; staging.fonial.de 401/403 gate has no passive discriminator, see STEP 4.)
+
+STEP 4 — SELF-CRITIQUE
+- [PARKED] shop admin-token standalone @ shop.fonial.de/graphql — confidence 40 at critique floor, zero new evidence since 09-07. Chain component only.
+- [PARKED] staging.fonial.de (401/403 gate) — no passive path through the auth wall; any finding there is excluded-class (descriptive errors) or needs a credential = HUMAN_ONLY with no value added by probing.
+- [PARKED] canary refresh probes — explicitly non-discriminating; executing another OPTIONS /session would be the rejected loop, not analysis.
+- [FINAL] survivors ranked: 1) prov BOLA cross-bind (84), 2) prod reproduction @ kundenkonto (79), 3) shop admin-token chain-only (40).
+
+STEP 5 — NEXT ACTION
+- [NEXT] HUMAN: Request program approval for exactly ONE fabricated-account registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email, fabricated address, trunkTariff 19) to confirm end-to-end tenant creation on the twin — the sole remaining gate for the two-tenant BOLA test. I will not self-execute; this is gated on program response per scope.yml `account_creation: restricted` / `no_data_modification`.
+
+STEP 6 — LEARNING
+- [LEARN] ACCEPTED meta-loop-signal @ fonial: 14 days of zero-drift canaries with unchanged survivor pair → the binding constraint is program-level approval, not probe data; cycles without an approval decision are non-generative.
+- [LEARN] REJECTED canary-refresh-probe @ prov+kundenkonto: OPTIONS /session within the same v2026.09.10-1 window adds no discrimination (already accepted as REJECTED on 09-11/09-12/09-13/09-15); not re-run this cycle.
+
+STEP 7 — RISK
+[RISK] fonial: 79 — highest-value surface is the kundenkonto/prov customer portal (PII/CDR/SIP creds/call control) with a confirmed dual-backend session seam, live self-signup on an unfronted twin, and probe-level lockstep deploys; impact potential is CRITICAL but remains un-validated and gated on program approval for one fabricated registration. No new passive finding this cycle; all other classes closed or out-of-scope per scope.yml.

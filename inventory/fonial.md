@@ -579,3 +579,5 @@ www.fonial.de
 - CHANGED prov.fonial.de/signup/register/55: GET-side still 302-loop; POST form fields confirmed live in prior cycles (PHPSESSID, CSRF _token, trunkTariff 19/21/22, AccountAddress, AccountContact)
 
 ## 2026-09-16 00:29:10 UTC
+
+## 2026-09-16 05:13:28 UTC
