@@ -250,3 +250,12 @@ TARGET_ORG not configured for fonial; skipping public-org deep scan.
 TARGET_ORG not configured for fonial; skipping public-org deep scan.
 ## REPOSCAN 2026-09-16 06:10:22 UTC
 TARGET_ORG not configured for fonial; skipping public-org deep scan.
+## REPOSCAN 2026-09-16 11:49:25 UTC
+[HYP] (none)
+class: N/A
+asset: N/A
+confidence: N/A
+reasoning: fonial-de GitHub org has 0 public repos; scope.yml github_orgs = none-configured; cands.txt = "no org candidates". No repository to clone or scan.
+impact: N/A
+verify_steps: N/A
+TARGET_ORG not configured for fonial; skipping public-org deep scan.
