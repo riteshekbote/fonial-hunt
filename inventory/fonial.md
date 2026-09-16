@@ -591,3 +591,5 @@ www.fonial.de
 - CHANGED CT-sweep: ~19 new subdomains (7 reachable, 12 firewalled); kampagne.fonial.de TYPO3 backend login (LIVE) = out-of-scope; int.fonial.de RFC1918 leak (LOW, chain-only)
 
 ## 2026-09-16 15:00:33 UTC
+
+## 2026-09-16 18:56:56 UTC

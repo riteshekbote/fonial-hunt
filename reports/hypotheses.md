@@ -2247,3 +2247,10 @@
 - LEARN: ACCEPTED CT-sweep-inventory-expansion @ fonial: crt.sh enumeration surfaces ~19 subdomains absent from inventory; 7 reachable (kampagne TYPO3 200, staging 401/4
 - LEARN: ACCEPTED internal-host-DNS-leak @ int.fonial.de: 192.168.10.71 (RFC1918) + git.fonial.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure,
 - LEARN: REJECTED kampagne-typo3-backend-login @ kampagne.fonial.de/typo3/: standard TYPO3 CMS Login (LIVE) = "publicly accessible login panels" out-of-scope; /install.p
+
+## RANKED HYPOTHESES 2026-09-16 18:56:56 UTC
+- [85] prov.fonial.de/api/2.0: Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin (from art/lead_bigpickle.txt)
+- NEXT(hypotheses-bigpickle.txt): HUMAN: Canary fresh (v2026.09.16-1, 10:00:17 UTC, 4th lockstep pair), comparison base valid post-deploy, signup POST form unchanged. Request program approval fo
+- LEARN: REJECTED kampagne-typo3-backend @ kampagne.fonial.de: live TYPO3 login = out-of-scope public login panel; /install.php + eID=dump 404; class closed (re-confirme
+- LEARN: ACCEPTED lockstep-deploy-live @ kundenkonto+prov: fourth consecutive same-minute lockstep pair (v2026.09.16-1, 10:00:17 UTC) — shared deploy pipeline confirmed 
+- LEARN: REJECTED further-passive-cycles @ fonial: canary refresh reconfirms zero drift on the sole survivor pair; no remaining passive probe discriminates the two HUMAN
