@@ -272,3 +272,12 @@ verify_steps: Visit https://github.com/fonial-de?tab=repositories to confirm 0 p
 TARGET_ORG not configured for fonial; skipping public-org deep scan.
 ## REPOSCAN 2026-09-16 22:47:06 UTC
 TARGET_ORG not configured for fonial; skipping public-org deep scan.
+## REPOSCAN 2026-09-17 01:13:08 UTC
+[HYP] No public fonial GmbH source code exists on GitHub
+class: N/A
+asset: github.com/fonial-de (org ID 104436535)
+confidence: 100
+reasoning: The fonial-de GitHub organization has 0 public repositories. No source code is available to audit for secrets, hardcoded credentials, or insecure patterns. All other fonial-related GitHub orgs (fonial1, Fonialabs-devs, Fonial) also return empty public repo lists. cands.txt explicitly states "no org candidates".
+impact: None — no source-code attack surface via public GitHub repos
+verify_steps: Visit https://github.com/fonial-de?tab=repositories to confirm 0 public repos. Cross-check with https://api.github.com/orgs/fonial-de/repos (returns []).
+TARGET_ORG not configured for fonial; skipping public-org deep scan.
