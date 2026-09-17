@@ -20981,3 +20981,228 @@ STEP 6 — LEARNING:
 
 STEP 7 — RISK:
 - [RISK] fonial: 80 — Customer portal holds PII/CDR/SIP-creds/call-control; dual-backend session-confusion seam re-verified intact on fresh v2026.09.16-1 (two probes this cycle: 10:00:17 + 18:5x UTC, zero drift) — seam has survived multiple deploy cycles. Unfronted byte-identical twin (prov) with live self-signup flow makes the CRITICAL-severity BOLA objectively reproducible before any prod claim. Sole blocker is program approval for one fabricated registration (HUMAN gate). No new defensible passive finding; all other classes closed or out-of-scope.
+===== ANALYST bigpickle 2026-09-17 00:03:01 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mcurl -s -o /dev/null -D - --max-time 15 -X OPTIONS https://prov.fonial.de/api/2.0/session | tr -d '\r'
+HTTP/2 200 
+server: nginx/1.10.3
+content-type: text/json; charset=UTF-8
+cache-control: max-age=0, must-revalidate, private
+date: Thu, 17 Sep 2026 00:01:30 GMT
+x-fonial-version: v2026.09.16-1
+expires: Thu, 17 Sep 2026 00:01:30 GMT
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+[0m
+[0m$ [0msleep 1 && curl -s -o /dev/null -D - --max-time 15 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session | tr -d '\r'
+HTTP/2 200 
+date: Thu, 17 Sep 2026 00:01:31 GMT
+content-type: text/json; charset=UTF-8
+server: cloudflare
+cache-control: max-age=0, must-revalidate, private
+expires: Thu, 17 Sep 2026 00:01:31 GMT
+x-fonial-version: v2026.09.16-1
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, OPTIONS
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+cf-cache-status: DYNAMIC
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=%2Bw4APe1dMlUwqI57nYS%2BICn7w30lRoG4NI9p4%2Bf%2BnQq6EMe6HNEIqfSrJp6oieZRtU4WJ0P5rb4AKWx5vvukc5FQWaJ%2Fkwu3KoUWcC6RlEMjpwMH7jGhU0ZQZUa5mdIGstUzMy2gKA%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cf-ray: a3c3d63b1fba26d3-SJC
+[0m
+[0m$ [0msleep 1 && curl -s -o /dev/null -D - --max-time 15 -H 'User-Agent: Mozilla/5.0' https://prov.fonial.de/signup/register/55 | tr -d '\r' | rg 'HTTP/|content-type|location|x-fonial'
+/bin/bash: line 1: rg: command not found
+[0m
+[0m$ [0msleep 1 && curl -s --max-time 15 -X POST -H 'Content-Type: application/json' -d '{}' https://prov.fonial.de/api/2.0/session | tr -d '\r'
+{"status":"ok","sid":"d183b7ec-0d94-4111-9a57-bced824ff6d9"}
+[0m
+[0m$ [0msleep 1 && curl -s -o /dev/null -D - --max-time 15 -H 'User-Agent: Mozilla/5.0' https://prov.fonial.de/signup/register/55 | tr -d '\r' | grep -iE 'HTTP/|content-type|location|x-fonial'
+HTTP/2 302 
+content-type: text/html; charset=utf-8
+location: /signup/55
+x-fonial-version: v2026.09.16-1
+[0m
+[0m$ [0msleep 1 && curl -s --max-time 20 -H 'User-Agent: Mozilla/5.0' https://kundenkonto.fonial.de/login | grep -oE '(src|href)="[^"]+"' | sort -u | head -40
+href="/bundles/fonial/frontend/css/bootstrap-timepicker.css"
+href="/bundles/fonial/frontend/css/bootstrap.min.css"
+href="/bundles/fonial/frontend/css/chosen.css"
+href="/bundles/fonial/frontend/css/datepicker.css"
+href="/bundles/fonial/frontend/css/fonts.css"
+href="/bundles/fonial/frontend/css/styles.css"
+href="/bundles/fonial/frontend/css/sweet-alert.css"
+href="/favicon.ico"
+href="/forgot/request"
+href="/signup"
+href="https://dslkonto.fonial.de/"
+href="https://kundenkonto.fonial.de/login"
+href="https://www.fonial.de/kontakt/datenschutzerklaerung/"
+href="https://www.fonial.de/kontakt/erklaerung-zur-barrierefreiheit/"
+href="https://www.fonial.de/kontakt/impressum/"
+src="/bundles/fonial/frontend/images/logo_enbw_w.svg"
+src="/bundles/fonial/frontend/js/lib/bootstrap.min.js"
+src="/bundles/fonial/frontend/js/lib/jquery-2.1.3.min.js"
+src="https://www.googletagmanager.com/ns.html?id=GTM-W5PWPRR"
+[0m
+[0m$ [0msleep 1 && curl -s --max-time 20 -H 'User-Agent: Mozilla/5.0' https://kundenkonto.fonial.de/login | grep -oE '<script[^>]*src="[^"]+"' | sed 's/.*src="//;s/"//' | sort -u
+/bundles/fonial/frontend/js/lib/bootstrap.min.js
+/bundles/fonial/frontend/js/lib/jquery-2.1.3.min.js
+[0m
+[0m$ [0msleep 1 && curl -s --max-time 20 -H 'User-Agent: Mozilla/5.0' https://kundenkonto.fonial.de/bundles/fonial/frontend/js/ | head -60
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+            <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-W5PWPRR');</script>
+<!-- End Google Tag Manager -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>fonial Kundenkonto</title>
+
+    <link rel="icon" type="image/ico" href="/favicon.ico">
+
+        <link rel="stylesheet" type="text/css" href="/bundles/fonial/frontend/css/bootstrap.min.css" media="all"/>
+    <link rel="stylesheet" type="text/css" href="/bundles/fonial/frontend/css/jquery.dataTables.min.css" media="all"/>
+    <link rel="stylesheet" type="text/css" href="/bundles/fonial/frontend/css/fonts.css" media="all"/>
+    <link rel="stylesheet" type="text/css" href="/bundles/fonial/frontend/css/sweet-alert.css" media="all"/>
+    <link rel="stylesheet" type="text/css" href="/bundles/fonial/frontend/css/datepicker.css" media="all"/>
+    <link rel="stylesheet" type="text/css" href="/bundles/fonial/frontend/css/bootstrap-timepicker.css" media="all"/>
+    <link rel="stylesheet" type="text/css" href="/bundles/fonial/frontend/css/chosen.css" media="all"/>
+    <link rel="stylesheet" type="text/css" href="/bundles/fonial/frontend/css/styles.css" media="all"/>
+    </head>
+        <body class="">
+            <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W5PWPRR" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+    
+    <!-- START MODAL EINRICHTUNGSASSISTENT BEGIN -->
+    <div class="modal modal-setup-assistent fade" id="startAssistentModal" tabindex="-1" role="dialog"  aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body text-center">
+                    <h4>Herzlich Willkommen</h4>
+                    <p class="top-text">im fonial-Einrichtungsassistenten!</p>
+                    <div class="row margin-top-130">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
+                            <p>Zur Ersteinrichtung Ihrer Telefonanlage empfehlen wir Ihnen den fonial-Einrichtungsassistenten. Folgen Sie dazu bitte Schritt für Schritt den Anweisungen.</p>
+                            <p>
+                                Starten Sie jetzt die Standardkonfiguration eines Mitarbeiters.
+                                <a type="button" class="no-decoration" data-toggle="tooltip"
+                                   data-original-title="Mit dem Einrichtungsassistenten richten Sie ausschließlich Sprachrufnummern ein. Sofern Sie Ihren Mitarbeitern eine Fax- oder eine Konferenzrufnummer zuweisen möchten, können Sie dies manuell nach Beendigung des Einrichtungsassistenten vornehmen. Entsprechende Anleitungen finden Sie in unserer Online-Hilfe. ">
+                                    <i class="icon-question-mark"></i>
+                                </a>
+                            </p>
+                            <p><strong>Hinweis:</strong>
+                                <br>
+                                Die Einrichtung von
+                                <strong>  Weiterleitungen</strong>
+                                auf externe Rufnummern (z.B. Mobilfunktelefone) ist im Rahmen des Einrichtungsassistenten nicht möglich. Diese können Sie manuell im Bereich
+
+                                <a href="/system/device/" class="text-ok"> Ziele</a>
+                                anlegen.
+                            </p>
+                        </div>
+                    </div>
+[0m
+[0m$ [0msleep 1 && curl -s --max-time 20 -H 'User-Agent: Mozilla/5.0' https://kundenkonto.fonial.de/login | grep -oE '(href|action)="/[^"]+"' | sed 's/.*="/\//;s/"//' | sort -u
+//bundles/fonial/frontend/css/bootstrap-timepicker.css
+//bundles/fonial/frontend/css/bootstrap.min.css
+//bundles/fonial/frontend/css/chosen.css
+//bundles/fonial/frontend/css/datepicker.css
+//bundles/fonial/frontend/css/fonts.css
+//bundles/fonial/frontend/css/styles.css
+//bundles/fonial/frontend/css/sweet-alert.css
+//favicon.ico
+//forgot/request
+//login_check
+//signup
+[0m
+[0m$ [0msleep 1 && curl -s --max-time 20 -H 'User-Agent: Mozilla/5.0' https://kundenkonto.fonial.de/login > /tmp/klogin.html; grep -oE '(/system/[a-z/_-]*|/help[a-z/_-]*|/settings[a-z/_-]*|/wizard[a-z/_-]*|/api/[0-9a-z./_-]*|/phone[a-z/_-]*|/device[a-z/_-]*)' /tmp/klogin.html | sort | uniq -c | sort -rn | head -40
+(no output)
+[0m
+[0m$ [0mgrep -oE 'href="[^"]*"[^>]*>' /tmp/klogin.html | sort -u | head -60; echo ---; grep -c 'system/device' /tmp/klogin.html
+href="/bundles/fonial/frontend/css/bootstrap-timepicker.css" media="all"/>
+href="/bundles/fonial/frontend/css/bootstrap.min.css" media="all"/>
+href="/bundles/fonial/frontend/css/chosen.css" media="all"/>
+href="/bundles/fonial/frontend/css/datepicker.css" media="all"/>
+href="/bundles/fonial/frontend/css/fonts.css" media="all"/>
+href="/bundles/fonial/frontend/css/styles.css" media="all"/>
+href="/bundles/fonial/frontend/css/sweet-alert.css" media="all"/>
+href="/favicon.ico">
+href="/forgot/request" class="forgot-pwd">
+href="/signup">
+href="https://dslkonto.fonial.de/">
+href="https://kundenkonto.fonial.de/login" />
+href="https://www.fonial.de/kontakt/datenschutzerklaerung/" target="_blank">
+href="https://www.fonial.de/kontakt/erklaerung-zur-barrierefreiheit/" target="_blank" title="Erklärung zur Barrierefreiheit">
+href="https://www.fonial.de/kontakt/impressum/" target="_blank">
+---
+0
+[0m
+[0m$ [0msleep 1 && curl -s -o /dev/null -D - --max-time 15 -H 'User-Agent: Mozilla/5.0' https://kundenkonto.fonial.de/system/device/ | tr -d '\r' | grep -iE '^HTTP/|^location|x-fonial'
+HTTP/2 302 
+location: https://kundenkonto.fonial.de/login
+x-fonial-version: v2026.09.16-1
+[0m
+All 5 probes ran ≤1 rps, read-only; both canaries live. Output follows.
+
+## 2026-09-17 00:01 UTC
+
+STEP 1 — DELTA
+- NO_DELTA at probe level: prov + kundenkonto `OPTIONS /api/2.0/session` both 200 `x-fonial-version: v2026.09.16-1` same minute (00:01:30/31 UTC) — lockstep survives 3rd deploy; nginx/1.10.3 vs Cloudflare, ACAO\* no credentials, unchanged.
+- CHANGED (enrichment, not surface): `POST /api/2.0/session` → fresh cleartext UUID sid `d183b7ec-...` (unchanged semantics); `GET /signup/register/55` → 302 `/signup/55` (unchanged).
+- CHANGED (enrichment): `/login` re-fetched post-bump — server-rendered login shell exposes setup-wizard modal links incl. `/system/device/`, `/forgot/request`, `/login_check`, `/signup`; all previously-unenumerated `/system/*` target `/system/device/` → 302 `/login` (auth-gated). No new pre-auth route. Bundle re-scan of `/bundles/fonial/frontend/js/` returns login shell (no new JS). No new surface after deploy.
+
+STEP 2 — PRIORITIZE
+- [PRIO] prov.fonial.de/api/2.0 — 7.8 (a8 b9 t8 g9 c2 f8) — the only gate that discriminates the survivor; live re-verified this cycle.
+- [PRIO] kundenkonto.fonial.de/api/2.0 — 6.9 (a8 b9 t8 g3 c3 f7) — prod landmass, gated on prov validation + sanctioned tenants.
+- [PRIO] kampagne.fonial.de — 3.1 (a4 b4 t5 g8 c2 f3) — TYPO3 login panel only, out-of-scope class.
+
+STEP 3 — HYPOTHESES
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 85
+reasoning: Re-probed 2026-09-17 00:01 UTC: v2026.09.16-1, nginx/1.10.3, body-SID-only authz (`session invalid` on absent SID), decorative PHPSESSID, cleartext UUID sid, ACAO\* no credentials, 5-endpoint surface, GET /signup/register/55 302 loop — byte-identical to kundenkonto after 3rd lockstep deploy. Signup POST form (CSRF _token, trunkTariff 19/21/22, AccountAddress/AccountContact) live in prior cycles. Two-tenant creation is the only unobserved variable.
+evidence_needed: tenant-B sid + tenant-A PHPSESSID on /evn/get or /devices/get returns tenant-A data, or a clean rejection proving the bind.
+verify_steps: HUMAN: GET /signup/register/55 → harvest CSRF; 2× POST /signup/confirm/55 (example.invalid email, fabricated address, trunkTariff 19) → tenants A+B; POST /api/2.0/session per tenant; cross-present {sid:B, phpsessid:A} on /evn/get then /devices/get; /call/initiate only after a clean read.
+impact: cross-tenant CDR, phone numbers, SIP creds, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Prov-confirmed BOLA reproduces on production (lockstep v2026.09.16-1)
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 80
+reasoning: Third consecutive same-minute lockstep pair re-verified 2026-09-17 00:01:30/31 UTC; seam survived 3 deploy cycles unchanged. Program risk clause forbids live-customer testing → prov-validate first, sanctioned test tenants only.
+evidence_needed: same cross-bind evidence, produced on prov twin before any prod repro.
+verify_steps: identical to prov hyp; program-sanctioned test tenants; never live customer data.
+impact: cross-tenant telephony data + call control on production — CRITICAL.
+testability: HUMAN_ONLY
+
+STEP 4 — SELF-CRITIQUE
+- Cross-bind BOLA @ prov (85): survives critique — AUTH/IDOR class, evidence_needed and 4-step verify specified, impact concrete. Held.
+- Prov→prod repro (80): derivative; only actionable after #1 confirms, inherits risk. Held at 80.
+- [PARKED] kampagne-typo3 (15): public login panel = out-of-scope; /install.php 404; no passive discriminator left. Below floor.
+- [PARKED] shop admin-token (40): at critique floor, no new evidence — chain component only.
+- [PARKED] CORS-wildcard standalone: ACAO\* read-back of data responses requires victim SID, which travels only in body and is known only to victim origin — no cross-origin pluck; non-reportable absent a SID leak. Correctly REJECTED earlier.
+- [FINAL] cross-bind BOLA @ prov (85) > prov-to-prod repro @ kundenkonto (80)
+
+STEP 5 — NEXT ACTION
+[NEXT] HUMAN: Canary fresh this cycle (v2026.09.16-1, 00:01:30/31 UTC, 3rd consecutive lockstep pair) — no drift, no new post-bump frontend/API surface, signup POST form still live, comparison base valid. Request program approval for exactly ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email, fabricated address, trunkTariff 19) to confirm end-to-end tenant creation on the twin — the still-sole unobserved variable before the two-tenant BOLA cross-bind test. Do not self-execute; no further passive probe discriminates the survivor.
+
+STEP 6 — LEARNING
+- [LEARN] ACCEPTED canary-drift-free-refresh @ prov+kundenkonto: live re-probe 2026-09-17 00:01 UTC, v2026.09.16-1 both hosts same minute — 3rd consecutive lockstep pair; comparison base valid post-deploy.
+- [LEARN] ACCEPTED login-shell-route-rescan @ kundenkonto: post-bump scan of /login + /bundles/fonial/frontend/js/ exposes setup-wizard modal targets (/system/device/) but all → 302 /login; no new pre-auth route, no new bundle.
+- [LEARN] REJECTED further-passive-cycles @ fonial: post-bump bundle/route re-scan (this cycle's only untested passive discriminator) adds no surface and no discrimination — both survivors remain gated on HUMAN approval, not probe data.
+
+STEP 7 — RISK
+[RISK] fonial: 80 — cross-tenant-BOLA seam (CRITICAL if real) re-verified intact across a 3rd deploy cycle on a byte-identical unfronted twin with live self-signup flow; objectively pre-validatable before any prod claim. Sole blocker is program approval for one fabricated registration (HUMAN gate). No new defensible passive finding; all other classes closed or out-of-scope.

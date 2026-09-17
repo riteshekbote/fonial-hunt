@@ -2257,3 +2257,7 @@
 
 ## RANKED HYPOTHESES 2026-09-16 21:42:38 UTC
 - [85] prov.fonial.de/api/2.0: Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin (from art/lead_bigpickle.txt)
+
+## RANKED HYPOTHESES 2026-09-17 00:03:01 UTC
+- [85] prov.fonial.de/api/2.0: Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin (from art/lead_bigpickle.txt)
+- NEXT(hypotheses-bigpickle.txt): HUMAN: Canary fresh this cycle (v2026.09.16-1, 00:01:30/31 UTC, 3rd consecutive lockstep pair) — no drift, no new post-bump frontend/API surface, signup POST fo

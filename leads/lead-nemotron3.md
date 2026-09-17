@@ -5886,3 +5886,4 @@ testability: PASSIVE
 [RISK] fonial: 88 — Customer portals (kundenkonto + dslkonto) have high business value (PII, CDR, SIP creds, billing, call control). Confirmed dual-backend architecture creating session confusion surface on kundenkonto API. prov.fonial.de provides unfronted duplicate with self-service signup for safe cross-bind testing. Lockstep deploy confirmed (same version bump v2026.09.16-1 on both). Symfony dev-mode exposed on dslkonto with profiler token leakage (critical misconfig but scope-excluded). CORS wildcard on auth domain confirmed. Main API not publicly documented but live with 5 endpoints including WRITE (/call/initiate). Risk elevated due to enterprise telephony data sensitivity and architectural anomalies across two portals.
 ## 2026-09-16 18:56:44 UTC [target] (model nemotron3)
 ## 2026-09-16 21:42:27 UTC [target] (model nemotron3)
+## 2026-09-17 00:02:16 UTC [target] (model nemotron3)
