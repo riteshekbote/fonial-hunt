@@ -3746,3 +3746,31 @@ testability: HUMAN_ONLY
 [LEARN] REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no allow-credentials, browser won't send cookies cross-origin → low direct impact without SID leak chain.
 [LEARN] ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface.
 [RISK] fonial: 80 — cross-tenant BOLA seam (CRITICAL if confirmed) re-verified intact across 4th deploy cycle on byte-identical unfronted twin with live self-signup flow; objectively pre-validatable before any prod claim. Sole blocker is program approval for one fabricated registration (HUMAN gate). INFRA ALERT: Both prov + kundenkonto timed out at 09:56 UTC — may indicate maintenance window, WAF change, or outage; comparison base validity requires re-verification post-recovery. No new defensible passive finding; all other classes closed or out-of-scope.
+## 2026-09-17 18:33:23 UTC [target] (model bigpickle)
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 85
+reasoning: v2026.09.16-1 last confirmed 05:01 UTC pre-outage; body-SID-only authz, decorative PHPSESSID, cleartext UUID sid, ACAO*, 5-endpoint; DNS now shows prov+kundenkonto share origin 62.146.7.20. Signup POST flow (CSRF _token, trunkTariff 19/21/22, AccountAddress) confirmed live prior cycles. Two-tenant creation remains sole unobserved variable. Blocker unchanged: comparison base requires re-verified canary post-recovery.
+evidence_needed: {sid:B, phpsessid:A} on /evn/get or /devices/get returns tenant-A data, or clean bind rejection. Plus pre-condition: live canary confirms v2026.09.16-1 + nginx/1.10.3 + ACAO* on recovered box.
+verify_steps: HUMAN (post-recovery): OPTIONS /session on both hosts to re-verify parity; GET /signup/register/55 harvest CSRF; 2× POST /signup/confirm/55 (example.invalid, fabricated address, trunkTariff 19)→tenants A+B; cross-present {sid:B,phpsessid:A} on /evn/get, /devices/get; /call/initiate only after clean read.
+impact: cross-tenant CDR, phone numbers, SIP creds, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Prov-confirmed BOLA reproduces on production (twin == same origin box now)
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 80
+reasoning: Fourth consecutive lockstep pair pre-outage; DNS now resolves kundenkonto directly to 62.146.7.20 (same box as prov) with no Cloudflare → if confirmed on recovery this RAISES prov→prod fidelity to "same nginx vhost" and adds origin-exposure/CORS-recheck dimension. Seam survived 4 deploy cycles.
+evidence_needed: same cross-bind evidence produced on prov first; then available on kundenkonto under identical origin.
+verify_steps: identical to prov hyp; never live customer data.
+impact: cross-tenant telephony data + call control on production — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Redundant second Mattermost node with weaker config via flapping LB
+class: MISCONFIG
+asset: mm.fonial.de
+confidence: 30
+reasoning: 5 state flips (200-vs-404, users/create 401-when-up) across 3 cycles point to ≥2 nodes w/ divergent configs, not simple restart. No evidence of divergent auth config — pure inference. Below floor; discard.
+impact: hypothetical weaker-auth node → account takeover — spec.
+testability: HUMAN_ONLY
+[NEXT] PROBE: first-recovery discriminator — `OPTIONS https://kundenkonto.fonial.de/api/2.0/session` + `OPTIONS https://prov.fonial.de/api/2.0/session` (max-time 15, dump -D headers): confirm Server/X-Fonial-Version v2026.09.16-1/ACAO* on both and presence-or-not of `cf-ray` on kundenkonto (CF-removed vs restored). If both direct-origin nginx/1.10.3, re-affirm twin parity (same box) then route to HUMAN gate for the single fabricated registration. No mutating tests while box is down.
+[RISK] fonial: 80 — CRITICAL-if-confirmed cross-tenant BOLA seam imports to production now that kundenkonto's DNS front (Cloudflare) has dropped at the record level, making origin 62.146.7.20 the direct boundary for an auth-enabled portal; prov→prod fidelity effectively "same box". Blocker unchanged: (a) origin outage must clear for canary validity, (b) program approval for one fabricated registration (HUMAN gate). No new defensible passive finding; all other classes closed or out-of-scope.

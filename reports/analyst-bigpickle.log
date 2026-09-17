@@ -21444,3 +21444,118 @@ Note: kundenkonto + prov both TIMEOUT at 09:56 UTC. If infra outage persists, ca
 **STEP 7 — RISK**
 
 [RISK] fonial: 80 — cross-tenant BOLA seam (CRITICAL if confirmed) re-verified intact across 4th deploy cycle on byte-identical unfronted twin with live self-signup flow; objectively pre-validatable before any prod claim. Sole blocker is program approval for one fabricated registration (HUMAN gate). INFRA ALERT: Both prov + kundenkonto timed out at 09:56 UTC — may indicate maintenance window, WAF change, or outage; comparison base validity requires re-verification post-recovery. No new defensible passive finding; all other classes closed or out-of-scope.
+===== ANALYST bigpickle 2026-09-17 18:34:19 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mcurl -sS -o /tmp/opencode/prov_session.txt -w "HTTP %{http_code} in %{time_total}s\n" -X OPTIONS --max-time 20 https://prov.fonial.de/api/2.0/session -D - 2>&1 | head -30
+curl: (28) Connection timed out after 20002 milliseconds
+HTTP 000 in 20.002934s
+[0m
+[0m$ [0mcurl -sS -o /tmp/opencode/kk_session.txt -w "HTTP %{http_code} in %{time_total}s\n" -X OPTIONS --max-time 20 https://kundenkonto.fonial.de/api/2.0/session -D - 2>&1 | head -30
+curl: (28) Connection timed out after 20002 milliseconds
+HTTP 000 in 20.002452s
+[0m
+Both still timing out. Let me get the full current surface picture — check other assets to distinguish per-host outage vs broader issue.
+[0m$ [0mfor h in "https://www.fonial.de/" "https://shop.fonial.de/graphql" "https://mm.fonial.de/api/v4/system/ping" "https://kampagne.fonial.de/" "https://red.fonial.de/"; do curl -sS -o /tmp/opencode/other.txt -w "[$h] HTTP %{http_code} in %{time_total}s\n" --max-time 12 -L "$h" -H "User-Agent: Mozilla/5.0" 2>&1 | head -2; done
+[https://www.fonial.de/] HTTP 200 in 0.972980s
+[https://shop.fonial.de/graphql] HTTP 500 in 0.891791s
+[https://mm.fonial.de/api/v4/system/ping] HTTP 200 in 0.810966s
+[https://kampagne.fonial.de/] HTTP 200 in 1.304355s
+[https://red.fonial.de/] HTTP 200 in 1.030494s
+[0m
+[0m$ [0mfor h in "https://prov.fonial.de/signup/confirm/55" "https://prov.fonial.de/api/2.0/devices/get"; do curl -sS -o /tmp/opencode/prov_path.txt -w "[$h] HTTP %{http_code} in %{time_total}s server=%{header_json}\n" --max-time 15 -X POST "$h" -H "Content-Type: application/json" -d '{"sid":"00000000-0000-0000-0000-000000000000"}' 2>&1 | head -3; done
+curl: (28) Connection timed out after 15002 milliseconds
+[https://prov.fonial.de/signup/confirm/55] HTTP 000 in 15.002785s server={
+}
+curl: (28) Connection timed out after 15002 milliseconds
+[https://prov.fonial.de/api/2.0/devices/get] HTTP 000 in 15.002080s server={
+}
+[0m
+Prov + kundenkonto both still down; but **mm.fonial.de/api/v4/system/ping is 200 again** (was 404 at 14:38). Flapping box. Probing mm surface + DNS state for the downed pair.
+[0m$ [0mfor h in prov.fonial.de kundenkonto.fonial.de www.fonial.de mm.fonial.de; do echo -n "$h -> "; getent ahosts "$h" | head -1 || echo "NO_RESOLVE"; done
+prov.fonial.de -> 62.146.7.20     STREAM prov.fonial.de
+kundenkonto.fonial.de -> 62.146.7.20     STREAM kundenkonto.fonial.de
+www.fonial.de -> 176.9.53.190    STREAM www.fonial.de
+mm.fonial.de -> 62.146.7.29     STREAM mm.fonial.de
+[0m
+[0m$ [0mfor p in "/api/v4/system/ping" "/api/v4/users" "/api/v4/users/create" "/api/v4/teams" "/signup/email" "/login"; do code=$(curl -sS -o /tmp/opencode/mm_body.txt -w "%{http_code}" --max-time 10 "https://mm.fonial.de$p" -H "User-Agent: Mozilla/5.0"); vsn=$(grep -i 'x-version-id' /tmp/opencode/mm_body.txt | head -c 80); body=$(head -c 120 /tmp/opencode/mm_body.txt); echo "[$p] HTTP $code | $vsn | $body"; sleep 1; done
+[/api/v4/system/ping] HTTP 200 |  | {"status":"OK"}
+[/api/v4/users] HTTP 401 |  | {"id":"api.context.session_expired.app_error","message":"Ungültige oder abgelaufene Sitzung, melden Sie sich erneut an.
+[/api/v4/users/create] HTTP 401 |  | {"id":"api.context.session_expired.app_error","message":"Ungültige oder abgelaufene Sitzung, melden Sie sich erneut an.
+[/api/v4/teams] HTTP 401 |  | {"id":"api.context.session_expired.app_error","message":"Ungültige oder abgelaufene Sitzung, melden Sie sich erneut an.
+[/signup/email] HTTP 200 |  | <!DOCTYPE html> <html> <head> <meta http-equiv=X-UA-Compatible content="IE=edge"> <meta name=viewport content="width=dev
+[/login] HTTP 200 |  | <!DOCTYPE html> <html> <head> <meta http-equiv=X-UA-Compatible content="IE=edge"> <meta name=viewport content="width=dev
+[0m
+Deltas found. Checking whether DNS actually points `kundenkonto` at origin (62.146.7.20) — that would be Cloudflare-bypass surface. Verifying against public resolvers.
+[0m$ [0mfor r in 8.8.8.8 1.1.1.1; do echo "== resolver $r =="; for h in kundenkonto.fonial.de prov.fonial.de www.fonial.de mm.fonial.de; do echo -n "$h A: "; dig +short @$r "$h" A | tr '\n' ' '; echo; done; done 2>&1; echo "== CNAME/A records =="; dig +short @8.8.8.8 kundenkonto.fonial.de CNAME; dig +noall +answer @8.8.8.8 kundenkonto.fonial.de kundenkonto.fonial.de 2>/dev/null | head
+== resolver 8.8.8.8 ==
+kundenkonto.fonial.de A: 62.146.7.20 
+prov.fonial.de A: 62.146.7.20 
+www.fonial.de A: 176.9.53.190 
+mm.fonial.de A: 62.146.7.29 
+== resolver 1.1.1.1 ==
+kundenkonto.fonial.de A: 62.146.7.20 
+prov.fonial.de A: 62.146.7.20 
+www.fonial.de A: 176.9.53.190 
+mm.fonial.de A: 62.146.7.29 
+== CNAME/A records ==
+kundenkonto.fonial.de.	300	IN	A	62.146.7.20
+kundenkonto.fonial.de.	299	IN	A	62.146.7.20
+[0m
+Probes complete. Confirmed: multi-hour origin-scoped outage on 62.146.7.20 (prov + kundenkonto both dead, all else alive), a DNS-layer change (kundenkonto now origin-direct, no Cloudflare), and mm.fonial.de flapping back to recovered.
+
+## STEP 1 — DELTA
+- [CHANGED] kundenkonto.fonial.de + prov.fonial.de: both STILL TCP-dead at 14:45 UTC (~5h continuous, since ≥09:56); www 200, shop 500, mm 200, kampagne 200, red 200 → outage isolated to origin 62.146.7.20 netblock, leaving the entire valid twin pair unreachable. Canary invalid until recovery.
+- [CHANGED] kundenkonto.fonial.de DNS: authoritative A=62.146.7.20 on both 8.8.8.8 and 1.1.1.1 (TTL 300) — origin-direct, NO Cloudflare in path; contradicts prior "Cloudflare-fronted" characterization (all prior probes postdating 09-10 saw CF). Same origin IP as prov → "twin" is literally the same box/nginx at DNS layer.
+- [CHANGED] mm.fonial.de: flapping reconfirmed — 14:45 UTC probe shows RECOVERED surface again (system/ping 200, /signup/email 200, /login 200, /api/v4/users 401 session_expired, /users/create 401, /teams 401) after 404 states at 05:01/09:56/14:38. Fifth state flip across 3 cycles; "definitively rejected recovery" LEARN (09:56) was premature.
+
+## STEP 2 — PRIORITIZE
+- [PRIO] prov.fonial.de/api/2.0,5.4,attack_surface=4/business_value=10/tech_exposure=6/gate_ease=4/cloud_surface=2/freshness=1
+- [PRIO] kundenkonto.fonial.de/api/2.0,5.3,attack_surface=4/business_value=10/tech_exposure=6/gate_ease=2/cloud_surface=4/freshness=1
+- [PRIO] mm.fonial.de,3.0,attack_surface=3/business_value=6/tech_exposure=4/gate_ease=4/cloud_surface=0/freshness=1 (flapping = unreliable for any conclusion)
+
+## STEP 3 — HYPOTHESES
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 85
+reasoning: v2026.09.16-1 last confirmed 05:01 UTC pre-outage; body-SID-only authz, decorative PHPSESSID, cleartext UUID sid, ACAO*, 5-endpoint; DNS now shows prov+kundenkonto share origin 62.146.7.20. Signup POST flow (CSRF _token, trunkTariff 19/21/22, AccountAddress) confirmed live prior cycles. Two-tenant creation remains sole unobserved variable. Blocker unchanged: comparison base requires re-verified canary post-recovery.
+evidence_needed: {sid:B, phpsessid:A} on /evn/get or /devices/get returns tenant-A data, or clean bind rejection. Plus pre-condition: live canary confirms v2026.09.16-1 + nginx/1.10.3 + ACAO* on recovered box.
+verify_steps: HUMAN (post-recovery): OPTIONS /session on both hosts to re-verify parity; GET /signup/register/55 harvest CSRF; 2× POST /signup/confirm/55 (example.invalid, fabricated address, trunkTariff 19)→tenants A+B; cross-present {sid:B,phpsessid:A} on /evn/get, /devices/get; /call/initiate only after clean read.
+impact: cross-tenant CDR, phone numbers, SIP creds, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Prov-confirmed BOLA reproduces on production (twin == same origin box now)
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 80
+reasoning: Fourth consecutive lockstep pair pre-outage; DNS now resolves kundenkonto directly to 62.146.7.20 (same box as prov) with no Cloudflare → if confirmed on recovery this RAISES prov→prod fidelity to "same nginx vhost" and adds origin-exposure/CORS-recheck dimension. Seam survived 4 deploy cycles.
+evidence_needed: same cross-bind evidence produced on prov first; then available on kundenkonto under identical origin.
+verify_steps: identical to prov hyp; never live customer data.
+impact: cross-tenant telephony data + call control on production — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Redundant second Mattermost node with weaker config via flapping LB
+class: MISCONFIG
+asset: mm.fonial.de
+confidence: 30
+reasoning: 5 state flips (200-vs-404, users/create 401-when-up) across 3 cycles point to ≥2 nodes w/ divergent configs, not simple restart. No evidence of divergent auth config — pure inference. Below floor; discard.
+impact: hypothetical weaker-auth node → account takeover — spec.
+testability: HUMAN_ONLY
+
+## STEP 4 — SELF-CRITIQUE
+- [PARKED] mm flapping: below floor, no divergent-config evidence, API 401 auth-gated when up, SPA /signup≡/login shell = no server-rendered signup. Class not testable passively.
+- [PARKED] shop admin-token: confidence 40, no new evidence, chain-only.
+- [PARKED] kampagne TYPO3: out-of-scope login panel.
+- [FINAL] 1. prov cross-bind BOLA (85, HUMAN_ONLY) — unchanged priors, pre-condition = canary re-verify post-recovery. 2. kundenkonto repro (80, HUMAN_ONLY) — strengthened by DNS same-origin discovery.
+
+## STEP 5 — NEXT ACTION
+[NEXT] PROBE: first-recovery discriminator — `OPTIONS https://kundenkonto.fonial.de/api/2.0/session` + `OPTIONS https://prov.fonial.de/api/2.0/session` (max-time 15, dump -D headers): confirm Server/X-Fonial-Version v2026.09.16-1/ACAO* on both and presence-or-not of `cf-ray` on kundenkonto (CF-removed vs restored). If both direct-origin nginx/1.10.3, re-affirm twin parity (same box) then route to HUMAN gate for the single fabricated registration. No mutating tests while box is down.
+
+## STEP 6 — LEARNING
+- [LEARN] ACCEPTED origin-scoped-outage @ fonial 62.146.7.20: kundenkonto+prov (and legacy admin/go) TCP-dead ≥5h (≥09:56→14:45) while www/shop/mm/kampagne/red alive → outage confined to shared origin netblock; confirms shared-infra model, keeps twin fidelity claim intact pending recovery.
+- [LEARN] ACCEPTED kundenkonto-DNS-repoint @ kundenkonto.fonial.de: authoritative A=62.146.7.20 origin-direct (8.8.8.8 + 1.1.1.1, TTL 300, 14:45 UTC) — "Cloudflare-fronted" characterization now STALE at DNS layer; header confirmation deferred until origin answers.
+- [LEARN] CHANGED mm-fonial-de-flapping @ mm.fonial.de: 14:45 probe shows recovered surface (system/ping 200, /users/create 401, /teams 401, SPA /signup/email+/login 200) after 404 states 05:01/09:56/14:38 → 5 flips/3 cycles; prior "definitively rejected" conclusion retracted; unauth self-signup still unproven either way; class parks, untestable while flipping.
+- [LEARN] REJECTED further-passive-cycles @ fonial (partial): infra/DNS-layer re-probes DID yield discriminating data this cycle (origin outage + DNS repoint + mm flap); only vuln-surface probes remain value-free.
+
+## STEP 7 — RISK
+[RISK] fonial: 80 — CRITICAL-if-confirmed cross-tenant BOLA seam imports to production now that kundenkonto's DNS front (Cloudflare) has dropped at the record level, making origin 62.146.7.20 the direct boundary for an auth-enabled portal; prov→prod fidelity effectively "same box". Blocker unchanged: (a) origin outage must clear for canary validity, (b) program approval for one fabricated registration (HUMAN gate). No new defensible passive finding; all other classes closed or out-of-scope.

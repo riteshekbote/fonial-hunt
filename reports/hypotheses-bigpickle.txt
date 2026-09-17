@@ -1,41 +1,28 @@
-## 2026-09-17 14:37:59 UTC [target] (model bigpickle)
-[CHANGED] kundenkonto.fonial.de: ALL 4 API endpoints (session, session/authenticate, devices/get, call/initiate) timed out at 09:56 UTC — were 200 at 05:01 UTC. Cloudflare-fronted host unreachable or blocking.
-[CHANGED] prov.fonial.de/signup/confirm/55: Timed out at 09:56 UTC — was 302 at 05:01 UTC. Unfronted twin also unreachable.
-[CHANGED] mm.fonial.de: /api/v4/users/create, /system/ping, /signup/email all confirmed 404 at 09:56 UTC (also at 05:01). KB "RECOVERED" claim definitively contradicted by two consecutive probe cycles.
-[PRIO] prov.fonial.de/api/2.0,5.4,attack_surface=4/business_value=10/tech_exposure=6/gate_ease=4/cloud_surface=2/freshness=1
-[PRIO] kundenkonto.fonial.de/api/2.0,5.3,attack_surface=4/business_value=10/tech_exposure=6/gate_ease=2/cloud_surface=4/freshness=1
+## 2026-09-17 18:33:23 UTC [target] (model bigpickle)
 [HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
 class: AUTH
 asset: prov.fonial.de/api/2.0
 confidence: 85
-reasoning: v2026.09.16-1 live-probed 05:01 UTC (pre-timeout); body-SID-only authz (session invalid on absent SID), decorative PHPSESSID (Secure;HttpOnly), cleartext UUID sid, ACAO* no credentials, 5-endpoint surface, nginx/1.10.3 direct, GET /signup/register/55 302→/signup/55. Signup POST form (CSRF _token, trunkTariff 19/21/22, AccountAddress/AccountContact) confirmed live in prior cycles. Two-tenant creation remains sole unobserved variable.
-evidence_needed: tenant-B sid + tenant-A PHPSESSID on /evn/get or /devices/get returns tenant-A data, or a clean rejection proving the bind.
-verify_steps: HUMAN: GET /signup/register/55 → harvest CSRF; 2× POST /signup/confirm/55 (example.invalid email, fabricated address, trunkTariff 19) → tenants A+B; POST /api/2.0/session per tenant; cross-present {sid:B, phpsessid:A} on /evn/get then /devices/get; /call/initiate only after clean read.
+reasoning: v2026.09.16-1 last confirmed 05:01 UTC pre-outage; body-SID-only authz, decorative PHPSESSID, cleartext UUID sid, ACAO*, 5-endpoint; DNS now shows prov+kundenkonto share origin 62.146.7.20. Signup POST flow (CSRF _token, trunkTariff 19/21/22, AccountAddress) confirmed live prior cycles. Two-tenant creation remains sole unobserved variable. Blocker unchanged: comparison base requires re-verified canary post-recovery.
+evidence_needed: {sid:B, phpsessid:A} on /evn/get or /devices/get returns tenant-A data, or clean bind rejection. Plus pre-condition: live canary confirms v2026.09.16-1 + nginx/1.10.3 + ACAO* on recovered box.
+verify_steps: HUMAN (post-recovery): OPTIONS /session on both hosts to re-verify parity; GET /signup/register/55 harvest CSRF; 2× POST /signup/confirm/55 (example.invalid, fabricated address, trunkTariff 19)→tenants A+B; cross-present {sid:B,phpsessid:A} on /evn/get, /devices/get; /call/initiate only after clean read.
 impact: cross-tenant CDR, phone numbers, SIP creds, device lists, outbound call control — CRITICAL.
 testability: HUMAN_ONLY
-[HYP] Prov-confirmed BOLA reproduces on production (lockstep v2026.09.16-1)
+[HYP] Prov-confirmed BOLA reproduces on production (twin == same origin box now)
 class: AUTH
 asset: kundenkonto.fonial.de/api/2.0
 confidence: 80
-reasoning: Fourth consecutive same-minute lockstep pair re-verified 05:01 UTC; seam survived deploy cycles unchanged. Exposure clause forbids live-customer testing → prov-validate first, sanctioned test tenants only.
-evidence_needed: same cross-bind evidence produced on prov twin before any prod repro.
-verify_steps: identical to prov hyp; program-sanctioned test tenants; never live customer data.
+reasoning: Fourth consecutive lockstep pair pre-outage; DNS now resolves kundenkonto directly to 62.146.7.20 (same box as prov) with no Cloudflare → if confirmed on recovery this RAISES prov→prod fidelity to "same nginx vhost" and adds origin-exposure/CORS-recheck dimension. Seam survived 4 deploy cycles.
+evidence_needed: same cross-bind evidence produced on prov first; then available on kundenkonto under identical origin.
+verify_steps: identical to prov hyp; never live customer data.
 impact: cross-tenant telephony data + call control on production — CRITICAL.
 testability: HUMAN_ONLY
-[PARKED] mm.fonial.de self-signup recovery: KB claims RECOVERED but two consecutive live probes (05:01 + 09:56) show /api/v4/* → 404. Recovery contradicted. Dead.
-[PARKED] shop admin-token standalone: confidence 40 at critique floor, no new evidence — chain component only.
-[PARKED] kampagne TYPO3 backend: out-of-scope public login panel; below floor.
-[FINAL] 1. prov cross-bind BOLA (85, HUMAN_ONLY) 2. kundenkonto repro (80, HUMAN_ONLY)
-[NEXT] HUMAN: Request program approval for exactly ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email, fabricated address, trunkTariff 19) to confirm end-to-end tenant creation on the twin — the still-sole unobserved variable before the two-tenant BOLA cross-bind test. Do not self-execute; no further passive probe discriminates the survivor. CRITICAL: Re-verify canary first — both kundenkonto + prov timed out at 09:56 UTC; confirm infra recovery before HUMAN gate.
-[LEARN] REJECTED further-passive-cycles @ fonial: this cycle's surface equals the 05:01 UTC probe; no drift, no discriminator remains on either cross-bind survivor — momentum requires the sanctioned write, not probe data.
-[LEARN] CHANGED mm-fonial-de-status @ mm.fonial.de: Knowledge base "RECOVERED" claim contradicted by TWO consecutive probe cycles (05:01 + 09:56) showing /api/v4/* → 404. Recovery claim definitively rejected; Mattermost self-signup class closed.
-[LEARN] ACCEPTED canary-drift-free-refresh @ prov+kundenkonto: both live-probed 2026-09-17 04:58 UTC at v2026.09.16-1 same minute → lockstep reconfirmed 4th consecutive cycle.
-[LEARN] ACCEPTED lockstep-deploy-live @ kundenkonto+prov: fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 version hops.
-[LEARN] ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.16-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate deployment to test dual-backend cross-bind.
-[LEARN] REJECTED shop admin-token standalone: confidence 40 at critique floor, no new evidence — chain component only.
-[LEARN] REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon.
-[LEARN] REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references.
-[LEARN] ACCEPTED MISCONFIG @ kundenkonto.fonial.de: CORS wildcard (ACAO *, ACAM GET/POST/OPTIONS) consistent on all 5 API endpoints; no allow-credentials → no cookie cross-origin exfil channel; SID-in-body required.
-[LEARN] REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no allow-credentials, browser won't send cookies cross-origin → low direct impact without SID leak chain.
-[LEARN] ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface.
-[RISK] fonial: 80 — cross-tenant BOLA seam (CRITICAL if confirmed) re-verified intact across 4th deploy cycle on byte-identical unfronted twin with live self-signup flow; objectively pre-validatable before any prod claim. Sole blocker is program approval for one fabricated registration (HUMAN gate). INFRA ALERT: Both prov + kundenkonto timed out at 09:56 UTC — may indicate maintenance window, WAF change, or outage; comparison base validity requires re-verification post-recovery. No new defensible passive finding; all other classes closed or out-of-scope.
+[HYP] Redundant second Mattermost node with weaker config via flapping LB
+class: MISCONFIG
+asset: mm.fonial.de
+confidence: 30
+reasoning: 5 state flips (200-vs-404, users/create 401-when-up) across 3 cycles point to ≥2 nodes w/ divergent configs, not simple restart. No evidence of divergent auth config — pure inference. Below floor; discard.
+impact: hypothetical weaker-auth node → account takeover — spec.
+testability: HUMAN_ONLY
+[NEXT] PROBE: first-recovery discriminator — `OPTIONS https://kundenkonto.fonial.de/api/2.0/session` + `OPTIONS https://prov.fonial.de/api/2.0/session` (max-time 15, dump -D headers): confirm Server/X-Fonial-Version v2026.09.16-1/ACAO* on both and presence-or-not of `cf-ray` on kundenkonto (CF-removed vs restored). If both direct-origin nginx/1.10.3, re-affirm twin parity (same box) then route to HUMAN gate for the single fabricated registration. No mutating tests while box is down.
+[RISK] fonial: 80 — CRITICAL-if-confirmed cross-tenant BOLA seam imports to production now that kundenkonto's DNS front (Cloudflare) has dropped at the record level, making origin 62.146.7.20 the direct boundary for an auth-enabled portal; prov→prod fidelity effectively "same box". Blocker unchanged: (a) origin outage must clear for canary validity, (b) program approval for one fabricated registration (HUMAN gate). No new defensible passive finding; all other classes closed or out-of-scope.
