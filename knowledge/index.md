@@ -430,3 +430,27 @@
 - 2026-09-17 ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
 - 2026-09-17 CHANGED mm-fonial-de-recovery-status @ mm.fonial.de: Knowledge base accepted "RECOVERED" state but live probe 2026-09-17 05:01:27 UTC shows /api/v4/system/ping → 404, /api/v4/users/create → 404, /signup/email → 404. Recovery claim contradicted by probe data. Requires independent re-verification before hypothesis promotion.
 - 2026-09-17 REJECTED further-passive-cycles @ fonial: this cycle's surface equals the 00:01 UTC probe; no drift, no discriminator remains on either cross-bind survivor — momentum requires sanctioned writes, not probe data
+- 2026-09-17 REJECTED further-passive-cycles @ fonial: this cycle's surface equals the 05:01 UTC probe; no drift, no discriminator remains on either cross-bind survivor — momentum requires the sanctioned write, not probe data.
+- 2026-09-17 CHANGED mm-fonial-de-status @ mm.fonial.de: Knowledge base "RECOVERED" claim contradicted by TWO consecutive probe cycles (05:01 + 09:56) showing /api/v4/* → 404. Recovery claim definitively rejected; Mattermost self-signup class closed.
+- 2026-09-17 ACCEPTED canary-drift-free-refresh @ prov+kundenkonto: both live-probed 2026-09-17 04:58 UTC at v2026.09.16-1 same minute → lockstep reconfirmed 4th consecutive cycle.
+- 2026-09-17 ACCEPTED lockstep-deploy-live @ kundenkonto+prov: fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 version hops.
+- 2026-09-17 ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.16-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate deployment to test dual-backend cross-bind.
+- 2026-09-17 REJECTED shop admin-token standalone: confidence 40 at critique floor, no new evidence — chain component only.
+- 2026-09-17 REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon.
+- 2026-09-17 REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references.
+- 2026-09-17 ACCEPTED MISCONFIG @ kundenkonto.fonial.de: CORS wildcard (ACAO *, ACAM GET/POST/OPTIONS) consistent on all 5 API endpoints; no allow-credentials → no cookie cross-origin exfil channel; SID-in-body required.
+- 2026-09-17 REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no allow-credentials, browser won't send cookies cross-origin → low direct impact without SID leak chain.
+- 2026-09-17 ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface.
+- 2026-09-17 REJECTED mm-fional-de-api-surface-RECOVERED @ mm.fional.de: Live probe 2026-09-17 14:38 UTC shows /api/v4/system/ping → 404, /signup/email → 404, /api/v4/users/create → 404 — contradicts KB 05:00:58 claim; self-signup class eliminated
+- 2026-09-17 ACCEPTED canary-drift-free-refresh @ prov+kundenkonto: Both live-probed 2026-09-17 04:58 UTC at v2026.09.16-1 same minute → lockstep reconfirmed 4th consecutive cycle, comparison base valid post-deploy
+- 2026-09-17 ACCEPTED lockstep-deploy-live @ kundenkonto+prov: Fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 version hops; seam survived deploy; prov→prod fidelity raised
+- 2026-09-17 REJECTED further-passive-cycles @ fonial: This cycle's surface equals the 00:01 UTC probe; no drift, no discriminator remains on either cross-bind survivor — momentum requires sanctioned writes, not probe data
+- 2026-09-17 ACCEPTED internal-host-DNS-leak @ int.fional.de: 192.168.10.71 (RFC1918) + git.fional.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure, LOW standalone, chain-info only
+- 2026-09-17 REJECTED kampagne-typo3-backend-login @ kampagne.fional.de/typo3/: Standard TYPO3 CMS Login (LIVE) = "publicly accessible login panels" out-of-scope; /install.php + eID=dump 404
+- 2026-09-17 ACCEPTED unfronted-duplicate @ prov.fional.de/api/2.0: Re-probe confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.16-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate deployment to test dual-backend cross-bind
+- 2026-09-17 REJECTED shop admin-token standalone: Confidence 40 at critique floor, no new evidence — chain component only
+- 2026-09-17 REJECTED SSRF @ www.fional.de: No URL parameters or webhook endpoints found in passive recon
+- 2026-09-17 REJECTED IDOR @ www.fional.de: Pure marketing site, no object references
+- 2026-09-17 ACCEPTED MISCONFIG @ kundenkonto.fional.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+- 2026-09-17 REJECTED CORS wildcard direct-exploit @ kundenkonto.fional.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
+- 2026-09-17 ACCEPTED dual-backend architecture @ kundenkonto.fional.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface

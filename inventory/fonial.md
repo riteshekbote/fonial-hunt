@@ -618,3 +618,17 @@ www.fonial.de
 - CHANGED prov.fonial.de/signup/confirm/55 POST returns 302 without form data — end-to-end tenant creation on prov data backend remains sole unobserved variable for self-service BOLA
 - CHANGED dslkonto.fonial.de/app_dev.php → 302 /login; _profiler/ 404 with rotating X-Debug-Token — dev-mode exposure unchanged, scope-excluded (descriptive errors only)
 - CHANGED shop.fonial.de/graphql GET 500 (sets PHPSESSID), no CORS, CSP report-only unsafe-inline/eval — asymmetric admin-auth (REST 404, GraphQL introspectable) unchanged at confidence 40
+
+## 2026-09-17 14:42:26 UTC
+- CHANGED kundenkonto.fonial.de: ALL 4 API endpoints (session, session/authenticate, devices/get, call/initiate) timed out at 09:56 UTC — were 200 at 05:01 UTC. Cloudflare-fronted host unreachable or blocking.
+- CHANGED prov.fonial.de/signup/confirm/55: Timed out at 09:56 UTC — was 302 at 05:01 UTC. Unfronted twin also unreachable.
+- CHANGED mm.fonial.de: /api/v4/users/create, /system/ping, /signup/email all confirmed 404 at 09:56 UTC (also at 05:01). KB "RECOVERED" claim definitively contradicted by two consecutive probe cycles.
+- NEW mm.fional.de API surface RE-DEGRADED: Live probe 2026-09-17 14:38 UTC shows `/api/v4/system/ping` → 404 (was 200 at 05:00:58 KB claim); contradicts "RECOVERED" status — self-signup class eliminated ag
+- CHANGED prov.fonial.de/api/2.0 + kundenkonto.fonial.de/api/2.0: Lockstep deploy CONFIRMED 4th consecutive cycle at v2026.09.16-1 (KB 09:55:11) — shared pipeline fidelity raised
+- CHANGED prov.fonial.de/signup/confirm/55: POST returns 302 without form data (KB 09:55:11) — end-to-end tenant creation on prov data backend remains sole unobserved variable
+- CHANGED mm.fional.de: X-Version-Id header absent on 404 responses; nginx/1.10.2 still responds — instance unstable/degraded
+- CHANGED shop.fional.de/graphql: GET 500 (sets PHPSESSID), no CORS, CSP report-only unsafe-inline/eval — asymmetric admin-auth (REST 404, GraphQL introspectable) unchanged confidence 40
+- CHANGED dslkonto.fonial.de/app_dev.php → 302 /login; _profiler/ 404 with rotating X-Debug-Token — dev-mode exposure unchanged, scope-excluded
+- CHANGED CT-sweep inventory: ~19 subdomains via crt.sh, 7 reachable (kampagne TYPO3 200, staging 401/403, dead 404s), 12 firewalled — no new exploitable passive surface
+- CHANGED int.fional.de DNS leak confirmed: 192.168.10.71 (RFC1918) + git.fional.de CNAME git.fonial.dev→92.51.132.112
+- CHANGED kampagne.fional.de/typo3/: Live TYPO3 backend login (200) = out-of-scope per scope.yml (public login panel)
