@@ -3774,3 +3774,31 @@ impact: hypothetical weaker-auth node → account takeover — spec.
 testability: HUMAN_ONLY
 [NEXT] PROBE: first-recovery discriminator — `OPTIONS https://kundenkonto.fonial.de/api/2.0/session` + `OPTIONS https://prov.fonial.de/api/2.0/session` (max-time 15, dump -D headers): confirm Server/X-Fonial-Version v2026.09.16-1/ACAO* on both and presence-or-not of `cf-ray` on kundenkonto (CF-removed vs restored). If both direct-origin nginx/1.10.3, re-affirm twin parity (same box) then route to HUMAN gate for the single fabricated registration. No mutating tests while box is down.
 [RISK] fonial: 80 — CRITICAL-if-confirmed cross-tenant BOLA seam imports to production now that kundenkonto's DNS front (Cloudflare) has dropped at the record level, making origin 62.146.7.20 the direct boundary for an auth-enabled portal; prov→prod fidelity effectively "same box". Blocker unchanged: (a) origin outage must clear for canary validity, (b) program approval for one fabricated registration (HUMAN gate). No new defensible passive finding; all other classes closed or out-of-scope.
+## 2026-09-17 21:44:18 UTC [target] (model bigpickle)
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 85
+reasoning: v2026.09.16-1 last confirmed 05:01 UTC pre-outage; body-SID-only authz confirmed 4 lockstep cycles; signup POST (CSRF, trunkTariff 19/21/22, AccountAddress) live prior; origin 62.146.7.20 direct (both hosts). Two-tenant creation is still sole unobserved variable; box now TCP-blackholed on 80+443 since 09:56 UTC.
+evidence_needed: {sid:B, phpsessid:A} on /evn/get or /devices/get returns tenant-A data, or clean bind rejection; precondition = live canary confirms v2026.09.16-1 + nginx/1.10.3 + ACAO* post-recovery.
+verify_steps: HUMAN (post-recovery): OPTIONS /api/2.0/session both hosts; GET /signup/register/55 harvest CSRF; 2× POST /signup/confirm/55 (example.invalid, fabricated address, trunkTariff 19) → tenants A+B; cross-present {sid:B,phpsessid:A} on /evn/get, /devices/get; /call/initiate only after clean read.
+impact: cross-tenant CDR, phone numbers, SIP creds, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Prov-confirmed BOLA reproduces on production (kundenkonto now same origin box)
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 80
+reasoning: DNS confirmed both hosts → 62.146.7.20 direct (no Cloudflare record); same nginx origin → prov→prod fidelity effectively "same vhost". Seam re-verified on 4 lockstep deploy cycles pre-outage.
+evidence_needed: identical cross-bind evidence on prov first, then kundenkonto under same origin post-recovery.
+verify_steps: identical to prov hyp, or post-recovery direct-origin parity probe; never live customer data.
+impact: cross-tenant telephony data + call control on production — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Mattermost flapping = ≥2 nodes with divergent routing/config
+class: MISCONFIG
+asset: mm.fonial.de
+confidence: 30
+reasoning: 18:35 live: system/ping 200, /signup/email 200, /api/v4/users/create 401 after 3 consecutive down-states (05:01/09:56/14:38); 5+ state flips across cycles. No divergent-auth evidence — inference only. users/create 401 = route exists, gated.
+evidence_needed: consecutive probes capturing 401-vs-404 on same endpoint within minutes to prove node divergence; auth-behavior difference between flips.
+verify_steps: GET /api/v4/users/create every ~10 min for 1h (≤1rps, read-only); correlate with signup 200/404.
+impact: hypothetical weaker-auth node → ATO — spec, no substance yet.
+testability: PASSIVE

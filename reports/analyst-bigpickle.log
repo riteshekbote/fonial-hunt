@@ -21559,3 +21559,88 @@ testability: HUMAN_ONLY
 
 ## STEP 7 — RISK
 [RISK] fonial: 80 — CRITICAL-if-confirmed cross-tenant BOLA seam imports to production now that kundenkonto's DNS front (Cloudflare) has dropped at the record level, making origin 62.146.7.20 the direct boundary for an auth-enabled portal; prov→prod fidelity effectively "same box". Blocker unchanged: (a) origin outage must clear for canary validity, (b) program approval for one fabricated registration (HUMAN gate). No new defensible passive finding; all other classes closed or out-of-scope.
+===== ANALYST bigpickle 2026-09-17 21:44:27 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mgetent hosts kundenkonto.fonial.de prov.fonial.de mm.fonial.de 2>&1; echo "---"; dig +short kundenkonto.fonial.de A 2>&1; echo "---"; dig +short prov.fonial.de A 2>&1
+62.146.7.20     kundenkonto.fonial.de
+62.146.7.20     prov.fonial.de
+62.146.7.29     mm.fonial.de
+---
+62.146.7.20
+---
+62.146.7.20
+[0m
+[0m$ [0mcurl -sS -o /dev/null -w "HTTP %{http_code} remote=%{remote_ip} time=%{time_total}\n" -D /tmp/opencode/k1.hdr --max-time 15 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session -H "Origin: https://evil.example" 2>&1; sleep 1; curl -sS -o /dev/null -w "HTTP %{http_code} remote=%{remote_ip} time=%{time_total}\n" -D /tmp/opencode/p1.hdr --max-time 15 -X OPTIONS https://prov.fonial.de/api/2.0/session -H "Origin: https://evil.example" 2>&1
+curl: (28) Connection timed out after 15002 milliseconds
+HTTP 000 remote= time=15.002024
+curl: (28) Connection timed out after 15002 milliseconds
+HTTP 000 remote= time=15.002052
+[0m
+[0m$ [0mcurl -sS -o /dev/null -w "www http=%{http_code} t=%{time_total}\n" --max-time 10 https://www.fonial.de/ 2>&1; sleep 1; curl -sS -o /dev/null -w "shop http=%{http_code} t=%{time_total}\n" --max-time 10 https://shop.fonial.de/graphql 2>&1; sleep 1; curl -sS -o /dev/null -w "mm http=%{http_code} t=%{time_total}\n" --max-time 10 https://mm.fonial.de/api/v4/system/ping 2>&1
+www http=200 t=0.824056
+shop http=500 t=0.674326
+mm http=200 t=0.409607
+[0m
+[0m$ [0mcurl -sS -o /dev/null -w "kundenkonto:80 http=%{http_code} t=%{time_total}\n" --max-time 12 http://kundenkonto.fonial.de/ 2>&1; sleep 1; curl -sS -o /dev/null -w "mm-signup http=%{http_code} t=%{time_total}\n" --max-time 10 https://mm.fonial.de/signup/email 2>&1; sleep 1; curl -sS -o /dev/null -w "mm-users-create http=%{http_code} t=%{time_total}\n" --max-time 10 https://mm.fonial.de/api/v4/users/create 2>&1
+curl: (28) Connection timed out after 12002 milliseconds
+kundenkonto:80 http=000 t=12.002117
+mm-signup http=200 t=0.496560
+mm-users-create http=401 t=0.403969
+[0m
+STEP 1 — DELTA
+- NEW mm.fonial.de surface UP at 18:35 UTC (live: /api/v4/system/ping 200, /signup/email 200, /api/v4/users/create 401) — flips back up after 14:38-down; flapping confirmed (within 24h: up≈05:00→down 05:01/09:56/14:38→up 18:35). KB "definitively rejected" was an over-claim; a fresh independent probe contradicts it.
+- CHANGED kundenkonto+prov origin 62.146.7.20: still unreachable at 18:35 UTC — TCP timeout on both 80+443 (t=15.0). Outage continues ~9h past 09:56 UTC first-observed. BOLA comparison base INVALID; the sanctioned-write/HUMAN gate is blocked on infra.
+- CHANGED (control) host-specific outage: egress healthy this cycle (www 200, shop 500-known-behavior, mm 200/401) → 62.146.7.20 is down/blackholing, not my source IP.
+
+STEP 2 — PRIORITIZE
+- [PRIO] kundenkonto.fonial.de/api/2.0,6.15,business_value+tech_exposure+gate_ease(now direct-origin post-CF-drop but HM-gated on outage)
+- [PRIO] prov.fonial.de/api/2.0,6.05,business_value+tech_exposure+gate_ease(test twin, HM-gated, unreachable now)
+- [PRIO] mm.fonial.de,4.55,freshness(flap state today)+gate_ease(401-gated self-signup)
+
+STEP 3 — HYPOTHESES
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 85
+reasoning: v2026.09.16-1 last confirmed 05:01 UTC pre-outage; body-SID-only authz confirmed 4 lockstep cycles; signup POST (CSRF, trunkTariff 19/21/22, AccountAddress) live prior; origin 62.146.7.20 direct (both hosts). Two-tenant creation is still sole unobserved variable; box now TCP-blackholed on 80+443 since 09:56 UTC.
+evidence_needed: {sid:B, phpsessid:A} on /evn/get or /devices/get returns tenant-A data, or clean bind rejection; precondition = live canary confirms v2026.09.16-1 + nginx/1.10.3 + ACAO* post-recovery.
+verify_steps: HUMAN (post-recovery): OPTIONS /api/2.0/session both hosts; GET /signup/register/55 harvest CSRF; 2× POST /signup/confirm/55 (example.invalid, fabricated address, trunkTariff 19) → tenants A+B; cross-present {sid:B,phpsessid:A} on /evn/get, /devices/get; /call/initiate only after clean read.
+impact: cross-tenant CDR, phone numbers, SIP creds, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Prov-confirmed BOLA reproduces on production (kundenkonto now same origin box)
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 80
+reasoning: DNS confirmed both hosts → 62.146.7.20 direct (no Cloudflare record); same nginx origin → prov→prod fidelity effectively "same vhost". Seam re-verified on 4 lockstep deploy cycles pre-outage.
+evidence_needed: identical cross-bind evidence on prov first, then kundenkonto under same origin post-recovery.
+verify_steps: identical to prov hyp, or post-recovery direct-origin parity probe; never live customer data.
+impact: cross-tenant telephony data + call control on production — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Mattermost flapping = ≥2 nodes with divergent routing/config
+class: MISCONFIG
+asset: mm.fonial.de
+confidence: 30
+reasoning: 18:35 live: system/ping 200, /signup/email 200, /api/v4/users/create 401 after 3 consecutive down-states (05:01/09:56/14:38); 5+ state flips across cycles. No divergent-auth evidence — inference only. users/create 401 = route exists, gated.
+evidence_needed: consecutive probes capturing 401-vs-404 on same endpoint within minutes to prove node divergence; auth-behavior difference between flips.
+verify_steps: GET /api/v4/users/create every ~10 min for 1h (≤1rps, read-only); correlate with signup 200/404.
+impact: hypothetical weaker-auth node → ATO — spec, no substance yet.
+testability: PASSIVE
+
+STEP 4 — SELF-CRITIQUE
+- [PARKED] mm-flap divergent-config: confidence 30 < 40 floor; /signup/email 200 = SPA shell (prior sha256-identical to /login), users/create 401 = gated; no auth-divergence fact. Requires sustained PASSIVE observation to justify, below report floor today.
+- [PARKED] shop admin-token standalone: confidence 40 at floor, no new evidence — chain component only.
+- [FINAL] 1. prov cross-bind BOLA (85, HUMAN_ONLY, infra-gated) 2. kundenkonto repro (80, HUMAN_ONLY, infra-gated)
+
+STEP 5 — NEXT ACTION
+- [NEXT] PROBE: recovery discriminator — `curl -sS -o /dev/null -D - --max-time 15 -X OPTIONS -H "Origin: https://evil.example" https://prov.fonial.de/api/2.0/session` then the identical probe on `https://kundenkonto.fonial.de/api/2.0/session` (1s gap): confirm origin 62.146.7.20 is back (currently TCP-blackholed), Server=nginx/1.10.3, X-Fonial-Version v2026.09.16-1, ACAO*/no-credentials, and kundenkonto still direct-origin (no `cf-ray`). Do NOT advance the HUMAN sanctioned-write gate for the single fabricated registration until both canaries return 200 — box is down, comparison base invalid.
+
+STEP 6 — LEARNING
+- [LEARN] ACCEPTED infra-outage @ kundenkonto+prov origin 62.146.7.20: independent 18:35 UTC probe re-confirms TCP blackhole on 80+443 (t=15.0); ~9h and counting since 09:56 UTC; BOLA comparison base invalid; HUMAN write gate blocked pending recovery.
+- [LEARN] CHANGED mm-fonial-de-flapping @ mm.fonial.de: 18:35 UTC live shows system/ping 200, /signup/email 200, /api/v4/users/create 401 after prior 04:38-down — KB "definitively rejected" over-claim corrected; both KB "RECOVERED" and KB "rejected" were premature; observable fact = flapping, no auth divergence.
+- [LEARN] ACCEPTED host-specific-outage @ 62.146.7.20: www(200), shop(known-500), mm(200/401) all reachable same cycle → block is specific to the twin origin, not my egress IP or netblock.
+- [LEARN] REJECTED further-passive-probing @ fonial: no remaining discriminator on the BOLA survivors beyond infra state; class repeat.
+
+STEP 7 — RISK
+- [RISK] fonial: 78 — CRITICAL-if-confirmed cross-tenant BOLA seam intact but its comparison base is unreachable (origin 62.146.7.20 blackholed on 80+443 since ~09:56, now direct DNS for BOTH kundenkonto and prov post-Cloudflare-removal → production auth portal is currently origin-exposed AND unavailable, an availability/security posture change). Blocker unchanged: (a) origin recovery for canary validity, (b) program approval for one fabricated registration (HUMAN gate). No new defensible passive finding; all other classes closed or out-of-scope.

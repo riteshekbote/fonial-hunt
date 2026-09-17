@@ -643,3 +643,5 @@ www.fonial.de
 - CHANGED CT-sweep inventory: ~19 subdomains via crt.sh, 7 reachable (kampagne TYPO3 200, staging 401/403, dead 404s), 12 firewalled — no new exploitable passive surface
 - CHANGED int.fional.de DNS leak confirmed: 192.168.10.71 (RFC1918) + git.fional.de CNAME git.fonial.dev→92.51.132.112
 - CHANGED kampagne.fional.de/typo3/: Live TYPO3 backend login (200) = out-of-scope per scope.yml (public login panel)
+
+## 2026-09-17 21:44:27 UTC

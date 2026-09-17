@@ -2350,3 +2350,21 @@
 - LEARN: ACCEPTED MISCONFIG @ kundenkonto.fional.de: Wildcard CORS with credentials on auth-enabled domain confirmed
 - LEARN: REJECTED CORS wildcard direct-exploit @ kundenkonto.fional.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origi
 - LEARN: ACCEPTED dual-backend architecture @ kundenkonto.fional.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanism
+
+## RANKED HYPOTHESES 2026-09-17 21:44:27 UTC
+- [85] prov.fonial.de/api/2.0: Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin (from art/lead_nemotron3.txt)
+- NEXT(hypotheses-nemotron3.txt): HUMAN: Request program approval for exactly ONE fake-data registration POST to https://prov.fional.de/signup/confirm/55 (example.invalid email, fabricated addre
+- LEARN: ACCEPTED canary-drift-free-refresh @ prov+kundenkonto: Both live-probed 2026-09-17 04:58 UTC at v2026.09.16-1 same minute → lockstep reconfirmed 4th consecutive
+- LEARN: ACCEPTED lockstep-deploy-live @ kundenkonto+prov: Fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 versi
+- LEARN: REJECTED further-passive-cycles @ fonial: This cycle's surface equals the 00:01 UTC probe; no drift, no discriminator remains on either cross-bind survivor — mo
+- LEARN: ACCEPTED CT-sweep-inventory-expansion @ fonial: crt.sh enumeration surfaces ~19 subdomains absent from inventory; 7 reachable (kampagne TYPO3 200, staging 401/4
+- LEARN: ACCEPTED internal-host-DNS-leak @ int.fional.de: 192.168.10.71 (RFC1918) + git.fional.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure,
+- LEARN: REJECTED kampagne-typo3-backend-login @ kampagne.fional.de/typo3/: Standard TYPO3 CMS Login (LIVE) = "publicly accessible login panels" out-of-scope; /install.p
+- LEARN: ACCEPTED unfronted-duplicate @ prov.fional.de/api/2.0: Re-probe confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.16-1, ACAO*/ACAM, no allow-credentials, 
+- LEARN: REJECTED shop admin-token standalone: Confidence 40 at critique floor, no new evidence — chain component only
+- LEARN: REJECTED SSRF @ www.fional.de: No URL parameters or webhook endpoints found in passive recon
+- LEARN: REJECTED IDOR @ www.fional.de: Pure marketing site, no object references
+- LEARN: ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+- LEARN: REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origi
+- LEARN: ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanism
+- LEARN: REJECTED mm-fional-de-api-surface-RECOVERED @ mm.fional.de: Live probe 2026-09-17 14:38 UTC shows /api/v4/system/ping → 404, /signup/email → 404, /api/v4/users/
