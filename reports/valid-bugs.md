@@ -54,3 +54,7 @@
   - | Q4 | Provable non-invasively? | **NO** — requires 2 valid customer accounts to cross-bind SID-A + PHPSESSID-B; passive recon exhausted |
   - | 1 | GraphQL introspection (shop) | **VALID** | 5.3 | Report-ready |
   - | 3 | Dual-backend session confusion | **HOLD** | 9.8 if proven | Needs 2 valid accounts |
+
+- 2 lead(s) marked VALID at 2026-09-17 21:57:12 UTC
+  - | Q4 | **NO** | Requires 2 valid accounts from different tenants to execute cross-bind matrix — no passive-only proof possible |
+  - | Q4 | **PARTIAL** | Unauthenticated ACAO: * confirmed passively; authenticated confirmation requires valid PHPSESSID (AUTH_HELPED). JS source grep is passive. |
