@@ -287,3 +287,12 @@ TARGET_ORG not configured for fonial; skipping public-org deep scan.
 TARGET_ORG not configured for fonial; skipping public-org deep scan.
 ## REPOSCAN 2026-09-17 16:37:07 UTC
 TARGET_ORG not configured for fonial; skipping public-org deep scan.
+## REPOSCAN 2026-09-17 19:51:59 UTC
+[HYP] No public source repos exist under fonial-de or any related GitHub account
+class: OTHER
+asset: github.com/fonial-de (org)
+confidence: 100
+reasoning: |
+impact: N/A — no source code in public GitHub scope to audit.
+verify_steps: |
+TARGET_ORG not configured for fonial; skipping public-org deep scan.
