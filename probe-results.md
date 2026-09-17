@@ -816,3 +816,13 @@ https://mm.fonial.de/api/v4/users/create -> HTTP 404
 https://mm.fonial.de/api/v4/system/ping -> HTTP 404
 https://mm.fonial.de/signup/email -> HTTP 404
 https://prov.fonial.de/signup/confirm/55 -> HTTP 302
+
+## 2026-09-17 09:56:21 UTC
+https://kundenkonto.fonial.de/api/2.0/session -> ERR <urlopen error timed out>
+https://kundenkonto.fonial.de/api/2.0/session/authenticate -> ERR <urlopen error timed out>
+https://kundenkonto.fonial.de/api/2.0/devices/get -> ERR <urlopen error timed out>
+https://kundenkonto.fonial.de/api/2.0/call/initiate -> ERR <urlopen error timed out>
+https://mm.fonial.de/api/v4/users/create -> HTTP 404
+https://mm.fonial.de/api/v4/system/ping -> HTTP 404
+https://mm.fonial.de/signup/email -> HTTP 404
+https://prov.fonial.de/signup/confirm/55 -> ERR <urlopen error timed out>

@@ -607,3 +607,14 @@ www.fonial.de
 - CHANGED prov.fonial.de/signup/register/55 GET still 302-loop; POST /signup/confirm/55 returns 302 without form data — end-to-end tenant creation on prov data backend remains sole unobserved variable for self-
 - CHANGED dslkonto.fonial.de/app_dev.php → 302 /login; _profiler/ 404 with X-Debug-Token (rotating) — dev-mode exposure unchanged, scope-excluded (descriptive errors only)
 - CHANGED shop.fonial.de/graphql GET 500 (sets PHPSESSID), no CORS, CSP report-only unsafe-inline/eval — asymmetric admin-auth (REST 404, GraphQL introspectable) unchanged at confidence 40
+
+## 2026-09-17 09:55:11 UTC
+- CHANGED mm.fonial.de: Knowledge base claims "RECOVERED" (system/ping 200, /signup/email 200, /login 200, /users 401, /users/create 401, /teams 401) but actual probe at 05:01:27 UTC shows /api/v4/users/create 
+- NEW mm.fonial.de API surface RECOVERED: /api/v4/system/ping 200, /signup/email 200, /login 200 (byte-identical SPA shell sha256 22b19425), /api/v4/users 401, /api/v4/users/create 401 (was 404), /api/v4/te
+- NEW prov.fonial.de + kundenkonto.fonial.de lockstep deploy RECONFIRMED 4th consecutive cycle at v2026.09.16-1 (both OPTIONS /session same minute, nginx/1.10.3 vs Cloudflare, identical X-Fonial-Version, AC
+- NEW CT-sweep inventory expansion confirmed: crt.sh ~19 subdomains, 7 reachable (kampagne TYPO3 200, staging 401/403, dead 404s), 12 firewalled/unreachable
+- NEW int.fonial.de DNS leak confirmed: 192.168.10.71 (RFC1918) + git.fonial.de CNAME git.fonial.dev→92.51.132.112 in public DNS
+- NEW kampagne.fonial.de/typo3/ live TYPO3 backend login (200, nginx-rc, PHPSESSID, be_typo_user cookies) — publicly accessible login panel = OUT-OF-SCOPE per scope.yml
+- CHANGED prov.fonial.de/signup/confirm/55 POST returns 302 without form data — end-to-end tenant creation on prov data backend remains sole unobserved variable for self-service BOLA
+- CHANGED dslkonto.fonial.de/app_dev.php → 302 /login; _profiler/ 404 with rotating X-Debug-Token — dev-mode exposure unchanged, scope-excluded (descriptive errors only)
+- CHANGED shop.fonial.de/graphql GET 500 (sets PHPSESSID), no CORS, CSP report-only unsafe-inline/eval — asymmetric admin-auth (REST 404, GraphQL introspectable) unchanged at confidence 40

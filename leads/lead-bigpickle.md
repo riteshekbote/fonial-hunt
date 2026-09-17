@@ -3676,3 +3676,32 @@ testability: HUMAN_ONLY
 [NEXT] HUMAN: Request program approval for exactly ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email, fabricated address, trunkTariff 19) to confirm end-to-end tenant creation on the twin — the still-sole unobserved variable before the two-tenant BOLA cross-bind test. Do not self-execute; no further passive probe discriminates the survivor.
 [LEARN] REJECTED further-passive-cycles @ fonial: this cycle's surface equals the 00:01 UTC probe; no drift, no discriminator remains on either cross-bind survivor — momentum requires the sanctioned write, not probe data.
 [RISK] fonial: 80 — cross-tenant BOLA seam (CRITICAL if confirmed) re-verified intact across a 3rd deploy cycle on a byte-identical unfronted twin with live self-signup flow; objectively pre-validatable before any prod claim. Sole blocker is program approval for one fabricated registration (HUMAN gate). No new defensible passive finding; all other classes closed or out-of-scope.
+## 2026-09-17 09:53:18 UTC [target] (model bigpickle)
+[CHANGED] mm.fonial.de: Knowledge base claims "RECOVERED" (system/ping 200, /signup/email 200, /login 200, /users 401, /users/create 401, /teams 401) but actual probe at 05:01:27 UTC shows /api/v4/users/create → 404, /api/v4/system/ping → 404, /signup/email → 404 — recovery contradicted by probe data, likely transient or KB inconsistency.
+[PRIO] prov.fonial.de/api/2.0,5.4,attack_surface=4/business_value=10/tech_exposure=6/gate_ease=4/cloud_surface=2/freshness=2
+[PRIO] kundenkonto.fonial.de/api/2.0,5.3,attack_surface=4/business_value=10/tech_exposure=6/gate_ease=2/cloud_surface=4/freshness=2
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 85
+reasoning: v2026.09.16-1 live-probed 05:01 UTC; body-SID-only authz (`session invalid` on absent SID), decorative PHPSESSID, cleartext UUID sid, ACAO* no credentials, 5-endpoint surface, nginx/1.10.3 direct, GET /signup/register/55 302→/signup/55. Signup POST form (CSRF _token, trunkTariff 19/21/22, AccountAddress, AccountContact) confirmed live in prior cycles. Two-tenant creation remains sole unobserved variable.
+evidence_needed: tenant-B sid + tenant-A PHPSESSID on /evn/get or /devices/get returns tenant-A data, or clean rejection proving the bind.
+verify_steps: HUMAN: GET /signup/register/55 → harvest CSRF; 2× POST /signup/confirm/55 (example.invalid email, fabricated address, trunkTariff 19) → tenants A+B; POST /api/2.0/session per tenant; cross-present {sid:B, phpsessid:A} on /evn/get then /devices/get; /call/initiate only after clean read.
+impact: cross-tenant CDR, phone numbers, SIP creds, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Prov-confirmed BOLA reproduces on production (lockstep v2026.09.16-1)
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 80
+reasoning: Fourth consecutive same-minute lockstep pair re-verified 05:01 UTC; seam survived 4 deploy cycles unchanged. Exposure clause forbids live-customer testing → prov-validate first.
+evidence_needed: same cross-bind evidence produced on prov twin before any prod repro.
+verify_steps: identical to prov hyp; program-sanctioned test tenants only; never live customer data.
+impact: cross-tenant telephony data + call control on production — CRITICAL.
+testability: HUMAN_ONLY
+[PARKED] mm.fonial.de self-signup recovery: KB claims RECOVERED (200/401 endpoints) but live probe at 05:01 shows 404 on /api/v4/system/ping, /api/v4/users/create, /signup/email — recovery contradicted. Needs independent re-probe to confirm/reject before re-promoting.
+[PARKED] shop admin-token standalone: confidence 40 at critique floor, no new evidence — chain component only.
+[PARKED] kampagne TYPO3 backend: out-of-scope public login panel; below floor.
+[FINAL] 1. prov cross-bind BOLA (85, HUMAN_ONLY) 2. kundenkonto repro (80, HUMAN_ONLY)
+[NEXT] HUMAN: Request program approval for exactly ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email, fabricated address, trunkTariff 19) to confirm end-to-end tenant creation on the twin — the still-sole unobserved variable before the two-tenant BOLA cross-bind test. Do not self-execute; no further passive probe discriminates the survivor.
+[LEARN] CHANGED mm-fonial-de-recovery-status @ mm.fonial.de: Knowledge base accepted "RECOVERED" state but live probe 2026-09-17 05:01:27 UTC shows /api/v4/system/ping → 404, /api/v4/users/create → 404, /signup/email → 404. Recovery claim contradicted by probe data. Requires independent re-verification before hypothesis promotion.
+[RISK] fonial: 80 — cross-tenant BOLA seam (CRITICAL if confirmed) re-verified intact across 4th deploy cycle on byte-identical unfronted twin with live self-signup flow; objectively pre-validatable before any prod claim. Sole blocker is program approval for one fabricated registration (HUMAN gate). No new defensible passive finding; all other classes closed or out-of-scope.

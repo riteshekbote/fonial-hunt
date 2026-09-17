@@ -428,3 +428,5 @@
 - 2026-09-17 ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
 - 2026-09-17 REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
 - 2026-09-17 ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
+- 2026-09-17 CHANGED mm-fonial-de-recovery-status @ mm.fonial.de: Knowledge base accepted "RECOVERED" state but live probe 2026-09-17 05:01:27 UTC shows /api/v4/system/ping → 404, /api/v4/users/create → 404, /signup/email → 404. Recovery claim contradicted by probe data. Requires independent re-verification before hypothesis promotion.
+- 2026-09-17 REJECTED further-passive-cycles @ fonial: this cycle's surface equals the 00:01 UTC probe; no drift, no discriminator remains on either cross-bind survivor — momentum requires sanctioned writes, not probe data
