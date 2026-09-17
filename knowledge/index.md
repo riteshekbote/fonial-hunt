@@ -413,3 +413,18 @@
 - 2026-09-16 REJECTED kampagne-typo3-backend @ kampagne.fonial.de: live TYPO3 login = out-of-scope public login panel; /install.php + eID=dump 404; class closed (re-confirmed this cycle, no drift).
 - 2026-09-16 ACCEPTED lockstep-deploy-live @ kundenkonto+prov: fourth consecutive same-minute lockstep pair (v2026.09.16-1, 10:00:17 UTC) — shared deploy pipeline confirmed across 2 version hops; seam survived deploy; prov→prod fidelity raised.
 - 2026-09-16 REJECTED further-passive-cycles @ fonial: canary refresh reconfirms zero drift on the sole survivor pair; no remaining passive probe discriminates the two HUMAN_ONLY survivors — momentum requires sanctioned writes, not probe data.
+- 2026-09-17 REJECTED further-passive-cycles @ fonial: this cycle's surface equals the 00:01 UTC probe; no drift, no discriminator remains on either cross-bind survivor — momentum requires the sanctioned write, not probe data.
+- 2026-09-17 ACCEPTED mm-fonial-de-api-surface-RECOVERED @ mm.fonial.de: /api/v4/system/ping 200, /signup/email 200, /login 200 (byte-identical SPA shell sha256 22b19425), /api/v4/users 401, /api/v4/users/create 401, /api/v4/teams 401 — all previously 404/degraded; self-signup class potentially viable again
+- 2026-09-17 ACCEPTED canary-drift-free-refresh @ prov+kundenkonto: both live-probed 2026-09-17 04:58 UTC at v2026.09.16-1 same minute → lockstep reconfirmed 4th consecutive cycle, comparison base valid post-deploy
+- 2026-09-17 ACCEPTED lockstep-deploy-live @ kundenkonto+prov: fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 version hops; seam survived deploy; prov→prod fidelity raised
+- 2026-09-17 REJECTED further-passive-cycles @ fonial: canary refresh reconfirms zero drift on the sole survivor pair; no remaining passive probe discriminates the two HUMAN_ONLY survivors — momentum requires sanctioned writes, not probe data
+- 2026-09-17 ACCEPTED CT-sweep-inventory-expansion @ fonial: crt.sh enumeration surfaces ~19 subdomains absent from inventory; 7 reachable (kampagne TYPO3 200, staging 401/403, dead 404s), 12 firewalled/unreachable — first new breadth since 2026-09-06, but no new exploitable passive surface
+- 2026-09-17 ACCEPTED internal-host-DNS-leak @ int.fonial.de: 192.168.10.71 (RFC1918) + git.fonial.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure, LOW standalone, chain-info only
+- 2026-09-17 REJECTED kampagne-typo3-backend-login @ kampagne.fonial.de/typo3/: standard TYPO3 CMS Login (LIVE) = "publicly accessible login panels" out-of-scope; /install.php + eID=dump 404
+- 2026-09-17 ACCEPTED unfronted-duplicate @ prov.fonial.de/api/2.0: re-probe confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.16-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate deployment to test dual-backend cross-bind
+- 2026-09-17 REJECTED shop admin-token standalone: confidence 40 at critique floor, no new evidence — chain component only
+- 2026-09-17 REJECTED SSRF @ www.fonial.de: No URL parameters or webhook endpoints found in passive recon
+- 2026-09-17 REJECTED IDOR @ www.fonial.de: Pure marketing site, no object references
+- 2026-09-17 ACCEPTED MISCONFIG @ kundenkonto.fonial.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+- 2026-09-17 REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
+- 2026-09-17 ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface

@@ -597,3 +597,13 @@ www.fonial.de
 ## 2026-09-16 21:42:38 UTC
 
 ## 2026-09-17 00:03:01 UTC
+
+## 2026-09-17 05:00:58 UTC
+- NEW mm.fional.de API surface RECOVERED: /api/v4/system/ping 200, /signup/email 200, /login 200 (byte-identical SPA shell), /api/v4/users 401, /api/v4/users/create 401, /api/v4/teams 401 — all previously 4
+- NEW CT-sweep inventory confirms ~19 subdomains via crt.sh; 7 reachable (kampagne TYPO3 200, staging 401/403, dead 404s), 12 firewalled/unreachable — no new exploitable passive surface beyond previously lo
+- NEW int.fonial.de DNS resolves to 192.168.10.71 (RFC1918) + git.fonial.de CNAME git.fonial.dev→92.51.132.112 — internal naming/infra disclosure confirmed live
+- NEW kampagne.fonial.de/typo3/ live TYPO3 backend login (200, nginx-rc, PHPSESSID, be_typo_user cookies) — publicly accessible login panel = OUT-OF-SCOPE per scope.yml
+- CHANGED prov.fonial.de/api/2.0 + kundenkonto.fonial.de/api/2.0: lockstep deploy RECONFIRMED at v2026.09.16-1 (both OPTIONS /session 200, ACAO*, no allow-credentials, nginx/1.10.3 vs Cloudflare, identical X-Fo
+- CHANGED prov.fonial.de/signup/register/55 GET still 302-loop; POST /signup/confirm/55 returns 302 without form data — end-to-end tenant creation on prov data backend remains sole unobserved variable for self-
+- CHANGED dslkonto.fonial.de/app_dev.php → 302 /login; _profiler/ 404 with X-Debug-Token (rotating) — dev-mode exposure unchanged, scope-excluded (descriptive errors only)
+- CHANGED shop.fonial.de/graphql GET 500 (sets PHPSESSID), no CORS, CSP report-only unsafe-inline/eval — asymmetric admin-auth (REST 404, GraphQL introspectable) unchanged at confidence 40
