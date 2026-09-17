@@ -3802,3 +3802,24 @@ evidence_needed: consecutive probes capturing 401-vs-404 on same endpoint within
 verify_steps: GET /api/v4/users/create every ~10 min for 1h (≤1rps, read-only); correlate with signup 200/404.
 impact: hypothetical weaker-auth node → ATO — spec, no substance yet.
 testability: PASSIVE
+## 2026-09-17 23:53:13 UTC [target] (model bigpickle)
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 85
+reasoning: v2026.09.16-1 last live 04:58 UTC pre-outage; body-SID-only authz, decorative PHPSESSID, cleartext uuid sid, ACAO*, 5-endpoint; signup POST (CSRF _token, trunkTariff 19/21/22, AccountAddress) confirmed live prior cycles. Origin .20 now TCP-closed 12h+; DNS single-A unchanged; no CF front on kundenkonto → infers migration/decommission event, comparison base invalidated until recovery.
+evidence_needed: preconditions (a) origin serves OPTIONS /api/2.0/session with v2026.09.16-1/nginx/1.10.3/ACAO*; (b) {sid:B,phpsessid:A} cross-presented on /evn/get or /devices/get returns tenant-A data or clean bind rejection; two fabricated tenants required.
+verify_steps: HUMAN (post-recovery): OPTIONS /api/2.0/session both hostnames; GET /signup/register/55 harvest CSRF; 2x POST /signup/confirm/55 (example.invalid, fabricated address, trunkTariff 19)→tenants A+B; cross-present {sid:B,phpsessid:A}; /call/initiate only after clean read.
+impact: cross-tenant CDR, phone numbers, SIP creds, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Mattermost dual-node flapping LB with divergent routing
+class: MISCONFIG
+asset: mm.fonial.de
+confidence: 35
+reasoning: 7 state flips observed (UP: ping 200/signup 200/users-create 401 ↔ DOWN: all 404) across 2026-09-10→17; UP state identical each time; nginx/1.10.2 answers in both. Indicates ≥2 nodes/LB or vhost churn, NOT an auth divergence (users/create auth-gated = 401 in both UP observations).
+evidence_needed: auth-behavior divergence between flips (401-vs-open); none observed so far.
+verify_steps: GET /api/v4/users/create every ~10min for 1h (≤1rps) correlating signup 200/404.
+impact: hypothetical weaker-auth node → ATO; unobserved — spec only.
+testability: PASSIVE
+[NEXT] PROBE: origin recovery + migration watcher — `curl -sS -o /dev/null -w "%{http_code} %{remote_ip}" --max-time 10 https://kundenkonto.fonial.de/api/2.0/session -X OPTIONS && curl -sS -o /dev/null -w "%{http_code} %{remote_ip}" --max-time 10 https://prov.fonial.de/api/2.0/session -X OPTIONS` + `getent ahosts kundenkonto.fonial.de prov.fonial.de` once per cycle until origin serves v2026.09.16-1/nginx/1.10.3/ACAO* or A-record migrates; then request ONE sanctioned fabricated registration (HUMAN gate) before any cross-bind POST.
+[RISK] fonial: 70 — sole survivor BOLA (CRITICAL-if-confirmed) remains objectively pre-validatable but blocked two ways: (a) origin .20 outage/near-migration after Cloudflare front removal, (b) program approval for one fabricated registration (HUMAN gate). Infra event lowers short-term probability of completing POC but does not invalidate the seam's existence; once origin returns, migration may alter headers/behavior and demand twin-parity re-labour before the sanctioned write. No new defensible passive finding this cycle; all other classes closed or out-of-scope.

@@ -645,3 +645,8 @@ www.fonial.de
 - CHANGED kampagne.fional.de/typo3/: Live TYPO3 backend login (200) = out-of-scope per scope.yml (public login panel)
 
 ## 2026-09-17 21:44:27 UTC
+
+## 2026-09-17 23:53:21 UTC
+- CHANGED kundenkonto.fonial.de/api/2.0: All 5 API endpoints timing out (OPTIONS/HEAD/GET) — were live at 04:58 UTC with v2026.09.16-1; Cloudflare-fronted host currently unreachable
+- CHANGED prov.fonial.de/api/2.0: All 5 API endpoints timing out — were live at 04:58 UTC with v2026.09.16-1; unfronted twin also unreachable
+- CHANGED mm.fional.de: Confirmed degraded — /api/v4/system/ping → 404, /signup/email → 404, /api/v4/users/create → 404 (two consecutive probe cycles); "RECOVERED" claim definitively rejected

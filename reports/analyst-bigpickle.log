@@ -21644,3 +21644,115 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 - [RISK] fonial: 78 — CRITICAL-if-confirmed cross-tenant BOLA seam intact but its comparison base is unreachable (origin 62.146.7.20 blackholed on 80+443 since ~09:56, now direct DNS for BOTH kundenkonto and prov post-Cloudflare-removal → production auth portal is currently origin-exposed AND unavailable, an availability/security posture change). Blocker unchanged: (a) origin recovery for canary validity, (b) program approval for one fabricated registration (HUMAN gate). No new defensible passive finding; all other classes closed or out-of-scope.
+===== ANALYST bigpickle 2026-09-17 23:53:21 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mcurl -sS -o /dev/null -D - --max-time 15 "https://kundenkonto.fonial.de/api/2.0/session" -X OPTIONS 2>&1 | head -40; echo "EXIT:$?"
+curl: (28) Connection timed out after 15002 milliseconds
+EXIT:0
+[0m
+[0m$ [0mcurl -sS -o /dev/null -D - --max-time 15 "https://prov.fonial.de/api/2.0/session" -X OPTIONS 2>&1 | head -40; echo "EXIT:$?"
+curl: (28) Connection timed out after 15002 milliseconds
+EXIT:0
+[0m
+[0m$ [0mfor h in kundenkonto.fonial.de prov.fonial.de; do echo "== $h =="; getent hosts "$h"; done 2>&1
+== kundenkonto.fonial.de ==
+62.146.7.20     kundenkonto.fonial.de
+== prov.fonial.de ==
+62.146.7.20     prov.fonial.de
+[0m
+[0m$ [0mtimeout 8 bash -c 'echo > /dev/tcp/62.146.7.20/443' 2>&1; echo "TCP443_6720_EXIT:$?"; timeout 8 bash -c 'echo > /dev/tcp/62.146.7.20/80' 2>&1; echo "TCP80_6720_EXIT:$?"
+TCP443_6720_EXIT:124
+TCP80_6720_EXIT:124
+[0m
+[0m$ [0mtimeout 8 curl -sS -o /dev/null -w "www http_code=%{http_code} ip=%{remote_ip}\n" --max-time 8 "http://www.fonial.de/" 2>&1; timeout 8 curl -sS -o /dev/null -w "kampagne http_code=%{http_code} ip=%{remote_ip}\n" --max-time 8 "https://kampagne.fonial.de/" 2>&1
+www http_code=301 ip=176.9.53.190
+kampagne http_code=200 ip=92.51.165.250
+[0m
+[0m$ [0mfor h in www.fonial.de shop.fonial.de mm.fonial.de int.fonial.de; do printf "%-20s " "$h"; timeout 8 curl -sS -o /dev/null -w "%{http_code} %{remote_ip}" --max-time 8 "https://$h/" 2>&1 | head -c 80; echo; done
+www.fonial.de        200 176.9.53.190
+shop.fonial.de       200 176.9.53.190
+mm.fonial.de         200 62.146.7.29
+int.fonial.de
+[0m
+[0m$ [0mfor h in red.fonial.de dslkonto.fonial.de hilfe.fonial.de staging.fonial.de; do printf "%-20s " "$h"; getent hosts "$h" 2>&1 | head -1; done
+red.fonial.de        62.146.7.29     red.fonial.de
+dslkonto.fonial.de   62.146.7.50     dslkonto.fonial.de
+hilfe.fonial.de      92.51.165.250   hilfe.fonial.de
+staging.fonial.de    62.146.7.23     staging.fonial.de
+[0m
+[0m$ [0mfor p in 22 80 443 8443 9000; do timeout 5 bash -c "echo > /dev/tcp/62.146.7.20/$p" 2>/dev/null && echo "port $p OPEN" || echo "port $p closed/timeout"; done
+port 22 closed/timeout
+port 80 closed/timeout
+port 443 closed/timeout
+port 8443 closed/timeout
+port 9000 closed/timeout
+[0m
+[0m$ [0mfor p in 80 443; do timeout 5 bash -c "echo > /dev/tcp/62.146.7.50/$p" 2>/dev/null && echo ".50 port $p OPEN" || echo ".50 port $p closed/timeout"; done
+.50 port 80 OPEN
+.50 port 443 OPEN
+[0m
+[0m$ [0mfor p in 22 80 443; do timeout 5 bash -c "echo > /dev/tcp/62.146.7.29/$p" 2>/dev/null && echo ".29 port $p OPEN" || echo ".29 port $p closed/timeout"; done
+.29 port 22 closed/timeout
+.29 port 80 OPEN
+.29 port 443 OPEN
+[0m
+[0m$ [0mgetent ahosts kundenkonto.fonial.de; echo "---"; getent ahosts prov.fonial.de; echo "---"; command -v dig >/dev/null && dig +short kundenkonto.fonial.de CNAME; command -v dig >/dev/null && dig +short kundenkonto.fonial.de A 2>&1 | head
+62.146.7.20     STREAM kundenkonto.fonial.de
+62.146.7.20     DGRAM  
+62.146.7.20     RAW    
+---
+62.146.7.20     STREAM prov.fonial.de
+62.146.7.20     DGRAM  
+62.146.7.20     RAW    
+---
+62.146.7.20
+[0m
+[0m$ [0mtimeout 8 curl -sS -o /dev/null -w "ping=%{http_code} " --max-time 8 "https://mm.fonial.de/api/v4/system/ping" ; timeout 8 curl -sS -o /dev/null -w "signup=%{http_code} " --max-time 8 "https://mm.fonial.de/signup/email"; timeout 8 curl -sS -o /dev/null -w "users=%{http_code} " --max-time 8 "https://mm.fonial.de/api/v4/users/create"; echo
+ping=200 signup=200 users=401
+[0m
+STEP 1 — DELTA
+- CHANGED: Origin 62.146.7.20 (kundenkonto + prov, single-A, no Cloudflare record) fully closed on 22/80/443/8443/9000 from egress; control hosts on same netblock (.29 mm, .50 dslkonto) alive → box-specific outage, not egress. >12h since 09:56 UTC.
+- CHANGED: mm.fonial.de re-observed UP at ~21:5x UTC (system/ping 200, signup/email 200, users/create 401) after DOWN at 05:01/09:56/14:38 → 7th documented flip; recovery claim was intermittent, not false.
+- CHANGED: kundenkonto DNS front (Cloudflare) confirmed absent at record level again (direct A→62.146.7.20); cannot header-verify while box down.
+
+STEP 2 — PRIORITIZE
+- [PRIO] kundenkonto.fonial.de/api/2.0,7.25,attack_surface=8/business=10/tech=6/gate=3/cloud=5/fresh=9
+- [PRIO] mm.fonial.de,5.05,attack_surface=4/business=6/tech=7/gate=4/cloud=1/fresh=8
+
+STEP 3 — HYPOTHESES
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 85
+reasoning: v2026.09.16-1 last live 04:58 UTC pre-outage; body-SID-only authz, decorative PHPSESSID, cleartext uuid sid, ACAO*, 5-endpoint; signup POST (CSRF _token, trunkTariff 19/21/22, AccountAddress) confirmed live prior cycles. Origin .20 now TCP-closed 12h+; DNS single-A unchanged; no CF front on kundenkonto → infers migration/decommission event, comparison base invalidated until recovery.
+evidence_needed: preconditions (a) origin serves OPTIONS /api/2.0/session with v2026.09.16-1/nginx/1.10.3/ACAO*; (b) {sid:B,phpsessid:A} cross-presented on /evn/get or /devices/get returns tenant-A data or clean bind rejection; two fabricated tenants required.
+verify_steps: HUMAN (post-recovery): OPTIONS /api/2.0/session both hostnames; GET /signup/register/55 harvest CSRF; 2x POST /signup/confirm/55 (example.invalid, fabricated address, trunkTariff 19)→tenants A+B; cross-present {sid:B,phpsessid:A}; /call/initiate only after clean read.
+impact: cross-tenant CDR, phone numbers, SIP creds, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Mattermost dual-node flapping LB with divergent routing
+class: MISCONFIG
+asset: mm.fonial.de
+confidence: 35
+reasoning: 7 state flips observed (UP: ping 200/signup 200/users-create 401 ↔ DOWN: all 404) across 2026-09-10→17; UP state identical each time; nginx/1.10.2 answers in both. Indicates ≥2 nodes/LB or vhost churn, NOT an auth divergence (users/create auth-gated = 401 in both UP observations).
+evidence_needed: auth-behavior divergence between flips (401-vs-open); none observed so far.
+verify_steps: GET /api/v4/users/create every ~10min for 1h (≤1rps) correlating signup 200/404.
+impact: hypothetical weaker-auth node → ATO; unobserved — spec only.
+testability: PASSIVE
+
+STEP 4 — SELF-CRITIQUE
+- [PARKED] mm flapping (conf 35): no auth divergence between states; users/create → 401 in UP state = self-signup closed; flapping is HA churn, not reportable. Below floor.
+- [PARKED] kundenkonto-reproduction (conf 80→prereq-invalidated): fidelity argument re-opened by origin .20 outage + CF front drop; re-promote only after twin parity re-established on a live origin.
+- [FINAL] 1) prov cross-bind BOLA [85] — sole survivor, gated on origin recovery + HUMAN approval. 2) mm flapping [35] — parked.
+
+STEP 5 — NEXT ACTION
+[NEXT] PROBE: origin recovery + migration watcher — `curl -sS -o /dev/null -w "%{http_code} %{remote_ip}" --max-time 10 https://kundenkonto.fonial.de/api/2.0/session -X OPTIONS && curl -sS -o /dev/null -w "%{http_code} %{remote_ip}" --max-time 10 https://prov.fonial.de/api/2.0/session -X OPTIONS` + `getent ahosts kundenkonto.fonial.de prov.fonial.de` once per cycle until origin serves v2026.09.16-1/nginx/1.10.3/ACAO* or A-record migrates; then request ONE sanctioned fabricated registration (HUMAN gate) before any cross-bind POST.
+
+STEP 6 — LEARNING
+- [LEARN] ACCEPTED persistent-origin-outage @ kundenkonto+prov/api/2.0: origin 62.146.7.20 closed on 22/80/443/8443/9000 >12h while netblock controls (.29,.50) and www/shop alive → box-specific outage; single-A direct (no CF front) unchanged; comparison base invalidated until recovery.
+- [LEARN] ACCEPTED mm-intermittent-up @ mm.fonial.de: 21:5x UTC re-observes UP state (ping 200, signup 200 SPA shell, users/create 401) after DOWN at 05:01/09:56/14:38 → 7th flip; intermittent HA pattern, prior "false recovery" reading corrected.
+- [LEARN] REJECTED mm-selfsignup-revival @ mm.fonial.de: even in UP state users/create → 401 (auth-gated), signup/email = SPA shell only, system/ping public-by-design → no unauth account creation; class stays eliminated.
+
+STEP 7 — RISK
+[RISK] fonial: 70 — sole survivor BOLA (CRITICAL-if-confirmed) remains objectively pre-validatable but blocked two ways: (a) origin .20 outage/near-migration after Cloudflare front removal, (b) program approval for one fabricated registration (HUMAN gate). Infra event lowers short-term probability of completing POC but does not invalidate the seam's existence; once origin returns, migration may alter headers/behavior and demand twin-parity re-labour before the sanctioned write. No new defensible passive finding this cycle; all other classes closed or out-of-scope.
