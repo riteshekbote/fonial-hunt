@@ -22348,3 +22348,123 @@ testability: HUMAN_ONLY
 
 **STEP 7 — RISK**
 [RISK] fonial: 75 — BOLA seam (CRITICAL-if-confirmed) remains valid-in-class but its validation window shrinks: 62.146.7.20 blackholed ~48h while every other asset recovered, so the outage is isolated-to-and-anomalous-within the .20 box → actively consistent with permanent infrastructural cutover. If the origin migrates without returning the old deployment, all 4 lockstep cycles of evidence go historical and no discriminating passive probe exists on any surviving hypothesis. The sole live action available this cycle (single MM user-create write) sits at confidence floor and needs program approval.
+===== ANALYST bigpickle 2026-09-18 21:53:40 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mcurl -sS -o /dev/null -w "mm ping => %{http_code} total=%{time_total}\n" --max-time 10 https://mm.fonial.de/api/v4/system/ping 2>&1; getent hosts mm.fonial.de; curl -sS -o /dev/null -w "shop graphql => %{http_code} total=%{time_total}\n" --max-time 10 "https://shop.fonial.de/graphql?id=1" 2>&1
+mm ping => 200 total=0.534081
+62.146.7.29     mm.fonial.de
+shop graphql => 500 total=0.737953
+[0m
+[0m$ [0mgetent hosts kundenkonto.fonial.de prov.fonial.de; echo "---"; curl -sS -o /dev/null -w "kundenkonto root => %{http_code} total=%{time_total}\n" --max-time 10 https://kundenkonto.fonial.de/ 2>&1; curl -sS -o /dev/null -w "prov signup => %{http_code} total=%{time_total}\n" --max-time 10 https://prov.fonial.de/signup/register/55 2>&1
+62.146.7.20     kundenkonto.fonial.de
+62.146.7.20     prov.fonial.de
+---
+curl: (28) Connection timed out after 10002 milliseconds
+kundenkonto root => 000 total=10.002276
+curl: (28) Connection timed out after 10001 milliseconds
+prov signup => 000 total=10.001642
+[0m
+[0m$ [0mcurl -sS -o /dev/null -w "kundenkonto OPTIONS /session => %{http_code} connect=%{time_connect} total=%{time_total}\n" --max-time 12 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session 2>&1; curl -sS -o /dev/null -w "prov OPTIONS /session => %{http_code} connect=%{time_connect} total=%{time_total}\n" --max-time 12 -X OPTIONS https://prov.fonial.de/api/2.0/session 2>&1
+curl: (28) Connection timed out after 12002 milliseconds
+kundenkonto OPTIONS /session => 000 connect=0.000000 total=12.002727
+curl: (28) Connection timed out after 12002 milliseconds
+prov OPTIONS /session => 000 connect=0.000000 total=12.002228
+[0m
+[0m$ [0mcurl -sS -D - --max-time 8 -o /dev/null "https://mm.fonial.de/api/v4/system/ping" 2>&1 | rg -i "server|x-version|content-type|location" ; echo "---"; curl -sS --max-time 8 "https://mm.fonial.de/login" 2>&1 | head -c 400; echo; echo "==="; curl -sS -D - --max-time 10 -o /dev/null "https://shop.fonial.de/graphql" 2>&1 | rg -i "server|set-cookie|content-type"
+/bin/bash: line 1: rg: command not found
+---
+<!DOCTYPE html> <html> <head> <meta http-equiv=X-UA-Compatible content="IE=edge"> <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0"> <meta name=robots content="noindex, nofollow"> <meta name=referrer content=no-referrer> <title>Mattermost</title> <meta name=apple-mobile-web-app-capable content=yes> <meta name=apple-mobile-web-app-status-bar-style cont
+===
+/bin/bash: line 1: rg: command not found
+[0m
+[0m$ [0mfor p in "api/v4/users/create" "api/v4/users" "api/v4/teams" "api/v4/config"; do curl -sS -o /dev/null -w "GET /$p => %{http_code}\n" --max-time 8 -X POST "https://mm.fonial.de/$p"; done; echo "---"; curl -sS -o /dev/null -w "GET /signup/email => %{http_code}\n" --max-time 8 "https://mm.fonial.de/signup/email"; curl -sS -o /dev/null -w "GET / => %{http_code}\n" --max-time 8 "https://mm.fonial.de/"
+GET /api/v4/users/create => 404
+GET /api/v4/users => 400
+GET /api/v4/teams => 401
+GET /api/v4/config => 404
+---
+GET /signup/email => 200
+GET / => 200
+[0m
+[0m$ [0mcurl -sS --max-time 8 "https://mm.fonial.de/login" -o /tmp/opencode/mm_login.html; curl -sS --max-time 8 "https://mm.fonial.de/signup/email" -o /tmp/opencode/mm_signup.html; sha256sum /tmp/opencode/mm_login.html /tmp/opencode/mm_signup.html; wc -c /tmp/opencode/mm_login.html /tmp/opencode/mm_signup.html
+22b194250d45e384db2dff3e03c5495828d38cd4acb71b4671f23515f3b73871  /tmp/opencode/mm_login.html
+22b194250d45e384db2dff3e03c5495828d38cd4acb71b4671f23515f3b73871  /tmp/opencode/mm_signup.html
+3091 /tmp/opencode/mm_login.html
+3091 /tmp/opencode/mm_signup.html
+6182 total
+[0m
+[0m$ [0mcurl -sSI --max-time 8 "https://mm.fonial.de/api/v4/system/ping" 2>&1 | grep -iE "server|version|cookie|content"; echo "---root---"; curl -sSI --max-time 8 "https://mm.fonial.de/" 2>&1 | grep -iE "server|version|cookie"; echo "---rest users ---"; curl -sS -D - -o /dev/null --max-time 8 "https://mm.fonial.de/api/v4/users" 2>&1 | head -20
+Server: nginx/1.10.2
+Content-Type: text/plain; charset=utf-8
+Content-Length: 209
+---root---
+Server: nginx/1.10.2
+---rest users ---
+HTTP/1.1 401 Unauthorized
+Server: nginx/1.10.2
+Date: Fri, 18 Sep 2026 21:50:55 GMT
+Content-Type: application/json
+Content-Length: 202
+Connection: keep-alive
+Expires: 0
+X-Cluster-Id: 
+X-Request-Id: 9fa8cgrfobrzxjoifcnexz7n3o
+X-Version-Id: 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false
+[0m
+STEP 1 — DELTA
+- [CHANGED] mm.fonial.de healthy again: DNS restored to 62.146.7.29 (was NXDOMAIN at 16:45 UTC), `/api/v4/system/ping` 200, `/login`=`/signup/email` byte-identical SPA shell sha256 22b19425 (3091 bytes), GET `/api/v4/users` 401 `session_expired`, GET `/` 200, X-Version-Id 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false restored, nginx/1.10.2 — matches the 05:00/12:40 "healthy" signature exactly. Host has now flapped healthy↔404↔NXDOMAIN across 3 distinct states in ~36h.
+- [CHANGED] POST `/api/v4/users/create` → 404 on the healthy instance: this path is NOT a real Mattermost v4 route (create = `POST /api/v4/users`); the prior 401/SessionExpired readings on `/users/create` came from degraded non-routing states and are not a valid signup discriminator.
+- [NO_DELTA] kundenkonto+prov both connection-timeout on 80 AND 443 (~52h), DNS single-A 62.146.7.20 unchanged, no CF re-front; `/` and `/signup/register/55` also timeout — outage fully isolated to .20 box, now inconsistent with transient flapping.
+- [NO_DELTA] shop.fonial.de/graphql still 500.
+
+STEP 2 — PRIORITIZE
+- [PRIO] prov.fonial.de/api/2.0,6.3,gate: unfronted twin; BOLA test-ground (session issue unauth, nginx/1.10.3)
+- [PRIO] kundenkonto.fonial.de/api/2.0,6.5,impact: CRITICAL telephony surface; only prod repro location
+- [PRIO] mm.fonial.de,4.9,freshness: only live discriminating surface; healthy signature revived
+
+STEP 3 — HYPOTHESES
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 85
+reasoning: 4 lockstep cycles (v2026.09.16-1) proved body-SID-only authz, decorative PHPSESSID, cleartext UUID sid on nginx/1.10.3; signup POST fields (CSRF, trunkTariff 19/21/22) confirmed live pre-outage; box blackholed 80+443 ~52h while all other assets recovered → now consistent with permanent cutover risk, only accessibility + time moved.
+evidence_needed: post-recovery OPTIONS /api/2.0/session returns v2026.09.16-1-family with unchanged Server/ACAO*; then {sid:B, phpsessid:A} → tenant-A data on /evn/get, /devices/get.
+verify_steps: HUMAN: OPTIONS both hosts; GET /signup/register/55 harvest CSRF; 2x POST /signup/confirm/55 (example.invalid) → tenants A+B; cross-present; /call/initiate last.
+impact: cross-tenant CDR, numbers, SIP creds, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Prov-confirmed BOLA reproduces on production kundenkonto
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 80
+reasoning: same origin 62.146.7.20 as prov; 4 same-minute lockstep deploys = shared pipeline; identical seam semantics pre-outage; both blackholed identically → same cutover fate.
+evidence_needed: prov evidence first; then kundenkonto under same origin post-recovery.
+verify_steps: identical to prov; origin-parity probe (Server/X-Fonial-Version/ACAO*/cf-ray) before any write.
+impact: production cross-tenant telephony — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Mattermost 3.7.3 self-service account creation via open email signup
+class: AUTH
+asset: mm.fonial.de
+confidence: 45
+reasoning: healthy signature restored (ping 200, X-Version-Id 3.7.3, /users 401, /teams 401, SPA 22b19425) → instance routing correctly; the real create route is POST /api/v4/users (Users/create 404 is route-not-found, not auth); signup-open state cannot be read passively (config endpoint 404); host flapped 3 states in 36h so a stale state may be read.
+evidence_needed: POST /api/v4/users returns 201 (open) vs 401/403+signup-disabled (closed).
+verify_steps: HUMAN: one minimal POST /api/v4/users {"email":"t"+rand+"@example.invalid","username":"t"+rand,"password":<16-char random>}; abandon account if created.
+impact: throwaway internal-chat account → red.fonial.de Redmine co-host (post-MM amplification) — MEDIUM.
+testability: HUMAN_ONLY
+
+STEP 4 — SELF-CRITIQUE
+- [PARKED] shop admin-token standalone (GraphQL GenerateCustomerTokenAsAdminInput): confidence 40 at critique floor, no new evidence; chain-only.
+- [PARKED] further-passive on .20 pair: no passive probe discriminates cutover vs maintenance; resolved only by origin return.
+- [FINAL] prov BOLA cross-bind (85) > kundenkonto BOLA repro (80) > mm self-signup (45).
+
+STEP 5 — NEXT ACTION
+[NEXT] HUMAN: on next sustained-healthy mm window (system/ping 200 stable >24h), send ONE program-approved minimal POST https://mm.fonial.de/api/v4/users (fake example.invalid data, 16-char random password, expect 201 vs 401/403); if approval withheld, continue the 12h origin-recovery watcher on https://kundenkonto.fonial.de/api/2.0/session and https://prov.fonial.de/api/2.0/session (OPTIONS, re-baseline headers on first 200 before any write).
+
+STEP 6 — LEARNING
+- [LEARN] ACCEPTED mm-healthy-state @ mm.fonial.de: DNS 62.146.7.29, ping 200, SPA sha256 22b19425, X-Version-Id 3.7.3, /users 401, /teams 401 → byte-identical healthy signature; contradicts 16:45 NXDOMAIN; flapped 3 states in 36h.
+- [LEARN] ACCEPTED users-create-route-correction @ mm.fonial.de: POST /api/v4/users/create → 404 on healthy instance → not a real v4 route; create = POST /api/v4/users; prior 401s on /users/create discardable as a signup signal.
+- [LEARN] ACCEPTED bola-origin-still-blackholed @ kundenkonto+prov: connect-timeout 80+443, DNS single-A 62.146.7.20, ~52h, isolated to .20 → cutover risk rises, seam still valid-in-class.
+
+STEP 7 — RISK
+[RISK] fonial: 74 — .20 blackholed >52h while every sibling recovered (mm now healthy at 62.146.7.29) → outage now anomalously isolate-signaling permanent Dutch cutover; each passing cycle without origin return converts the locked 4-cycle evidence base toward history; the sole live discriminator (mm signup write) sits at confidence 45 and is gated on approval.

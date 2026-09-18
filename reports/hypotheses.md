@@ -2454,3 +2454,15 @@
 - LEARN: ACCEPTED mm-fonial-de-api-surface-RECOVERED @ mm.fonial.de: Live probe 2026-09-18 showed /api/v4/system/ping → 200, /signup/email → 200, /login → 200, /api/v4/u
 - LEARN: ACCEPTED lockstep-deploy-live @ kundenkonto+prov: Fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 versi
 - LEARN: REJECTED shop admin-token standalone: Confidence 40 at critique floor, no new evidence — chain component only
+
+## RANKED HYPOTHESES 2026-09-18 21:53:40 UTC
+- [85] prov.fonial.de/api/2.0: Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin (from art/lead_bigpickle.txt)
+- [15] mm.fional.de/api/v4/users/create: Mattermost self-registration disabled via API (from art/lead_nemotron3.txt)
+- NEXT(hypotheses-bigpickle.txt): HUMAN: on next sustained-healthy mm window (system/ping 200 stable >24h), send ONE program-approved minimal POST https://mm.fonial.de/api/v4/users (fake example
+- NEXT(hypotheses-nemotron3.txt): SCAN: origin-recovery watcher every 12h until flip — `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/ses
+- LEARN: REJECTED further-passive-cycles @ fonial: kundenkonto/prov APIs timing out — no passive probe can resolve; momentum requires service recovery or sanctioned writ
+- LEARN: REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origi
+- LEARN: ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanism
+- LEARN: ACCEPTED mm-fonial-de-api-surface-RECOVERED @ mm.fional.de: `/api/v4/system/ping` 200, `/signup/email` 200, `/api/v4/users` 401, `/api/v4/users/create` 404 — re
+- LEARN: ACCEPTED lockstep-deploy-live @ kundenkonto+prov: Fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 versi
+- LEARN: REJECTED shop admin-token standalone: Confidence 40 at critique floor, no new evidence — chain component only

@@ -908,3 +908,8 @@ https://kundenkonto.fonial.de/api/2.0/session -> ERR <urlopen error timed out>
 https://prov.fonial.de/api/2.0/session -> ERR <urlopen error timed out>
 https://kundenkonto.fonial.de/api/2.0/session` -> ERR <urlopen error timed out>
 https://mm.fonial.de/api/v4/system/ping` -> HTTP 404
+
+## 2026-09-18 21:54:08 UTC
+https://kundenkonto.fonial.de/api/2.0/session -> ERR <urlopen error timed out>
+https://prov.fonial.de/api/2.0/session -> ERR <urlopen error timed out>
+https://mm.fonial.de/api/v4/users -> HTTP 404
