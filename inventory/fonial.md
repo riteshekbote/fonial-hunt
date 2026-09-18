@@ -664,3 +664,10 @@ www.fonial.de
 - CHANGED prov.fonial.de/api/2.0: All 5 API endpoints timing out (were live at 2026-09-17 04:58 UTC with v2026.09.16-1) — unfronted twin also unreachable
 - CHANGED mm.fional.de: API surface RECOVERED — /api/v4/system/ping 200, /signup/email 200, /login 200, /api/v4/users/create 401 (was 404 in two prior consecutive probe cycles) — self-signup class potentially v
 - CHANGED shop.fonial.de/graphql: Returns 500 (sets PHPSESSID), no CORS, CSP report-only unsafe-inline/eval — unchanged from prior cycles
+
+## 2026-09-18 16:45:08 UTC
+- CHANGED kundenkonto.fonial.de/api/2.0: All 5 API endpoints timing out (connection timeout) — were live at 2026-09-17 04:58 UTC with v2026.09.16-1; Cloudflare-fronted host currently unreachable
+- CHANGED prov.fonial.de/api/2.0: All 5 API endpoints timing out (connection timeout) — were live at 2026-09-17 04:58 UTC with v2026.09.16-1; unfronted twin also unreachable (same IP 62.146.7.20)
+- CHANGED mm.fional.de: DNS resolution failing (NXDOMAIN) — was RECOVERED at 2026-09-18 12:40 with /api/v4/system/ping 200, /signup/email 200, /login 200, /api/v4/users/create 401
+- CHANGED shop.fional.de/graphql: Returns 500 (sets PHPSESSID), no CORS, CSP report-only unsafe-inline/eval — unchanged from prior cycles
+- NEW Both customer portal APIs (kundenkonto + prov) share same backend IP (62.146.7.20) and are simultaneously down — confirms shared infrastructure fate

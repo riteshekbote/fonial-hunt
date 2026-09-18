@@ -22158,3 +22158,80 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 [RISK] fonial: 72 — BOLA seam (CRITICAL-if-confirmed) remains valid-in-class but its validation window degrades: .20 host blackholed ~36h while every other asset recovered, so the outage is now isolated-to-and-inconsistent-with-maintenance → actively consistent with permanent infrastructural cutover. If origin migrates without returning the old deployment, the seam closes permanently, all 4 lockstep cycles of evidence become historical, and no new discriminating passive probe exists on any surviving hypothesis. MM recovery re-confirmed no alternate path. Sole path forward requires the sanctioned fabricated registration before or immediately after origin returns.
+===== ANALYST bigpickle 2026-09-18 16:45:08 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mcurl -sS -o /dev/null -w "kundenkonto:%{http_code}" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session 2>&1; echo; curl -sS -o /dev/null -w "prov:%{http_code}" --max-time 10 -X OPTIONS https://prov.fonial.de/api/2.0/session 2>&1; echo; curl -sS -o /dev/null -w "mm-ping:%{http_code}" --max-time 10 https://mm.fonial.de/api/v4/system/ping 2>&1; echo; getent ahosts kundenkonto.fonial.de | head -1; getent ahosts prov.fonial.de | head -1
+curl: (28) Connection timed out after 10001 milliseconds
+kundenkonto:000
+curl: (28) Connection timed out after 10002 milliseconds
+prov:000
+mm-ping:200
+62.146.7.20     STREAM kundenkonto.fonial.de
+62.146.7.20     STREAM prov.fonial.de
+[0m
+[0m$ [0mfor u in "https://mm.fonial.de/signup/email" "https://mm.fonial.de/api/v4/users/create" "https://mm.fonial.de/api/v4/users" "https://shop.fonial.de/graphql"; do curl -sS -o /dev/null -w "$u => %{http_code}" --max-time 8 "$u" 2>&1; echo; done; getent ahosts go.fonial.de | head -1; getent ahosts admin.fonial.de | head -1; curl -sS -o /dev/null -w "go:%{http_code}" --max-time 8 https://go.fonial.de/ 2>&1; echo; curl -sS -o /dev/null -w "admin:%{http_code}" --max-time 8 https://admin.fonial.de/ 2>&1; echo
+https://mm.fonial.de/signup/email => 200
+https://mm.fonial.de/api/v4/users/create => 401
+https://mm.fonial.de/api/v4/users => 401
+https://shop.fonial.de/graphql => 500
+62.146.7.20     STREAM go.fonial.de
+62.146.7.20     STREAM admin.fonial.de
+curl: (28) Connection timed out after 8002 milliseconds
+go:000
+curl: (28) Connection timed out after 8002 milliseconds
+admin:000
+[0m
+STEP 1 — DELTA:
+- CHANGED origin box 62.146.7.20: kundenkonto, prov, go, admin ALL timeout (4/4 vhosts), DNS single-A unchanged, no Cloudflare re-front — uniform blackhole now >40h vs every other asset recovered → cutover-consistent, not maintenance.
+- CHANGED mm.fonial.de state flip #3: /api/v4/system/ping 200, /signup/email 200, /api/v4/users/create 401 (was 404 in two prior cycles), /api/v4/users 401.
+- CHANGED shop.fonial.de/graphql GET 500 — unchanged.
+
+STEP 2 — PRIORITIZE:
+- [PRIO] prov.fonial.de/api/2.0,6.1,BOLA-seam (business 9 / surface 9 / exposure 7 / gate 0-unreachable / freshness 4) — time-critical, unreachable.
+- [PRIO] kundenkonto.fonial.de/api/2.0,6.0,prod-BOLA-reproduction — same box, unreachable.
+- [PRIO] mm.fonial.de,5.2,self-signup-discriminator (gate 8 / freshness 9 / surface 6) — only live asset that discriminates.
+
+STEP 3 — HYPOTHESES:
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 85
+reasoning: 4 lockstep cycles pre-outage (v2026.09.16-1) + live probes 2026-09-17 04:58 proved body-SID-only authz, decorative PHPSESSID, cleartext UUID sid on nginx/1.10.3; signup POST fields (CSRF token, trunkTariff 19/21/22) confirmed; box blackholed >40h, DNS single-A unchanged, no CF re-front — seam unchanged, only accessibility and cutover time move.
+evidence_needed: origin serves OPTIONS /api/2.0/session post-recovery with v2026.09.16-1-family/non-rotation; then {sid:B, phpsessid:A} cross-present → tenant-A data on /evn/get, /devices/get.
+verify_steps: HUMAN post-recovery: OPTIONS /api/2.0/session (both hosts, before any write); GET /signup/register/55 harvest CSRF; 2x POST /signup/confirm/55 (example.invalid) → tenants A+B; cross-present; /call/initiate only after clean read.
+impact: cross-tenant CDR, numbers, SIP creds, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Prov-confirmed BOLA reproduces on production kundenkonto
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 80
+reasoning: same origin 62.146.7.20 as prov (post-CF-drop); 4 same-minute lockstep deploys across 2 version hops = shared pipeline; identical seam semantics pre-outage; both hosts blackholed identically → same-box cutover risk applies to both.
+evidence_needed: prov evidence first; then kundenkonto under same origin post-recovery.
+verify_steps: identical to prov hyp post-recovery; direct-origin parity probe (Server/X-Fonial-Version/ACAO*/cf-ray) before any write.
+impact: production cross-tenant telephony + call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Mattermost 3.7.3 self-service account creation via open email signup
+class: AUTH
+asset: mm.fonial.de
+confidence: 50
+reasoning: current live probe /api/v4/system/ping 200 + /signup/email 200 + /api/v4/users/create 401 (not 404) → API up and routing; 401-session_expired on users/create is consistent with auth-gated creation, not proof signup closed; state flipped 3x in 48h (previous "RECOVERED" claims twice contradicted) so only a live write discriminates; v4 config endpoint hidden (404) → cannot confirm EnableSignUpWithEmail passively.
+evidence_needed: POST /api/v4/users returns 201 (created) vs 401 (closed).
+verify_steps: HUMAN: minimal POST /api/v4/users {"email":"t"+rand+"@example.invalid","username":"t"+rand,"password":<16char random>,"first_name":"t","last_name":"t"} — read-only acceptance if 401; delete/abandon account after.
+impact: throwaway account on internal chat → chained to red.fonial.de Redmine co-host (post-MM amplification) — MEDIUM.
+testability: HUMAN_ONLY
+
+STEP 4 — SELF-CRITIQUE:
+- [PARKED] MM self-signup (50): state flapping invalidates prior 404-based REJECTED; 401 confirms API routes recognize the path but does not prove open registration — only the sanctioned write discriminates.
+- [FINAL] 1) prov BOLA (85), 2) kundenkonto BOLA (80), 3) mm self-signup (50).
+
+STEP 5 — NEXT ACTION:
+- [NEXT] HUMAN: Request program approval for exactly ONE sanctioned write set, ordered: (a) prov.fonial.de fabricated registration → cross-bind BOLA (primary); (b) if box returns changed version, re-baseline OPTIONS headers first and re-request; (c) fallback discriminator: mm.fonial.de POST /api/v4/users minimal throwaway payload if BOLA still blocked. No further passive probes add discrimination — everything else now closes on the >40h cutover-consistent blackhole.
+
+STEP 6 — LEARNING:
+- [LEARN] ACCEPTED origin-cutover-signal @ fonial: box 62.146.7.20 (kundenkonto/prov/go/admin) uniformly blackholed >40h while mm/shop/www recovered; DNS single-A unchanged, no CF re-front → actively consistent with permanent infrastructural cutover; BOLA validation window is time-critical.
+- [LEARN] REJECTED mm-fonial-de-recovered-stability @ mm.fonial.de: recovered claim now observed UP again (3rd flip) but prior UP states were twice contradicted within a cycle — state is unstable; 401 on /users/create is auth-gated-not-proven, not evidence of open registration.
+
+STEP 7 — RISK:
+- [RISK] fonial: 75 — BOLA (CRITICAL-if-confirmed) stays valid-in-class but its validation window degrades monotonically: >40h uniform blackhole of the seam box incl. legacy vhosts is increasingly consistent with permanent cutover; if the origin migrates without returning, the 4 lockstep cycles become historical and the seam closes permanently. MM recovered as the only live asset but discriminates only via a sanctioned write. No defensible passive finding this cycle.

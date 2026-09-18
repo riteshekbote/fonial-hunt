@@ -472,3 +472,4 @@
 - 2026-09-18 REJECTED further-passive-cycles @ fonial: kundenkonto/prov APIs timing out — no passive probe can resolve; momentum requires service recovery or sanctioned writes
 - 2026-09-18 REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
 - 2026-09-18 ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
+- 2026-09-18 ACCEPTED mm-fonial-de-api-surface-RECOVERED @ mm.fional.de: Live probe 2026-09-18 showed /api/v4/system/ping → 200, /signup/email → 200, /login → 200, /api/v4/users/create → 401 — contradicts KB 2026-09-17 14:38 claim; self-signup class potentially viable again (now DNS-failing)

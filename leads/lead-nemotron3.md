@@ -6459,3 +6459,55 @@ testability: HUMAN_ONLY
 [LEARN] REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
 [LEARN] ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
 [RISK] fonial: 72 — Customer portals (kundenkonto + prov) currently unreachable (timeout), eliminating primary BOLA surface. Mattermost instance recovered with potential open registration (HIGH if confirmed). Shop GraphQL asymmetric admin-auth remains chain-only (40). Internal DNS leak (int.fional.de) and CT-sweep inventory expansion (~19 subdomains) provide breadth but no new exploitable passive surface. Risk reduced from 88 due to primary API outage.
+## 2026-09-18 16:44:55 UTC [target] (model nemotron3)
+[CHANGED] kundenkonto.fonial.de/api/2.0: All 5 API endpoints timing out (connection timeout) — were live at 2026-09-17 04:58 UTC with v2026.09.16-1; Cloudflare-fronted host currently unreachable
+[CHANGED] prov.fonial.de/api/2.0: All 5 API endpoints timing out (connection timeout) — were live at 2026-09-17 04:58 UTC with v2026.09.16-1; unfronted twin also unreachable (same IP 62.146.7.20)
+[CHANGED] mm.fional.de: DNS resolution failing (NXDOMAIN) — was RECOVERED at 2026-09-18 12:40 with /api/v4/system/ping 200, /signup/email 200, /login 200, /api/v4/users/create 401
+[CHANGED] shop.fional.de/graphql: Returns 500 (sets PHPSESSID), no CORS, CSP report-only unsafe-inline/eval — unchanged from prior cycles
+[NEW] Both customer portal APIs (kundenkonto + prov) share same backend IP (62.146.7.20) and are simultaneously down — confirms shared infrastructure fate
+[PRIO] shop.fonial.de/graphql, 4.1, attack_surface=6 business_value=7 tech_exposure=6 gate_ease=10 cloud_surface=3 freshness=5
+[PRIO] mm.fional.de, 0.0, attack_surface=0 business_value=6 tech_exposure=0 gate_ease=0 cloud_surface=3 freshness=0
+[PRIO] kundenkonto.fonial.de/api/2.0, 0.0, attack_surface=0 business_value=10 tech_exposure=0 gate_ease=0 cloud_surface=0 freshness=0
+[PRIO] prov.fonial.de/api/2.0, 0.0, attack_surface=0 business_value=10 tech_exposure=0 gate_ease=0 cloud_surface=0 freshness=0
+[PRIO] www.fonial.de, 1.1, attack_surface=1 business_value=2 tech_exposure=1 gate_ease=10 cloud_surface=1 freshness=2
+[HYP] Asymmetric admin-auth exploitation via GraphQL GenerateCustomerTokenAsAdminInput
+class: AUTH
+asset: shop.fonial.de/graphql
+confidence: 40
+reasoning: Full unauth GraphQL introspection (300+ types, 68 mutations) exposes GenerateCustomerTokenAsAdminInput {customer_email: String!}. Adobe/Magento docs confirm requires admin Bearer token + customer remote_shopping_assistance opt-in. REST /V1/integration/admin/token → 404 (route removed) while GraphQL mutation remains introspectable → non-uniform admin-auth surface. No CORS on GraphQL endpoint. CSP report-only with unsafe-inline/eval.
+evidence_needed: Valid admin token + customer with remote_shopping_assistance=true → GenerateCustomerTokenAsAdminInput returns customer token for arbitrary user
+verify_steps: 1) GET https://shop.fonial.de/graphql?query={__schema{types{name}}} → confirm introspection; 2) POST https://shop.fonial.de/graphql with mutation generateCustomerTokenAsAdmin(customer_email: "victim@example.com") + Authorization: Bearer <admin_token> → observe 200 with customer_token or 403; 3) If 200, use token to access /rest/V1/customers/me → PII access
+impact: Admin-token compromise → full customer account takeover, order history, PII, payment data — HIGH
+testability: HUMAN_ONLY
+[HYP] Self-service account creation via Mattermost open registration
+class: AUTH
+asset: mm.fional.de
+confidence: 15
+reasoning: mm.fional.de DNS resolution failing (NXDOMAIN) — host currently unreachable. Prior cycle showed RECOVERED state with /api/v4/system/ping 200, /signup/email 200, /login 200, /api/v4/users/create 401. Mattermost 3.7.3 default configuration allows open team creation via email signup unless explicitly disabled. Instance instability (flapping between 404/200) makes this unreliable.
+evidence_needed: DNS resolution restored + POST /api/v4/users with valid payload creates account without admin invite → open registration confirmed
+verify_steps: 1) Wait for DNS resolution; 2) GET https://mm.fional.de/api/v4/system/ping → confirm 200; 3) POST https://mm.fional.de/api/v4/users with {"email":"test@example.invalid","name":"test","username":"testuser","password":"TestPass123!"} → observe 201 vs 401/403
+impact: Unauthenticated account creation on internal comms platform → potential access to Redmine (co-hosted), internal channels, operational data — HIGH
+testability: PASSIVE
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on customer portal APIs
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0 + prov.fonial.de/api/2.0
+confidence: 10
+reasoning: Both API surfaces (5 endpoints each) simultaneously timing out — shared backend IP 62.146.7.20 confirmed down. Dual-backend architecture confirmed: session endpoints (text/json, no PHPSESSID) vs data endpoints (text/json;charset=UTF-8, sets PHPSESSID) with body-SID-only authorization. Lockstep deploy confirmed across 4 cycles (v2026.09.16-1). prov.fional.de/signup/confirm/55 enables self-service tenant creation. Cross-bind hypothesis requires live APIs.
+evidence_needed: Service recovery + two valid SIDs from different tenants → cross-tenant data access via body SID swap on /devices/get, /evn/get, /call/initiate
+verify_steps: 1) Monitor for service recovery via OPTIONS https://kundenkonto.fonial.de/api/2.0/session; 2) If live, create tenant A on prov.fional.de (POST /signup/confirm/55); 3) Create tenant B on kundenkonto.fonial.de (program-provisioned); 4) Swap SIDs across /devices/get → observe cross-tenant data leak
+impact: Cross-tenant access to PII, CDR, SIP credentials, billing, call control on enterprise telephony platform — CRITICAL
+testability: HUMAN_ONLY
+[PARKED] Self-service account creation via Mattermost open registration: confidence dropped to 15 — DNS resolution failing (NXDOMAIN), instance flapping/unreliable; requires service recovery first
+[PARKED] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind: confidence dropped to 10 — both API surfaces simultaneously down (shared backend IP 62.146.7.20); requires service recovery before any test possible
+[PARKED] Asymmetric admin-auth exploitation via GraphQL GenerateCustomerTokenAsAdminInput: confidence 40 at critique floor; requires admin token compromise + customer opt-in → no standalone exploit path; retain only as chain component
+[FINAL] 1. Asymmetric admin-auth via GraphQL GenerateCustomerTokenAsAdminInput on shop.fional.de/graphql (40) — CHAIN ONLY
+[FINAL] 2. Self-service account creation via Mattermost open registration (15) — BLOCKED on DNS/service recovery
+[FINAL] 3. Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on customer portal
+[NEXT] SCAN: origin-recovery watcher every 12h until flip: `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session && curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://prov.fonial.de/api/2.0/session && dig +short mm.fional.de` — exact read-only probes for API recovery + DNS restoration
+[LEARN] REJECTED further-passive-cycles @ fonial: kundenkonto/prov APIs timing out — no passive probe can resolve; momentum requires service recovery or sanctioned writes
+[LEARN] REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
+[LEARN] ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
+[LEARN] ACCEPTED mm-fonial-de-api-surface-RECOVERED @ mm.fional.de: Live probe 2026-09-18 showed /api/v4/system/ping → 200, /signup/email → 200, /login → 200, /api/v4/users/create → 401 — contradicts KB 2026-09-17 14:38 claim; self-signup class potentially viable again (now DNS-failing)
+[LEARN] ACCEPTED lockstep-deploy-live @ kundenkonto+prov: Fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 version hops; seam survived deploy; prov→prod fidelity raised
+[LEARN] REJECTED shop admin-token standalone: Confidence 40 at critique floor, no new evidence — chain component only
+[RISK] fonial: 58 — Customer portals (kundenkonto + prov) completely unreachable (shared backend 62.146.7.20 down), eliminating primary BOLA surface. Mattermost instance DNS-failing (NXDOMAIN) after brief recovery — self-signup hypothesis blocked. Shop GraphQL asymmetric admin-auth remains chain-only (40). Internal DNS leak (int.fional.de) and CT-sweep inventory expansion (~19 subdomains) provide breadth but no new exploitable passive surface. Risk reduced from 72 due to primary API outage + Mattermost DNS failure.
