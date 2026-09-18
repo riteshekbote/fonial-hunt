@@ -3981,3 +3981,31 @@ impact: throwaway internal-chat account → red.fonial.de Redmine co-host (post-
 testability: HUMAN_ONLY
 [NEXT] HUMAN: on next sustained-healthy mm window (system/ping 200 stable >24h), send ONE program-approved minimal POST https://mm.fonial.de/api/v4/users (fake example.invalid data, 16-char random password, expect 201 vs 401/403); if approval withheld, continue the 12h origin-recovery watcher on https://kundenkonto.fonial.de/api/2.0/session and https://prov.fonial.de/api/2.0/session (OPTIONS, re-baseline headers on first 200 before any write).
 [RISK] fonial: 74 — .20 blackholed >52h while every sibling recovered (mm now healthy at 62.146.7.29) → outage now anomalously isolate-signaling permanent Dutch cutover; each passing cycle without origin return converts the locked 4-cycle evidence base toward history; the sole live discriminator (mm signup write) sits at confidence 45 and is gated on approval.
+## 2026-09-18 23:50:09 UTC [target] (model bigpickle)
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 85
+reasoning: 4 lockstep cycles (v2026.09.16-1, ~51h ago) proved body-SID-only authz, decorative PHPSESSID, cleartext UUID sid on nginx/1.10.3; signup POST fields (CSRF, trunkTariff) confirmed live pre-outage; .20 blackholed on 80+443 >53h while shop+mm recovered (mm at .29) → outage now isolated to the seam box, consistent with both maintenance and permanent cutover.
+evidence_needed: post-recovery OPTIONS /api/2.0/session returns v2026.09.16-1-family with unchanged Server/ACAO*; then {sid:B, phpsessid:A} → tenant-A data on /evn/get, /devices/get.
+verify_steps: HUMAN: OPTIONS both hosts; GET /signup/register/55 harvest CSRF; 2x POST /signup/confirm/55 (example.invalid) → tenants A+B; cross-present; /call/initiate last.
+impact: cross-tenant CDR, numbers, SIP creds, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Prov-confirmed BOLA reproduces on production kundenkonto
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 80
+reasoning: same origin 62.146.7.20 as prov; 4 same-minute lockstep deploys; both blackholed identically while siblings recovered → same-box cutover fate.
+evidence_needed: prov evidence first; then kundenkonto under same origin post-recovery.
+verify_steps: identical to prov; origin-parity probe (Server/X-Fonial-Version/ACAO*/cf-ray) before any write.
+impact: production cross-tenant telephony — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Mattermost 3.7.3 self-registration open at API level
+class: AUTH
+asset: mm.fonial.de
+confidence: 45
+reasoning: healthy signature restored (ping 200, X-Version-Id 3.7.3, /users 401, SPA 22b19425); /users/create this cycle → 401 (was 404 at 21:53) — 201 vs 403-signup-disabled not observed, 401 pre-handler suggests auth-required → leans closed but host flaps states so a stale read is unverifiable passively.
+evidence_needed: POST /api/v4/users returns 201 (open) vs 401/403 (closed).
+verify_steps: HUMAN: one minimal POST /api/v4/users {"email":"t"+rand+"@example.invalid","username":"t"+rand,"password":<16-char random>}; abandon account if 201; accept 401/403 as closed.
+impact: throwaway internal-chat account → chained red.fonial.de Redmine co-host — MEDIUM.
+testability: HUMAN_ONLY

@@ -22468,3 +22468,104 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 [RISK] fonial: 74 — .20 blackholed >52h while every sibling recovered (mm now healthy at 62.146.7.29) → outage now anomalously isolate-signaling permanent Dutch cutover; each passing cycle without origin return converts the locked 4-cycle evidence base toward history; the sole live discriminator (mm signup write) sits at confidence 45 and is gated on approval.
+===== ANALYST bigpickle 2026-09-18 23:51:05 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mecho "== mm =="; curl -sS -o /dev/null -w "%{http_code} %{time_total}s\n" --max-time 8 https://mm.fonial.de/api/v4/system/ping 2>&1; echo "== shop DNS =="; getent hosts shop.fonial.de 2>&1 || echo nxdomain; echo "== mm ping =="; curl -sS -o /dev/null -w "%{http_code}\n" --max-time 8 https://mm.fonial.de/api/v4/users/create 2>&1
+== mm ==
+200 0.520580s
+== shop DNS ==
+176.9.53.190    shop.fonial.de
+== mm ping ==
+401
+[0m
+[0m$ [0mfor h in kundenkonto.fonial.de prov.fonial.de; do echo "== $h =="; curl -sS -o /dev/null -w "%{http_code} %{time_total}s\n" --max-time 10 -X OPTIONS https://$h/api/2.0/session 2>&1; done
+== kundenkonto.fonial.de ==
+curl: (28) Connection timed out after 10002 milliseconds
+000 10.002660s
+== prov.fonial.de ==
+curl: (28) Connection timed out after 10002 milliseconds
+000 10.002884s
+[0m
+[0m$ [0mecho "== mm signup =="; curl -sS -o /dev/null -w "%{http_code}\n" --max-time 8 https://mm.fonial.de/signup/email 2>&1; getent hosts mm.fonial.de
+== mm signup ==
+200
+62.146.7.29     mm.fonial.de
+[0m
+[0m$ [0mecho "== shop graphql =="; curl -sS -o /dev/null -w "%{http_code}\n" --max-time 10 -X POST https://shop.fonial.de/graphql -H 'Content-Type: application/json' -d '{"query":"{__typename}"}' 2>&1; echo "== shop root =="; curl -sS -o /dev/null -w "%{http_code}\n" --max-time 10 https://shop.fonial.de/ 2>&1
+== shop graphql ==
+200
+== shop root ==
+200
+[0m
+[0m$ [0mcurl -sS -o /dev/null -D - --max-time 8 https://mm.fonial.de/api/v4/users/create 2>&1 | grep -iE '^(HTTP|server|content-type|x-version)' | head -5
+HTTP/1.1 401 Unauthorized
+Server: nginx/1.10.2
+Content-Type: application/json
+X-Version-Id: 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false
+[0m
+[0m$ [0mcurl -sS --max-time 10 -X POST https://shop.fonial.de/graphql -H 'Content-Type: application/json' -d '{"query":"{__typename}"}' 2>&1 | head -c 300; echo; echo "== shop headers =="; curl -sS -o /dev/null -D - --max-time 10 -X POST https://shop.fonial.de/graphql -H 'Content-Type: application/json' -d '{"query":"{__typename}"}' 2>&1 | grep -iE '^(server|cf-ray|content-type|x-magento)' | head -5
+{"data":{"__typename":"Query"}}
+== shop headers ==
+content-type: application/json
+server: nginx/1.31.2
+x-magento-cache-id: e76dfb659e35e57956eeda4b55b6c98fba39c4f8f30bbdcf4d104f07143c1047
+x-magento-tags: FPC
+[0m
+Living evidence gathered (passive, ≤1rps). All probes are read-only.
+
+**STEP 1 — DELTA**
+- CHANGED kundenkonto.fonial.de + prov.fonial.de: /api/2.0/session OPTIONS still connection-timeout (62.146.7.20 blackholed, now ~53h) — no recovery, sole survivor gated.
+- CHANGED shop.fonial.de: DNS recovered (176.9.53.190, was NXDOMAIN), POST /graphql → 200 `{"data":{"__typename":"Query"}}`, nginx/1.31.2 + Magento FPC tags — healthy signature fully restored.
+- CHANGED mm.fonial.de: /api/v4/users/create → **401** (was 404 at 21:53) with X-Version-Id 3.7.3 present, /signup/email → 200, host 62.146.7.29 — healthy window persists but users/create flaps 401↔404 across cycles.
+
+**STEP 2 — PRIORITIZE**
+- [PRIO] prov.fonial.de/api/2.0, 7.95, AUTH seam at 85 on the twin — highest value but currently unobservable.
+- [PRIO] kundenkonto.fonial.de/api/2.0, 7.60, prod-mapped BOLA replica under same .20 fate.
+- [PRIO] mm.fonial.de/api/v4/users, 5.20, only live-observable discriminator left, flapping state.
+
+**STEP 3 — HYPOTHESES**
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 85
+reasoning: 4 lockstep cycles (v2026.09.16-1, ~51h ago) proved body-SID-only authz, decorative PHPSESSID, cleartext UUID sid on nginx/1.10.3; signup POST fields (CSRF, trunkTariff) confirmed live pre-outage; .20 blackholed on 80+443 >53h while shop+mm recovered (mm at .29) → outage now isolated to the seam box, consistent with both maintenance and permanent cutover.
+evidence_needed: post-recovery OPTIONS /api/2.0/session returns v2026.09.16-1-family with unchanged Server/ACAO*; then {sid:B, phpsessid:A} → tenant-A data on /evn/get, /devices/get.
+verify_steps: HUMAN: OPTIONS both hosts; GET /signup/register/55 harvest CSRF; 2x POST /signup/confirm/55 (example.invalid) → tenants A+B; cross-present; /call/initiate last.
+impact: cross-tenant CDR, numbers, SIP creds, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Prov-confirmed BOLA reproduces on production kundenkonto
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 80
+reasoning: same origin 62.146.7.20 as prov; 4 same-minute lockstep deploys; both blackholed identically while siblings recovered → same-box cutover fate.
+evidence_needed: prov evidence first; then kundenkonto under same origin post-recovery.
+verify_steps: identical to prov; origin-parity probe (Server/X-Fonial-Version/ACAO*/cf-ray) before any write.
+impact: production cross-tenant telephony — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Mattermost 3.7.3 self-registration open at API level
+class: AUTH
+asset: mm.fonial.de
+confidence: 45
+reasoning: healthy signature restored (ping 200, X-Version-Id 3.7.3, /users 401, SPA 22b19425); /users/create this cycle → 401 (was 404 at 21:53) — 201 vs 403-signup-disabled not observed, 401 pre-handler suggests auth-required → leans closed but host flaps states so a stale read is unverifiable passively.
+evidence_needed: POST /api/v4/users returns 201 (open) vs 401/403 (closed).
+verify_steps: HUMAN: one minimal POST /api/v4/users {"email":"t"+rand+"@example.invalid","username":"t"+rand,"password":<16-char random>}; abandon account if 201; accept 401/403 as closed.
+impact: throwaway internal-chat account → chained red.fonial.de Redmine co-host — MEDIUM.
+testability: HUMAN_ONLY
+
+**STEP 4 — SELF-CRITIQUE**
+- [PARKED] shop asymmetric admin-auth ⦁ shop.fonial.de/graphql: recovered healthy but zero new evidence; confidence 40 at floor, chain-only, no verify-step advancement this cycle.
+- [PARKED] shop REST/guest-cart/MageWorx: fully mapped, closed classes.
+- [FINAL] survivor order: prov BOLA (85), kundenkonto BOLA-map (80), mm self-registration (45). All HUMAN_ONLY.
+
+**STEP 5 — NEXT ACTION**
+- [NEXT] PROBE: origin-recovery watcher at next 12h tick — `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session` and same for https://prov.fonial.de/api/2.0/session; on first 200 re-baseline headers (Server / X-Fonial-Version v2026.09.16-family / ACAO* / cf-ray) before any write; independent single check https://mm.fonial.de/api/v4/users/create (401 vs 404 drift) for stability before escalating the MM write.
+
+**STEP 6 — LEARNING**
+- [LEARN] ACCEPTED surface-recovery @ shop.fonial.de: graphql POST 200 introspectable, nginx/1.31.2, Magento FPC tags — full healthy state restored after NXDOMAIN; known surface, no new class.
+- [LEARN] ACCEPTED mm-healthy-flap @ mm.fonial.de: /users/create 401 (auth-required) vs 404 (degraded) across cycles → state-instability means any passive read is provisional; only a live POST discriminates signup state.
+- [LEARN] REJECTED further-passive-cycles @ fonial: shop+mm recoveries reassert known surfaces; kundenkonto/prov remain blackholed; no new discriminating passive probe exists on any survivor.
+
+**STEP 7 — RISK**
+- [RISK] fonial: 74 — .20 blackholed >53h while shop (graphql 200) and mm (ping 200) fully recovered → outage is conclusively isolated to the BOLA seam box, no longer consistent with generic platform outage but increasingly with a permanent cutover; each cycle without origin return converts the locked 4-cycle evidence toward history. The only live discriminator (single MM user-create write) sits at confidence 45 and remains gated on program approval.

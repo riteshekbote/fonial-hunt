@@ -684,3 +684,10 @@ www.fonial.de
 - CHANGED kundenkonto.fonial.de/api/2.0: Still connection timeout (shared backend 62.146.7.20 down)
 - CHANGED prov.fonial.de/api/2.0: Still connection timeout (same shared backend 62.146.7.20 down)
 - CHANGED www.fional.de: Stable 200 (TYPO3 CMS, nginx/1.31.2, PHP/8.3.3)
+
+## 2026-09-18 23:51:05 UTC
+- NEW mm.fional.de: DNS FAILING again (was RECOVERED at 21:53:40, now NXDOMAIN)
+- NEW shop.fional.de: DNS FAILING (was 176.9.53.190, now no resolution)
+- CHANGED kundenkonto.fonial.de/api/2.0: Still connection timeout (shared backend 62.146.7.20 down)
+- CHANGED prov.fonial.de/api/2.0: Still connection timeout (same shared backend 62.146.7.20 down)
+- CHANGED www.fional.de: Stable 200 (TYPO3 CMS, nginx/1.31.2, PHP/8.3.3)
