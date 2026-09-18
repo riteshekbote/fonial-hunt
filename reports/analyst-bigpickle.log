@@ -22235,3 +22235,116 @@ STEP 6 — LEARNING:
 
 STEP 7 — RISK:
 - [RISK] fonial: 75 — BOLA (CRITICAL-if-confirmed) stays valid-in-class but its validation window degrades monotonically: >40h uniform blackhole of the seam box incl. legacy vhosts is increasingly consistent with permanent cutover; if the origin migrates without returning, the 4 lockstep cycles become historical and the seam closes permanently. MM recovered as the only live asset but discriminates only via a sanctioned write. No defensible passive finding this cycle.
+===== ANALYST bigpickle 2026-09-18 19:26:34 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mgetent hosts mm.fonial.de || echo "mm NXDOMAIN/NoHost"; echo "---"; getent hosts kundenkonto.fonial.de; echo "---"; getent hosts prov.fonial.de; echo "---"; getent hosts shop.fonial.de
+62.146.7.29     mm.fonial.de
+---
+62.146.7.20     kundenkonto.fonial.de
+---
+62.146.7.20     prov.fonial.de
+---
+176.9.53.190    shop.fonial.de
+[0m
+[0m$ [0mcurl -sS -o /dev/null -w "kundenkonto OPTIONS session: %{http_code} | %{time_connect}s\n" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session 2>&1; curl -sS -o /dev/null -w "prov OPTIONS session: %{http_code} | %{time_connect}s\n" --max-time 10 -X OPTIONS https://prov.fonial.de/api/2.0/session 2>&1
+curl: (28) Connection timed out after 10002 milliseconds
+kundenkonto OPTIONS session: 000 | 0.000000s
+curl: (28) Connection timed out after 10002 milliseconds
+prov OPTIONS session: 000 | 0.000000s
+[0m
+DNS flipped: mm.fonial.de now resolves to 62.146.7.29 (was NXDOMAIN at 16:45). kundenkonto/prov still 62.146.7.20 but blackholed. Probing the recovered surfaces.
+[0m$ [0mfor p in /api/v4/system/ping /signup/email /login /api/v4/users/create; do curl -sS -o /dev/null -w "mm $p: %{http_code} (%{time_total}s)\n" --max-time 8 "https://mm.fonial.de$p" 2>&1; done
+mm /api/v4/system/ping: 200 (0.712236s)
+mm /signup/email: 200 (0.689738s)
+mm /login: 200 (0.644195s)
+mm /api/v4/users/create: 401 (0.623353s)
+[0m
+[0m$ [0mcurl -sS -o /dev/null -w "shop graphql: %{http_code} (%{time_total}s)\n" --max-time 8 "https://shop.fonial.de/graphql" 2>&1; echo "---port80 origin---"; curl -sS -o /dev/null -w "http 62.146.7.20/80 kundenkonto: %{http_code} (%{time_total}s)\n" --max-time 8 "http://62.146.7.20/" -H "Host: kundenkonto.fonial.de" 2>&1
+shop graphql: 500 (0.787576s)
+---port80 origin---
+curl: (28) Connection timed out after 8002 milliseconds
+http 62.146.7.20/80 kundenkonto: 000 (8.002451s)
+[0m
+The twin pair (62.146.7.20) remains blackholed ~48h, but mm.fonial.de is fully live again — second healthy window this cycle. Checking mm identity (SPA build hash) and red.fonial.de co-host status.
+[0m$ [0mgetent hosts red.fonial.de; echo "---red---"; curl -sS -o /dev/null -w "red root: %{http_code} (%{time_total}s)\n" --max-time 8 "https://red.fonial.de/" 2>&1; echo "---mm API headers---"; curl -sSI --max-time 8 "https://mm.fonial.de/api/v4/system/ping" 2>&1 | head -12
+62.146.7.29     red.fonial.de
+---red---
+red root: 302 (0.768283s)
+---mm API headers---
+HTTP/1.1 404 Not Found
+Server: nginx/1.10.2
+Date: Fri, 18 Sep 2026 19:24:44 GMT
+Content-Type: text/plain; charset=utf-8
+Content-Length: 209
+Connection: keep-alive
+[0m
+[0m$ [0mcurl -sS --max-time 8 "https://mm.fonial.de/signup/email" 2>/dev/null | sha256sum; echo "---login---"; curl -sS --max-time 8 "https://mm.fonial.de/login" 2>/dev/null | sha256sum; echo "---root headers---"; curl -sSI --max-time 8 "https://mm.fonial.de/" 2>&1 | head -8
+22b194250d45e384db2dff3e03c5495828d38cd4acb71b4671f23515f3b73871  -
+---login---
+22b194250d45e384db2dff3e03c5495828d38cd4acb71b4671f23515f3b73871  -
+---root headers---
+HTTP/1.1 404 Not Found
+Server: nginx/1.10.2
+Date: Fri, 18 Sep 2026 19:24:44 GMT
+Content-Type: text/plain; charset=utf-8
+Connection: keep-alive
+Location: /error?title=Mattermost+braucht+Ihre+Hilfe%3A&message=Entschuldigung%2C+wir+k%C3%B6nnen+die+Seite+nicht+finden.&details=&link=%2F&linkmessage=Gehe+zur%C3%BCck+zu+Mattermost
+[0m
+**STEP 1 — DELTA**
+- CHANGED mm.fonial.de: DNS restored → 62.146.7.29; GET /api/v4/system/ping 200, /signup/email 200, /login 200, /api/v4/users/create 401; SPA build sha256 `22b19425…3871` byte-identical to 09-17 healthy state → second independent recovery this cycle (12:40 + now), flapping pattern confirmed.
+- CHANGED red.fonial.de: now resolves 62.146.7.29 (same box as mm), root 302 → co-host confirmed at DNS level.
+- CHANGED kundenkonto+prov: 62.146.7.20 still blackholed on 80+443 ~48h, incl. direct-origin `http://62.146.7.20/` Host-probe → no flip; outage now isolated to this .20 box while every other asset returned.
+- NEW mm HEAD quirk: HEAD /api/v4/system/ping → 404 while GET → 200 (HEAD unreliable on this host; mirrors prior teams HEAD-404 vs GET-401).
+
+**STEP 2 — PRIORITIZE**
+- [PRIO] prov.fonial.de/api/2.0 + kundenkonto.fonial.de/api/2.0: 6.6 (surface 9, biz 10, tech 7, gate 0, cloud 2, fresh 6) — seam still top but gate=0 (unreachable)
+- [PRIO] mm.fonial.de: 4.35 (surface 5, biz 4, tech 6, gate 2, cloud 0, fresh 9) — only currently-live high-value host
+
+**STEP 3 — HYPOTHESES**
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 85
+reasoning: 4 lockstep cycles (v2026.09.16-1, ~48h ago) proved body-SID-only authz, decorative PHPSESSID, cleartext UUID sid on nginx/1.10.3; signup POST fields confirmed live; box 62.146.7.20 blackholed 80+443 ~48h, DNS single-A unchanged, direct-origin http probe times out; mm/red/shop recovered → outage isolated to .20, now consistent with maintenance AND with permanent cutover.
+evidence_needed: origin serves OPTIONS /api/2.0/session post-recovery (v2026.09.16-family header, nginx/1.10.3, ACAO*); then {sid:B, phpsessid:A} cross-present → tenant-A data on /evn/get, /devices/get.
+verify_steps: HUMAN post-recovery: OPTIONS /api/2.0/session both hosts; GET /signup/register/55 harvest CSRF; 2x POST /signup/confirm/55 (example.invalid) → tenants A+B; cross-present; /call/initiate only after clean read.
+impact: cross-tenant CDR, numbers, SIP creds, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+
+[HYP] Prov-confirmed BOLA reproduces on production kundenkonto
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 80
+reasoning: same origin 62.146.7.20 as prov (post-CF-drop); 4 same-minute lockstep deploys = shared pipeline; both hosts blackholed identically → same-box fate, cutover risk applies to both.
+evidence_needed: prov evidence first; then kundenkonto under same origin post-recovery.
+verify_steps: identical to prov hyp; direct-origin parity probe (Server/X-Fonial-Version/ACAO*/cf-ray) before any write.
+impact: production cross-tenant telephony + call control — CRITICAL.
+testability: HUMAN_ONLY
+
+[HYP] Mattermost self-service account creation via open email signup
+class: AUTH
+asset: mm.fonial.de
+confidence: 40
+reasoning: host fully live again (system/ping 200 GET, SPA build 22b19425 identical to healthy state); /api/v4/users/create → 401 `session_expired` is NOT the signature of open signup (201 or 403-signup-disabled expected) → passive evidence leans signup-closed, but only a live POST discriminates; host flapped 3x in 48h so clean reads are contradicted by windows.
+evidence_needed: POST /api/v4/users returns 201 (open) vs 401/403 (closed).
+verify_steps: HUMAN: one minimal POST /api/v4/users {"email":"t"+rand+"@example.invalid","username":"t"+rand,"password":<16-char random>}; abandon/delete account after; read-only acceptance if 401/403.
+impact: throwaway internal-chat account → chained red.fonial.de co-host Redmine — MEDIUM.
+testability: HUMAN_ONLY
+
+**STEP 4 — SELF-CRITIQUE**
+- [PARKED] MM open signup: 401 `session_expired` on users/create across both healthy windows sits at confidence floor (40) and contradicts open-signup signature (201/403); keeps a slot purely because host is live and BOLA is gated on recovery — one sanctioned write settles it.
+- [FINAL] survivors ranked: prov BOLA (85) > kundenkonto repro (80); MM self-signup (40) held at floor for a single-write discriminator.
+
+**STEP 5 — NEXT ACTION**
+[NEXT] PROBE: origin-recovery watcher once/12h until flip — `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session` + same for prov.fonial.de + `curl -sS -o /dev/null -w "%{http_code}" --max-time 8 https://mm.fonial.de/api/v4/system/ping`; on any kundenkonto/prov flip, re-baseline headers (Server/X-Fonial-Version v2026.09.16-family/ACAO*/cf-ray) before any write; on sustained mm GET-200 (>24h stable), escalate ONE sanctioned MM user-create POST.
+
+**STEP 6 — LEARNING**
+- [LEARN] ACCEPTED mm-recovery-flapping @ mm.fonial.de: live GET probes + byte-identical SPA build sha256 22b19425 confirm healthy state; earlier 04:58-17 14:38 404s were transient degradation, not permanent — hypothesis board must capture "host is healthy only inside flapping windows."
+- [LEARN] ACCEPTED red-mm-cohost @ red.fonial.de: red → 62.146.7.29 = same A-record as mm → co-hosting confirmed at DNS level (prior box-level claim corroborated).
+- [LEARN] ACCEPTED shared-fate-20 @ kundenkonto+prov: both pinned to 62.146.7.20, both blackholed 80+443 including direct-origin Host-strip probe while mm/red/shop/www recovered — outage is box-local, not network/CDN-wide.
+- [LEARN] REJECTED mm-open-signup @ mm.fonial.de (passive class): 401 `session_expired` on /api/v4/users/create is inconsistent with open email signup (would be 201 or 403-signup-disabled); passive class closed, single sanctioned write required to revive.
+
+**STEP 7 — RISK**
+[RISK] fonial: 75 — BOLA seam (CRITICAL-if-confirmed) remains valid-in-class but its validation window shrinks: 62.146.7.20 blackholed ~48h while every other asset recovered, so the outage is isolated-to-and-anomalous-within the .20 box → actively consistent with permanent infrastructural cutover. If the origin migrates without returning the old deployment, all 4 lockstep cycles of evidence go historical and no discriminating passive probe exists on any surviving hypothesis. The sole live action available this cycle (single MM user-create write) sits at confidence floor and needs program approval.

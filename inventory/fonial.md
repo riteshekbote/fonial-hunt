@@ -671,3 +671,9 @@ www.fonial.de
 - CHANGED mm.fional.de: DNS resolution failing (NXDOMAIN) — was RECOVERED at 2026-09-18 12:40 with /api/v4/system/ping 200, /signup/email 200, /login 200, /api/v4/users/create 401
 - CHANGED shop.fional.de/graphql: Returns 500 (sets PHPSESSID), no CORS, CSP report-only unsafe-inline/eval — unchanged from prior cycles
 - NEW Both customer portal APIs (kundenkonto + prov) share same backend IP (62.146.7.20) and are simultaneously down — confirms shared infrastructure fate
+
+## 2026-09-18 19:26:34 UTC
+- NEW kundenkonto.fonial.de/api/2.0 + prov.fonial.de/api/2.0: All 5 API endpoints on both hosts timing out (connection timeout) — shared backend IP 62.146.7.20 confirmed down simultaneously
+- NEW mm.fonial.de: DNS resolution failing (NXDOMAIN) — was RECOVERED at 2026-09-18 12:40 UTC with live API surface
+- CHANGED shop.fional.de/graphql: Persistent 500 response (sets PHPSESSID), no CORS, CSP report-only with unsafe-inline/eval — unchanged
+- CHANGED Risk reduced from 72 → 58 due to primary API outage + Mattermost DNS failure

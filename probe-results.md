@@ -902,3 +902,9 @@ https://shop.fonial.de/graphql?query={__schema{types{name -> HTTP 500
 https://shop.fonial.de/graphql -> HTTP 500
 https://kundenkonto.fonial.de/api/2.0/session -> ERR <urlopen error timed out>
 https://prov.fonial.de/api/2.0/session -> ERR <urlopen error timed out>
+
+## 2026-09-18 19:27:15 UTC
+https://kundenkonto.fonial.de/api/2.0/session -> ERR <urlopen error timed out>
+https://prov.fonial.de/api/2.0/session -> ERR <urlopen error timed out>
+https://kundenkonto.fonial.de/api/2.0/session` -> ERR <urlopen error timed out>
+https://mm.fonial.de/api/v4/system/ping` -> HTTP 404

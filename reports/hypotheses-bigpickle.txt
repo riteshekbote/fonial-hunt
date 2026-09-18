@@ -1,28 +1,30 @@
-## 2026-09-18 16:44:04 UTC [target] (model bigpickle)
+## 2026-09-18 19:25:52 UTC [target] (model bigpickle)
 [HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
 class: AUTH
 asset: prov.fonial.de/api/2.0
 confidence: 85
-reasoning: 4 lockstep cycles pre-outage (v2026.09.16-1) + live probes 2026-09-17 04:58 proved body-SID-only authz, decorative PHPSESSID, cleartext UUID sid on nginx/1.10.3; signup POST fields (CSRF token, trunkTariff 19/21/22) confirmed; box blackholed >40h, DNS single-A unchanged, no CF re-front — seam unchanged, only accessibility and cutover time move.
-evidence_needed: origin serves OPTIONS /api/2.0/session post-recovery with v2026.09.16-1-family/non-rotation; then {sid:B, phpsessid:A} cross-present → tenant-A data on /evn/get, /devices/get.
-verify_steps: HUMAN post-recovery: OPTIONS /api/2.0/session (both hosts, before any write); GET /signup/register/55 harvest CSRF; 2x POST /signup/confirm/55 (example.invalid) → tenants A+B; cross-present; /call/initiate only after clean read.
+reasoning: 4 lockstep cycles (v2026.09.16-1, ~48h ago) proved body-SID-only authz, decorative PHPSESSID, cleartext UUID sid on nginx/1.10.3; signup POST fields confirmed live; box 62.146.7.20 blackholed 80+443 ~48h, DNS single-A unchanged, direct-origin http probe times out; mm/red/shop recovered → outage isolated to .20, now consistent with maintenance AND with permanent cutover.
+evidence_needed: origin serves OPTIONS /api/2.0/session post-recovery (v2026.09.16-family header, nginx/1.10.3, ACAO*); then {sid:B, phpsessid:A} cross-present → tenant-A data on /evn/get, /devices/get.
+verify_steps: HUMAN post-recovery: OPTIONS /api/2.0/session both hosts; GET /signup/register/55 harvest CSRF; 2x POST /signup/confirm/55 (example.invalid) → tenants A+B; cross-present; /call/initiate only after clean read.
 impact: cross-tenant CDR, numbers, SIP creds, device lists, outbound call control — CRITICAL.
 testability: HUMAN_ONLY
 [HYP] Prov-confirmed BOLA reproduces on production kundenkonto
 class: AUTH
 asset: kundenkonto.fonial.de/api/2.0
 confidence: 80
-reasoning: same origin 62.146.7.20 as prov (post-CF-drop); 4 same-minute lockstep deploys across 2 version hops = shared pipeline; identical seam semantics pre-outage; both hosts blackholed identically → same-box cutover risk applies to both.
+reasoning: same origin 62.146.7.20 as prov (post-CF-drop); 4 same-minute lockstep deploys = shared pipeline; both hosts blackholed identically → same-box fate, cutover risk applies to both.
 evidence_needed: prov evidence first; then kundenkonto under same origin post-recovery.
-verify_steps: identical to prov hyp post-recovery; direct-origin parity probe (Server/X-Fonial-Version/ACAO*/cf-ray) before any write.
+verify_steps: identical to prov hyp; direct-origin parity probe (Server/X-Fonial-Version/ACAO*/cf-ray) before any write.
 impact: production cross-tenant telephony + call control — CRITICAL.
 testability: HUMAN_ONLY
-[HYP] Mattermost 3.7.3 self-service account creation via open email signup
+[HYP] Mattermost self-service account creation via open email signup
 class: AUTH
 asset: mm.fonial.de
-confidence: 50
-reasoning: current live probe /api/v4/system/ping 200 + /signup/email 200 + /api/v4/users/create 401 (not 404) → API up and routing; 401-session_expired on users/create is consistent with auth-gated creation, not proof signup closed; state flipped 3x in 48h (previous "RECOVERED" claims twice contradicted) so only a live write discriminates; v4 config endpoint hidden (404) → cannot confirm EnableSignUpWithEmail passively.
-evidence_needed: POST /api/v4/users returns 201 (created) vs 401 (closed).
-verify_steps: HUMAN: minimal POST /api/v4/users {"email":"t"+rand+"@example.invalid","username":"t"+rand,"password":<16char random>,"first_name":"t","last_name":"t"} — read-only acceptance if 401; delete/abandon account after.
-impact: throwaway account on internal chat → chained to red.fonial.de Redmine co-host (post-MM amplification) — MEDIUM.
+confidence: 40
+reasoning: host fully live again (system/ping 200 GET, SPA build 22b19425 identical to healthy state); /api/v4/users/create → 401 `session_expired` is NOT the signature of open signup (201 or 403-signup-disabled expected) → passive evidence leans signup-closed, but only a live POST discriminates; host flapped 3x in 48h so clean reads are contradicted by windows.
+evidence_needed: POST /api/v4/users returns 201 (open) vs 401/403 (closed).
+verify_steps: HUMAN: one minimal POST /api/v4/users {"email":"t"+rand+"@example.invalid","username":"t"+rand,"password":<16-char random>}; abandon/delete account after; read-only acceptance if 401/403.
+impact: throwaway internal-chat account → chained red.fonial.de co-host Redmine — MEDIUM.
 testability: HUMAN_ONLY
+[NEXT] PROBE: origin-recovery watcher once/12h until flip — `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session` + same for prov.fonial.de + `curl -sS -o /dev/null -w "%{http_code}" --max-time 8 https://mm.fonial.de/api/v4/system/ping`; on any kundenkonto/prov flip, re-baseline headers (Server/X-Fonial-Version v2026.09.16-family/ACAO*/cf-ray) before any write; on sustained mm GET-200 (>24h stable), escalate ONE sanctioned MM user-create POST.
+[RISK] fonial: 75 — BOLA seam (CRITICAL-if-confirmed) remains valid-in-class but its validation window shrinks: 62.146.7.20 blackholed ~48h while every other asset recovered, so the outage is isolated-to-and-anomalous-within the .20 box → actively consistent with permanent infrastructural cutover. If the origin migrates without returning the old deployment, all 4 lockstep cycles of evidence go historical and no discriminating passive probe exists on any surviving hypothesis. The sole live action available this cycle (single MM user-create write) sits at confidence floor and needs program approval.
