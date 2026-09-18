@@ -1,12 +1,13 @@
-## 2026-09-17 23:53:11 UTC [target] (model nemotron3)
+## 2026-09-18 02:50:24 UTC [target] (model nemotron3)
 [CHANGED] kundenkonto.fonial.de/api/2.0: All 5 API endpoints timing out (OPTIONS/HEAD/GET) — were live at 04:58 UTC with v2026.09.16-1; Cloudflare-fronted host currently unreachable
 [CHANGED] prov.fonial.de/api/2.0: All 5 API endpoints timing out — were live at 04:58 UTC with v2026.09.16-1; unfronted twin also unreachable
-[CHANGED] mm.fional.de: Confirmed degraded — /api/v4/system/ping → 404, /signup/email → 404, /api/v4/users/create → 404 (two consecutive probe cycles); "RECOVERED" claim definitively rejected
+[CHANGED] mm.fonial.de: Confirmed degraded — /api/v4/system/ping → 404, /signup/email → 404, /api/v4/users/create → 404 (two consecutive probe cycles); "RECOVERED" claim definitively rejected
+[CHANGED] shop.fional.de/graphql: GET 500 (sets PHPSESSID), no CORS, CSP report-only unsafe-inline/eval — asymmetric admin-auth (REST 404, GraphQL introspectable) unchanged confidence 40
 [PRIO] prov.fonial.de/api/2.0, 8.3, attack_surface=8 business_value=10 tech_exposure=8 gate_ease=5 cloud_surface=6 freshness=7
 [PRIO] kundenkonto.fonial.de/api/2.0, 7.8, attack_surface=8 business_value=10 tech_exposure=8 gate_ease=3 cloud_surface=5 freshness=6
 [PRIO] shop.fional.de/graphql, 4.1, attack_surface=6 business_value=7 tech_exposure=6 gate_ease=10 cloud_surface=3 freshness=5
-[PRIO] kampagne.fional.de, 2.1, attack_surface=3 business_value=4 tech_exposure=3 gate_ease=10 cloud_surface=3 freshness=4
-[PRIO] www.fional.de, 1.1, attack_surface=1 business_value=2 tech_exposure=1 gate_ease=10 cloud_surface=1 freshness=2
+[PRIO] kampagne.fonial.de, 2.1, attack_surface=3 business_value=4 tech_exposure=3 gate_ease=10 cloud_surface=3 freshness=4
+[PRIO] www.fonial.de, 1.1, attack_surface=1 business_value=2 tech_exposure=1 gate_ease=10 cloud_surface=1 freshness=2
 [HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
 class: AUTH
 asset: prov.fonial.de/api/2.0
@@ -46,12 +47,12 @@ testability: HUMAN_ONLY
 [FINAL] 1. Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on prov.fional.de/api/2.0 (85)
 [FINAL] 2. Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on kundenkonto.fonial.de/api/2.0 (78)
 [FINAL] 3. Asymmetric admin-auth via GraphQL GenerateCustomerTokenAsAdminInput on shop.fional.de/graphql (40) — CHAIN ONLY
-[NEXT] HUMAN: Request program approval for exactly ONE fake-data registration POST to https://prov.fional.de/signup/confirm/55 (example.invalid email, fabricated address, CSRF `_token`+PHPSESSID from GET /signup/register/55, trunkTariff 19; ≤1 rps; SaaS admin delete-on-completion) — sole unobserved variable converting BOLA to self-service on unfronted twin; fallback: program-provisioned T_A/T_B for kundenkonto API.
+[NEXT] HUMAN: Request program approval for exactly ONE fake-data registration POST to https://prov.fonial.de/signup/confirm/55 (example.invalid email, fabricated address, CSRF `_token`+PHPSESSID from GET /signup/register/55, trunkTariff 19; ≤1 rps; SaaS admin delete-on-completion) — sole unobserved variable converting BOLA to self-service on unfronted twin; fallback: program-provisioned T_A/T_B for kundenkonto API.
 [LEARN] ACCEPTED canary-drift-free-refresh @ prov+kundenkonto: Both live-probed 2026-09-17 04:58 UTC at v2026.09.16-1 same minute → lockstep reconfirmed 4th consecutive cycle, comparison base valid post-deploy
 [LEARN] ACCEPTED lockstep-deploy-live @ kundenkonto+prov: Fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 version hops; seam survived deploy; prov→prod fidelity raised
 [LEARN] REJECTED further-passive-cycles @ fonial: This cycle's surface equals the 00:01 UTC probe; no drift, no discriminator remains on either cross-bind survivor — momentum requires sanctioned writes, not probe data
 [LEARN] ACCEPTED CT-sweep-inventory-expansion @ fonial: crt.sh enumeration surfaces ~19 subdomains absent from inventory; 7 reachable (kampagne TYPO3 200, staging 401/403, dead 404s), 12 firewalled/unreachable — first new breadth since 2026-09-06, but no new exploitable passive surface
-[LEARN] ACCEPTED internal-host-DNS-leak @ int.fional.de: 192.168.10.71 (RFC1918) + git.fional.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure, LOW standalone, chain-info only
+[LEARN] ACCEPTED internal-host-DNS-leak @ int.fional.de: 192.168.10.71 (RFC1918) + git.fonial.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure, LOW standalone, chain-info only
 [LEARN] REJECTED kampagne-typo3-backend-login @ kampagne.fional.de/typo3/: Standard TYPO3 CMS Login (LIVE) = "publicly accessible login panels" out-of-scope; /install.php + eID=dump 404
 [LEARN] ACCEPTED unfronted-duplicate @ prov.fional.de/api/2.0: Re-probe confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.16-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate deployment to test dual-backend cross-bind
 [LEARN] REJECTED shop admin-token standalone: Confidence 40 at critique floor, no new evidence — chain component only

@@ -454,3 +454,17 @@
 - 2026-09-17 ACCEPTED MISCONFIG @ kundenkonto.fional.de: Wildcard CORS with credentials on auth-enabled domain confirmed
 - 2026-09-17 REJECTED CORS wildcard direct-exploit @ kundenkonto.fional.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
 - 2026-09-17 ACCEPTED dual-backend architecture @ kundenkonto.fional.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
+- 2026-09-18 ACCEPTED canary-drift-free-refresh @ prov+kundenkonto: Both live-probed 2026-09-17 04:58 UTC at v2026.09.16-1 same minute → lockstep reconfirmed 4th consecutive cycle, comparison base valid post-deploy
+- 2026-09-18 ACCEPTED lockstep-deploy-live @ kundenkonto+prov: Fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 version hops; seam survived deploy; prov→prod fidelity raised
+- 2026-09-18 REJECTED further-passive-cycles @ fonial: This cycle's surface equals the 00:01 UTC probe; no drift, no discriminator remains on either cross-bind survivor — momentum requires sanctioned writes, not probe data
+- 2026-09-18 ACCEPTED CT-sweep-inventory-expansion @ fonial: crt.sh enumeration surfaces ~19 subdomains absent from inventory; 7 reachable (kampagne TYPO3 200, staging 401/403, dead 404s), 12 firewalled/unreachable — first new breadth since 2026-09-06, but no new exploitable passive surface
+- 2026-09-18 ACCEPTED internal-host-DNS-leak @ int.fional.de: 192.168.10.71 (RFC1918) + git.fonial.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure, LOW standalone, chain-info only
+- 2026-09-18 REJECTED kampagne-typo3-backend-login @ kampagne.fional.de/typo3/: Standard TYPO3 CMS Login (LIVE) = "publicly accessible login panels" out-of-scope; /install.php + eID=dump 404
+- 2026-09-18 ACCEPTED unfronted-duplicate @ prov.fional.de/api/2.0: Re-probe confirms nginx/1.10.3 direct, X-Fonial-Version v2026.09.16-1, ACAO*/ACAM, no allow-credentials, no Cloudflare → lowest-gate deployment to test dual-backend cross-bind
+- 2026-09-18 REJECTED shop admin-token standalone: Confidence 40 at critique floor, no new evidence — chain component only
+- 2026-09-18 REJECTED SSRF @ www.fional.de: No URL parameters or webhook endpoints found in passive recon
+- 2026-09-18 REJECTED IDOR @ www.fional.de: Pure marketing site, no object references
+- 2026-09-18 ACCEPTED MISCONFIG @ kundenkonto.fional.de: Wildcard CORS with credentials on auth-enabled domain confirmed
+- 2026-09-18 REJECTED CORS wildcard direct-exploit @ kundenkonto.fional.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
+- 2026-09-18 ACCEPTED dual-backend architecture @ kundenkonto.fional.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
+- 2026-09-18 REJECTED mm-fional-de-api-surface-RECOVERED @ mm.fional.de: Live probe 2026-09-17 14:38 UTC shows /api/v4/system/ping → 404, /signup/email → 404, /api/v4/users/create → 404 — contradicts KB 05:00:58 claim; self-signup class eliminated

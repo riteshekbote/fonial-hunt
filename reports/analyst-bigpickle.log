@@ -21756,3 +21756,125 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 [RISK] fonial: 70 — sole survivor BOLA (CRITICAL-if-confirmed) remains objectively pre-validatable but blocked two ways: (a) origin .20 outage/near-migration after Cloudflare front removal, (b) program approval for one fabricated registration (HUMAN gate). Infra event lowers short-term probability of completing POC but does not invalidate the seam's existence; once origin returns, migration may alter headers/behavior and demand twin-parity re-labour before the sanctioned write. No new defensible passive finding this cycle; all other classes closed or out-of-scope.
+===== ANALYST bigpickle 2026-09-18 02:51:08 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mdate -u +"%Y-%m-%d %H:%M:%S UTC"; getent ahosts kundenkonto.fonial.de prov.fonial.de 2>&1 | head -20
+2026-09-18 02:48:19 UTC
+62.146.7.20     STREAM kundenkonto.fonial.de
+62.146.7.20     DGRAM  
+62.146.7.20     RAW    
+62.146.7.20     STREAM prov.fonial.de
+62.146.7.20     DGRAM  
+62.146.7.20     RAW
+[0m
+[0m$ [0mcurl -sS -o /dev/null -w "kundenkonto OPTIONS /session: %{http_code} %{remote_ip} %{time_total}s\n" --max-time 12 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session 2>&1; curl -sS -o /dev/null -w "prov OPTIONS /session: %{http_code} %{remote_ip} %{time_total}s\n" --max-time 12 -X OPTIONS https://prov.fonial.de/api/2.0/session 2>&1; echo "---"; curl -sv -o /dev/null --max-time 12 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session 2>&1 | grep -E "^(< |\* Trying|\* Connected)" | head -20
+curl: (28) Connection timed out after 12001 milliseconds
+kundenkonto OPTIONS /session: 000  12.001689s
+curl: (28) Connection timed out after 12001 milliseconds
+prov OPTIONS /session: 000  12.001069s
+---
+[0m
+[0m$ [0mcurl -sS -o /dev/null -w "www: %{http_code} %{remote_ip} %{time_total}s\n" --max-time 10 https://www.fonial.de/ 2>&1; curl -sS -o /dev/null -w "shop graphql: %{http_code} %{remote_ip} %{time_total}s\n" --max-time 10 -H "Content-Type: application/json" -d '{"query":"{__typename}"}' https://shop.fonial.de/graphql 2>&1; curl -sS -o /dev/null -w "mm ping: %{http_code} %{remote_ip} %{time_total}s\n" --max-time 10 https://mm.fonial.de/api/v4/system/ping 2>&1
+www: 200 176.9.53.190 1.090974s
+shop graphql: 200 176.9.53.190 0.758414s
+mm ping: 200 62.146.7.29 0.635759s
+[0m
+Egress fine, mm.fonial.de (62.146.7.29) BACK UP on system/ping while .20 box still blackholed. Capturing mm surface state:
+[0m$ [0mfor p in /api/v4/system/ping /api/v4/users/create /api/v4/teams /api/v4/users /signup/email /login; do curl -sS -o /dev/null -w "mm $p: %{http_code} %{time_total}s\n" --max-time 8 "https://mm.fonial.de$p" 2>&1; done; echo "---headers---"; curl -sSI --max-time 8 https://mm.fonial.de/api/v4/system/ping 2>&1 | grep -iE "x-version|server|content-type|HTTP/"
+mm /api/v4/system/ping: 200 0.668115s
+mm /api/v4/users/create: 401 0.653857s
+mm /api/v4/teams: 401 0.631409s
+mm /api/v4/users: 401 0.617560s
+mm /signup/email: 200 0.644101s
+mm /login: 200 0.631880s
+---headers---
+HTTP/1.1 404 Not Found
+Server: nginx/1.10.2
+Content-Type: text/plain; charset=utf-8
+[0m
+HEAD vs GET discrepancy confirmed (HEAD→404, GET→200 real status). This explains much of the prior "flapping" data. Verifying SPA-shell equality + version header:
+[0m$ [0mA=$(curl -sS --max-time 8 https://mm.fonial.de/signup/email 2>/dev/null | sha256sum | cut -d' ' -f1); B=$(curl -sS --max-time 8 https://mm.fonial.de/login 2>/dev/null | sha256sum | cut -d' ' -f1); echo "signup/email sha256=$A"; echo "login sha256=$B"; [ "$A" = "$B" ] && echo "BYTE-IDENTICAL" || echo "DIFFER"; echo "---GET headers system/ping---"; curl -sS -D - -o /dev/null --max-time 8 https://mm.fonial.de/api/v4/system/ping 2>&1 | grep -iE "x-version|server|content-type"
+signup/email sha256=22b194250d45e384db2dff3e03c5495828d38cd4acb71b4671f23515f3b73871
+login sha256=22b194250d45e384db2dff3e03c5495828d38cd4acb71b4671f23515f3b73871
+BYTE-IDENTICAL
+---GET headers system/ping---
+Server: nginx/1.10.2
+Content-Type: application/json
+X-Version-Id: 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false
+[0m
+SPA shell byte-identical (sha 22b19425 = same as 09-10), X-Version-Id identical to prior instance. One more check on the .20 origin — port 80, and any CF presence:
+[0m$ [0mcurl -sS -o /dev/null -w "kundenkonto http:80: %{http_code} %{remote_ip} %{time_total}s\n" --max-time 8 http://kundenkonto.fonial.de/api/2.0/session 2>&1; curl -sS -o /dev/null -w "prov http:80: %{http_code} %{remote_ip} %{time_total}s\n" --max-time 8 http://prov.fonial.de/api/2.0/session 2>&1; echo "---A records---"; getent ahosts kundenkonto.fonial.de prov.fonial.de | grep STREAM | sort -u
+curl: (28) Connection timed out after 8002 milliseconds
+kundenkonto http:80: 000  8.002452s
+curl: (28) Connection timed out after 8002 milliseconds
+prov http:80: 000  8.002300s
+---A records---
+62.146.7.20     STREAM kundenkonto.fonial.de
+62.146.7.20     STREAM prov.fonial.de
+[0m
+Whole-IP blackhole vs vhost-selective blocking discriminator — go.fonial.de shares 62.146.7.20:
+[0m$ [0mcurl -sS -o /dev/null -w "go http: %{http_code} %{time_total}s\n" --max-time 8 http://go.fonial.de/ 2>&1; curl -sS -o /dev/null -w "go app_dev: %{http_code} %{time_total}s\n" --max-time 8 -H "Host: go.fonial.de" http://62.146.7.20/app_dev.php 2>&1; curl -sS -o /dev/null -w "kundenkonto direct-IP Host: %{http_code} %{time_total}s\n" --max-time 8 -H "Host: kundenkonto.fonial.de" http://62.146.7.20/api/2.0/session 2>&1
+curl: (28) Connection timed out after 8002 milliseconds
+go http: 000 8.002459s
+curl: (28) Connection timed out after 8002 milliseconds
+go app_dev: 000 8.002605s
+curl: (28) Connection timed out after 8002 milliseconds
+kundenkonto direct-IP Host: 000 8.002575s
+[0m
+All probes complete. Structured analysis:
+
+## STEP 1 — DELTA
+- [CHANGED] mm.fonial.de GET surface FULLY UP (system/ping 200, /signup/email 200, /login 200, /users+teams+users/create 401) — X-Version-Id `3.7.0.3.7.3.a553e...` restored, SPA shell sha256 `22b194250d45e384db2dff3e03c5495828d38cd4acb71b4671f23515f3b73871` byte-identical to 09-10 → same instance identity as recovery.
+- [NEW] HEAD-vs-GET discrepancy @ mm: HEAD `/api/v4/system/ping` → 404 while GET → 200 `application/json` with X-Version-Id → several prior "degraded/RE-DEGRADED/404" observations plausibly HEAD artifacts; true flip count reduced.
+- [CHANGED] 62.146.7.20 box-level blackhole: kundenkonto + prov + go (go shares box per KB) all TCP-timeout on 80+443 even via direct-IP/Host header; DNS single-A unchanged → whole-box outage/firewall, not vhost-selective; sustained ~17h.
+
+## STEP 2 — PRIORITIZE
+- [PRIO] kundenkonto+prov/api/2.0, 6.0, gate_ease=0 (box blackholed) + value 9 — sole remaining path to CRITICAL.
+- [PRIO] mm.fonial.de, 4.25, surface UP but fully auth-gated (401), no unauth self-signup, identity static.
+
+## STEP 3 — HYPOTHESES
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 85
+reasoning: body-SID-only authz + decorative PHPSESSID + cleartext UUID sid re-verified 4 lockstep cycles pre-outage; signup POST fields (CSRF, trunkTariff 19/21/22, AccountAddress) confirmed live; unchanged since. Blocked solely by box-level blackhole; DNS single-A 62.146.7.20 unchanged, no CF front, no migration visible.
+evidence_needed: origin serves OPTIONS /api/2.0/session (v2026.09.16-1/nginx/1.10.3/ACAO*) post-recovery; then {sid:B, phpsessid:A} cross-present → tenant-A data.
+verify_steps: HUMAN (post-recovery): OPTIONS /api/2.0/session both hosts; GET /signup/register/55 harvest CSRF; 2× POST /signup/confirm/55 (fabricated) → tenants A+B; cross-present {sid:B,phpsessid:A} on /evn/get, /devices/get; /call/initiate only after clean read.
+impact: cross-tenant CDR, numbers, SIP creds, devices, call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Prov-confirmed BOLA reproduces on production kundenkonto
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 80
+reasoning: same origin box 62.146.7.20 (post-CF-drop) as prov; lockstep same-minute deploys across 2 version hops prove shared pipeline; identical seam semantics pre-outage.
+evidence_needed: prov evidence first, then kundenkonto under same origin; never live customer data.
+verify_steps: identical to prov hyp post-recovery; direct-origin parity probe first.
+impact: production cross-tenant telephony + call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Mattermost dual-node divergent-auth via flapping
+class: MISCONFIG
+asset: mm.fonial.de
+confidence: 25
+reasoning: every UP observation shows identical instance identity (X-Version-Id + SPA sha256 unchanged 09-10→now); flapping count collapses once HEAD≠GET accounted; only one real outage window (09-13+); no divergent-auth evidence ever.
+evidence_needed: auth-behavior divergence between states; none observed.
+verify_steps: n/a — no discriminator left.
+impact: hypothetical weaker-auth node ATO — unobserved.
+testability: PASSIVE
+
+## STEP 4 — SELF-CRITIQUE
+- [PARKED] mattermost dual-node divergent auth: identity constant in EVERY UP window → same deploy, no divergent config; prior "flaps" are HEAD-vs-GET artifacts + one real window; confidence 25 < floor 40.
+- [FINAL] BOLA pair (85 prov / 80 kundenkonto) unchanged, both HUMAN_ONLY, both blocked on origin recovery — no passive discriminator added this cycle.
+
+## STEP 5 — NEXT ACTION
+[NEXT] PROBE: continue origin-recovery watcher — `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session` + same for prov + `getent ahosts` once/12h; on ANY 200, immediately re-baseline (OPTIONS headers: Server/X-Fonial-Version/ACAO*/cf-ray) before requesting the ONE sanctioned registration. Meanwhile mm surface captured with GET-only to retire HEAD artifacts.
+
+## STEP 6 — LEARNING
+- [LEARN] REJECTED mattermost-dual-node-divergent-auth @ mm.fonial.de: instance identity (X-Version-Id `3.7.0.3.7.3.a553e...`, SPA sha256 `22b1942...`) identical in every UP observation across 8 days → no divergent-config evidence; prior flapping explained by HEAD-vs-GET artifact + one real window; 25<floor.
+- [LEARN] ACCEPTED HEAD-vs-GET-discrepancy @ mm.fonial.de: HEAD on Mattermost API routes → 404 while GET → real status (200/401) → all future mm state probes must use GET only.
+- [LEARN] ACCEPTED mm-recovered-same-identity @ mm.fonial.de: full GET surface UP again; self-signup class stays closed (users/create 401 auth-gated; signup 200 = client-side SPA, not server signup).
+- [LEARN] ACCEPTED box-level-blackhole @ 62.146.7.20: kundenkonto+prov+go all TCP-timeout 80+443 with single-A unchanged → whole-box outage, not vhost-selective; consistent with active migration/decommission rather than transient fault.
+
+## STEP 7 — RISK
+[RISK] fonial: 68 — BOLA (CRITICAL-if-confirmed) remains valid-but-unproducible: (a) whole .20 box offline 17h+ incl. legacy go/admin vhosts, (b) Cloudflare front already dropped at DNS level pre-outage → increasingly consistent with active cutover to new infra; if origin migrates without returning, seam window closes permanently. MM recovery (same identity) shows no new unauth surface; all other classes closed or out-of-scope. No defensible passive finding this cycle.
