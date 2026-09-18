@@ -656,3 +656,5 @@ www.fonial.de
 - CHANGED prov.fonial.de/api/2.0: All 5 API endpoints timing out — were live at 04:58 UTC with v2026.09.16-1; unfronted twin also unreachable
 - CHANGED mm.fonial.de: Confirmed degraded — /api/v4/system/ping → 404, /signup/email → 404, /api/v4/users/create → 404 (two consecutive probe cycles); "RECOVERED" claim definitively rejected
 - CHANGED shop.fional.de/graphql: GET 500 (sets PHPSESSID), no CORS, CSP report-only unsafe-inline/eval — asymmetric admin-auth (REST 404, GraphQL introspectable) unchanged confidence 40
+
+## 2026-09-18 07:58:12 UTC

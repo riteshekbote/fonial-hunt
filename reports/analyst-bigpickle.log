@@ -21878,3 +21878,152 @@ testability: PASSIVE
 
 ## STEP 7 — RISK
 [RISK] fonial: 68 — BOLA (CRITICAL-if-confirmed) remains valid-but-unproducible: (a) whole .20 box offline 17h+ incl. legacy go/admin vhosts, (b) Cloudflare front already dropped at DNS level pre-outage → increasingly consistent with active cutover to new infra; if origin migrates without returning, seam window closes permanently. MM recovery (same identity) shows no new unauth surface; all other classes closed or out-of-scope. No defensible passive finding this cycle.
+===== ANALYST bigpickle 2026-09-18 07:58:12 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mgetent ahosts kundenkonto.fonial.de prov.fonial.de 2>/dev/null | sort -u
+62.146.7.20     DGRAM  
+62.146.7.20     RAW    
+62.146.7.20     STREAM kundenkonto.fonial.de
+62.146.7.20     STREAM prov.fonial.de
+[0m
+[0m$ [0mcurl -sS -o /dev/null -w "mm ping: %{http_code} time:%{time_total}s\n" --max-time 10 https://mm.fonial.de/api/v4/system/ping; curl -sS -o /dev/null -w "mm users/create: %{http_code} time:%{time_total}s\n" --max-time 10 https://mm.fonial.de/api/v4/users/create; curl -sS -o /dev/null -w "mm signup/email: %{http_code} time:%{time_total}s\n" --max-time 10 https://mm.fonial.de/signup/email
+mm ping: 200 time:0.504182s
+mm users/create: 401 time:0.421394s
+mm signup/email: 200 time:0.403663s
+[0m
+[0m$ [0mcurl -sS -o /dev/null -w "kundenkonto OPTIONS: %{http_code} %{remote_ip} time:%{time_total}s\n" --max-time 12 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session
+curl: (28) Connection timed out after 12002 milliseconds
+kundenkonto OPTIONS: 000  time:12.002858s
+[0m
+[0m$ [0mcurl -sS -o /dev/null -w "prov OPTIONS: %{http_code} %{remote_ip} time:%{time_total}s\n" --max-time 12 -X OPTIONS https://prov.fonial.de/api/2.0/session
+curl: (28) Connection timed out after 12002 milliseconds
+prov OPTIONS: 000  time:12.002333s
+[0m
+[0m$ [0mcurl -sS -D - -o /tmp/mm_signup.html --max-time 10 https://mm.fonial.de/signup/email | head -25; echo "---SHA---"; sha256sum /tmp/mm_signup.html
+HTTP/1.1 200 OK
+Server: nginx/1.10.2
+Date: Fri, 18 Sep 2026 07:54:35 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 3091
+Connection: keep-alive
+Accept-Ranges: bytes
+Cache-Control: no-cache, max-age=31556926, public
+Content-Security-Policy: frame-ancestors 'self'
+Last-Modified: Wed, 22 Mar 2017 23:36:09 GMT
+X-Cluster-Id: 
+X-Frame-Options: SAMEORIGIN
+X-Request-Id: dija1738ejbb3kh17kz9c8nq3o
+X-Version-Id: 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false
+
+---SHA---
+22b194250d45e384db2dff3e03c5495828d38cd4acb71b4671f23515f3b73871  /tmp/mm_signup.html
+[0m
+[0m$ [0mcurl -sS -D - -o /dev/null --max-time 10 https://mm.fonial.de/api/v4/system/ping | head -20; echo "---"; curl -sS -D - -o /dev/null --max-time 10 https://mm.fonial.de/api/v4/teams | head -20
+HTTP/1.1 200 OK
+Server: nginx/1.10.2
+Date: Fri, 18 Sep 2026 07:54:37 GMT
+Content-Type: application/json
+Content-Length: 15
+Connection: keep-alive
+Expires: 0
+X-Cluster-Id: 
+X-Request-Id: 6f1n4trnqifbmjsnkqzghe8zqw
+X-Version-Id: 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false
+
+---
+HTTP/1.1 401 Unauthorized
+Server: nginx/1.10.2
+Date: Fri, 18 Sep 2026 07:54:37 GMT
+Content-Type: application/json
+Content-Length: 202
+Connection: keep-alive
+Expires: 0
+X-Cluster-Id: 
+X-Request-Id: xfeb1g6mytdptgrg3s8mw78x1e
+X-Version-Id: 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false
+[0m
+[0m$ [0mcurl -sS -D - -o /tmp/mm_login.html --max-time 10 https://mm.fonial.de/login | head -8; echo "---SHA---"; sha256sum /tmp/mm_login.html; echo "---users GET---"; curl -sS -D - -o /dev/null --max-time 10 https://mm.fonial.de/api/v4/users | head -8; echo "---config/client---"; curl -sS -o /dev/null -w "config/client: %{http_code}\n" --max-time 10 https://mm.fonial.de/api/v4/config/client
+HTTP/1.1 200 OK
+Server: nginx/1.10.2
+Date: Fri, 18 Sep 2026 07:54:59 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 3091
+Connection: keep-alive
+Accept-Ranges: bytes
+Cache-Control: no-cache, max-age=31556926, public
+---SHA---
+22b194250d45e384db2dff3e03c5495828d38cd4acb71b4671f23515f3b73871  /tmp/mm_login.html
+---users GET---
+HTTP/1.1 401 Unauthorized
+Server: nginx/1.10.2
+Date: Fri, 18 Sep 2026 07:55:00 GMT
+Content-Type: application/json
+Content-Length: 202
+Connection: keep-alive
+Expires: 0
+X-Cluster-Id: 
+---config/client---
+config/client: 404
+[0m
+[0m$ [0mcurl -sS -o /dev/null -w "shop graphql GET: %{http_code}\n" --max-time 12 https://shop.fonial.de/graphql; curl -sS -D - -o /dev/null --max-time 12 "https://shop.fonial.de/rest/V1/guest-carts" -X POST | head -10
+shop graphql GET: 500
+HTTP/2 200 
+cache-control: no-store
+content-type: application/json; charset=utf-8
+date: Fri, 18 Sep 2026 07:55:03 GMT
+expires: Thu, 19 Nov 1981 08:52:00 GMT
+pragma: no-cache
+server: nginx/1.31.2
+set-cookie: PHPSESSID=3edcc47cba26c13c5cbf3a466c81c3f5; expires=Fri, 18 Sep 2026 08:55:03 GMT; Max-Age=3600; path=/; domain=shop.fonial.de; secure; HttpOnly; SameSite=Lax
+x-frame-options: SAMEORIGIN
+x-powered-by: PHP/8.3.3
+[0m
+STEP 1 — DELTA
+- NEW mm.fional.de 4th UP state (07:54 UTC): /api/v4/system/ping 200, /api/v4/users 401, /api/v4/teams 401, /api/v4/users/create 401, /signup/email 200, /login 200 — byte-identical identity to 2026-09-10 01:31 run (X-Version-Id 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false, nginx/1.10.2)
+- NEW /signup/email ≡ /login static-file fingerprint: sha256 22b19425… (both, match), `Last-Modified: Wed, 22 Mar 2017` → nginx-served static 2017 SPA shell (max-age 31556926), NOT app-rendered; 200↔404 flapping is static-route servability churn
+- NEW /api/v4/users/create returns 401 (auth-gated) in UP state → route exists, no unauth self-signup; same as prior UP observations
+- CHANGED kundenkonto+prov: TCP-blackhole sustained 30h+ (07:55 UTC both 12s timeout), DNS single-A 62.146.7.20 unchanged, no CF re-fronting
+- NO_DELTA shop: graphql GET 500 (PHPSESSID set), REST guest-carts 200
+
+STEP 2 — PRIORITIZE
+- [PRIO] kundenkonto/prov api/2.0 — 5.4 — b=10 telephony/CDR/call-control crown jewels; sole surviving CRITICAL seam; gate blocked (box down + HUMAN)
+- [PRIO] shop.fonial.de/graphql — 5.5 — full introspection + guest cart, but all classes already closed/rejected
+- [PRIO] mm.fional.de — 3.7 — anomaly of the hour (fresh flip), but zero exploitable passive surface; self-signup gated
+
+STEP 3 — HYPOTHESES
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fional.de/api/2.0
+confidence: 85
+reasoning: 4 lockstep cycles pre-outage (v2026.09.16-1, 10:00 UTC 09-16) proved body-SID-only authz, decorative PHPSESSID, cleartext UUID sid on nginx/1.10.3; signup POST fields (CSRF _token, trunkTariff 19/21/22, AccountAddress) confirmed live; .20 box TCP-blackholed 30h+, DNS single-A unchanged, no CF re-front — seam unchanged, accessibility only.
+evidence_needed: origin serves OPTIONS /api/2.0/session (v2026.09.16-1/nginx/1.10.3/ACAO*) post-recovery; then {sid:B, phpsessid:A} cross-present → tenant-A data.
+verify_steps: HUMAN (post-recovery): OPTIONS /api/2.0/session both hosts; GET /signup/register/55 harvest CSRF; 2x POST /signup/confirm/55 (example.invalid) → tenants A+B; cross-present {sid:B,phpsessid:A} on /evn/get, /devices/get; /call/initiate only after clean read.
+impact: cross-tenant CDR, numbers, SIP creds, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Prov-confirmed BOLA reproduces on production kundenkonto
+class: AUTH
+asset: kundenkonto.fional.de/api/2.0
+confidence: 80
+reasoning: same origin 62.146.7.20 (post-CF-drop); 4 same-minute lockstep deploys across 2 version hops = shared pipeline; identical seam semantics pre-outage.
+evidence_needed: prov evidence first, then kundenkonto under same origin.
+verify_steps: identical to prov hyp post-recovery; direct-origin parity probe first.
+impact: production cross-tenant telephony + call control — CRITICAL.
+testability: HUMAN_ONLY
+
+STEP 4 — SELF-CRITIQUE
+- [PARKED] Mattermost dual-node divergent-auth @ mm.fional.de: falsified — 4th byte-identical UP state (static sha256 22b19425 shell, X-Version-Id constant), /signup/email+/login = 2017 static files on nginx/1.10.2, users/create 401-gated in EVERY UP state; DOWN states are static-route 404s, never an auth-behavior difference → no weaker-auth node ever observed; confidence <40.
+- [PARKED] Mattermost self-signup @ mm.fional.de: /api/v4/users/create 401 in every UP state → route exists but auth-gated; no unauth tenant creation; class closed.
+- [FINAL] prov BOLA 85, kundenkonto reproduction 80 — both unchanged; sole survivors, both HUMAN_ONLY, both blocked on .20 box recovery.
+
+STEP 5 — NEXT ACTION
+- [NEXT] PROBE: origin-recovery watcher, ONCE per 12h until answered — `getent ahosts kundenkonto.fional.de prov.fional.de && curl -sS -o /dev/null -w "%{http_code} %{remote_ip} %{time_total}" --max-time 12 -X OPTIONS https://kundenkonto.fional.de/api/2.0/session && curl -sS -o /dev/null -w "%{http_code} %{remote_ip}" --max-time 12 -X OPTIONS https://prov.fional.de/api/2.0/session` — on ANY 200, immediately re-baseline full header sweep (Server, X-Fonial-Version, ACAO*, cf-ray) before requesting the ONE sanctioned fabricated registration (HUMAN gate).
+
+STEP 6 — LEARNING
+- [LEARN] REJECTED Mattermost dual-node divergent-auth @ mm.fional.de: 4th byte-identical UP state (shell sha256 22b19425, X-Version-Id 3.7.0…a553e134) + users/create 401-gated in every UP observation + 200↔404 flapping is nginx static-file/route servability (Last-Modified 2017-03-22) → single-node churn, no auth divergence; hypothesis falsified.
+- [LEARN] ACCEPTED static-SPA-churn @ mm.fional.de: /signup/email ≡ /login sha256 22b19425…, nginx-served static file (max-age 31556926) → every mm "recovery" observation = static-file presence, not Mattermost app state.
+- [LEARN] REJECTED Mattermost self-signup @ mm.fional.de: /api/v4/users/create → 401 in every UP state (route exists, auth-gated) → no unauth tenant creation; self-signup class closed.
+
+STEP 7 — RISK
+- [RISK] fonial: 72 — sole survivor BOLA (CRITICAL-if-confirmed) still pre-validatable but doubly blocked: whole 62.146.7.20 box blackholed 30h+ with CF already dropped at DNS level pre-outage → increasingly consistent with permanent cutover to new infra, which would close the seam window forever; and the sanctioned-write HUMAN gate remains unmet. This cycle's only live change (mm UP) added zero exploitable surface and formally killed the last MM hypothesis. No defensible passive finding; momentum is purely gated on box recovery + program approval.

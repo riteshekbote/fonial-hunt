@@ -3853,3 +3853,22 @@ impact: hypothetical weaker-auth node ATO — unobserved.
 testability: PASSIVE
 [NEXT] PROBE: continue origin-recovery watcher — `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session` + same for prov + `getent ahosts` once/12h; on ANY 200, immediately re-baseline (OPTIONS headers: Server/X-Fonial-Version/ACAO*/cf-ray) before requesting the ONE sanctioned registration. Meanwhile mm surface captured with GET-only to retire HEAD artifacts.
 [RISK] fonial: 68 — BOLA (CRITICAL-if-confirmed) remains valid-but-unproducible: (a) whole .20 box offline 17h+ incl. legacy go/admin vhosts, (b) Cloudflare front already dropped at DNS level pre-outage → increasingly consistent with active cutover to new infra; if origin migrates without returning, seam window closes permanently. MM recovery (same identity) shows no new unauth surface; all other classes closed or out-of-scope. No defensible passive finding this cycle.
+## 2026-09-18 07:56:18 UTC [target] (model bigpickle)
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fional.de/api/2.0
+confidence: 85
+reasoning: 4 lockstep cycles pre-outage (v2026.09.16-1, 10:00 UTC 09-16) proved body-SID-only authz, decorative PHPSESSID, cleartext UUID sid on nginx/1.10.3; signup POST fields (CSRF _token, trunkTariff 19/21/22, AccountAddress) confirmed live; .20 box TCP-blackholed 30h+, DNS single-A unchanged, no CF re-front — seam unchanged, accessibility only.
+evidence_needed: origin serves OPTIONS /api/2.0/session (v2026.09.16-1/nginx/1.10.3/ACAO*) post-recovery; then {sid:B, phpsessid:A} cross-present → tenant-A data.
+verify_steps: HUMAN (post-recovery): OPTIONS /api/2.0/session both hosts; GET /signup/register/55 harvest CSRF; 2x POST /signup/confirm/55 (example.invalid) → tenants A+B; cross-present {sid:B,phpsessid:A} on /evn/get, /devices/get; /call/initiate only after clean read.
+impact: cross-tenant CDR, numbers, SIP creds, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Prov-confirmed BOLA reproduces on production kundenkonto
+class: AUTH
+asset: kundenkonto.fional.de/api/2.0
+confidence: 80
+reasoning: same origin 62.146.7.20 (post-CF-drop); 4 same-minute lockstep deploys across 2 version hops = shared pipeline; identical seam semantics pre-outage.
+evidence_needed: prov evidence first, then kundenkonto under same origin.
+verify_steps: identical to prov hyp post-recovery; direct-origin parity probe first.
+impact: production cross-tenant telephony + call control — CRITICAL.
+testability: HUMAN_ONLY

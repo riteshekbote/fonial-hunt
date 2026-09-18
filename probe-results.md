@@ -879,3 +879,13 @@ https://kundenkonto.fonial.de/api/2.0/devices/get -> ERR <urlopen error timed ou
 https://kundenkonto.fonial.de/api/2.0/call/initiate -> ERR <urlopen error timed out>
 https://prov.fonial.de/signup/confirm/55 -> ERR <urlopen error timed out>
 https://kundenkonto.fonial.de/api/2.0/session` -> ERR <urlopen error timed out>
+
+## 2026-09-18 07:59:57 UTC
+https://prov.fonial.de/api/2.0/session -> ERR <urlopen error timed out>
+https://prov.fonial.de/api/2.0/session/authenticate -> ERR <urlopen error timed out>
+https://prov.fonial.de/api/2.0/devices/get -> ERR <urlopen error timed out>
+https://prov.fonial.de/api/2.0/call/initiate -> ERR <urlopen error timed out>
+https://kundenkonto.fonial.de/api/2.0/session -> ERR <urlopen error timed out>
+https://kundenkonto.fonial.de/api/2.0/session/authenticate -> ERR <urlopen error timed out>
+https://kundenkonto.fonial.de/api/2.0/devices/get -> ERR <urlopen error timed out>
+https://kundenkonto.fonial.de/api/2.0/call/initiate -> ERR <urlopen error timed out>
