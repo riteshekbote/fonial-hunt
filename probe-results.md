@@ -889,3 +889,10 @@ https://kundenkonto.fonial.de/api/2.0/session -> ERR <urlopen error timed out>
 https://kundenkonto.fonial.de/api/2.0/session/authenticate -> ERR <urlopen error timed out>
 https://kundenkonto.fonial.de/api/2.0/devices/get -> ERR <urlopen error timed out>
 https://kundenkonto.fonial.de/api/2.0/call/initiate -> ERR <urlopen error timed out>
+
+## 2026-09-18 12:40:48 UTC
+https://mm.fonial.de/api/v4/system/ping -> HTTP 404
+https://shop.fonial.de/graphql?query={__schema{types{name -> HTTP 500
+https://shop.fonial.de/graphql -> HTTP 500
+https://mm.fonial.de/api/v4/users -> HTTP 404
+https://kundenkonto.fonial.de/api/2.0/session` -> ERR <urlopen error timed out>

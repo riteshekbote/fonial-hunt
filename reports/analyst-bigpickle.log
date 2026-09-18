@@ -22027,3 +22027,134 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 - [RISK] fonial: 72 — sole survivor BOLA (CRITICAL-if-confirmed) still pre-validatable but doubly blocked: whole 62.146.7.20 box blackholed 30h+ with CF already dropped at DNS level pre-outage → increasingly consistent with permanent cutover to new infra, which would close the seam window forever; and the sanctioned-write HUMAN gate remains unmet. This cycle's only live change (mm UP) added zero exploitable surface and formally killed the last MM hypothesis. No defensible passive finding; momentum is purely gated on box recovery + program approval.
+===== ANALYST bigpickle 2026-09-18 12:40:28 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mcurl -sS -o /dev/null -w "%{http_code} %{remote_ip}\n" --max-time 12 -X OPTIONS https://kundenkonto.fional.de/api/2.0/session ; curl -sS -o /dev/null -w "%{http_code} %{remote_ip}\n" --max-time 12 -X OPTIONS https://prov.fional.de/api/2.0/session ; getent ahosts kundenkonto.fional.de prov.fional.de
+curl: (6) Could not resolve host: kundenkonto.fional.de
+000 
+curl: (6) Could not resolve host: prov.fional.de
+000
+[0m
+The `fional` spelling fails DNS — likely a propagated typo; the real domain is `fonial.de`. Re-probing with correct names:
+[0m$ [0mgetent ahosts kundenkonto.fonial.de prov.fonial.de mm.fonial.de www.fonial.de shop.fonial.de dlskonto.fonial.de int.fonial.de red.fonial.de 2>&1; echo "---"; curl -sS -o /dev/null -w "kundenkonto %{http_code} %{remote_ip} %{errormsg}\n" --max-time 12 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session ; curl -sS -o /dev/null -w "prov %{http_code} %{remote_ip} %{errormsg}\n" --max-time 12 -X OPTIONS https://prov.fonial.de/api/2.0/session
+62.146.7.20     STREAM kundenkonto.fonial.de
+62.146.7.20     DGRAM  
+62.146.7.20     RAW    
+62.146.7.20     STREAM prov.fonial.de
+62.146.7.20     DGRAM  
+62.146.7.20     RAW    
+62.146.7.29     STREAM mm.fonial.de
+62.146.7.29     DGRAM  
+62.146.7.29     RAW    
+176.9.53.190    STREAM www.fonial.de
+176.9.53.190    DGRAM  
+176.9.53.190    RAW    
+176.9.53.190    STREAM shop.fonial.de
+176.9.53.190    DGRAM  
+176.9.53.190    RAW    
+192.168.10.71   STREAM int.fonial.de
+192.168.10.71   DGRAM  
+192.168.10.71   RAW    
+62.146.7.29     STREAM red.fonial.de
+62.146.7.29     DGRAM  
+62.146.7.29     RAW    
+---
+curl: (28) Connection timed out after 12002 milliseconds
+kundenkonto 000  Connection timed out after 12002 milliseconds
+curl: (28) Connection timed out after 12002 milliseconds
+prov 000  Connection timed out after 12002 milliseconds
+[0m
+`.20` box still blackholed (~36h). Checking siblings and clock:
+[0m$ [0mdate -u; echo "---"; curl -sS -o /dev/null -w "mm.ping %{http_code} %{remote_ip} %{errormsg}\n" --max-time 10 https://mm.fonial.de/api/v4/system/ping; curl -sS -o /dev/null -w "mm.signup %{http_code} %{errormsg}\n" --max-time 10 https://mm.fonial.de/api/v4/users/create; curl -sS -o /dev/null -w "shop.graphql %{http_code} %{errormsg}\n" --max-time 10 "https://shop.fonial.de/graphql?query={__typename}"; curl -sS -o /dev/null -w "www %{http_code} %{errormsg}\n" --max-time 10 https://www.fonial.de/
+Fri Sep 18 12:37:59 UTC 2026
+---
+mm.ping 200 62.146.7.29 
+mm.signup 401 
+shop.graphql 500 
+www 200
+[0m
+`mm.fonial.de` is UP again (system/ping 200, users/create 401) — second genuine recovery observation. Full surface re-verify:
+[0m$ [0mfor p in "https://mm.fonial.de/signup/email" "https://mm.fonial.de/login"; do curl -sS -o /dev/null -w "$p %{http_code}\n" --max-time 10 "$p"; done; curl -sS -o /dev/null -w "users %{http_code}\n" --max-time 10 https://mm.fonial.de/api/v4/users; curl -sS -o /dev/null -w "teams %{http_code}\n" --max-time 10 https://mm.fonial.de/api/v4/teams; echo "--- headers ---"; curl -sS -D - -o /dev/null --max-time 10 https://mm.fonial.de/api/v4/system/ping | head -20; echo "--- signup sha ---"; curl -sS --max-time 10 https://mm.fonial.de/signup/email | sha256sum
+https://mm.fonial.de/signup/email 200
+https://mm.fonial.de/login 200
+users 401
+teams 401
+--- headers ---
+HTTP/1.1 200 OK
+Server: nginx/1.10.2
+Date: Fri, 18 Sep 2026 12:38:09 GMT
+Content-Type: application/json
+Content-Length: 15
+Connection: keep-alive
+Expires: 0
+X-Cluster-Id: 
+X-Request-Id: 5fnugjmar3gffgw7k5p3u6nz3c
+X-Version-Id: 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false
+
+--- signup sha ---
+22b194250d45e384db2dff3e03c5495828d38cd4acb71b4671f23515f3b73871  -
+[0m
+mm fully recovered to the identical UP state. Testing the `.20` box on alternate ports to refine outage/migration picture:
+[0m$ [0mtimeout 5 nc -vz 62.146.7.20 80 2>&1; timeout 5 nc -vz 62.146.7.20 443 2>&1; timeout 5 nc -vz 62.146.7.20 8080 2>&1; echo "---"; curl -sS -o /dev/null -w "http80 %{http_code} %{errormsg}\n" --max-time 8 http://kundenkonto.fonial.de/ ; curl -sS -o /dev/null -w "prov80 %{http_code} %{errormsg}\n" --max-time 8 http://prov.fonial.de/
+---
+curl: (28) Connection timed out after 8002 milliseconds
+http80 000 Connection timed out after 8002 milliseconds
+curl: (28) Connection timed out after 8002 milliseconds
+prov80 000 Connection timed out after 8002 milliseconds
+[0m
+[0m$ [0mcurl -sS --max-time 10 https://mm.fonial.de/login | sha256sum; curl -sS --max-time 10 https://mm.fonial.de/ | sha256sum; curl -sS -o /dev/null -w "config %{http_code}\n" --max-time 10 https://mm.fonial.de/api/v4/config; curl -sS -o /dev/null -w "config/client %{http_code}\n" --max-time 10 https://mm.fonial.de/api/v4/config/client
+22b194250d45e384db2dff3e03c5495828d38cd4acb71b4671f23515f3b73871  -
+22b194250d45e384db2dff3e03c5495828d38cd4acb71b4671f23515f3b73871  -
+config 404
+config/client 404
+[0m
+## 2026-09-18 12:39:04 UTC [target] (model bigpickle)
+
+STEP 1 — DELTA
+- NEW mm.fonial.de 3rd UP flip, live 12:38 UTC: `/`, `/login`, `/signup/email` all 200 byte-identical SPA shell sha256 22b19425; `/api/v4/system/ping` 200; `/users`, `/teams`, `/users/create` all 401; `X-Version-Id 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false` constant; `/config` + `/config/client` 404; nginx/1.10.2.
+- CHANGED `.20` box (kundenkonto.fonial.de + prov.fonial.de): full TCP blackhole on 80+443 at 12:37 UTC (~36h+), DNS unchanged single-A 62.146.7.20; UNIQUE among assets — mm (.29) recovered, shop/www (176.9.53.190) stable.
+- CHANGED `fional.de` spelling fails DNS in all prior KB entries — typo; live resolution only under `fonial.de` (this cycle's probes).
+
+STEP 2 — PRIORITIZE
+- [PRIO] prov.fonial.de/api/2.0,6.2,0.25·6+0.25·10+0.15·8+0.15·2+0.10·0+0.10·7
+- [PRIO] kundenkonto.fonial.de/api/2.0,6.2,0.25·6+0.25·10+0.15·8+0.15·2+0.10·0+0.10·7
+- [PRIO] mm.fonial.de,3.9,0.25·4+0.25·6+0.15·5+0.15·1+0.10·0+0.10·5
+
+STEP 3 — HYPOTHESES
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 85
+reasoning: 4 lockstep cycles pre-outage (v2026.09.16-1, 10:00 UTC 09-16) proved body-SID-only authz, decorative PHPSESSID, cleartext UUID sid on nginx/1.10.3; signup POST fields (CSRF _token, trunkTariff 19/21/22, AccountAddress) confirmed live. Box 62.146.7.20 blackholed 80+443 ~36h, DNS single-A unchanged, no CF re-front; other assets recovered — seam unchanged, only accessibility and time-to-cutover move.
+evidence_needed: origin serves OPTIONS /api/2.0/session (v2026.09.16-1/nginx/1.10.3/ACAO*) post-recovery; then {sid:B,phpsessid:A} cross-present → tenant-A data on /evn/get, /devices/get.
+verify_steps: HUMAN (post-recovery): OPTIONS /api/2.0/session both hosts; GET /signup/register/55 harvest CSRF; 2x POST /signup/confirm/55 (example.invalid) → tenants A+B; cross-present; /call/initiate only after clean read.
+impact: cross-tenant CDR, numbers, SIP creds, device lists, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Prov-confirmed BOLA reproduces on production kundenkonto
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 80
+reasoning: same origin 62.146.7.20 as prov (post-CF-drop); 4 same-minute lockstep deploys across 2 version hops = shared pipeline; identical seam semantics pre-outage; both hosts blackholed identically this cycle → same-box cutover risk applies to both.
+evidence_needed: prov evidence first, then kundenkonto under same origin after recovery.
+verify_steps: identical to prov hyp post-recovery; direct-origin parity probe (OPTIONS headers Server/X-Fonial-Version/ACAO*/cf-ray) before any write.
+impact: production cross-tenant telephony + call control — CRITICAL.
+testability: HUMAN_ONLY
+
+STEP 4 — SELF-CRITIQUE
+- [PARKED] mm dual-node divergent-auth: byte-identical build (X-Version-Id a553e13, SPA sha256 22b19425) + identical 401 auth behavior across all 3 UP flips directly falsifies ≥2 divergent nodes — flapping is single-node availability flutter, not LB churn. Confidence 25 → dropped. No discriminator remains.
+- [PARKED] any further mm probing: surface byte-identical to prior UP; /config + /config/client 404; no new unauth route; self-signup class remains closed (users/create + teams 401).
+- [FINAL] prov BOLA 85; kundenkonto BOLA 80. Both unchanged in class; only pathology is the box-level blackhole and cutover clock.
+
+STEP 5 — NEXT ACTION
+[NEXT] PROBE: origin-recovery watcher once/12h until flip: `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session` + same for prov.fonial.de; on first 200 re-baseline (Server/X-Fonial-Version/ACAO*/cf-ray vs pre-outage v2026.09.16-1) and then request the ONE sanctioned fabricated registration before any cross-bind POST.
+
+STEP 6 — LEARNING
+- [LEARN] ACCEPTED mm-recovery-byte-identical @ mm.fonial.de: 3rd UP flip (12:38 UTC) is byte-exact (sha256 22b19425, X-Version-Id a553e13 constant) — RULED OUT LB/node divergence; single app backend with availability flutter.
+- [LEARN] REJECTED mm-dual-node-divergent-auth @ mm.fonial.de: constant build identity + constant 401 across 3 UPs falsifies ≥2 divergent-auth nodes; no discriminator ever observed.
+- [LEARN] ACCEPTED .20-host-isolated-outage @ fonial: kundenkonto+prov both blackholed 80+443 ~36h while mm (.29) and shop/www (.53.190) healthy → event confined to 62.146.7.20; increasingly consistent with permanent cutover/migration, not fleet-wide incident.
+- [LEARN] REJECTED further-passive-cycles @ fonial: mm byte-identical recovery adds no new unauth surface; .20 down admits zero discriminating probe; all other assets zero-drift — momentum requires the sanctioned write or the cutover to resolve.
+
+STEP 7 — RISK
+[RISK] fonial: 72 — BOLA seam (CRITICAL-if-confirmed) remains valid-in-class but its validation window degrades: .20 host blackholed ~36h while every other asset recovered, so the outage is now isolated-to-and-inconsistent-with-maintenance → actively consistent with permanent infrastructural cutover. If origin migrates without returning the old deployment, the seam closes permanently, all 4 lockstep cycles of evidence become historical, and no new discriminating passive probe exists on any surviving hypothesis. MM recovery re-confirmed no alternate path. Sole path forward requires the sanctioned fabricated registration before or immediately after origin returns.

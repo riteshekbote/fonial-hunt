@@ -1,19 +1,21 @@
-## 2026-09-18 07:56:18 UTC [target] (model bigpickle)
+## 2026-09-18 12:40:19 UTC [target] (model bigpickle)
 [HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
 class: AUTH
-asset: prov.fional.de/api/2.0
+asset: prov.fonial.de/api/2.0
 confidence: 85
-reasoning: 4 lockstep cycles pre-outage (v2026.09.16-1, 10:00 UTC 09-16) proved body-SID-only authz, decorative PHPSESSID, cleartext UUID sid on nginx/1.10.3; signup POST fields (CSRF _token, trunkTariff 19/21/22, AccountAddress) confirmed live; .20 box TCP-blackholed 30h+, DNS single-A unchanged, no CF re-front — seam unchanged, accessibility only.
-evidence_needed: origin serves OPTIONS /api/2.0/session (v2026.09.16-1/nginx/1.10.3/ACAO*) post-recovery; then {sid:B, phpsessid:A} cross-present → tenant-A data.
-verify_steps: HUMAN (post-recovery): OPTIONS /api/2.0/session both hosts; GET /signup/register/55 harvest CSRF; 2x POST /signup/confirm/55 (example.invalid) → tenants A+B; cross-present {sid:B,phpsessid:A} on /evn/get, /devices/get; /call/initiate only after clean read.
+reasoning: 4 lockstep cycles pre-outage (v2026.09.16-1, 10:00 UTC 09-16) proved body-SID-only authz, decorative PHPSESSID, cleartext UUID sid on nginx/1.10.3; signup POST fields (CSRF _token, trunkTariff 19/21/22, AccountAddress) confirmed live. Box 62.146.7.20 blackholed 80+443 ~36h, DNS single-A unchanged, no CF re-front; other assets recovered — seam unchanged, only accessibility and time-to-cutover move.
+evidence_needed: origin serves OPTIONS /api/2.0/session (v2026.09.16-1/nginx/1.10.3/ACAO*) post-recovery; then {sid:B,phpsessid:A} cross-present → tenant-A data on /evn/get, /devices/get.
+verify_steps: HUMAN (post-recovery): OPTIONS /api/2.0/session both hosts; GET /signup/register/55 harvest CSRF; 2x POST /signup/confirm/55 (example.invalid) → tenants A+B; cross-present; /call/initiate only after clean read.
 impact: cross-tenant CDR, numbers, SIP creds, device lists, outbound call control — CRITICAL.
 testability: HUMAN_ONLY
 [HYP] Prov-confirmed BOLA reproduces on production kundenkonto
 class: AUTH
-asset: kundenkonto.fional.de/api/2.0
+asset: kundenkonto.fonial.de/api/2.0
 confidence: 80
-reasoning: same origin 62.146.7.20 (post-CF-drop); 4 same-minute lockstep deploys across 2 version hops = shared pipeline; identical seam semantics pre-outage.
-evidence_needed: prov evidence first, then kundenkonto under same origin.
-verify_steps: identical to prov hyp post-recovery; direct-origin parity probe first.
+reasoning: same origin 62.146.7.20 as prov (post-CF-drop); 4 same-minute lockstep deploys across 2 version hops = shared pipeline; identical seam semantics pre-outage; both hosts blackholed identically this cycle → same-box cutover risk applies to both.
+evidence_needed: prov evidence first, then kundenkonto under same origin after recovery.
+verify_steps: identical to prov hyp post-recovery; direct-origin parity probe (OPTIONS headers Server/X-Fonial-Version/ACAO*/cf-ray) before any write.
 impact: production cross-tenant telephony + call control — CRITICAL.
 testability: HUMAN_ONLY
+[NEXT] PROBE: origin-recovery watcher once/12h until flip: `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session` + same for prov.fonial.de; on first 200 re-baseline (Server/X-Fonial-Version/ACAO*/cf-ray vs pre-outage v2026.09.16-1) and then request the ONE sanctioned fabricated registration before any cross-bind POST.
+[RISK] fonial: 72 — BOLA seam (CRITICAL-if-confirmed) remains valid-in-class but its validation window degrades: .20 host blackholed ~36h while every other asset recovered, so the outage is now isolated-to-and-inconsistent-with-maintenance → actively consistent with permanent infrastructural cutover. If origin migrates without returning the old deployment, the seam closes permanently, all 4 lockstep cycles of evidence become historical, and no new discriminating passive probe exists on any surviving hypothesis. MM recovery re-confirmed no alternate path. Sole path forward requires the sanctioned fabricated registration before or immediately after origin returns.

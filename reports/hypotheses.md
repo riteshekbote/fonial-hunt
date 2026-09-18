@@ -2421,3 +2421,13 @@
 - LEARN: ACCEPTED MISCONFIG @ kundenkonto.fional.de: Wildcard CORS with credentials on auth-enabled domain confirmed
 - LEARN: REJECTED CORS wildcard direct-exploit @ kundenkonto.fional.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origi
 - LEARN: ACCEPTED dual-backend architecture @ kundenkonto.fional.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanism
+
+## RANKED HYPOTHESES 2026-09-18 12:40:28 UTC
+- [85] prov.fonial.de/api/2.0: Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin (from art/lead_bigpickle.txt)
+- [75] mm.fonial.de: Self-service account creation via Mattermost open registration (from art/lead_nemotron3.txt)
+- NEXT(hypotheses-bigpickle.txt): PROBE: origin-recovery watcher once/12h until flip: `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/sess
+- NEXT(hypotheses-nemotron3.txt): PROBE: POST https://mm.fonial.de/api/v4/users with {"email":"test@example.invalid","name":"test","username":"testuser","password":"TestPass123!"} — exact read-o
+- LEARN: ACCEPTED mm-fonial-de-api-surface-RECOVERED @ mm.fonial.de: Live probe 2026-09-18 shows /api/v4/system/ping → 200, /signup/email → 200, /login → 200, /api/v4/us
+- LEARN: REJECTED further-passive-cycles @ fonial: kundenkonto/prov APIs timing out — no passive probe can resolve; momentum requires service recovery or sanctioned writ
+- LEARN: REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origi
+- LEARN: ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanism
