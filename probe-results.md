@@ -926,3 +926,10 @@ https://prov.fonial.de/api/2.0/session -> ERR <urlopen error timed out>
 https://kundenkonto.fonial.de/api/2.0/session -> ERR <urlopen error timed out>
 https://prov.fonial.de/api/2.0/session -> ERR <urlopen error timed out>
 https://prov.fonial.de/api/2.0/session` -> ERR <urlopen error timed out>
+
+## 2026-09-19 12:17:19 UTC
+https://fonial.de/ -> 200 len=107612
+https://kundenkonto.fonial.de/api/2.0/session -> ERR <urlopen error timed out>
+https://prov.fonial.de/api/2.0/session -> ERR <urlopen error timed out>
+https://mm.fonial.de/api/v4/users -> HTTP 404
+https://prov.fonial.de/api/2.0/session` -> ERR <urlopen error timed out>

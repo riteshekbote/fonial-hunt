@@ -4036,3 +4036,33 @@ testability: HUMAN_ONLY
 [LEARN] ACCEPTED shop-dns-recovery @ shop.fonial.de: DNS back (176.9.53.190), GraphQL 500 restored — surface unchanged, no new passive discriminator.
 [LEARN] ACCEPTED origin-outage-isolation @ 62.146.7.20: third sibling (.29 mm) recovered within the same netblock while .20 stays blackholed >55h — actively consistent with permanent cutover, not maintenance.
 [RISK] fonial: 62 — twins down >55h with sustained mismatch to recovered siblings raises permanent-cutover probability each cycle; the sole discriminator (mm signup write) sits at 42, gated on approval; BOLA evidence base decays ~15h/cycle unreached.
+## 2026-09-19 12:15:02 UTC [target] (model bigpickle)
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 80
+reasoning: 4 lockstep cycles (v2026.09.16-1) proved body-SID-only authz, decorative PHPSESSID, cleartext UUID sid; signup POST fields (CSRF, trunkTariff) confirmed pre-outage; east-coast siblings now all recovered (176.9.53.190 + .29) while .20 stays TCP-blackholed >63h with CF-fronting removed from kundenkonto DNS → decommission, not maintenance, accelerates evidence decay.
+evidence_needed: post-recovery OPTIONS /api/2.0/session → v2026.09.16-1-family with unchanged Server/ACAO*; then {sid:B, phpsessid:A} cross-present on /evn/get, /devices/get.
+verify_steps: HUMAN: OPTIONS both hosts; GET /signup/register/55 harvest CSRF; 2x POST /signup/confirm/55 (example.invalid) → tenants A+B; cross-present; /call/initiate last.
+impact: cross-tenant CDR, numbers, SIP creds, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Mattermost 3.7.3 self-registration state via API
+class: AUTH
+asset: mm.fonial.de/api/v4/users
+confidence: 48
+reasoning: current window reproduces the 05:00/12:40 RECOVERED signature exactly (ping 200, X-Version-Id 3.7.3, /users/create 401, /signup/email 200 SPA); /users/create 401 (not 404) implies route present + auth-layer rejection — 201/403 still unobserved; host has flapped >5 states, so a single healthy window is weak evidence.
+evidence_needed: POST /api/v4/users returns 201 (open) vs 401/403 (closed).
+verify_steps: HUMAN: one minimal POST /api/v4/users {"email":"t"+rand+"@example.invalid","username":"t"+rand,"password":<16-char random>}; abandon if 201; accept 401/403 as closed.
+impact: throwaway internal-chat account → red.fonial.de Redmine co-host (now live again on .29) — MEDIUM.
+testability: HUMAN_ONLY
+[HYP] Prov-confirmed BOLA reproduces on production kundenkonto w/o Cloudflare front
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 75
+reasoning: DNS now binds kundenkonto directly to the same origin 62.146.7.20 as prov (CF fronting gone at resolver level) — same-box fate likely; any prov-side BOLA maps to prod with the fronting seam removed (origin-parity probe now trivially comparable).
+evidence_needed: prov evidence first; then kundenkonto origin-parity probe (Server/X-Fonial-Version/ACAO*) on first non-000.
+verify_steps: identical to prov; origin-parity before any write.
+impact: production cross-tenant telephony — CRITICAL.
+testability: HUMAN_ONLY
+[NEXT] HUMAN: mm.fonial.de is in the sustained-healthy signature window — send ONE program-approved minimal POST https://mm.fonial.de/api/v4/users {"email":"t"+rand+"@example.invalid","username":"t"+rand,"password":<16-char random>} and read 201 vs 401/403; if approval withheld, continue the 12h origin-recovery watcher `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://prov.fonial.de/api/2.0/session` and re-baseline headers (Server/X-Fonial-Version/ACAO*/cf-ray) on both twins on first non-000.
+[RISK] fonial: 66 — east-coast recovery proves the infra is live but .20 stays blackholed >63h with CF-fronting removed → BOLA evidence base (bodies, headers, signup fields) now plausibly a decommissioned snapshot decaying ~15h/cycle; sole live discriminator (mm signup write, 48) remains HUMAN-gated; every unreached cycle lowers the chance either survivor is reportable in current form.

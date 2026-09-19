@@ -6761,3 +6761,47 @@ testability: PASSIVE
 [LEARN] REJECTED shop admin-token standalone: Confidence 40 at critique floor, no new evidence — chain component only
 [LEARN] ACCEPTED internal-host-DNS-leak @ int.fional.de: 192.168.10.71 (RFC1918) + git.fional.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure, LOW standalone, chain-info only
 [RISK] fonial: 35 — Customer portals (kundenkonto + prov) completely unreachable (shared backend 62.146.7.20 down), eliminating primary BOLA surface. Mattermost (mm.fional.de) DNS NXDOMAIN — self-signup hypothesis blocked. Shop GraphQL (shop.fional.de) DNS NXDOMAIN — asymmetric admin-auth chain blocked. www.fional.de DNS NXDOMAIN — marketing site unreachable. Only apex fonial.de (redirect to dead www) and int.fional.de (RFC1918 leak) remain resolvable. Risk reduced from 48 due to complete DNS loss for 3/5 major subdomains.
+## 2026-09-19 12:16:25 UTC [target] (model nemotron3)
+[CHANGED] www.fional.de: DNS NXDOMAIN (was stable 200 TYPO3 CMS at 2026-09-19 02:47)
+[CHANGED] shop.fional.de: DNS NXDOMAIN (was 176.9.53.190, GraphQL 500)
+[CHANGED] mm.fional.de: DNS NXDOMAIN (was briefly recovered 21:53, then NXDOMAIN at 23:51)
+[CHANGED] kundenkonto.fonial.de/api/2.0: Still connection timeout (shared backend 62.146.7.20 down) — OPTIONS /session 000
+[CHANGED] prov.fonial.de/api/2.0: Still connection timeout (same shared backend 62.146.7.20 down) — OPTIONS /session 000
+[CHANGED] int.fional.de: Resolves to 192.168.10.71 (RFC1918) in public DNS — internal host disclosure confirmed live, TCP timeout from egress
+[CHANGED] fonial.de (apex): Still resolves (176.9.53.190) but redirects to www.fional.de which no longer exists
+[PRIO] fonial.de,3.35,attack_surface=2,business_value=3,tech_exposure=2,gate_ease=10,cloud_surface=1,freshness=2
+[PRIO] int.fional.de,2.80,attack_surface=1,business_value=2,tech_exposure=1,gate_ease=10,cloud_surface=1,freshness=3
+[PRIO] kundenkonto.fonial.de/api/2.0,0.00,attack_surface=0,business_value=10,tech_exposure=0,gate_ease=0,cloud_surface=0,freshness=0
+[PRIO] prov.fonial.de/api/2.0,0.00,attack_surface=0,business_value=10,tech_exposure=0,gate_ease=0,cloud_surface=0,freshness=0
+[PRIO] shop.fional.de/graphql,0.00,attack_surface=0,business_value=7,tech_exposure=0,gate_ease=0,cloud_surface=0,freshness=0
+[PRIO] mm.fional.de,0.00,attack_surface=0,business_value=6,tech_exposure=0,gate_ease=0,cloud_surface=0,freshness=0
+[HYP] Internal infrastructure disclosure via DNS
+class: MISCONFIG
+asset: int.fional.de
+confidence: 65
+reasoning: int.fional.de resolves to 192.168.10.71 (RFC1918) in public DNS; git.fional.de CNAME → git.fonial.dev (92.51.132.112) also exposed; internal naming/infrastructure leakage confirmed live
+evidence_needed: Confirm RFC1918 record persists in public DNS; enumerate adjacent int.* subdomains for further leakage
+verify_steps: dig +short int.fional.de @8.8.8.8 → confirm 192.168.10.71; crt.sh/enum for int*.fonial.de; check if any int.* hosts resolve to public IPs with exposed services
+impact: Internal network topology disclosure, potential pivot reconnaissance — LOW standalone, chain-info only
+testability: PASSIVE
+[HYP] Open redirect chain on apex fonial.de
+class: OTHER
+asset: fonial.de
+confidence: 35
+reasoning: fonial.de (apex) resolves to 176.9.53.190 and 301-redirects to www.fional.de which is now NXDOMAIN; broken redirect chain could be leveraged if www subdomain is reclaimed or if intermediate caching/CDN behavior differs
+evidence_needed: Observe redirect behavior with various User-Agents/headers; check if www.fional.de DNS zone still exists with wildcard/catch-all
+verify_steps: curl -I https://fonial.de/; dig +short www.fional.de @8.8.8.8; curl -H "Host: www.fional.de" -I https://fonial.de/
+impact: Potential subdomain takeover if www zone delegated externally, or cache poisoning via broken redirect — LOW/MEDIUM
+testability: PASSIVE
+[PARKED] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind: confidence 85 but HUMAN_ONLY and blocked on service recovery (shared backend 62.146.7.20 down, no ETA)
+[PARKED] Asymmetric admin-auth via GraphQL GenerateCustomerTokenAsAdminInput: confidence 40 at critique floor; requires admin token compromise + customer opt-in → no standalone exploit path; shop.fional.de currently DNS-unreachable (NXDOMAIN)
+[PARKED] Mattermost self-registration disabled via API: confidence 15 < 40; registration API returns 404; DNS currently failing (NXDOMAIN)
+[FINAL] Internal infrastructure disclosure via DNS @ int.fional.de — only currently verifiable passive finding
+[NEXT] PROBE: origin-recovery watcher every 12h until flip — `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session && curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://prov.fonial.de/api/2.0/session && dig +short mm.fional.de shop.fional.de www.fional.de fonial.de int.fional.de @8.8.8.8`
+[LEARN] REJECTED further-passive-cycles @ fonial: kundenkonto/prov APIs timing out + shop/mm/www DNS NXDOMAIN — no passive probe can resolve; momentum requires service recovery or sanctioned writes
+[LEARN] REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
+[LEARN] ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
+[LEARN] ACCEPTED lockstep-deploy-live @ kundenkonto+prov: Fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 version hops; prov→prod fidelity raised
+[LEARN] REJECTED shop admin-token standalone: Confidence 40 at critique floor, no new evidence — chain component only
+[LEARN] ACCEPTED internal-host-DNS-leak @ int.fional.de: 192.168.10.71 (RFC1918) + git.fional.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure, LOW standalone, chain-info only
+[RISK] fonial: 35 — Customer portals (kundenkonto + prov) completely unreachable (shared backend 62.146.7.20 down), eliminating primary BOLA surface. Mattermost (mm.fional.de) DNS NXDOMAIN — self-signup hypothesis blocked. Shop GraphQL (shop.fional.de) DNS NXDOMAIN — asymmetric admin-auth chain blocked. www.fional.de DNS NXDOMAIN — marketing site unreachable. Only apex fonial.de (redirect to dead www) and int.fional.de (RFC1918 leak) remain resolvable. Risk reduced from 48 due to complete DNS loss for 3/5 major subdomains.

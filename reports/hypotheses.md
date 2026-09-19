@@ -2502,3 +2502,15 @@
 - LEARN: ACCEPTED lockstep-deploy-live @ kundenkonto+prov: Fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 versi
 - LEARN: REJECTED shop admin-token standalone: Confidence 40 at critique floor, no new evidence — chain component only
 - LEARN: ACCEPTED internal-host-DNS-leak @ int.fional.de: 192.168.10.71 (RFC1918) + git.fional.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure,
+
+## RANKED HYPOTHESES 2026-09-19 12:16:36 UTC
+- [80] prov.fonial.de/api/2.0: Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin (from art/lead_bigpickle.txt)
+- [65] int.fional.de: Internal infrastructure disclosure via DNS (from art/lead_nemotron3.txt)
+- NEXT(hypotheses-bigpickle.txt): HUMAN: mm.fonial.de is in the sustained-healthy signature window — send ONE program-approved minimal POST https://mm.fonial.de/api/v4/users {"email":"t"+rand+"@
+- NEXT(hypotheses-nemotron3.txt): PROBE: origin-recovery watcher every 12h until flip — `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/se
+- LEARN: REJECTED further-passive-cycles @ fonial: kundenkonto/prov APIs timing out + shop/mm/www DNS NXDOMAIN — no passive probe can resolve; momentum requires service 
+- LEARN: REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origi
+- LEARN: ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanism
+- LEARN: ACCEPTED lockstep-deploy-live @ kundenkonto+prov: Fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 versi
+- LEARN: REJECTED shop admin-token standalone: Confidence 40 at critique floor, no new evidence — chain component only
+- LEARN: ACCEPTED internal-host-DNS-leak @ int.fional.de: 192.168.10.71 (RFC1918) + git.fional.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure,

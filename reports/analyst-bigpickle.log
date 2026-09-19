@@ -22677,3 +22677,114 @@ STEP 6 — LEARNING
 
 STEP 7 — RISK
 [RISK] fonial: 62 — twins down >55h with sustained mismatch to recovered siblings raises permanent-cutover probability each cycle; the sole discriminator (mm signup write) sits at 42, gated on approval; BOLA evidence base decays ~15h/cycle unreached.
+===== ANALYST bigpickle 2026-09-19 12:16:36 UTC =====
+[0m
+> build · big-pickle
+[0m
+[0m$ [0mfor h in www.fonial.de shop.fonial.de mm.fonial.de fonial.de int.fonial.de red.fonial.de kundenkonto.fonial.de prov.fonial.de; do printf "%-24s " "$h"; getent ahosts "$h" 2>/dev/null | head -1 || echo "NXDOMAIN/fail"; done
+www.fonial.de            176.9.53.190    STREAM www.fonial.de
+shop.fonial.de           176.9.53.190    STREAM shop.fonial.de
+mm.fonial.de             62.146.7.29     STREAM mm.fonial.de
+fonial.de                176.9.53.190    STREAM fonial.de
+int.fonial.de            192.168.10.71   STREAM int.fonial.de
+red.fonial.de            62.146.7.29     STREAM red.fonial.de
+kundenkonto.fonial.de    62.146.7.20     STREAM kundenkonto.fonial.de
+prov.fonial.de           62.146.7.20     STREAM prov.fonial.de
+[0m
+[0m$ [0mfor u in "https://prov.fonial.de/api/2.0/session" "https://kundenkonto.fonial.de/api/2.0/session"; do printf "%-50s " "$u"; curl -sS -o /dev/null -w "%{http_code} %{time_total}s\n" --max-time 8 -X OPTIONS "$u" 2>&1 || echo "fail"; done
+https://prov.fonial.de/api/2.0/session             curl: (28) Connection timed out after 8002 milliseconds
+000 8.002668s
+fail
+https://kundenkonto.fonial.de/api/2.0/session      curl: (28) Connection timed out after 8002 milliseconds
+000 8.002557s
+fail
+[0m
+[0m$ [0mfor u in "https://www.fonial.de/" "https://shop.fonial.de/graphql" "https://mm.fonial.de/api/v4/system/ping" "https://red.fonial.de/" "https://fonial.de/"; do printf "%-40s " "$u"; curl -sS -o /dev/null -w "%{http_code} %{time_total}s\n" --max-time 8 -L "$u" 2>&1 | tail -1; done
+https://www.fonial.de/                   200 1.105130s
+https://shop.fonial.de/graphql           500 0.757826s
+https://mm.fonial.de/api/v4/system/ping  200 0.744446s
+https://red.fonial.de/                   200 0.745934s
+https://fonial.de/                       200 1.334992s
+[0m
+[0m$ [0mcurl -sS --max-time 8 -D - "https://mm.fonial.de/api/v4/system/ping" -o /dev/null 2>&1 | rg -i "server|x-version" ; echo "---"; curl -sS --max-time 8 -D - "https://mm.fonial.de/signup/email" -o /dev/null 2>&1 | rg -i "server|x-version|http/"
+/bin/bash: line 1: rg: command not found
+---
+/bin/bash: line 1: rg: command not found
+[0m
+[0m$ [0mfor p in "/api/v4/users" "/api/v4/users/create" "/api/v4/config" "/api/v4/system/ping" "/api/v4/teams" "/signup/email"; do printf "%-24s " "$p"; curl -sS -o /dev/null -w "%{http_code}\n" --max-time 8 "https://mm.fonial.de$p" 2>&1; done
+/api/v4/users            401
+/api/v4/users/create     401
+/api/v4/config           404
+/api/v4/system/ping      200
+/api/v4/teams            401
+/signup/email            200
+[0m
+[0m$ [0mcurl -sS --max-time 8 -D - "https://mm.fonial.de/api/v4/system/ping" -o /dev/null 2>&1 | grep -iE "server|x-version|http/"; echo "---"; curl -sS --max-time 8 -D - "https://mm.fonial.de/signup/email" -o /dev/null 2>&1 | grep -iE "^HTTP|server|x-version"
+HTTP/1.1 200 OK
+Server: nginx/1.10.2
+X-Version-Id: 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false
+---
+HTTP/1.1 200 OK
+Server: nginx/1.10.2
+X-Version-Id: 3.7.0.3.7.3.a553e134e678a5f08571c91f579d4442.false
+[0m
+STEP 1 — DELTA
+- NEW www.fonial.de + shop.fonial.de + fonial.de: DNS recovered → 176.9.53.190 (were NXDOMAIN at 07:48); www 200, shop /graphql 500 — pre-outage signatures restored.
+- NEW mm.fonial.de + red.fonial.de: DNS recovered → 62.146.7.29; mm /api/v4/system/ping 200, X-Version-Id 3.7.0.3.7.3.a553e134... back, /users 401, /users/create 401 (NOT 404), /teams 401, /signup/email 200 SPA; red 200 — matches the oldest "RECOVERED" signature.
+- CHANGED kundenkonto.fonial.de: DNS now resolves to origin 62.146.7.20 directly — no Cloudflare edge IP, cf-fronting absent from resolution; OPTIONS /api/2.0/session → 000 (timeout).
+- CHANGED prov.fonial.de: 62.146.7.20, OPTIONS /api/2.0/session → 000 (>63h continuous).
+- NO_DELTA int.fonial.de (RFC1918), kampagne TYPO3 login (out-of-scope), dslkonto (scope-excluded), shop admin-token (40).
+
+STEP 2 — PRIORITIZE
+- [PRIO] mm.fonial.de/api/v4,4.30,a4/b4/t5/g3/c2/f9
+- [PRIO] kundenkonto.fonial.de/api/2.0,5.60,a6/b10/t6/g2/c3/f1
+- [PRIO] prov.fonial.de/api/2.0,5.20,a6/b9/t6/g2/c3/f1
+- [PRIO] www.fonial.de,2.10,a2/b3/t2/g7/c1/f4 (rejected-class surface, low value)
+
+STEP 3 — HYPOTHESES
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 80
+reasoning: 4 lockstep cycles (v2026.09.16-1) proved body-SID-only authz, decorative PHPSESSID, cleartext UUID sid; signup POST fields (CSRF, trunkTariff) confirmed pre-outage; east-coast siblings now all recovered (176.9.53.190 + .29) while .20 stays TCP-blackholed >63h with CF-fronting removed from kundenkonto DNS → decommission, not maintenance, accelerates evidence decay.
+evidence_needed: post-recovery OPTIONS /api/2.0/session → v2026.09.16-1-family with unchanged Server/ACAO*; then {sid:B, phpsessid:A} cross-present on /evn/get, /devices/get.
+verify_steps: HUMAN: OPTIONS both hosts; GET /signup/register/55 harvest CSRF; 2x POST /signup/confirm/55 (example.invalid) → tenants A+B; cross-present; /call/initiate last.
+impact: cross-tenant CDR, numbers, SIP creds, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+
+[HYP] Mattermost 3.7.3 self-registration state via API
+class: AUTH
+asset: mm.fonial.de/api/v4/users
+confidence: 48
+reasoning: current window reproduces the 05:00/12:40 RECOVERED signature exactly (ping 200, X-Version-Id 3.7.3, /users/create 401, /signup/email 200 SPA); /users/create 401 (not 404) implies route present + auth-layer rejection — 201/403 still unobserved; host has flapped >5 states, so a single healthy window is weak evidence.
+evidence_needed: POST /api/v4/users returns 201 (open) vs 401/403 (closed).
+verify_steps: HUMAN: one minimal POST /api/v4/users {"email":"t"+rand+"@example.invalid","username":"t"+rand,"password":<16-char random>}; abandon if 201; accept 401/403 as closed.
+impact: throwaway internal-chat account → red.fonial.de Redmine co-host (now live again on .29) — MEDIUM.
+testability: HUMAN_ONLY
+
+[HYP] Prov-confirmed BOLA reproduces on production kundenkonto w/o Cloudflare front
+class: AUTH
+asset: kundenkonto.fonial.de/api/2.0
+confidence: 75
+reasoning: DNS now binds kundenkonto directly to the same origin 62.146.7.20 as prov (CF fronting gone at resolver level) — same-box fate likely; any prov-side BOLA maps to prod with the fronting seam removed (origin-parity probe now trivially comparable).
+evidence_needed: prov evidence first; then kundenkonto origin-parity probe (Server/X-Fonial-Version/ACAO*) on first non-000.
+verify_steps: identical to prov; origin-parity before any write.
+impact: production cross-tenant telephony — CRITICAL.
+testability: HUMAN_ONLY
+
+STEP 4 — SELF-CRITIQUE
+- [PARKED] shop admin-token standalone: confidence 40 at critique floor, nothing new — chain component only.
+- [PARKED] east-coast DNS recovery as vuln: infra-resilience observation only, no CVSS — support for decommission read, not a finding.
+- [FINAL] BOLA cross-bind prov (80); BOLA cross-bind prod kundenkonto (75); mm signup write (48).
+
+STEP 5 — NEXT ACTION
+[NEXT] HUMAN: mm.fonial.de is in the sustained-healthy signature window — send ONE program-approved minimal POST https://mm.fonial.de/api/v4/users {"email":"t"+rand+"@example.invalid","username":"t"+rand,"password":<16-char random>} and read 201 vs 401/403; if approval withheld, continue the 12h origin-recovery watcher `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://prov.fonial.de/api/2.0/session` and re-baseline headers (Server/X-Fonial-Version/ACAO*/cf-ray) on both twins on first non-000.
+
+STEP 6 — LEARNING
+- [LEARN] ACCEPTED east-coast-recovery @ fonial: www/shop/apex (176.9.53.190) + mm/red (.29) all DNS+HTTP recovered while .20 stays blackholed >63h → outage now definitively single-host; actively consistent with permanent cutover of the customer-portal box.
+- [LEARN] ACCEPTED fronting-change @ kundenkonto.fonial.de: public DNS resolves to origin 62.146.7.20 directly (no Cloudflare edge / cf-ray) — CF fronting absent from resolution; consistent with decommission/migration, not a reportable vuln.
+- [LEARN] ACCEPTED mm-healthy-signature @ mm.fonial.de: ping 200 + X-Version-Id 3.7.3 + /users/create 401 (not 404) + /signup/email 200 SPA reproduce the 05:00/12:40 RECOVERED signature; registration-state discriminator (POST /users) remains unread passively.
+- [LEARN] REJECTED further-passive-cycles @ fonial: .20 watcher re-probes only re-measure downtime; east-coast recovery changes nothing passive — no remaining passive probe discriminates the two HUMAN_ONLY survivors.
+
+STEP 7 — RISK
+[RISK] fonial: 66 — east-coast recovery proves the infra is live but .20 stays blackholed >63h with CF-fronting removed → BOLA evidence base (bodies, headers, signup fields) now plausibly a decommissioned snapshot decaying ~15h/cycle; sole live discriminator (mm signup write, 48) remains HUMAN-gated; every unreached cycle lowers the chance either survivor is reportable in current form.
