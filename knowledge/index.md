@@ -483,3 +483,8 @@
 - 2026-09-19 ACCEPTED mm-fonial-de-api-surface-RECOVERED @ mm.fional.de: `/api/v4/system/ping` 200, `/signup/email` 200, `/api/v4/users` 401, `/api/v4/users/create` 404 — registration API disabled; self-signup class eliminated (now DNS-failing again)
 - 2026-09-19 ACCEPTED lockstep-deploy-live @ kundenkonto+prov: Fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 version hops; prov→prod fidelity raised
 - 2026-09-19 REJECTED shop admin-token standalone: Confidence 40 at critique floor, no new evidence — chain component only
+- 2026-09-19 ACCEPTED mm-fonial-de-api-surface-RECOVERED @ mm.fonial.de: DNS restored to 62.146.7.29, ping 200, /users 401, /users/create 401, /signup/email 200 — healthy window; self-signup class re-open for write, still HUMAN-gated.
+- 2026-09-19 ACCEPTED shop-dns-recovery @ shop.fonial.de: DNS back (176.9.53.190), GraphQL 500 restored — surface unchanged, no new passive discriminator.
+- 2026-09-19 ACCEPTED origin-outage-isolation @ 62.146.7.20: third sibling (.29 mm) recovered within the same netblock while .20 stays blackholed >55h — actively consistent with permanent cutover, not maintenance.
+- 2026-09-19 REJECTED further-passive-cycles @ fonial: kundenkonto/prov APIs timing out + shop/mm/www DNS NXDOMAIN — no passive probe can resolve; momentum requires service recovery or sanctioned writes
+- 2026-09-19 ACCEPTED internal-host-DNS-leak @ int.fional.de: 192.168.10.71 (RFC1918) + git.fional.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure, LOW standalone, chain-info only

@@ -4010,3 +4010,29 @@ verify_steps: HUMAN: one minimal POST /api/v4/users {"email":"t"+rand+"@example.
 impact: throwaway internal-chat account → chained red.fonial.de Redmine co-host — MEDIUM.
 testability: HUMAN_ONLY
 ## 2026-09-19 02:46:51 UTC [target] (model bigpickle)
+## 2026-09-19 07:45:46 UTC [target] (model bigpickle)
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 80
+reasoning: 4 lockstep cycles (v2026.09.16-1, last verified ~04:58 UTC) proved body-SID-only authz, decorative PHPSESSID, cleartext UUID sid; signup POST fields (CSRF, trunkTariff 19/21/22) confirmed live pre-outage; `.20` blackholed >55h while both siblings in the 62.146.7.2x block (mm .29) recovered — consistent with permanent cutover, so evidence base decays with each unreached cycle.
+evidence_needed: post-recovery OPTIONS /api/2.0/session → v2026.09.16-1-family with unchanged Server/ACAO*; then {sid:B, phpsessid:A} cross-present on /evn/get, /devices/get.
+verify_steps: HUMAN: OPTIONS both hosts; GET /signup/register/55 harvest CSRF; 2x POST /signup/confirm/55 (example.invalid) → tenants A+B; cross-present; /call/initiate last.
+impact: cross-tenant CDR, numbers, SIP creds, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[HYP] Mattermost 3.7.3 self-registration state via API
+class: AUTH
+asset: mm.fonial.de/api/v4/users
+confidence: 42
+reasoning: healthy signature restored this cycle (ping 200, /users 401, /users/create 401, /signup/email 200 SPA); POST /api/v4/users response (201 vs 401/403-signup-disabled) is the only discriminator and is unreadable passively (config endpoint 404); host has flapped 4 states in ~36h.
+evidence_needed: POST /api/v4/users returns 201 (open) vs 401/403 (closed).
+verify_steps: HUMAN: one minimal POST /api/v4/users {"email":"t"+rand+"@example.invalid","username":"t"+rand,"password":<16-char random>}; abandon if 201; accept 401/403 as closed.
+impact: throwaway internal-chat account → red.fonial.de Redmine co-host — MEDIUM.
+testability: HUMAN_ONLY
+[PARKED] shop admin-token standalone: confidence 40 at critique floor, GraphQL 500 static — chain-only.
+[FINAL] BOLA cross-bind prov (80); BOLA cross-bind prod kundenkonto (75, same-origin dependency); mm signup write (42).
+[NEXT] PROBE: continue 12h origin-recovery watcher on 62.146.7.20 — `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://prov.fonial.de/api/2.0/session`; on first non-000, immediately re-baseline headers (Server/X-Fonial-Version/ACAO*/cf-ray) on both prov+kundenkonto before any further action.
+[LEARN] ACCEPTED mm-fonial-de-api-surface-RECOVERED @ mm.fonial.de: DNS restored to 62.146.7.29, ping 200, /users 401, /users/create 401, /signup/email 200 — healthy window; self-signup class re-open for write, still HUMAN-gated.
+[LEARN] ACCEPTED shop-dns-recovery @ shop.fonial.de: DNS back (176.9.53.190), GraphQL 500 restored — surface unchanged, no new passive discriminator.
+[LEARN] ACCEPTED origin-outage-isolation @ 62.146.7.20: third sibling (.29 mm) recovered within the same netblock while .20 stays blackholed >55h — actively consistent with permanent cutover, not maintenance.
+[RISK] fonial: 62 — twins down >55h with sustained mismatch to recovered siblings raises permanent-cutover probability each cycle; the sole discriminator (mm signup write) sits at 42, gated on approval; BOLA evidence base decays ~15h/cycle unreached.

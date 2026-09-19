@@ -698,3 +698,11 @@ www.fonial.de
 - CHANGED mm.fional.de: DNS FAILING (NXDOMAIN) — was briefly recovered at 21:53, now no resolution
 - CHANGED shop.fional.de: DNS FAILING (no resolution) — was 176.9.53.190, now no A/AAAA records
 - CHANGED www.fional.de: Stable 200 (TYPO3 CMS, nginx/1.31.2, PHP/8.3.3) — unchanged
+
+## 2026-09-19 07:48:35 UTC
+- CHANGED www.fional.de: DNS NXDOMAIN (was stable 200 TYPO3 CMS at 2026-09-19 02:47) — apex fonial.de still resolves (176.9.53.190) but redirects to www.fional.de which no longer exists
+- CHANGED shop.fional.de: DNS NXDOMAIN (was 176.9.53.190, GraphQL 500) — complete DNS removal
+- CHANGED mm.fional.de: DNS NXDOMAIN (was briefly recovered 21:53, then NXDOMAIN at 23:51) — now confirmed NXDOMAIN
+- CHANGED kundenkonto.fonial.de/api/2.0: Still connection timeout (shared backend 62.146.7.20 down) — OPTIONS /session 000
+- CHANGED prov.fonial.de/api/2.0: Still connection timeout (same shared backend 62.146.7.20 down) — OPTIONS /session 000
+- CHANGED int.fional.de: Resolves to 192.168.10.71 (RFC1918) in public DNS — internal host disclosure confirmed live, but TCP timeout from egress

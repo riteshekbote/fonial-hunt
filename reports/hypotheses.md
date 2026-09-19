@@ -2487,3 +2487,18 @@
 - LEARN: ACCEPTED mm-fonial-de-api-surface-RECOVERED @ mm.fional.de: `/api/v4/system/ping` 200, `/signup/email` 200, `/api/v4/users` 401, `/api/v4/users/create` 404 — re
 - LEARN: ACCEPTED lockstep-deploy-live @ kundenkonto+prov: Fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 versi
 - LEARN: REJECTED shop admin-token standalone: Confidence 40 at critique floor, no new evidence — chain component only
+
+## RANKED HYPOTHESES 2026-09-19 07:48:35 UTC
+- [85] prov.fonial.de/api/2.0: Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind (from art/lead_nemotron3.txt)
+- [80] prov.fonial.de/api/2.0: Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin (from art/lead_bigpickle.txt)
+- NEXT(hypotheses-bigpickle.txt): PROBE: continue 12h origin-recovery watcher on 62.146.7.20 — `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://prov.fonial.de/api/2.0/se
+- NEXT(hypotheses-nemotron3.txt): PROBE: origin-recovery watcher every 12h until flip — `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/se
+- LEARN: ACCEPTED mm-fonial-de-api-surface-RECOVERED @ mm.fonial.de: DNS restored to 62.146.7.29, ping 200, /users 401, /users/create 401, /signup/email 200 — healthy wi
+- LEARN: ACCEPTED shop-dns-recovery @ shop.fonial.de: DNS back (176.9.53.190), GraphQL 500 restored — surface unchanged, no new passive discriminator.
+- LEARN: ACCEPTED origin-outage-isolation @ 62.146.7.20: third sibling (.29 mm) recovered within the same netblock while .20 stays blackholed >55h — actively consistent 
+- LEARN: REJECTED further-passive-cycles @ fonial: kundenkonto/prov APIs timing out + shop/mm/www DNS NXDOMAIN — no passive probe can resolve; momentum requires service 
+- LEARN: REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origi
+- LEARN: ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanism
+- LEARN: ACCEPTED lockstep-deploy-live @ kundenkonto+prov: Fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 versi
+- LEARN: REJECTED shop admin-token standalone: Confidence 40 at critique floor, no new evidence — chain component only
+- LEARN: ACCEPTED internal-host-DNS-leak @ int.fional.de: 192.168.10.71 (RFC1918) + git.fional.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure,

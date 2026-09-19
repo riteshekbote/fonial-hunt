@@ -18379,3 +18379,217 @@ testability: PASSIVE
 
 **STEP 7 — RISK**
 [RISK] fonial: 48 — Customer portals (kundenkonto + prov) completely unreachable (shared backend 62.146.7.20 down), eliminating primary BOLA surface. Mattermost DNS failing (NXDOMAIN) after brief recovery — self-signup hypothesis blocked. Shop GraphQL DNS-failing (no resolution) — asymmetric admin-auth chain blocked. Internal DNS leak (int.fional.de) and CT-sweep inventory expansion (~19 subdomains) provide breadth but no new exploitable passive surface. Risk reduced from 55 due to Mattermost DNS failure + shop DNS failure.
+===== ANALYST nemotron3 2026-09-19 07:48:35 UTC =====
+[0m
+> build · nemotron-3-ultra-free
+[0m
+[0m$ [0mcurl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session 2>&1
+curl: (28) Connection timed out after 10002 milliseconds
+000
+[0m
+[0m$ [0mcurl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://prov.fonial.de/api/2.0/session 2>&1 && dig +short mm.fional.de shop.fional.de www.fonial.de
+curl: (28) Connection timed out after 10002 milliseconds
+000
+[0m
+[0m$ [0mdig +short mm.fional.de shop.fional.de www.fional.de int.fonial.de
+192.168.10.71
+[0m
+[0m$ [0mdig +short www.fional.de && curl -sS -o /dev/null -w "%{http_code}" --max-time 10 https://www.fional.de 2>&1
+curl: (6) Could not resolve host: www.fional.de
+000
+[0m
+[0m$ [0mdig +short fonial.de && curl -sS -o /dev/null -w "%{http_code}" --max-time 10 https://fonial.de 2>&1
+176.9.53.190
+301
+[0m
+[0m$ [0mcurl -sS -I --max-time 10 https://fonial.de 2>&1 | head -20
+HTTP/2 301 
+content-type: text/html
+date: Sat, 19 Sep 2026 07:46:59 GMT
+location: https://www.fonial.de/
+server: nginx/1.31.2
+content-length: 169
+[0m
+[0m$ [0mdig +short www.fional.de @8.8.8.8 && dig +short shop.fional.de @8.8.8.8 && dig +short mm.fional.de @8.8.8.8
+(no output)
+[0m
+[0m$ [0mdig CNAME shop.fonial.de @8.8.8.8 && dig CNAME mm.fional.de @8.8.8.8 && dig CNAME www.fional.de @8.8.8.8
+; <<>> DiG 9.18.39-0ubuntu0.24.04.7-Ubuntu <<>> CNAME shop.fonial.de @8.8.8.8
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 64664
+;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 512
+;; QUESTION SECTION:
+;shop.fonial.de.			IN	CNAME
+
+;; AUTHORITY SECTION:
+fonial.de.		1800	IN	SOA	davina.ns.cloudflare.com. dns.cloudflare.com. 2415199555 10000 2400 604800 1800
+
+;; Query time: 19 msec
+;; SERVER: 8.8.8.8#53(8.8.8.8) (UDP)
+;; WHEN: Sat Sep 19 07:47:33 UTC 2026
+;; MSG SIZE  rcvd: 107
+
+
+; <<>> DiG 9.18.39-0ubuntu0.24.04.7-Ubuntu <<>> CNAME mm.fional.de @8.8.8.8
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 41511
+;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 512
+;; QUESTION SECTION:
+;mm.fional.de.			IN	CNAME
+
+;; AUTHORITY SECTION:
+de.			1800	IN	SOA	f.nic.de. dns-operations.denic.de. 1789804011 7200 7200 3600000 7200
+
+;; Query time: 8 msec
+;; SERVER: 8.8.8.8#53(8.8.8.8) (UDP)
+;; WHEN: Sat Sep 19 07:47:33 UTC 2026
+;; MSG SIZE  rcvd: 104
+
+
+; <<>> DiG 9.18.39-0ubuntu0.24.04.7-Ubuntu <<>> CNAME www.fional.de @8.8.8.8
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 13259
+;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 512
+;; QUESTION SECTION:
+;www.fional.de.			IN	CNAME
+
+;; AUTHORITY SECTION:
+de.			1800	IN	SOA	f.nic.de. dns-operations.denic.de. 1789804035 7200 7200 3600000 7200
+
+;; Query time: 9 msec
+;; SERVER: 8.8.8.8#53(8.8.8.8) (UDP)
+;; WHEN: Sat Sep 19 07:47:33 UTC 2026
+;; MSG SIZE  rcvd: 105
+[0m
+[0m$ [0mdig A shop.fional.de @8.8.8.8 && dig A www.fional.de @8.8.8.8
+; <<>> DiG 9.18.39-0ubuntu0.24.04.7-Ubuntu <<>> A shop.fional.de @8.8.8.8
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 48496
+;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 512
+;; QUESTION SECTION:
+;shop.fional.de.			IN	A
+
+;; AUTHORITY SECTION:
+de.			1800	IN	SOA	f.nic.de. dns-operations.denic.de. 1789804035 7200 7200 3600000 7200
+
+;; Query time: 9 msec
+;; SERVER: 8.8.8.8#53(8.8.8.8) (UDP)
+;; WHEN: Sat Sep 19 07:47:44 UTC 2026
+;; MSG SIZE  rcvd: 106
+
+
+; <<>> DiG 9.18.39-0ubuntu0.24.04.7-Ubuntu <<>> A www.fional.de @8.8.8.8
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 14216
+;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 512
+;; QUESTION SECTION:
+;www.fional.de.			IN	A
+
+;; AUTHORITY SECTION:
+de.			1800	IN	SOA	f.nic.de. dns-operations.denic.de. 1789804035 7200 7200 3600000 7200
+
+;; Query time: 9 msec
+;; SERVER: 8.8.8.8#53(8.8.8.8) (UDP)
+;; WHEN: Sat Sep 19 07:47:44 UTC 2026
+;; MSG SIZE  rcvd: 105
+[0m
+[0m$ [0mcurl -sS --max-time 10 https://fonial.de 2>&1 | head -30
+<html>
+<head><title>301 Moved Permanently</title></head>
+<body>
+<center><h1>301 Moved Permanently</h1></center>
+<hr><center>nginx/1.31.2</center>
+</body>
+</html>
+[0m
+[0m$ [0mcurl -sS --max-time 10 http://int.fonial.de 2>&1 | head -30
+curl: (28) Connection timed out after 10001 milliseconds
+[0m
+---
+
+**STEP 1 — DELTA**
+[CHANGED] www.fional.de: DNS NXDOMAIN (was stable 200 TYPO3 CMS at 2026-09-19 02:47) — apex fonial.de still resolves (176.9.53.190) but redirects to www.fional.de which no longer exists
+[CHANGED] shop.fional.de: DNS NXDOMAIN (was 176.9.53.190, GraphQL 500) — complete DNS removal
+[CHANGED] mm.fional.de: DNS NXDOMAIN (was briefly recovered 21:53, then NXDOMAIN at 23:51) — now confirmed NXDOMAIN
+[CHANGED] kundenkonto.fonial.de/api/2.0: Still connection timeout (shared backend 62.146.7.20 down) — OPTIONS /session 000
+[CHANGED] prov.fonial.de/api/2.0: Still connection timeout (same shared backend 62.146.7.20 down) — OPTIONS /session 000
+[CHANGED] int.fional.de: Resolves to 192.168.10.71 (RFC1918) in public DNS — internal host disclosure confirmed live, but TCP timeout from egress
+
+**STEP 2 — PRIORITIZE**
+[PRIO] fonial.de (apex),3.2,attack_surface=2,business_value=3,tech_exposure=2,gate_ease=10,cloud_surface=1,freshness=2
+[PRIO] int.fonial.de,1.8,attack_surface=1,business_value=2,tech_exposure=1,gate_ease=10,cloud_surface=1,freshness=3
+[PRIO] kundenkonto.fonial.de/api/2.0,0.0,attack_surface=0,business_value=10,tech_exposure=0,gate_ease=0,cloud_surface=0,freshness=0
+[PRIO] prov.fonial.de/api/2.0,0.0,attack_surface=0,business_value=10,tech_exposure=0,gate_ease=0,cloud_surface=0,freshness=0
+[PRIO] shop.fional.de/graphql,0.0,attack_surface=0,business_value=7,tech_exposure=0,gate_ease=0,cloud_surface=0,freshness=0
+[PRIO] mm.fional.de,0.0,attack_surface=0,business_value=6,tech_exposure=0,gate_ease=0,cloud_surface=0,freshness=0
+
+**STEP 3 — HYPOTHESES**
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind
+class: AUTH
+asset: prov.fonial.de/api/2.0 + kundenkonto.fonial.de/api/2.0
+confidence: 85
+reasoning: Dual-backend architecture confirmed (session vs data endpoints, different Content-Type, body-SID-only authz, decorative PHPSESSID); lockstep deploy confirmed 4 cycles (v2026.09.16-1); prov.fional.de `/signup/confirm/55` enables self-service tenant creation; cross-bind requires live APIs
+evidence_needed: Service recovery + two valid SIDs from different tenants → cross-tenant data access via body SID swap on `/devices/get`, `/evn/get`, `/call/initiate`
+verify_steps: 1) Monitor OPTIONS https://kundenkonto.fonial.de/api/2.0/session for 200; 2) If live, create tenant A on prov.fional.de (POST /signup/confirm/55); 3) Create tenant B on kundenkonto.fonial.de (program-provisioned); 4) Swap SIDs across /devices/get → observe cross-tenant data leak
+impact: Cross-tenant access to PII, CDR, SIP credentials, billing, call control on enterprise telephony — CRITICAL
+testability: HUMAN_ONLY
+
+[HYP] Asymmetric admin-auth via GraphQL GenerateCustomerTokenAsAdminInput (chain-only)
+class: AUTH
+asset: shop.fional.de/graphql
+confidence: 40
+reasoning: Full unauth GraphQL introspection (300+ types, 68 mutations) exposes `GenerateCustomerTokenAsAdminInput {customer_email: String!}`; Adobe/Magento docs confirm requires admin Bearer token + customer `remote_shopping_assistance` opt-in; REST `/V1/integration/admin/token` → 404 (route removed) while GraphQL mutation remains introspectable → non-uniform admin-auth surface; no CORS; CSP report-only with unsafe-inline/eval; currently DNS-unreachable (NXDOMAIN)
+evidence_needed: Valid admin token + customer with `remote_shopping_assistance=true` → `generateCustomerTokenAsAdmin` returns customer token for arbitrary user
+verify_steps: 1) GET https://shop.fional.de/graphql?query={__schema{types{name}}} → confirm introspection live; 2) POST https://shop.fional.de/graphql with mutation `generateCustomerTokenAsAdmin(customer_email: "victim@example.com")` + `Authorization: Bearer <admin_token>` → observe 200 with `customer_token` or 403; 3) If 200, use token to access `/rest/V1/customers/me` → PII access
+impact: Admin-token compromise → full customer account takeover, order history, PII, payment data — HIGH
+testability: HUMAN_ONLY
+
+[HYP] Internal infrastructure disclosure via DNS
+class: MISCONFIG
+asset: int.fional.de
+confidence: 65
+reasoning: int.fional.de resolves to 192.168.10.71 (RFC1918) in public DNS; git.fional.de CNAME → git.fonial.dev (92.51.132.112) also exposed; internal naming/infrastructure leakage
+evidence_needed: Confirm RFC1918 record persists in public DNS; enumerate adjacent int.* subdomains for further leakage
+verify_steps: 1) dig +short int.fional.de @8.8.8.8 → confirm 192.168.10.71; 2) crt.sh/enum for int*.fonial.de; 3) check if any int.* hosts resolve to public IPs with exposed services
+impact: Internal network topology disclosure, potential pivot reconnaissance — LOW standalone, chain-info only
+testability: PASSIVE
+
+**STEP 4 — SELF-CRITIQUE**
+[PARKED] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind: confidence 85 but HUMAN_ONLY and blocked on service recovery (shared backend 62.146.7.20 down, no ETA)
+[PARKED] Asymmetric admin-auth via GraphQL GenerateCustomerTokenAsAdminInput: confidence 40 at critique floor; requires admin token compromise + customer opt-in → no standalone exploit path; shop.fional.de currently DNS-unreachable (NXDOMAIN)
+[PARKED] Mattermost self-registration disabled via API: confidence 15 < 40; registration API returns 404; DNS currently failing (NXDOMAIN)
+[FINAL] Internal infrastructure disclosure via DNS @ int.fional.de — only currently verifiable passive finding
+
+**STEP 5 — NEXT ACTION**
+[NEXT] PROBE: origin-recovery watcher every 12h until flip — `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session && curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://prov.fonial.de/api/2.0/session && dig +short mm.fional.de shop.fional.de www.fional.de fonial.de int.fional.de @8.8.8.8` — exact read-only probes for API recovery + DNS restoration
+
+**STEP 6 — LEARNING**
+[LEARN] REJECTED further-passive-cycles @ fonial: kundenkonto/prov APIs timing out + shop/mm/www DNS NXDOMAIN — no passive probe can resolve; momentum requires service recovery or sanctioned writes
+[LEARN] REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
+[LEARN] ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
+[LEARN] ACCEPTED lockstep-deploy-live @ kundenkonto+prov: Fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 version hops; prov→prod fidelity raised
+[LEARN] REJECTED shop admin-token standalone: Confidence 40 at critique floor, no new evidence — chain component only
+[LEARN] ACCEPTED internal-host-DNS-leak @ int.fional.de: 192.168.10.71 (RFC1918) + git.fional.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure, LOW standalone, chain-info only
+
+**STEP 7 — RISK**
+[RISK] fonial: 35 — Customer portals (kundenkonto + prov) completely unreachable (shared backend 62.146.7.20 down), eliminating primary BOLA surface. Mattermost (mm.fional.de) DNS NXDOMAIN — self-signup hypothesis blocked. Shop GraphQL (shop.fional.de) DNS NXDOMAIN — asymmetric admin-auth chain blocked. www.fional.de DNS NXDOMAIN — marketing site unreachable. Only apex fonial.de (redirect to dead www) and int.fional.de (RFC1918 leak) remain resolvable. Risk reduced from 48 due to complete DNS loss for 3/5 major subdomains.
