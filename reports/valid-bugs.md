@@ -58,3 +58,12 @@
 - 2 lead(s) marked VALID at 2026-09-17 21:57:12 UTC
   - | Q4 | **NO** | Requires 2 valid accounts from different tenants to execute cross-bind matrix — no passive-only proof possible |
   - | Q4 | **PARTIAL** | Unauthenticated ACAO: * confirmed passively; authenticated confirmation requires valid PHPSESSID (AUTH_HELPED). JS source grep is passive. |
+
+- 7 lead(s) marked VALID at 2026-09-19 05:00:50 UTC
+  - | Q4 | Provable non-invasively? | **PARTIAL** — Architecture confirmed passively (dual backends, decorative PHPSESSID, body-SID authz). Exploitation proof requires 2 valid accounts (HUMAN_ONLY) |
+  - | Q7 | Reasonable triager? | **YES** — full schema exposure on a live e-commerce platform is a valid finding, though medium severity |
+  - **Verdict: VALID (conditional)**
+  - | Q7 | Reasonable triager? | **YES** — production API clone without CDN protection on a separate hostname is a valid security concern |
+  - **Verdict: VALID**
+  - | 6 | shop.fonial.de GraphQL introspection | **VALID** | MEDIUM |
+  - | 7 | prov.fonial.de unfronted API clone | **VALID** | MEDIUM |
