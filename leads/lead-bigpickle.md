@@ -4066,3 +4066,32 @@ impact: production cross-tenant telephony — CRITICAL.
 testability: HUMAN_ONLY
 [NEXT] HUMAN: mm.fonial.de is in the sustained-healthy signature window — send ONE program-approved minimal POST https://mm.fonial.de/api/v4/users {"email":"t"+rand+"@example.invalid","username":"t"+rand,"password":<16-char random>} and read 201 vs 401/403; if approval withheld, continue the 12h origin-recovery watcher `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://prov.fonial.de/api/2.0/session` and re-baseline headers (Server/X-Fonial-Version/ACAO*/cf-ray) on both twins on first non-000.
 [RISK] fonial: 66 — east-coast recovery proves the infra is live but .20 stays blackholed >63h with CF-fronting removed → BOLA evidence base (bodies, headers, signup fields) now plausibly a decommissioned snapshot decaying ~15h/cycle; sole live discriminator (mm signup write, 48) remains HUMAN-gated; every unreached cycle lowers the chance either survivor is reportable in current form.
+## 2026-09-19 15:57:16 UTC [target] (model bigpickle)
+[PRIO] shop.fonial.de/graphql,6.15,tech(open introspection)+business+gate
+[PRIO] www.fonial.de,5.55,surface(full CMS)+gate+recovery freshness
+[PRIO] mm.fonial.de/api/v4/users,4.95,write-gate+legacy MM+only live discriminator
+[HYP] Mattermost 3.7.3 self-registration state via POST discriminator
+class: AUTH
+asset: mm.fonial.de/api/v4/users
+confidence: 50
+reasoning: healthy signature persists (ping 200, /signup/email 200, /users 401); /users/create GET→401 = route present + auth-layer rejection (not 404-as-disabled); only POST result unobserved; host has flapped 5+ states, so one healthy window is weak.
+evidence_needed: POST /api/v4/users → 201 (open) vs 401/403 (closed).
+verify_steps: HUMAN: one minimal POST /api/v4/users {"email":"t"+rand+"@example.invalid","username":"t"+rand,"password":<16-char random>}; abandon if 201; accept 401/403.
+impact: throwaway internal-chat account → red.fonial.de Redmine co-host (live 302 on same box) — MEDIUM.
+testability: HUMAN_ONLY
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on unfronted twin
+class: AUTH
+asset: prov.fonial.de/api/2.0
+confidence: 80
+reasoning: 4 lockstep cycles (v2026.09.16-1) proved body-SID-only authz, decorative PHPSESSID, cleartext UUID sid, signup POST fields live pre-outage; origin 62.146.7.20 dark >70h while all three east siblings (www/shop/mm/red) now recovered — decommission rather than maintenance, evidence base = pre-outage snapshot decaying.
+evidence_needed: host re-light → OPTIONS /session re-baseline (Server/X-Fonial-Version/ACAO*) then {sid:B,phpsessid:A} cross-present.
+verify_steps: HUMAN: OPTIONS both hosts; GET /signup/register/55 harvest CSRF; 2x POST /signup/confirm/55 (example.invalid) → tenants A+B; cross-present on /evn/get,/devices/get; /call/initiate last.
+impact: cross-tenant CDR, numbers, SIP creds, outbound call control — CRITICAL.
+testability: HUMAN_ONLY
+[PARKED] shop admin-token standalone (40): no new evidence, chain-only, unchanged.
+[PARKED] BOLA-kundenkonto prod (75): parent prov confirmed first; same-origin seam, subsumed by prov hyp.
+[FINAL] BOLA prov cross-bind (80, evidence decaying ~15h/cycle while dark); mm signup write (50, sole live discriminator).
+[NEXT] HUMAN: mm.fonial.de is in a sustained healthy window — submit ONE program-approved minimal POST https://mm.fonial.de/api/v4/users {"email":"t"+rand+"@example.invalid","username":"t"+rand,"password":<16-char random>} and read 201 vs 401/403; if approval withheld, continue 12h origin watcher `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://prov.fonial.de/api/2.0/session` and re-baseline both twins on first non-000.
+[LEARN] ACCEPTED east-side full recovery @ fonial: www/shop DNS+HTTP restored, mm healthy window with /users/create 401 route-present, red live 302; only 62.146.7.20 twins remain dark >70h → permanent-cutover reading strengthened, evidence decay accelerates.
+[LEARN] ACCEPTED mm route-present @ mm.fonial.de: GET /api/v4/users/create → 401 (not 404) in current window = route live, gate at auth layer; write discriminator remains POST-only and HUMAN-gated.
+[RISK] fonial: 68 — east-side recovery proves infra live while the .20 twins stay blackholed >70h with CF-fronting removed; the BOLA evidence base is now a decaying pre-outage snapshot and the sole live discriminator (mm write, 50) remains approval-gated — every unreached cycle lowers probability the survivors report in current form.

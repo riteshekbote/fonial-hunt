@@ -2514,3 +2514,17 @@
 - LEARN: ACCEPTED lockstep-deploy-live @ kundenkonto+prov: Fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 versi
 - LEARN: REJECTED shop admin-token standalone: Confidence 40 at critique floor, no new evidence — chain component only
 - LEARN: ACCEPTED internal-host-DNS-leak @ int.fional.de: 192.168.10.71 (RFC1918) + git.fional.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure,
+
+## RANKED HYPOTHESES 2026-09-19 16:01:39 UTC
+- [50] mm.fonial.de/api/v4/users: Mattermost 3.7.3 self-registration state via POST discriminator (from art/lead_bigpickle.txt)
+- [45] shop.fional.de/graphql: Asymmetric admin-auth via GraphQL GenerateCustomerTokenAsAdminInput on recovered shop (from art/lead_nemotron3.txt)
+- NEXT(hypotheses-bigpickle.txt): HUMAN: mm.fonial.de is in a sustained healthy window — submit ONE program-approved minimal POST https://mm.fonial.de/api/v4/users {"email":"t"+rand+"@example.in
+- NEXT(hypotheses-nemotron3.txt): PROBE: origin-recovery watcher every 6h until flip — `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/ses
+- LEARN: ACCEPTED east-side full recovery @ fonial: www/shop DNS+HTTP restored, mm healthy window with /users/create 401 route-present, red live 302; only 62.146.7.20 tw
+- LEARN: ACCEPTED mm route-present @ mm.fonial.de: GET /api/v4/users/create → 401 (not 404) in current window = route live, gate at auth layer; write discriminator remai
+- LEARN: REJECTED further-passive-cycles @ fonial: kundenkonto/prov APIs timing out + mm DNS NXDOMAIN — no passive probe can resolve; momentum requires service recovery 
+- LEARN: REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origi
+- LEARN: ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanism
+- LEARN: ACCEPTED lockstep-deploy-live @ kundenkonto+prov: Fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 versi
+- LEARN: REJECTED shop admin-token standalone: Confidence 40 at critique floor, no new evidence — chain component only
+- LEARN: ACCEPTED shop.fional.de GraphQL introspection live on recovery: full schema accessible unauthenticated, asymmetric admin-auth surface preserved

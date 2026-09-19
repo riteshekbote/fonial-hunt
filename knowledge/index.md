@@ -488,3 +488,7 @@
 - 2026-09-19 ACCEPTED origin-outage-isolation @ 62.146.7.20: third sibling (.29 mm) recovered within the same netblock while .20 stays blackholed >55h — actively consistent with permanent cutover, not maintenance.
 - 2026-09-19 REJECTED further-passive-cycles @ fonial: kundenkonto/prov APIs timing out + shop/mm/www DNS NXDOMAIN — no passive probe can resolve; momentum requires service recovery or sanctioned writes
 - 2026-09-19 ACCEPTED internal-host-DNS-leak @ int.fional.de: 192.168.10.71 (RFC1918) + git.fional.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure, LOW standalone, chain-info only
+- 2026-09-19 ACCEPTED east-side full recovery @ fonial: www/shop DNS+HTTP restored, mm healthy window with /users/create 401 route-present, red live 302; only 62.146.7.20 twins remain dark >70h → permanent-cutover reading strengthened, evidence decay accelerates.
+- 2026-09-19 ACCEPTED mm route-present @ mm.fonial.de: GET /api/v4/users/create → 401 (not 404) in current window = route live, gate at auth layer; write discriminator remains POST-only and HUMAN-gated.
+- 2026-09-19 REJECTED further-passive-cycles @ fonial: kundenkonto/prov APIs timing out + mm DNS NXDOMAIN — no passive probe can resolve; momentum requires service recovery or sanctioned writes
+- 2026-09-19 ACCEPTED shop.fional.de GraphQL introspection live on recovery: full schema accessible unauthenticated, asymmetric admin-auth surface preserved

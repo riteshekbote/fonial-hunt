@@ -6805,3 +6805,55 @@ testability: PASSIVE
 [LEARN] REJECTED shop admin-token standalone: Confidence 40 at critique floor, no new evidence — chain component only
 [LEARN] ACCEPTED internal-host-DNS-leak @ int.fional.de: 192.168.10.71 (RFC1918) + git.fional.de→git.fonial.dev exposed in public DNS; internal naming/infra disclosure, LOW standalone, chain-info only
 [RISK] fonial: 35 — Customer portals (kundenkonto + prov) completely unreachable (shared backend 62.146.7.20 down), eliminating primary BOLA surface. Mattermost (mm.fional.de) DNS NXDOMAIN — self-signup hypothesis blocked. Shop GraphQL (shop.fional.de) DNS NXDOMAIN — asymmetric admin-auth chain blocked. www.fional.de DNS NXDOMAIN — marketing site unreachable. Only apex fonial.de (redirect to dead www) and int.fional.de (RFC1918 leak) remain resolvable. Risk reduced from 48 due to complete DNS loss for 3/5 major subdomains.
+## 2026-09-19 16:01:31 UTC [target] (model nemotron3)
+[CHANGED] www.fonial.de: DNS restored (176.9.53.190), HTTP 200 TYPO3 CMS — was NXDOMAIN at 2026-09-19 07:48
+[CHANGED] shop.fonial.de: DNS restored (176.9.53.190), GraphQL 500 + introspection live — was NXDOMAIN at 2026-09-19 07:48
+[CHANGED] kundenkonto.fonial.de/api/2.0: Still connection timeout (shared backend 62.146.7.20 down) — OPTIONS /session 000
+[CHANGED] prov.fonial.de/api/2.0: Still connection timeout (same shared backend 62.146.7.20 down) — OPTIONS /session 000
+[CHANGED] mm.fional.de: Still DNS NXDOMAIN — no resolution
+[CHANGED] int.fional.de: No A record returned from 8.8.8.8/1.1.1.1 (was RFC1918 192.168.10.71 in KB)
+[CHANGED] fonial.de apex: Resolves to 176.9.53.190, redirects to www.fonial.de (now live)
+[PRIO] shop.fional.de/graphql,7.25,attack_surface=8,business_value=7,tech_exposure=9,gate_ease=10,cloud_surface=3,freshness=8
+[PRIO] www.fonial.de,3.50,attack_surface=3,business_value=3,tech_exposure=2,gate_ease=10,cloud_surface=1,freshness=5
+[PRIO] kundenkonto.fonial.de/api/2.0,2.75,attack_surface=0,business_value=10,tech_exposure=0,gate_ease=0,cloud_surface=0,freshness=0
+[PRIO] prov.fonial.de/api/2.0,2.75,attack_surface=0,business_value=10,tech_exposure=0,gate_ease=0,cloud_surface=0,freshness=0
+[PRIO] mm.fional.de,0.00,attack_surface=0,business_value=6,tech_exposure=0,gate_ease=0,cloud_surface=0,freshness=0
+[PRIO] int.fional.de,0.00,attack_surface=1,business_value=2,tech_exposure=1,gate_ease=0,cloud_surface=1,freshness=0
+[HYP] Asymmetric admin-auth via GraphQL GenerateCustomerTokenAsAdminInput on recovered shop
+class: AUTH
+asset: shop.fional.de/graphql
+confidence: 45
+reasoning: GraphQL introspection fully open (confirmed live); GenerateCustomerTokenAsAdminInput introspectable; REST /V1/integration/admin/token → 404 (route removed) while GraphQL mutation remains; Adobe docs confirm requires admin Bearer + customer remote_shopping_assistance opt-in; shop now DNS-resolved + GraphQL responding 500 with PHPSESSID
+evidence_needed: Valid admin token + opted-in customer to test mutation; or proof mutation executable without admin context
+verify_steps: 1) POST /graphql {generateCustomerTokenAsAdmin(customer_email: "test@test.de")} → expect auth error; 2) Enumerate all mutations for auth-bypass candidates; 3) Check if any mutation accepts customer_id without admin token
+impact: Admin-to-customer token impersonation → full customer account takeover (PII, orders, payment) — HIGH
+testability: AUTH_HELPED
+[HYP] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind on kundenkonto/prov
+class: BUSLOGIC
+asset: kundenkonto.fonial.de/api/2.0 (and prov twin)
+confidence: 85
+reasoning: Dual-backend architecture confirmed (session vs data endpoints with different headers/session mechanisms); data endpoints authorize by body SID only (PHPSESSID decorative); /session issues cleartext UUID SID; prov.fional.de is unfronted byte-behavior clone with identical self-signup flow (POST /signup/confirm/55); lockstep deploy confirmed across 4 version hops; shared backend 62.146.7.20 currently down
+evidence_needed: Two valid tenant accounts (one on prov, one on kundenkonto) + SID cross-test on data endpoints (/devices/get, /evn/get, /call/initiate)
+verify_steps: 1) Wait for API recovery (OPTIONS /session → 200); 2) Create tenant A on prov via /signup/confirm/55; 3) Create tenant B on kundenkonto via /signup/register/55; 4) POST /devices/get with SID from tenant A against tenant B's data backend
+impact: Cross-tenant data access (devices, EVN, call initiation) → full customer data compromise — CRITICAL
+testability: HUMAN_ONLY
+[HYP] Internal infrastructure disclosure via DNS at int.fional.de
+class: MISCONFIG
+asset: int.fional.de
+confidence: 60
+reasoning: KB records RFC1918 192.168.10.71 in public DNS for int.fional.de + git.fional.de CNAME → git.fonial.dev (92.51.132.112); current dig from 8.8.8.8/1.1.1.1 returns no A record (may be transient or removed); historical evidence strong
+evidence_needed: Confirm RFC1918 record persists in public DNS from multiple resolvers; enumerate adjacent int.* subdomains
+verify_steps: 1) dig +short int.fional.de @8.8.8.8 @1.1.1.1 @9.9.9.9; 2) crt.sh query for int*.fonial.de; 3) Check if any int.* hosts resolve to public IPs with exposed services
+impact: Internal network topology disclosure, potential pivot reconnaissance — LOW standalone, chain-info only
+testability: PASSIVE
+[PARKED] Cross-tenant BOLA via dual-backend SID/PHPSESSID cross-bind: confidence 85 but HUMAN_ONLY and blocked on service recovery (shared backend 62.146.7.20 down, no ETA)
+[PARKED] Asymmetric admin-auth via GraphQL GenerateCustomerTokenAsAdminInput: confidence 45; requires admin token compromise + customer opt-in → no standalone exploit path without auth help
+[FINAL] Internal infrastructure disclosure via DNS @ int.fional.de — only currently verifiable passive finding (confidence 60, PASSIVE)
+[NEXT] PROBE: origin-recovery watcher every 6h until flip — `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session && curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://prov.fonial.de/api/2.0/session && dig +short mm.fional.de shop.fional.de www.fional.de fonial.de int.fional.de @8.8.8.8 @1.1.1.1`
+[LEARN] REJECTED further-passive-cycles @ fonial: kundenkonto/prov APIs timing out + mm DNS NXDOMAIN — no passive probe can resolve; momentum requires service recovery or sanctioned writes
+[LEARN] REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
+[LEARN] ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
+[LEARN] ACCEPTED lockstep-deploy-live @ kundenkonto+prov: Fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 version hops; prov→prod fidelity raised
+[LEARN] REJECTED shop admin-token standalone: Confidence 40 at critique floor, no new evidence — chain component only
+[LEARN] ACCEPTED shop.fional.de GraphQL introspection live on recovery: full schema accessible unauthenticated, asymmetric admin-auth surface preserved
+[RISK] fonial: 42 — Customer portals (kundenkonto + prov) completely unreachable (shared backend 62.146.7.20 down), eliminating primary BOLA surface. Shop GraphQL recovered (176.9.53.190) with full introspection + asymmetric admin-auth surface — new active attack surface. Mattermost (mm.fional.de) DNS NXDOMAIN — self-signup hypothesis blocked. www.fional.de recovered (marketing TYPO3). int.fional.de RFC1918 record not currently resolving from public resolvers. Risk up from 35 due to shop GraphQL recovery exposing high-value auth surface.

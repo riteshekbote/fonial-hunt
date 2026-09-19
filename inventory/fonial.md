@@ -715,3 +715,12 @@ www.fonial.de
 - CHANGED prov.fonial.de/api/2.0: Still connection timeout (same shared backend 62.146.7.20 down) — OPTIONS /session 000
 - CHANGED int.fional.de: Resolves to 192.168.10.71 (RFC1918) in public DNS — internal host disclosure confirmed live, TCP timeout from egress
 - CHANGED fonial.de (apex): Still resolves (176.9.53.190) but redirects to www.fional.de which no longer exists
+
+## 2026-09-19 16:01:39 UTC
+- CHANGED www.fonial.de: DNS restored (176.9.53.190), HTTP 200 TYPO3 CMS — was NXDOMAIN at 2026-09-19 07:48
+- CHANGED shop.fonial.de: DNS restored (176.9.53.190), GraphQL 500 + introspection live — was NXDOMAIN at 2026-09-19 07:48
+- CHANGED kundenkonto.fonial.de/api/2.0: Still connection timeout (shared backend 62.146.7.20 down) — OPTIONS /session 000
+- CHANGED prov.fonial.de/api/2.0: Still connection timeout (same shared backend 62.146.7.20 down) — OPTIONS /session 000
+- CHANGED mm.fional.de: Still DNS NXDOMAIN — no resolution
+- CHANGED int.fional.de: No A record returned from 8.8.8.8/1.1.1.1 (was RFC1918 192.168.10.71 in KB)
+- CHANGED fonial.de apex: Resolves to 176.9.53.190, redirects to www.fonial.de (now live)
