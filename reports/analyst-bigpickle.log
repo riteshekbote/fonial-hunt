@@ -22569,3 +22569,20 @@ testability: HUMAN_ONLY
 
 **STEP 7 — RISK**
 - [RISK] fonial: 74 — .20 blackholed >53h while shop (graphql 200) and mm (ping 200) fully recovered → outage is conclusively isolated to the BOLA seam box, no longer consistent with generic platform outage but increasingly with a permanent cutover; each cycle without origin return converts the locked 4-cycle evidence toward history. The only live discriminator (single MM user-create write) sits at confidence 45 and remains gated on program approval.
+===== ANALYST bigpickle 2026-09-19 02:47:29 UTC =====
+[0m
+> build · big-pickle
+[0m
+[93m[1m! [0mpermission requested: external_directory (/tmp/*); auto-rejecting
+[0m✗ [0mcurl -sS -o /tmp/kk.txt -w "kundenkonto: %{http_code} t=%{time_total}s\n" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session -D /tmp/kk.h; head -40 /tmp/kk.txt; cat /tmp/kk.h failed
+[91m[1mError: [0mThe user rejected permission to use this specific tool call.
+[93m[1m! [0mpermission requested: external_directory (/tmp/*); auto-rejecting
+[0m✗ [0mcurl -sS -o /tmp/pv.txt -w "prov: %{http_code} t=%{time_total}s\n" --max-time 10 -X OPTIONS https://prov.fonial.de/api/2.0/session -D /tmp/pv.h; head -40 /tmp/pv.txt; cat /tmp/pv.h failed
+[91m[1mError: [0mThe user rejected permission to use this specific tool call.
+[0m
+[0m$ [0mcurl -sS -o /dev/null -w "mm ping: %{http_code} t=%{time_total}s\n" --max-time 8 https://mm.fonial.de/api/v4/system/ping; getent hosts mm.fonial.de || echo "mm: no resolution"; getent hosts shop.fonial.de || echo "shop: no resolution"; getent hosts www.fonial.de || echo "www: no resolution"
+mm ping: 200 t=0.711471s
+62.146.7.29     mm.fonial.de
+176.9.53.190    shop.fonial.de
+176.9.53.190    www.fonial.de
+[0m

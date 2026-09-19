@@ -477,3 +477,9 @@
 - 2026-09-18 ACCEPTED mm-fonial-de-api-surface-RECOVERED @ mm.fional.de: `/api/v4/system/ping` 200, `/signup/email` 200, `/api/v4/users` 401, `/api/v4/users/create` 404 — registration API disabled; self-signup class eliminated
 - 2026-09-18 ACCEPTED lockstep-deploy-live @ kundenkonto+prov: Fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 version hops; prov→prod fidelity raised
 - 2026-09-18 ACCEPTED mm-fonial-de-api-surface-RECOVERED @ mm.fional.de: `/api/v4/system/ping` 200, `/signup/email` 200, `/api/v4/users` 401, `/api/v4/users/create` 404 — registration API disabled; self-signup class eliminated (now DNS-failing again)
+- 2026-09-19 REJECTED further-passive-cycles @ fonial: kundenkonto/prov APIs timing out — no passive probe can resolve; momentum requires service recovery or sanctioned writes
+- 2026-09-19 REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
+- 2026-09-19 ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
+- 2026-09-19 ACCEPTED mm-fonial-de-api-surface-RECOVERED @ mm.fional.de: `/api/v4/system/ping` 200, `/signup/email` 200, `/api/v4/users` 401, `/api/v4/users/create` 404 — registration API disabled; self-signup class eliminated (now DNS-failing again)
+- 2026-09-19 ACCEPTED lockstep-deploy-live @ kundenkonto+prov: Fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 version hops; prov→prod fidelity raised
+- 2026-09-19 REJECTED shop admin-token standalone: Confidence 40 at critique floor, no new evidence — chain component only

@@ -1,10 +1,10 @@
-## 2026-09-18 23:50:54 UTC [target] (model nemotron3)
-[NEW] mm.fional.de: DNS FAILING again (was RECOVERED at 21:53:40, now NXDOMAIN)
-[NEW] shop.fional.de: DNS FAILING (was 176.9.53.190, now no resolution)
-[CHANGED] kundenkonto.fonial.de/api/2.0: Still connection timeout (shared backend 62.146.7.20 down)
-[CHANGED] prov.fonial.de/api/2.0: Still connection timeout (same shared backend 62.146.7.20 down)
-[CHANGED] www.fional.de: Stable 200 (TYPO3 CMS, nginx/1.31.2, PHP/8.3.3)
-[PRIO] www.fional.de,2.7,attack_surface=1,business_value=2,tech_exposure=1,gate_ease=10,cloud_surface=1,freshness=2
+## 2026-09-19 02:47:22 UTC [target] (model nemotron3)
+[CHANGED] kundenkonto.fonial.de/api/2.0: Still connection timeout (shared backend 62.146.7.20 down) — OPTIONS /session 000
+[CHANGED] prov.fonial.de/api/2.0: Still connection timeout (same shared backend 62.146.7.20 down) — OPTIONS /session 000
+[CHANGED] mm.fional.de: DNS FAILING (NXDOMAIN) — was briefly recovered at 21:53, now no resolution
+[CHANGED] shop.fional.de: DNS FAILING (no resolution) — was 176.9.53.190, now no A/AAAA records
+[CHANGED] www.fional.de: Stable 200 (TYPO3 CMS, nginx/1.31.2, PHP/8.3.3) — unchanged
+[PRIO] www.fonial.de,2.7,attack_surface=1,business_value=2,tech_exposure=1,gate_ease=10,cloud_surface=1,freshness=2
 [PRIO] kundenkonto.fonial.de/api/2.0,0.0,attack_surface=0,business_value=10,tech_exposure=0,gate_ease=0,cloud_surface=0,freshness=0
 [PRIO] prov.fonial.de/api/2.0,0.0,attack_surface=0,business_value=10,tech_exposure=0,gate_ease=0,cloud_surface=0,freshness=0
 [PRIO] mm.fional.de,0.0,attack_surface=0,business_value=6,tech_exposure=0,gate_ease=0,cloud_surface=0,freshness=0
@@ -31,7 +31,7 @@ testability: HUMAN_ONLY
 class: AUTH
 asset: mm.fional.de/api/v4/users/create
 confidence: 15
-reasoning: DNS recovered then failed again (NXDOMAIN); prior probe showed `/api/v4/system/ping` 200, `/signup/email` 200 (SPA shell), `/api/v4/users` 401 (exists, auth-gated), but `/api/v4/users/create` returns 404 — registration endpoint absent; Mattermost 3.7.3 legacy (X-Version-Id header previously observed), `EnableOpenServer` likely false
+reasoning: DNS failing (NXDOMAIN); prior probe showed `/api/v4/system/ping` 200, `/signup/email` 200 (SPA shell), `/api/v4/users` 401 (exists, auth-gated), but `/api/v4/users/create` returns 404 — registration endpoint absent; Mattermost 3.7.3 legacy (X-Version-Id header previously observed), `EnableOpenServer` likely false
 evidence_needed: DNS recovery + Confirm `EnableOpenServer` config via `/api/v4/system/ping` response; verify no alternate registration path (email invite, LDAP, SAML)
 verify_steps: 1) GET https://mm.fional.de/api/v4/system/ping — parse JSON for config hints; 2) GET https://mm.fional.de/api/v4/users — confirm 401 `session_expired`; 3) POST https://mm.fional.de/api/v4/users/create with valid payload — observe 404; 4) Check `/signup/email` SPA for client-side registration flow
 impact: If open registration enabled → self-service account → internal team access, channels, file uploads, Redmine (co-hosted) chain — MEDIUM
@@ -40,11 +40,11 @@ testability: PASSIVE
 [PARKED] Asymmetric admin-auth via GraphQL GenerateCustomerTokenAsAdminInput: confidence 40 at critique floor; requires admin token compromise + customer opt-in → no standalone exploit path; retain only as chain component; shop.fional.de currently DNS-unreachable
 [PARKED] Mattermost self-registration disabled via API: confidence 15 < 40; registration API returns 404; DNS currently failing
 [FINAL] (none — all hypotheses parked below confidence threshold or blocked on service recovery)
-[NEXT] SCAN: origin-recovery watcher every 12h until flip: `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session && curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://prov.fonial.de/api/2.0/session && dig +short mm.fional.de shop.fional.de` — exact read-only probes for API recovery + DNS restoration
+[NEXT] PROBE: origin-recovery watcher every 12h until flip — `curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://kundenkonto.fonial.de/api/2.0/session && curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -X OPTIONS https://prov.fonial.de/api/2.0/session && dig +short mm.fional.de shop.fional.de` — exact read-only probes for API recovery + DNS restoration
 [LEARN] REJECTED further-passive-cycles @ fonial: kundenkonto/prov APIs timing out — no passive probe can resolve; momentum requires service recovery or sanctioned writes
 [LEARN] REJECTED CORS wildcard direct-exploit @ kundenkonto.fonial.de/api/2.0: SID in body (not cookies), no `allow-credentials`, browser won't send cookies cross-origin → low direct impact without SID leak chain
 [LEARN] ACCEPTED dual-backend architecture @ kundenkonto.fonial.de/api/2.0: Two distinct servers (session vs data) with different response headers and session mechanisms → session confusion attack surface
 [LEARN] ACCEPTED mm-fonial-de-api-surface-RECOVERED @ mm.fional.de: `/api/v4/system/ping` 200, `/signup/email` 200, `/api/v4/users` 401, `/api/v4/users/create` 404 — registration API disabled; self-signup class eliminated (now DNS-failing again)
 [LEARN] ACCEPTED lockstep-deploy-live @ kundenkonto+prov: Fourth consecutive same-minute lockstep pair (v2026.09.16-1) — shared deploy pipeline confirmed across 2 version hops; prov→prod fidelity raised
 [LEARN] REJECTED shop admin-token standalone: Confidence 40 at critique floor, no new evidence — chain component only
-[RISK] fonial: 48 — Customer portals (kundenkonto + prov) completely unreachable (shared backend 62.146.7.20 down), eliminating primary BOLA surface. Mattermost DNS failing (NXDOMAIN) after brief recovery — self-signup hypothesis blocked. Shop GraphQL DNS-failing (no resolution) — asymmetric admin-auth chain blocked. Internal DNS leak (int.fonial.de) and CT-sweep inventory expansion (~19 subdomains) provide breadth but no new exploitable passive surface. Risk reduced from 55 due to Mattermost DNS failure + shop DNS failure.
+[RISK] fonial: 48 — Customer portals (kundenkonto + prov) completely unreachable (shared backend 62.146.7.20 down), eliminating primary BOLA surface. Mattermost DNS failing (NXDOMAIN) after brief recovery — self-signup hypothesis blocked. Shop GraphQL DNS-failing (no resolution) — asymmetric admin-auth chain blocked. Internal DNS leak (int.fional.de) and CT-sweep inventory expansion (~19 subdomains) provide breadth but no new exploitable passive surface. Risk reduced from 55 due to Mattermost DNS failure + shop DNS failure.

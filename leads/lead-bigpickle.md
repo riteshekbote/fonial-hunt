@@ -4009,3 +4009,4 @@ evidence_needed: POST /api/v4/users returns 201 (open) vs 401/403 (closed).
 verify_steps: HUMAN: one minimal POST /api/v4/users {"email":"t"+rand+"@example.invalid","username":"t"+rand,"password":<16-char random>}; abandon account if 201; accept 401/403 as closed.
 impact: throwaway internal-chat account → chained red.fonial.de Redmine co-host — MEDIUM.
 testability: HUMAN_ONLY
+## 2026-09-19 02:46:51 UTC [target] (model bigpickle)
